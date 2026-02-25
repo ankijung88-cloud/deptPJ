@@ -79,6 +79,11 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
                     zh: '1楼是与世界分享韩国文化现状的充满动态交流的场所。通过与全球艺术家的合作、国家间的文化交流项目发现新的灵感。'
                 }
             }
+        ],
+        subitems: [
+            { id: 'global', label: { ko: '글로벌 K-컬처', en: 'Global K-Culture', ja: 'グローバルK-カルチャー', zh: '全球 K-Culture' } },
+            { id: 'exchange', label: { ko: '문화 교류', en: 'Cultural Exchange', ja: '文化交流', zh: '文化交流' } },
+            { id: 'collab', label: { ko: '협업 프로젝트', en: 'Collaboration Project', ja: 'コラボプロジェクト', zh: '合作项目' } }
         ]
     },
     {
@@ -103,10 +108,14 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
                 value: {
                     ko: '2층은 한국 예술의 정수를 보존하고 홍보하는 아카이브 공간입니다. 무형문화재의 디지털 기록물과 현대 미디어 기법으로 재 탄생한 전통 공연을 감상할 수 있습니다.',
                     en: 'The 2nd floor is an archive space aimed at preserving and promoting the essence of Korean arts. You can appreciate digital records of intangible cultural properties and traditional performances reborn with modern media techniques.',
-                    ja: '2階は韓国芸術の精髄を保存し広めるアーカイブ空間입니다. 무형문화재의 디지털 기록물과 현대 미디어 기법으로 재 탄생한 전통 공연을 감상할 수 있습니다.',
+                    ja: '2階は韓国芸術の精髄を保存し広めるアーカイブ空間です。無形文化財のデジタル記録物と現代メディア技法で再誕生した伝統公演を鑑賞することができます。',
                     zh: '2楼是保存和宣传韩国艺术精华的档案空间。可以欣赏到无形文化遗产的数字化记录和通过现代媒体技术重新诞生的传统演出。'
                 }
             }
+        ],
+        subitems: [
+            { id: 'traditional', label: { ko: '전통 예술', en: 'Traditional Arts', ja: '伝統芸術', zh: '传统艺术' } },
+            { id: 'media', label: { ko: '미디어 아카이브', en: 'Media Archive', ja: 'メディアアーカイブ', zh: '媒体档案' } }
         ]
     },
     {
@@ -135,6 +144,10 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
                     zh: '3楼是通过亲自体验学习的文化交流学校。通过专家指导的茶道、书法、工艺课程，深入了解韩国之美并加入自己的感悟。'
                 }
             }
+        ],
+        subitems: [
+            { id: 'class', label: { ko: '문화 체험 클래스', en: 'Culture Class', ja: '文化体験クラス', zh: '文化体验课' } },
+            { id: 'heritage', label: { ko: '전통 공예', en: 'Traditional Craft', ja: '伝統工芸', zh: '传统工艺' } }
         ]
     },
     {
@@ -163,6 +176,10 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
                     zh: '4楼是通过现代时尚和摄影展现韩国审美要素的画廊。可以见到体现韩服曲线的现代造型和年轻摄影师捕捉到的文化地貌。'
                 }
             }
+        ],
+        subitems: [
+            { id: 'kstyle', label: { ko: 'K-스타일', en: 'K-Style', ja: 'K-スタイル', zh: 'K-Style' } },
+            { id: 'fashion', label: { ko: '시각 예술 / 패션', en: 'Visual Arts / Fashion', ja: '視覚芸術 / ファッション', zh: '视觉艺术 / 时尚' } }
         ]
     },
     {
@@ -191,6 +208,10 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
                     zh: '5楼是通过策划韩国各地区独特文化的旅游休息室。通过带有地域特色的宣传品和当地人推荐的特别路线宣传真正的韩国情调。'
                 }
             }
+        ],
+        subitems: [
+            { id: 'local_heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage', ja: '地域文化遺産', zh: '本地文化遗产' } },
+            { id: 'travel_curation', label: { ko: '여행 큐레이션', en: 'Travel Curation', ja: '旅行キュレーション', zh: '旅游策展' } }
         ]
     },
 ];
@@ -212,6 +233,38 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
         date: { ko: '2026.05.01 - 2026.05.07', en: 'May 01 - May 07, 2026', ja: '2026.05.01 - 2026.05.07', zh: '2026.05.01 - 2026.05.07' },
         location: { ko: '1F 글로벌 라운지', en: '1F Global Lounge', ja: '1F グローバル라운지', zh: '1F 全球休息室' },
         price: { ko: '무료 참가', en: 'Free Participation', ja: '参加無料', zh: '免费参加' }
+    },
+    {
+        id: 'global-artist-collab-2026',
+        title: { ko: '2026 글로벌 아티스트 협업전: 경계를 넘어서', en: '2026 Global Artist Collab: Beyond Borders', ja: '2026 グローバルアーティストコラボ：境界を越えて', zh: '2026 全球艺术家合作展：跨越边界' },
+        category: 'Trend',
+        subcategory: 'collab',
+        description: {
+            ko: '국내외 최정상 아티스트들이 각자의 고유한 문화를 융합하여 새로운 예술적 비전을 제시하는 대규모 협업 프로젝트입니다.',
+            en: 'A large-scale collaboration project where top domestic and international artists fuse their unique cultures to present a new artistic vision.',
+            ja: '国内外のトップアーティストが各自の固有の文化を融合し、新しい芸術的ビジョンを提示する大規模なコラボレーションプロジェクトです。',
+            zh: '国内外顶级艺术家融合各自独特文化，展现全新艺术视野的大型合作项目。'
+        },
+        imageUrl: 'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?q=80&w=2560&auto=format&fit=crop',
+        date: { ko: '2026.08.10 - 2026.09.10', en: 'Aug 10 - Sep 10, 2026', ja: '2026.08.10 - 2026.09.10', zh: '2026.08.10 - 2026.09.10' },
+        location: { ko: '1F 글로벌 라운지', en: '1F Global Lounge', ja: '1F グローバル라운지', zh: '1F 全球休息室' },
+        price: { ko: '무료 관람', en: 'Free Admission', ja: '観覧無料', zh: '免费参观' }
+    },
+    {
+        id: 'k-culture-brand-collab',
+        title: { ko: 'K-뷰티 x 전통 공예 스페셜 콜라보 팝업', en: 'K-Beauty x Traditional Craft Special Collab Pop-up', ja: 'K-ビューティー x 伝統工芸 スペシャルコラボポップアップ', zh: 'K-Beauty x 传统工艺 特别合作快闪' },
+        category: 'Trend',
+        subcategory: 'collab',
+        description: {
+            ko: '한국의 전통 공예 장인들과 뷰티 브랜드가 만나 아름다움의 본질을 현대적으로 재해석한 한정판 에디션을 선보입니다.',
+            en: 'Korean traditional craft masters and beauty brands meet to present a limited edition that modernly reinterprets the essence of beauty.',
+            ja: '韓国の伝統工芸職人とビューティーブランドが出会い、美の本質を現代的に再解釈した限定版エディションを披露します。',
+            zh: '韩国传统工艺匠人与美妆品牌相遇，推出将美的本质进行现代重新诠释的限量版产品。'
+        },
+        imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=2560&auto=format&fit=crop',
+        date: { ko: '2026.10.01 - 2026.10.15', en: 'Oct 01 - Oct 15, 2026', ja: '2026.10.01 - 2026.10.15', zh: '2026.10.01 - 2026.10.15' },
+        location: { ko: '1F 팝업존', en: '1F Pop-up Zone', ja: '1F ポップアップゾーン', zh: '1F 快闪区' },
+        price: { ko: '제품 구매 가능', en: 'Products Available', ja: '製品購入可能', zh: '产品可购买' }
     },
     {
         id: 'heritage-digital-archive',
@@ -527,26 +580,82 @@ export const BRAND_SPOTLIGHTS: BrandSpotlight[] = [
 export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-1',
-        title: { ko: '전통 무용 게릴라 공연', en: 'Traditional Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
-        videoUrl: './video/traditional_dance.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=2669&auto=format&fit=crop',
-        location: { ko: '1F 중앙 광장', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
+        title: { ko: '글로벌 K-컬쳐', en: 'Tradition Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
+        videoUrl: './video/k-culture.mp4',
+
+        location: { ko: '1F 글로벌 K-컬쳐', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
         viewCount: 12500
     },
     {
         id: 'short-2',
-        title: { ko: 'K-푸드 팝업 키친 Live', en: 'K-Food Pop-up Kitchen Live', ja: 'K-フードポップアップキッチンLive', zh: 'K-Food 弹出式厨房现场' },
-        videoUrl: './video/chef_cooking.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2574&auto=format&fit=crop',
-        location: { ko: 'B1 고메 스트리트', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
+        title: { ko: '전통의 현대화', en: 'K-Food Pop-up Kitchen Live', ja: 'K-フードポップアップキッチンLive', zh: 'K-Food 弹出式厨房现场' },
+        videoUrl: './video/modern_tradition.mp4',
+
+        location: { ko: '1F 전통의 현대화', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
         viewCount: 8900
     },
     {
         id: 'short-3',
-        title: { ko: '미디어 아트 도슨트 투어', en: 'Media Art Docent Tour', ja: 'メディアアートドセントツアー', zh: '媒体艺术讲解之旅' },
+        title: { ko: '문화 교류', en: 'Media Art Docent Tour', ja: 'メディアアートドセントツアー', zh: '媒体艺术讲解之旅' },
         videoUrl: './video/media_gallery.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop',
-        location: { ko: '4F 아트 갤러리', en: '4F Art Gallery', ja: '4F アートギャラリー', zh: '4F 艺术画廊' },
-        viewCount: 15400
+
+        location: { ko: '2F 문화 교류 부스', en: '2F Art Theater', ja: '2F 아트 시어터', zh: '2F 艺术影院' },
+        viewCount: 15200
+    },
+    {
+        id: 'short-4',
+        title: { ko: '협업 프로젝트', en: 'Traditional Hanbok Runway Highlights', ja: '伝統韓服ランウェイハイライト', zh: '传统韩服时装秀亮点' },
+        videoUrl: './video/hanbok_runway.mp4',
+
+        location: { ko: '1F 협업 프로젝트', en: '1F Culture Plaza', ja: '1F カルチャースクエア', zh: '1F 文化广场' },
+        viewCount: 22000
+    },
+    {
+        id: 'short-5',
+        title: { ko: '전통 예술', en: 'Mother-of-Pearl Craftsmanship Demo', ja: '螺鈿漆器職人実演会', zh: '螺钿漆器工匠演示会' },
+        videoUrl: './video/najeon_demo.mp4',
+
+        location: { ko: '3F 전통 예술', en: '3F Craft Library', ja: '3F クラフトライブラリー', zh: '3F 工艺图书馆' },
+        viewCount: 18400
+    },
+    {
+        id: 'short-6',
+        title: { ko: '스트리트 댄스 배틀 결승전', en: 'Street Dance Battle Finals', ja: 'ストリートダンスバトル決勝戦', zh: '街舞对决总决赛' },
+        videoUrl: './video/dance_battle.mp4',
+
+        location: { ko: '3F 현대 미디어 아트', en: 'B2 Underground Stage', ja: 'B2 アンダーグラウンドステージ', zh: 'B2 地下舞台' },
+        viewCount: 31500
+    },
+    {
+        id: 'short-7',
+        title: { ko: '달항아리 다도 체험 클래스', en: 'Moon Jar Tea Ceremony Class', ja: '月壺茶道体験クラス', zh: '月亮罐茶道体验课' },
+        videoUrl: './video/tea_ceremony.mp4',
+
+        location: { ko: '4F 문화 체험 클래스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅' },
+        viewCount: 14200
+    },
+    {
+        id: 'short-8',
+        title: { ko: '디지털 한글 타이포그래피 전', en: 'Digital Hangeul Typography Exhibition', ja: 'デジタルハングルタイポグラフィ展', zh: '数字韩文版式展' },
+        videoUrl: './video/hangeul_typo.mp4',
+
+        location: { ko: '4F 글로벌 K-스타일', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院' },
+        viewCount: 27800
+    },
+    {
+        id: 'short-9',
+        title: { ko: '가야금 현대 음악 라이브', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场' },
+        videoUrl: './video/gayageum_live.mp4',
+
+        location: { ko: '5F 지역 문화 유산', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区' },
+        viewCount: 19500
+    },
+    {
+        id: 'short-10',
+        title: { ko: '전통 막걸리 양조 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程' },
+        videoUrl: './video/makgeolli_brew.mp4',
+
+        location: { ko: '5F 여행 큐레이션', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
+        viewCount: 26300
     }
 ];

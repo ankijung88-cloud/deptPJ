@@ -7,7 +7,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const CalendarSection: React.FC = () => {
     const { i18n } = useTranslation();
-    const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
+    const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
     // 가상의 3월 달력 데이터 생성 (2026년 3월은 일요일부터 시작한다고 가정)
     const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -50,13 +50,12 @@ export const CalendarSection: React.FC = () => {
                         return (
                             <motion.button
                                 key={day}
-                                onMouseEnter={() => event && setHoveredEvent(event.id)}
-                                onMouseLeave={() => setHoveredEvent(null)}
+                                onClick={() => event && setSelectedEvent(event.id)}
                                 whileHover={{ scale: 1.1 }}
                                 className={`aspect-square rounded-lg flex items-center justify-center text-sm md:text-lg font-medium transition-all duration-300 relative ${event
-                                        ? 'bg-dancheong-red text-white shadow-[0_0_20px_rgba(196,48,43,0.3)]'
-                                        : 'bg-white/5 text-white/20 hover:bg-white/10'
-                                    }`}
+                                    ? 'bg-dancheong-red text-white shadow-[0_0_20px_rgba(196,48,43,0.3)]'
+                                    : 'bg-white/5 text-white/20 hover:bg-white/10'
+                                    } ${selectedEvent === event?.id ? 'ring-2 ring-white scale-110' : ''}`}
                             >
                                 {day}
                                 {event && (
@@ -70,9 +69,9 @@ export const CalendarSection: React.FC = () => {
                 {/* Event Detail Preview */}
                 <div className="h-[400px] flex items-center justify-center relative">
                     <AnimatePresence mode="wait">
-                        {hoveredEvent ? (
+                        {selectedEvent ? (
                             <motion.div
-                                key={hoveredEvent}
+                                key={selectedEvent}
                                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, scale: 1.05 }}
@@ -81,7 +80,7 @@ export const CalendarSection: React.FC = () => {
                             >
                                 <div className="aspect-video relative overflow-hidden">
                                     <img
-                                        src={getEventForDay(Number(CALENDAR_EVENTS.find(e => e.id === hoveredEvent)?.date.split('-')[2]))?.imageUrl}
+                                        src={getEventForDay(Number(CALENDAR_EVENTS.find(e => e.id === selectedEvent)?.date.split('-')[2]))?.imageUrl}
                                         alt="event"
                                         className="w-full h-full object-cover"
                                     />
@@ -89,10 +88,10 @@ export const CalendarSection: React.FC = () => {
                                 </div>
                                 <div className="p-8">
                                     <span className="text-xs font-bold text-dancheong-red uppercase tracking-widest mb-2 block">
-                                        {CALENDAR_EVENTS.find(e => e.id === hoveredEvent)?.date}
+                                        {CALENDAR_EVENTS.find(e => e.id === selectedEvent)?.date}
                                     </span>
                                     <h4 className="text-2xl font-serif font-bold text-white mb-4">
-                                        <AutoTranslatedText text={getLocalizedText(CALENDAR_EVENTS.find(e => e.id === hoveredEvent)!.title, i18n.language)} />
+                                        <AutoTranslatedText text={getLocalizedText(CALENDAR_EVENTS.find(e => e.id === selectedEvent)!.title, i18n.language)} />
                                     </h4>
                                     <p className="text-white/60 text-sm leading-relaxed">
                                         <AutoTranslatedText text="선정된 일자에 진행되는 특별한 문화 행사를 놓치지 마세요. 상세 내용은 고객 센터로 문의 바랍니다." />

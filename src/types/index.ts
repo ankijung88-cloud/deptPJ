@@ -1,9 +1,9 @@
 export interface LocalizedString {
     ko: string;
-    en: string;
-    ja: string;
-    zh: string;
-    [key: string]: string;
+    en?: string;
+    ja?: string;
+    zh?: string;
+    [key: string]: string | undefined;
 }
 
 export interface NavItem {
@@ -44,6 +44,10 @@ export interface FloorCategory {
     description: LocalizedString;
     bgImage: string;
     content?: FloorContent[];
+    subitems?: {
+        id: string;
+        label: LocalizedString;
+    }[];
 }
 
 export interface Artist {
@@ -77,7 +81,6 @@ export interface LiveShort {
     id: string;
     title: LocalizedString;
     videoUrl: string;
-    thumbnailUrl: string;
     location: LocalizedString;
     viewCount: number;
 }

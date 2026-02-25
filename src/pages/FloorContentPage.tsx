@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -9,35 +9,54 @@ import { FeaturedItem } from '../types';
 import { FLOOR_CATEGORIES } from '../data/mockData';
 import { ArrowRight, BookOpen } from 'lucide-react';
 
+const CATEGORY_FILTERS: Record<string, string[]> = {
+    'trend': ['Trend', 'trend', 'popup', 'collab', 'new', 'discount', '트렌드', '팝업', '할인상품', '신상품'],
+    'tickets': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', '공연', '전시'],
+    'art': ['Art', 'art', 'class', 'fashion', '활동', '예술', '클래스', '스타일'],
+    'style': ['Style', 'style', 'photo', 'video', 'media', '사진', '영상', '미디어'],
+    'travel': ['Travel', 'travel', 'local', 'course', 'guide', '여행', '로컬'],
+    'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티', '공지사항', '후기']
+};
 
-const SubCategoryPage: React.FC = () => {
-    const { subId } = useParams<{ subId: string }>();
+const FloorContentPage: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const [searchParams] = useSearchParams();
+    const filter = searchParams.get('filter');
     const { i18n } = useTranslation();
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const targetSubId = subId || '';
-
-    // Find the floor that contains this subcategory
-    const parentFloor = FLOOR_CATEGORIES.find(f =>
-        f.subitems?.some(sub => sub.id === targetSubId)
-    );
-    // Find the specific subcategory data
-    const subcategoryData = parentFloor?.subitems?.find(sub => sub.id === targetSubId);
+    const categoryId = id || 'trend';
+    const floorData = FLOOR_CATEGORIES.find(f => f.id === categoryId);
 
     useEffect(() => {
         let mounted = true;
         const fetchItems = async () => {
             setLoading(true);
             try {
-                // Fetch items exactly matching the subcategory ID
-                const results = await getProductsByCategory(targetSubId);
+                const targetInternalCategories = CATEGORY_FILTERS[categoryId] || [];
+                if (targetInternalCategories.length === 0) {
+                    if (mounted) setItems([]);
+                } else {
+                    const promises = targetInternalCategories.map(cat => getProductsByCategory(cat));
+                    const results = await Promise.all(promises);
+                    // Deduplicate items
+                    const uniqueMap = new Map();
+                    results.flat().forEach(item => uniqueMap.set(item.id, item));
+                    let allItems = Array.from(uniqueMap.values());
 
-                // If no exact matches are found, you could optionally fallback to search terms,
-                // but strict filtering is preferred to prevent category pollution.
-                if (mounted) setItems(results);
+                    // Apply Sub-filter if present
+                    if (filter) {
+                        allItems = allItems.filter(item =>
+                            (item.subcategory && item.subcategory.toLowerCase() === filter.toLowerCase()) ||
+                            (item.category && item.category.toLowerCase() === filter.toLowerCase())
+                        );
+                    }
+
+                    if (mounted) setItems(allItems);
+                }
             } catch (error: any) {
-                console.error('Failed to fetch subcategory items:', error.message || error);
+                console.error('Failed to fetch floor items:', error.message || error);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -46,12 +65,12 @@ const SubCategoryPage: React.FC = () => {
         window.scrollTo(0, 0);
         fetchItems();
         return () => { mounted = false; };
-    }, [targetSubId]);
+    }, [categoryId, filter]);
 
-    if (!parentFloor || !subcategoryData) {
+    if (!floorData) {
         return (
             <div className="min-h-screen pt-32 text-center bg-charcoal text-white">
-                <h2 className="text-2xl font-bold">해당 카테고리를 찾을 수 없습니다.</h2>
+                <h2 className="text-2xl font-bold">존재하지 않는 층입니다.</h2>
                 <Link to="/" className="text-dancheong-red mt-4 inline-block">홈으로 가기</Link>
             </div>
         );
@@ -63,7 +82,7 @@ const SubCategoryPage: React.FC = () => {
             <header className="relative w-full py-24 flex items-center justify-center overflow-hidden mb-16 border-b border-white/10">
                 <div className="absolute inset-0 z-0 opacity-20">
                     <img
-                        src={parentFloor.bgImage}
+                        src={floorData.bgImage}
                         alt=""
                         className="w-full h-full object-cover grayscale"
                     />
@@ -77,13 +96,13 @@ const SubCategoryPage: React.FC = () => {
                         transition={{ duration: 0.8 }}
                     >
                         <span className="text-dancheong-red font-bold tracking-[0.3em] uppercase mb-4 block text-sm">
-                            {parentFloor.floor} / <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language)} />
+                            {floorData.floor} Contents
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 tracking-tight">
-                            <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language)} />
+                            <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                         </h1>
                         <p className="text-xl text-white/70 font-light leading-relaxed">
-                            <AutoTranslatedText text="해당 카테고리에 특화된 큐레이션 스토리와 최신 인사이트를 탐색합니다." />
+                            <AutoTranslatedText text="문화를 읽고, 영감을 발견하는 공간. 이 층에서 제공하는 큐레이션 스토리와 특별한 기획을 확인해보세요." />
                         </p>
                     </motion.div>
                 </div>
@@ -100,7 +119,7 @@ const SubCategoryPage: React.FC = () => {
                 {/* Empty State */}
                 {!loading && items.length === 0 && (
                     <div className="text-white/40 text-center py-32 font-light text-lg">
-                        <AutoTranslatedText text="현재 이 카테고리에 준비된 콘텐츠가 없습니다." />
+                        <AutoTranslatedText text="현재 준비된 에디토리얼 콘텐츠가 없습니다." />
                     </div>
                 )}
 
@@ -126,7 +145,7 @@ const SubCategoryPage: React.FC = () => {
 
                                 <div className="absolute top-6 left-6 flex gap-2">
                                     <span className="bg-black/80 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 select-none">
-                                        <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language)} />
+                                        <AutoTranslatedText text={getLocalizedText(item.category || item.subcategory || 'Culture', i18n.language)} />
                                     </span>
                                 </div>
                             </div>
@@ -168,4 +187,4 @@ const SubCategoryPage: React.FC = () => {
     );
 };
 
-export default SubCategoryPage;
+export default FloorContentPage;

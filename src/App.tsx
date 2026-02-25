@@ -11,6 +11,8 @@ import CategoryPage from './pages/CategoryPage';
 
 import FloorIntroPage from './pages/FloorIntroPage';
 import FloorGuidePage from './pages/FloorGuidePage';
+import FloorContentPage from './pages/FloorContentPage';
+import SubCategoryPage from './pages/SubCategoryPage';
 import AboutPage from './pages/AboutPage';
 
 import AllProductsPage from './pages/AllProductsPage';
@@ -24,6 +26,8 @@ function App() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/detail/:id" element={<DetailPage />} />
                     <Route path="/floor/:id" element={<FloorIntroPage />} />
+                    <Route path="/floor/:id/articles" element={<FloorContentPage />} />
+                    <Route path="/category/:subId" element={<SubCategoryPage />} />
                     <Route path="/floor-guide" element={<FloorGuidePage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/:category" element={<CategoryPage />} />

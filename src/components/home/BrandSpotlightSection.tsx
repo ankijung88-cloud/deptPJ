@@ -9,8 +9,8 @@ export const BrandSpotlightSection: React.FC = () => {
     const { i18n } = useTranslation();
 
     return (
-        <section className="h-screen w-full snap-start bg-charcoal relative flex flex-col justify-center overflow-hidden">
-            <div className="container mx-auto px-6 mb-12 flex justify-between items-end">
+        <section className="h-screen w-full snap-start bg-charcoal relative flex flex-col justify-center overflow-hidden pt-20 pb-8">
+            <div className="container mx-auto px-6 mb-8 lg:mb-12 flex justify-between items-end shrink-0">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}

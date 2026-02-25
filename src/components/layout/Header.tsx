@@ -100,40 +100,40 @@ const Header: React.FC = () => {
             id: 'trend',
             label: '트렌드',
             subitems: [
-                { id: 'global', label: '글로벌 K-컬처' },
-                { id: 'heritage', label: '전통의 현대화' }
+                { id: 'global', label: '글로벌 K-컬처', path: '/category/global' },
+                { id: 'heritage', label: '전통의 현대화', path: '/category/heritage' }
             ]
         },
         {
             id: 'popup',
             label: '팝업',
             subitems: [
-                { id: 'exchange', label: '문화 교류 부스' },
-                { id: 'collab', label: '협업 프로젝트' }
+                { id: 'exchange', label: '문화 교류 부스', path: '/category/exchange' },
+                { id: 'collab', label: '협업 프로젝트', path: '/category/collab' }
             ]
         },
         {
             id: 'performance_exhibition',
             label: '공연/전시',
             subitems: [
-                { id: 'traditional', label: '전통 예술' },
-                { id: 'media', label: '현대 미디어 아트' }
+                { id: 'traditional', label: '전통 예술', path: '/category/traditional' },
+                { id: 'media', label: '현대 미디어 아트', path: '/category/media' }
             ]
         },
         {
             id: 'activity_style',
             label: '활동/스타일',
             subitems: [
-                { id: 'class', label: '문화 체험 클래스' },
-                { id: 'style', label: '글로벌 K-스타일' }
+                { id: 'class', label: '문화 체험 클래스', path: '/category/class' },
+                { id: 'style', label: '글로벌 K-스타일', path: '/category/kstyle' }
             ]
         },
         {
             id: 'local',
             label: '로컬',
             subitems: [
-                { id: 'heritage', label: '지역 문화 유산' },
-                { id: 'travel', label: '여행 큐레이션' }
+                { id: 'heritage', label: '지역 문화 유산', path: '/category/local_heritage' },
+                { id: 'travel', label: '여행 큐레이션', path: '/category/travel_curation' }
             ]
         }
     ];
@@ -170,7 +170,7 @@ const Header: React.FC = () => {
                                         {item.subitems.map((sub) => (
                                             <Link
                                                 key={sub.id}
-                                                to={sub.path || `/${item.id}?filter=${sub.id}`}
+                                                to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
                                                 className="px-5 py-2.5 text-sm text-white/50 hover:text-white hover:bg-white/5 transition-all duration-200 text-left relative group/item"
                                                 onClick={() => setActiveDropdown(null)}
                                             >
@@ -312,7 +312,7 @@ const Header: React.FC = () => {
                                             {item.subitems.map((sub) => (
                                                 <Link
                                                     key={sub.id}
-                                                    to={sub.path || `/${item.id}?filter=${sub.id}`}
+                                                    to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
                                                     className="text-white/60 hover:text-white text-base"
                                                     onClick={() => setIsMenuOpen(false)}
                                                 >

@@ -7,8 +7,9 @@ interface AutoTranslatedTextProps {
     as?: keyof JSX.IntrinsicElements;
 }
 
-export const AutoTranslatedText: React.FC<AutoTranslatedTextProps> = ({ text, className, as: Component = 'span' }) => {
+export const AutoTranslatedText: React.FC<AutoTranslatedTextProps> = ({ text, className, as = 'span' }) => {
     const { translatedText, isLoading } = useAutoTranslate(text);
+    const Component = as as React.ElementType;
 
     return (
         <Component className={className}>

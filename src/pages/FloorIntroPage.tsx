@@ -68,7 +68,7 @@ const FloorIntroPage: React.FC = () => {
                         transition={{ delay: 0.3 }}
                     >
                         <Link
-                            to={`/${floorData.id}`}
+                            to={`/floor/${floorData.id}/articles`}
                             className="inline-flex items-center gap-2 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all text-white font-medium group"
                         >
                             전체 내용 보기
@@ -131,7 +131,7 @@ const FloorIntroPage: React.FC = () => {
                 <div className="container mx-auto px-6 text-center">
                     <h3 className="text-2xl font-bold mb-8">더 많은 소식이 궁금하신가요?</h3>
                     <Link
-                        to={`/${floorData.id}`}
+                        to={`/floor/${floorData.id}/articles`}
                         className="inline-flex items-center gap-2 px-10 py-4 bg-dancheong-red hover:bg-red-700 text-white rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
                     >
                         {getLocalizedText(floorData.title, i18n.language)} 자세히 보기
