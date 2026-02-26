@@ -210,7 +210,7 @@ export const LiveShortsSection: React.FC = () => {
                     slidesPerView={1.5}
                     centeredSlides={true}
                     loop={true}
-                    speed={5000} // 일정하고 부드러운 속도
+                    speed={2500} // 기존 5000에서 2500으로 변경하여 슬라이드 속도 상향 조정
                     autoplay={{
                         delay: 0,
                         disableOnInteraction: false,
