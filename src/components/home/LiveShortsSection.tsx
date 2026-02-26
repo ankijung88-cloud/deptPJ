@@ -7,11 +7,12 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { Eye, MapPin, X, Play } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination, EffectCoverflow, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-coverflow';
+import 'swiper/css/free-mode';
 
 const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => void }> = ({ item, index, onClick }) => {
     const { i18n } = useTranslation();
@@ -175,42 +176,24 @@ export const LiveShortsSection: React.FC = () => {
                 </motion.div>
             </div>
 
-            <div className="w-full pl-6 md:pl-12 lg:pl-24"
-                 onMouseEnter={() => {
-                     if (swiperInstance) {
-                         swiperInstance.autoplay.stop();
-                         // get the real-time position of the slider
-                         const currentTranslate = swiperInstance.translate;
-                         // effectively remove transition duration to freeze in place
-                         swiperInstance.setTransition(0);
-                         swiperInstance.setTranslate(currentTranslate);
-                     }
-                 }}
-                 onMouseLeave={() => {
-                     if (swiperInstance) {
-                         // restore speed and slide to the next slide to keep continuous movement
-                         swiperInstance.setTransition(5000);
-                         swiperInstance.autoplay.start();
-                         swiperInstance.slideNext();
-                     }
-                 }}
-            >
+            <div className="w-full pl-6 md:pl-12 lg:pl-24">
                 <style>
                     {`
-                    .smooth-swiper .swiper-wrapper {
+                    /* Wrapper와 Slide가 정확히 동일한 linear 속도로 움직여야 끊기는 역현상이 발생하지 않습니다 */
+                    .smooth-swiper .swiper-wrapper,
+                    .smooth-swiper .swiper-slide {
                         transition-timing-function: linear !important;
                     }
-                    /* 파도 투명도 효과 (Opacity Animation) */
+                    /* 개별 카드 투명도 조절 */
                     .smooth-swiper .swiper-slide {
-                        opacity: 0.5;
-                        transition: opacity 0.5s ease;
-                    }
-                    .smooth-swiper .swiper-slide-active {
-                        opacity: 1;
+                        opacity: 0.3;
                     }
                     .smooth-swiper .swiper-slide-next,
                     .smooth-swiper .swiper-slide-prev {
-                        opacity: 0.8;
+                        opacity: 0.7;
+                    }
+                    .smooth-swiper .swiper-slide-active {
+                        opacity: 1;
                     }
                     `}
                 </style>
@@ -218,39 +201,35 @@ export const LiveShortsSection: React.FC = () => {
                     modules={[Autoplay, Navigation, Pagination, EffectCoverflow]}
                     effect="coverflow"
                     coverflowEffect={{
-                        rotate: 0, // 회전 없앰
-                        stretch: 0, // 간격 조절
-                        depth: 150, // 깊이감 (값이 클수록 양옆이 더 작아짐)
-                        modifier: 1, // 파도 효과 배수
-                        slideShadows: false, // 그림자 비활성
-                        scale: 0.85, // 양옆 슬라이드 비율 줄임 (최신버전 Swiper 지원)
+                        rotate: 35, // 둥글게 말리는 원형 회전 효과 강화
+                        stretch: -20, // 카드를 모아 원기둥 형태 느낌 구성
+                        depth: 400, // 깊이감을 늘려 완벽한 3D 형태로 구성
+                        modifier: 1,
+                        slideShadows: false, // 그림자 렌더링 연산 부하 및 잔상으로 인한 끊김 방지
+                        scale: 0.85, 
                     }}
-                    spaceBetween={6} // 카드 간 6px 간격 설정
+                    spaceBetween={10}
                     slidesPerView={1.5}
-                    centeredSlides={true} /* 카드가 중앙을 지날 때 active가 되게 설정 */
+                    centeredSlides={true}
                     loop={true}
-                    speed={5000} // transition speed for smooth scrolling
+                    loopedSlides={shorts.length * 2} // 루프 렌더링 범위 확보
+                    speed={5000} // 일정하고 부드러운 속도
                     onSwiper={setSwiperInstance}
                     autoplay={{
-                        delay: 0, // 0 delay for continuous scroll
+                        delay: 0,
                         disableOnInteraction: false,
-                        // pauseOnMouseEnter is handled by div wrappers now for more reliable pause with linear transition
+                        pauseOnMouseEnter: true, // 호버 시 안정적인 정지
                     }}
                     breakpoints={{
-                        480: {
-                            slidesPerView: 2.5,
-                        },
-                        768: {
-                            slidesPerView: 3.5,
-                        },
-                        1024: {
-                            slidesPerView: 5, /* PC 환경에서 화면에 5개가 보이도록 설정 */
-                        }
+                        480: { slidesPerView: 2.5 },
+                        768: { slidesPerView: 3.5 },
+                        1024: { slidesPerView: 5 }
                     }}
                     className="w-full pb-12 smooth-swiper"
                 >
-                    {shorts.map((item, index) => (
-                        <SwiperSlide key={item.id}>
+                    {/* 데이터 개수가 부족하여 루프에서 끊기는 현상을 방지하고자 배열을 임의로 곱함 */}
+                    {[...shorts, ...shorts, ...shorts, ...shorts, ...shorts].map((item, index) => (
+                        <SwiperSlide key={`${item.id}-${index}`}>
                             <LiveShortItem
                                 item={item}
                                 index={index}
