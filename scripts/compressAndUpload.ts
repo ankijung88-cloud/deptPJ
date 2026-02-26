@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+// @ts-ignore
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 
@@ -29,7 +30,7 @@ function compressVideo(inputPath: string, outputPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
         console.log(`Compressing ${path.basename(inputPath)}... This may take a few minutes.`);
 
-        ffmpeg(inputPath)
+        (ffmpeg as any)(inputPath)
             .outputOptions([
                 '-crf 28',        // Compression quality (lower is better, 28 is a good balance for web)
                 '-preset fast',   // Speed of compression
@@ -42,7 +43,7 @@ function compressVideo(inputPath: string, outputPath: string): Promise<string> {
                 console.log(`Successfully compressed ${path.basename(inputPath)}`);
                 resolve(outputPath);
             })
-            .on('error', (err) => {
+            .on('error', (err: any) => {
                 console.error(`Error compressing ${path.basename(inputPath)}:`, err);
                 reject(err);
             })

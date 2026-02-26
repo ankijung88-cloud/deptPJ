@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { FloorGuideModal } from '../common/FloorGuideModal';
@@ -12,19 +12,59 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const slides = [
-    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: false },
-    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true },
-    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: false },
-    { id: 4, src: '/video/active.mp4', poster: '', hasSound: true },
-    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: false }
+    {
+        id: 1,
+        src: '/video/trend.mp4',
+        poster: '',
+        hasSound: false,
+        titleKey: 'nav.trend',
+        subKey: 'category.trend.description'
+    },
+    {
+        id: 2,
+        src: '/video/popup_store.mp4',
+        poster: '',
+        hasSound: true,
+        titleKey: 'nav.store',
+        subKey: 'category.community.description' // Or a better matching description
+    },
+    {
+        id: 3,
+        src: '/video/festival.mp4',
+        poster: '',
+        hasSound: false,
+        titleKey: 'nav.tickets',
+        subKey: 'category.tickets.description'
+    },
+    {
+        id: 4,
+        src: '/video/active.mp4',
+        poster: '',
+        hasSound: true,
+        titleKey: 'nav.art',
+        subKey: 'category.art.description'
+    },
+    {
+        id: 5,
+        src: '/video/travel.mp4',
+        poster: '',
+        hasSound: false,
+        titleKey: 'nav.travel',
+        subKey: 'category.travel.description'
+    }
 ];
 
 export const HeroSection: React.FC = () => {
     const { t } = useTranslation();
-    const [isFloorGuideModalOpen, setIsFloorGuideModalOpen] = React.useState(false);
+    const [isFloorGuideModalOpen, setIsFloorGuideModalOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const handleVideoPlayback = (swiper: any) => {
         if (!swiper || !swiper.el) return;
+
+        // Sync local active index (realIndex accounts for loop)
+        setActiveIndex(swiper.realIndex);
+
         // 모든 비디오 엘리먼트를 찾아서 정지 및 음소거
         const allVideos = swiper.el.querySelectorAll('video');
         allVideos.forEach((v: HTMLVideoElement) => {
@@ -33,17 +73,12 @@ export const HeroSection: React.FC = () => {
         });
 
         // 현재 활성화된 슬라이드 내의 비디오만 재생
-        // Swiper loop mode에서는 activeIndex가 복제본을 가리킬 수 있으므로 
-        // 쿼리 셀렉터를 통해 현재 화면에 보이는 active 슬라이드를 공략합니다.
         const activeSlide = swiper.el.querySelector('.swiper-slide-active');
         if (!activeSlide) return;
 
         const activeVideo = activeSlide.querySelector('video') as HTMLVideoElement;
         if (activeVideo) {
-            // 소리 유무 데이터 속성에 따라 음소거 토글
             activeVideo.muted = activeVideo.dataset.hasSound !== 'true';
-
-            // 재생 시도 (브라우저 자동재생 정책 대응)
             const playPromise = activeVideo.play();
             if (playPromise !== undefined) {
                 playPromise.catch((error) => {
@@ -54,6 +89,8 @@ export const HeroSection: React.FC = () => {
             }
         }
     };
+
+    const currentSlide = slides[activeIndex];
 
     return (
         <section id="hero" className="relative h-screen w-full overflow-hidden bg-black snap-start">
@@ -84,7 +121,6 @@ export const HeroSection: React.FC = () => {
                     transform: scale(1.3);
                     box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
                 }
-                /* Swiper Navigation Button States */
                 .hero-prev, .hero-next {
                     cursor: pointer !important;
                 }
@@ -118,7 +154,6 @@ export const HeroSection: React.FC = () => {
                     }}
                     onSlideChangeTransitionEnd={handleVideoPlayback}
                     onSwiper={(swiper) => {
-                        // 초기 로딩 시 첫 번째 비디오 재생 보장
                         setTimeout(() => handleVideoPlayback(swiper), 300);
                     }}
                     className="w-full h-full"
@@ -143,33 +178,34 @@ export const HeroSection: React.FC = () => {
 
             {/* Content (Overlayed on top of Swiper) */}
             <div className="relative z-20 container mx-auto px-6 h-full flex flex-col justify-center items-start pointer-events-none">
-                <div className="pointer-events-auto">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight"
-                    >
-                        {t('hero.title')}
-                    </motion.h1>
+                <div className="pointer-events-auto h-[300px] flex flex-col justify-center">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeIndex}
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 30 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            className="flex flex-col items-start"
+                        >
+                            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight">
+                                {t(currentSlide.titleKey)}
+                            </h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl font-light"
-                    >
-                        {t('hero.subtitle')}
-                    </motion.p>
+                            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl font-light">
+                                {t(currentSlide.subKey)}
+                            </p>
+                        </motion.div>
+                    </AnimatePresence>
 
                     <motion.button
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.5, delay: 0.6 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                         onClick={() => setIsFloorGuideModalOpen(true)}
-                        className="bg-dancheong-red hover:bg-red-700 text-white px-8 py-4 rounded-full text-lg font-medium flex items-center space-x-2 transition-colors shadow-lg"
+                        className="bg-dancheong-red hover:bg-red-700 text-white px-8 py-4 rounded-full text-lg font-medium flex items-center space-x-2 transition-colors shadow-lg w-fit"
                     >
                         <span>{t('hero.cta')}</span>
                         <ArrowRight size={20} />

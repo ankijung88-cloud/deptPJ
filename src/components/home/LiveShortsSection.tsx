@@ -7,12 +7,11 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { Eye, MapPin, X, Play } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination, EffectCoverflow, FreeMode } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-coverflow';
-import 'swiper/css/free-mode';
 
 const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => void }> = ({ item, index, onClick }) => {
     const { i18n } = useTranslation();
@@ -56,13 +55,13 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-            
+
             {/* Play indicator icon to show it's a video */}
-             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                 <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
                     <Play className="text-white fill-white ml-1" size={24} />
-                 </div>
-             </div>
+                </div>
+            </div>
 
             <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 z-10 pointer-events-none">
                 <div className="flex items-center gap-1 text-white/70 text-[10px] md:text-xs mb-2 uppercase font-bold tracking-tighter bg-black/40 px-2 py-1 rounded-full w-fit backdrop-blur-sm">
@@ -140,7 +139,6 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
 export const LiveShortsSection: React.FC = () => {
     const [shorts, setShorts] = useState<LiveShort[]>([]);
     const [selectedShort, setSelectedShort] = useState<LiveShort | null>(null);
-    const [swiperInstance, setSwiperInstance] = useState<any>(null);
 
     useEffect(() => {
         let mounted = true;
@@ -206,15 +204,13 @@ export const LiveShortsSection: React.FC = () => {
                         depth: 400, // 깊이감을 늘려 완벽한 3D 형태로 구성
                         modifier: 1,
                         slideShadows: false, // 그림자 렌더링 연산 부하 및 잔상으로 인한 끊김 방지
-                        scale: 0.85, 
+                        scale: 0.85,
                     }}
                     spaceBetween={10}
                     slidesPerView={1.5}
                     centeredSlides={true}
                     loop={true}
-                    loopedSlides={shorts.length * 2} // 루프 렌더링 범위 확보
                     speed={5000} // 일정하고 부드러운 속도
-                    onSwiper={setSwiperInstance}
                     autoplay={{
                         delay: 0,
                         disableOnInteraction: false,
