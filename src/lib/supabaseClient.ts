@@ -6,7 +6,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 console.log('Supabase: Initializing client with URL:', supabaseUrl ? 'Defined' : 'UNDEFINED');
 
-export const supabase = createClient<Database>(
+export const supabase = createClient<any>(
     supabaseUrl || '',
     supabaseAnonKey || '',
     {

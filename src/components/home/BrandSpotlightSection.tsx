@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BRAND_SPOTLIGHTS } from '../../data/mockData';
+import { getBrandSpotlights } from '../../api/brands';
+import { BrandSpotlight } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const BrandSpotlightSection: React.FC = () => {
     const { i18n } = useTranslation();
+    const [brands, setBrands] = useState<BrandSpotlight[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchBrands = async () => {
+            try {
+                const data = await getBrandSpotlights();
+                if (mounted) setBrands(data);
+            } catch (error) {
+                console.error("Failed to fetch brand spotlights", error);
+            }
+        };
+        fetchBrands();
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <section className="h-screen w-full snap-start bg-charcoal relative flex flex-col justify-center overflow-hidden pt-20 pb-8">
@@ -25,7 +41,7 @@ export const BrandSpotlightSection: React.FC = () => {
 
             <div className="flex-grow flex items-center">
                 <div className="w-full flex overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 gap-8">
-                    {BRAND_SPOTLIGHTS.map((brand, index) => (
+                    {brands.map((brand, index) => (
                         <motion.div
                             key={brand.id}
                             initial={{ opacity: 0, scale: 0.9 }}

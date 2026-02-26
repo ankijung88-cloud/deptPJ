@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductsByCategory } from '../api/products';
-import { FeaturedItem } from '../types';
-import { FLOOR_CATEGORIES } from '../data/mockData';
+import { getFloorCategories } from '../api/categories';
+import { FeaturedItem, FloorCategory } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { Plus } from 'lucide-react';
 import LoginModal from '../components/auth/LoginModal';
@@ -33,19 +33,21 @@ const CategoryPage: React.FC = () => {
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [floorData, setFloorData] = useState<FloorCategory | null>(null);
 
     // Handle case where category might be undefined or not in map
     const categoryId = category || 'tickets';
-    // const targetCategories = CATEGORY_FILTERS[categoryId] || []; // Old logic using internal categories
-
-    // Find current floor metadata
-    const floorData = FLOOR_CATEGORIES.find(f => f.id === categoryId);
 
     useEffect(() => {
         let mounted = true;
-        const fetchItems = async () => {
+        const fetchData = async () => {
             setLoading(true);
             try {
+                // Fetch floor metadata
+                const floors = await getFloorCategories();
+                const currentFloor = floors.find(f => f.id === categoryId);
+                if (mounted) setFloorData(currentFloor || null);
+
                 // Fetch all items (in a real app, we might filter by category at API level)
                 // For mock data, we get all and filter client-side or use getProductsByCategory if it supports multiple
 
@@ -91,7 +93,7 @@ const CategoryPage: React.FC = () => {
         };
 
         window.scrollTo(0, 0);
-        fetchItems();
+        fetchData();
         return () => { mounted = false; };
     }, [categoryId, filter]);
 

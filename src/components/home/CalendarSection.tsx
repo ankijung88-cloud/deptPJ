@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CALENDAR_EVENTS } from '../../data/mockData';
+import { getCalendarEvents } from '../../api/events';
+import { CalendarEvent } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
@@ -8,6 +9,21 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 export const CalendarSection: React.FC = () => {
     const { i18n } = useTranslation();
     const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+    const [events, setEvents] = useState<CalendarEvent[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchEvents = async () => {
+            try {
+                const data = await getCalendarEvents();
+                if (mounted) setEvents(data);
+            } catch (error) {
+                console.error("Error fetching events", error);
+            }
+        };
+        fetchEvents();
+        return () => { mounted = false; };
+    }, []);
 
     // 가상의 3월 달력 데이터 생성 (2026년 3월은 일요일부터 시작한다고 가정)
     const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -15,7 +31,7 @@ export const CalendarSection: React.FC = () => {
 
     const getEventForDay = (day: number) => {
         const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
-        return CALENDAR_EVENTS.find(ev => ev.date === dateStr);
+        return events.find(ev => ev.date === dateStr);
     };
 
     return (
@@ -80,7 +96,7 @@ export const CalendarSection: React.FC = () => {
                             >
                                 <div className="aspect-video relative overflow-hidden">
                                     <img
-                                        src={getEventForDay(Number(CALENDAR_EVENTS.find(e => e.id === selectedEvent)?.date.split('-')[2]))?.imageUrl}
+                                        src={getEventForDay(Number(events.find(e => e.id === selectedEvent)?.date.split('-')[2]))?.imageUrl}
                                         alt="event"
                                         className="w-full h-full object-cover"
                                     />
@@ -88,10 +104,10 @@ export const CalendarSection: React.FC = () => {
                                 </div>
                                 <div className="p-8">
                                     <span className="text-xs font-bold text-dancheong-red uppercase tracking-widest mb-2 block">
-                                        {CALENDAR_EVENTS.find(e => e.id === selectedEvent)?.date}
+                                        {events.find(e => e.id === selectedEvent)?.date}
                                     </span>
                                     <h4 className="text-2xl font-serif font-bold text-white mb-4">
-                                        <AutoTranslatedText text={getLocalizedText(CALENDAR_EVENTS.find(e => e.id === selectedEvent)!.title, i18n.language)} />
+                                        <AutoTranslatedText text={getLocalizedText(events.find(e => e.id === selectedEvent)!.title, i18n.language)} />
                                     </h4>
                                     <p className="text-white/60 text-sm leading-relaxed">
                                         <AutoTranslatedText text="선정된 일자에 진행되는 특별한 문화 행사를 놓치지 마세요. 상세 내용은 고객 센터로 문의 바랍니다." />

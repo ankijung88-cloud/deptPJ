@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ARTISTS_OF_THE_YEAR } from '../../data/mockData';
+import { getArtists } from '../../api/artists';
+import { Artist } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const ArtistSection: React.FC = () => {
     const { i18n } = useTranslation();
+    const [artists, setArtists] = useState<Artist[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchArtists = async () => {
+            try {
+                const data = await getArtists();
+                if (mounted) setArtists(data);
+            } catch (error) {
+                console.error("Failed to fetch artists", error);
+            }
+        };
+        fetchArtists();
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <section className="h-screen w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden">
@@ -25,7 +41,7 @@ export const ArtistSection: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 h-[70vh] w-full px-4 gap-4">
-                {ARTISTS_OF_THE_YEAR.map((artist, index) => (
+                {artists.map((artist, index) => (
                     <motion.div
                         key={artist.id}
                         initial={{ opacity: 0, y: 20 }}

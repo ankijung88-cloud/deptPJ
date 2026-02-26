@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
-import { FLOOR_CATEGORIES } from '../../data/mockData';
+import { getFloorCategories } from '../../api/categories';
+import { FloorCategory } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { Link } from 'react-router-dom';
@@ -24,8 +25,25 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
         return () => window.removeEventListener('keydown', handleEsc);
     }, [onClose]);
 
+    const [floors, setFloors] = useState<FloorCategory[]>([]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        let mounted = true;
+        const fetchFloors = async () => {
+            try {
+                const data = await getFloorCategories();
+                if (mounted) setFloors(data);
+            } catch (error) {
+                console.error("Error fetching floors for modal", error);
+            }
+        };
+        fetchFloors();
+        return () => { mounted = false; };
+    }, [isOpen]);
+
     // Reverse floors to show 6F first (top to bottom)
-    const reversedFloors = [...FLOOR_CATEGORIES].reverse();
+    const reversedFloors = [...floors].reverse();
 
     return (
         <AnimatePresence>
@@ -99,7 +117,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                     {/* Subcategories */}
                                     {floor.subitems && floor.subitems.length > 0 && (
                                         <div className="flex flex-wrap gap-2 md:pl-[5.5rem] pl-[4.5rem]">
-                                            {floor.subitems.map(sub => (
+                                            {floor.subitems.map((sub: any) => (
                                                 <Link
                                                     key={sub.id}
                                                     to={`/category/${sub.id}`}

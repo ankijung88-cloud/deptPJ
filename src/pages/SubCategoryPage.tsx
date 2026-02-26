@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getProductsByCategory } from '../api/products';
-import { FeaturedItem } from '../types';
-import { FLOOR_CATEGORIES } from '../data/mockData';
+import { getFloorCategories } from '../api/categories';
+import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
 
 
@@ -15,21 +15,21 @@ const SubCategoryPage: React.FC = () => {
     const { i18n } = useTranslation();
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [parentFloor, setParentFloor] = useState<FloorCategory | null>(null);
 
     const targetSubId = subId || '';
 
-    // Find the floor that contains this subcategory
-    const parentFloor = FLOOR_CATEGORIES.find(f =>
-        f.subitems?.some(sub => sub.id === targetSubId)
-    );
-    // Find the specific subcategory data
-    const subcategoryData = parentFloor?.subitems?.find(sub => sub.id === targetSubId);
-
     useEffect(() => {
         let mounted = true;
-        const fetchItems = async () => {
+        const fetchData = async () => {
             setLoading(true);
             try {
+                const floors = await getFloorCategories();
+                const floor = floors.find(f =>
+                    f.subitems?.some((sub: any) => sub.id === targetSubId)
+                );
+                if (mounted) setParentFloor(floor || null);
+
                 // Fetch items exactly matching the subcategory ID
                 const results = await getProductsByCategory(targetSubId);
 
@@ -44,9 +44,11 @@ const SubCategoryPage: React.FC = () => {
         };
 
         window.scrollTo(0, 0);
-        fetchItems();
+        fetchData();
         return () => { mounted = false; };
     }, [targetSubId]);
+
+    const subcategoryData = parentFloor?.subitems?.find((sub: any) => sub.id === targetSubId);
 
     if (!parentFloor || !subcategoryData) {
         return (

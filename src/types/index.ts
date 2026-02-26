@@ -1,10 +1,10 @@
-export interface LocalizedString {
+export type LocalizedString = string | {
     ko: string;
     en?: string;
     ja?: string;
     zh?: string;
     [key: string]: string | undefined;
-}
+};
 
 export interface NavItem {
     id: string; // Translation key

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { LIVE_SHORTS } from '../../data/mockData';
+import { getLiveShorts } from '../../api/media';
 import { LiveShort } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
@@ -74,15 +74,30 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number }> = ({ item, ind
 
 export const LiveShortsSection: React.FC = () => {
     const [isMobile, setIsMobile] = useState(false);
+    const [shorts, setShorts] = useState<LiveShort[]>([]);
 
     useEffect(() => {
+        let mounted = true;
+        const fetchShorts = async () => {
+            try {
+                const data = await getLiveShorts();
+                if (mounted) setShorts(data);
+            } catch (error) {
+                console.error("Failed to fetch live shorts", error);
+            }
+        };
+        fetchShorts();
+
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 640);
         };
         checkMobile();
 
         window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        return () => {
+            mounted = false;
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     return (
@@ -118,7 +133,7 @@ export const LiveShortsSection: React.FC = () => {
                     }}
                     className={`w-full ${isMobile ? 'h-full' : ''}`}
                 >
-                    {LIVE_SHORTS.map((item, index) => (
+                    {shorts.map((item, index) => (
                         <SwiperSlide key={item.id} className={isMobile ? '!h-auto' : ''}>
                             <LiveShortItem item={item} index={index} />
                         </SwiperSlide>

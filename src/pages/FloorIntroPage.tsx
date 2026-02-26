@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { FLOOR_CATEGORIES } from '../data/mockData';
+import { getFloorCategories } from '../api/categories';
+import { FloorCategory } from '../types';
 import { motion } from 'framer-motion';
 import { getLocalizedText } from '../utils/i18nParams';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +11,29 @@ const FloorIntroPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { i18n } = useTranslation();
 
-    // Find Floor Data
-    const floorData = FLOOR_CATEGORIES.find(f => f.id === id);
+    const [floorData, setFloorData] = useState<FloorCategory | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let mounted = true;
+        const fetchFloor = async () => {
+            setLoading(true);
+            try {
+                const floors = await getFloorCategories();
+                const matched = floors.find(f => f.id === id);
+                if (mounted) setFloorData(matched || null);
+            } catch (e) {
+                console.error("Error fetching floor intro data");
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+        fetchFloor();
         window.scrollTo(0, 0);
+        return () => { mounted = false; };
     }, [id]);
+
+    if (loading) return <div className="min-h-screen pt-32 text-center bg-charcoal text-white">Loading...</div>;
 
     if (!floorData) {
         return (
@@ -82,7 +100,7 @@ const FloorIntroPage: React.FC = () => {
             {floorData.content && (
                 <section className="py-16 container mx-auto px-6">
                     <div className="max-w-4xl mx-auto space-y-12">
-                        {floorData.content.map((block, index) => (
+                        {floorData.content?.map((block: any, index: number) => (
                             <motion.div
                                 key={index}
                                 initial={{ opacity: 0, y: 20 }}

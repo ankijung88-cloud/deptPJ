@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { motion } from 'framer-motion';
-import { FLOOR_CATEGORIES } from '../../data/mockData';
+import { getFloorCategories } from '../../api/categories';
+import { FloorCategory } from '../../types';
 import { ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nParams';
@@ -9,10 +10,25 @@ import { Link } from 'react-router-dom';
 
 export const FloorGuideSection: React.FC = () => {
     const { i18n } = useTranslation();
+    const [floors, setFloors] = useState<FloorCategory[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchFloors = async () => {
+            try {
+                const data = await getFloorCategories();
+                if (mounted) setFloors(data);
+            } catch (error) {
+                console.error("Error fetching floors", error);
+            }
+        };
+        fetchFloors();
+        return () => { mounted = false; };
+    }, []);
 
     return (
         <section className="h-screen w-full snap-start bg-charcoal overflow-hidden flex">
-            {FLOOR_CATEGORIES.map((floor) => (
+            {floors.map((floor) => (
                 <div key={floor.floor} className="flex-1 h-full relative group border-r border-white/5 last:border-r-0 overflow-hidden">
                     <Link to={`/floor/${floor.id}`} className="block w-full h-full">
                         {/* Background Image */}

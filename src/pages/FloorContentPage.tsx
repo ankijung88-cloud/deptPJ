@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getProductsByCategory } from '../api/products';
-import { FeaturedItem } from '../types';
-import { FLOOR_CATEGORIES } from '../data/mockData';
+import { getFloorCategories } from '../api/categories';
+import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
@@ -25,15 +25,18 @@ const FloorContentPage: React.FC = () => {
     const { i18n } = useTranslation();
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [floorData, setFloorData] = useState<FloorCategory | null>(null);
 
     const categoryId = id || 'trend';
-    const floorData = FLOOR_CATEGORIES.find(f => f.id === categoryId);
 
     useEffect(() => {
         let mounted = true;
-        const fetchItems = async () => {
+        const fetchData = async () => {
             setLoading(true);
             try {
+                const floors = await getFloorCategories();
+                const currentFloor = floors.find(f => f.id === categoryId);
+                if (mounted) setFloorData(currentFloor || null);
                 const targetInternalCategories = CATEGORY_FILTERS[categoryId] || [];
                 if (targetInternalCategories.length === 0) {
                     if (mounted) setItems([]);
@@ -63,7 +66,7 @@ const FloorContentPage: React.FC = () => {
         };
 
         window.scrollTo(0, 0);
-        fetchItems();
+        fetchData();
         return () => { mounted = false; };
     }, [categoryId, filter]);
 
