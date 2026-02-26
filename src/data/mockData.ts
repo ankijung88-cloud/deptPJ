@@ -450,7 +450,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '김한얼', en: 'Han-eol Kim', ja: 'キム・ハンオル', zh: '金韩尔' },
         type: { ko: '비주얼 아티스트', en: 'Visual Artist', ja: 'ビジュアルアーティスト', zh: '视觉艺术家' },
         description: { ko: 'K-컬처의 역동성을 캔버스에 담아내는 현대 미술가', en: 'A modern artist capturing the dynamism of K-Culture on canvas', ja: 'K-컬처의 역동성을 캔버스에 담아내는 현대 미술가', zh: '在画布上捕捉 K-Culture 动态的现代艺术家' },
-        imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2576&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-1-global.png',
         subcategory: 'global'
     },
     {
@@ -458,7 +458,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '이유림', en: 'Yu-rim Lee', ja: 'イ・ユリム', zh: '李宥琳' },
         type: { ko: '전통 공예 마스터', en: 'Traditional Craft Master', ja: '伝統工芸マスター', zh: '传统工艺大师' },
         description: { ko: '전통 장인 정신을 현대적 오브제로 재탄생시키는 공예가', en: 'A craftsman who rebirths traditional craftsmanship into modern objects', ja: '전통 장인 정신을 현대적 오브제로 재탄생시키는 공예가', zh: '将传统工匠精神转化为现代器物的工艺家' },
-        imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-2-heritage.png',
         subcategory: 'heritage'
     },
     {
@@ -466,7 +466,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '최현석', en: 'Hyun-seok Choi', ja: 'チェ・ヒョンソク', zh: '崔贤硕' },
         type: { ko: '교류 프로젝트 디렉터', en: 'Exchange Project Director', ja: '交流プロジェクトディレクター', zh: '交流项目总监' },
         description: { ko: '국가 간 문화적 경계를 허무는 글로벌 프로젝트 설계자', en: 'A global project designer breaking down cultural boundaries between nations', ja: '국가 간 문화적 경계를 허무는 글로벌 프로젝트 설계자', zh: '打破国家间文化界限的全球项目设计师' },
-        imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-3-exchange.png',
         subcategory: 'exchange'
     },
     {
@@ -474,7 +474,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '박지민', en: 'Ji-min Park', ja: 'パク・ジミン', zh: '朴智敏' },
         type: { ko: '콜라보레이션 아티스트', en: 'Collaboration Artist', ja: 'コラボレーションアーティスト', zh: '合作艺术家' },
         description: { ko: '다양한 장르의 경계를 넘나드는 웅합 예술가', en: 'A convergence artist crossing the boundaries of various genres', ja: '다양한 장르의 경계를 넘나드는 웅합 예술가', zh: '横跨多种领域界限的融合艺术家' },
-        imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-4-collab.png',
         subcategory: 'collab'
     },
     {
@@ -482,7 +482,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '정경숙', en: 'Kyung-sook Jung', ja: 'チョン・ギョンスク', zh: '郑京淑' },
         type: { ko: '무형문화재 이수자', en: 'Intangible Cultural Property Trainee', ja: '無形文化財履修者', zh: '无형문화재传承人' },
         description: { ko: '전통의 소리와 몸짓을 현대에 전달하는 가교', en: 'A bridge delivering traditional sounds and gestures to the present', ja: '전통의 소리와 몸짓을 현대에 전달하는 가교', zh: '连接传统声韵与身段至现代的桥梁' },
-        imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2600&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-5-traditional.png',
         subcategory: 'traditional'
     },
     {
@@ -490,7 +490,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '강다현', en: 'Da-hyun Kang', ja: 'カン・ダヒョン', zh: '姜多贤' },
         type: { ko: '미디어 아티스트', en: 'Media Artist', ja: 'メディアアーティスト', zh: '媒体艺术家' },
         description: { ko: '디지털 기술로 가상과 현실의 문화를 엮는 작가', en: 'An artist weaving virtual and real cultures through digital technology', ja: '디지털 기술로 가상과 현실의 문화를 엮는 작가', zh: '以数字技术融合虚拟与现实文化的作者' },
-        imageUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-6-media.png',
         subcategory: 'media'
     },
     {
@@ -498,7 +498,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '윤진서', en: 'Jin-seo Yoon', ja: 'ユン・ジンソ', zh: '尹珍序' },
         type: { ko: '컬처 클래스 마스터', en: 'Culture Class Master', ja: '컬쳐 클래스 마스터', zh: '文化课程大师' },
         description: { ko: '일상 속에 한국의 미를 심어주는 예술 교육자', en: 'An art educator planting Korean beauty in everyday life', ja: '일상 속에 한국의 미를 심어주는 예술 교육자', zh: '在日常生活中播种韩国之美的艺术教育者' },
-        imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-7-class.png',
         subcategory: 'class'
     },
     {
@@ -506,7 +506,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '임하늘', en: 'Ha-neul Lim', ja: 'イム・ハヌル', zh: '任河那' },
         type: { ko: 'K-스타일 디자이너', en: 'K-Style Designer', ja: 'K-スタイルデザイナー', zh: 'K-Style 设计师' },
         description: { ko: '한복의 철학을 현대적 의상으로 풀어내는 디자이너', en: 'A designer unraveling the philosophy of Hanbok into modern clothing', ja: '한복의 철학을 현대적 의상으로 풀어내는 디자이너', zh: '将韩服哲学融入现代服饰的设计师' },
-        imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-8-kstyle.png',
         subcategory: 'kstyle'
     },
     {
@@ -514,7 +514,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '송민호', en: 'Min-ho Song', ja: 'ソン・ミンホ', zh: '宋旻浩' },
         type: { ko: '로컬 헤리티지 아카이브', en: 'Local Heritage Archivist', ja: '로컬 헤리티지 아카이브', zh: '本地遗产档案员' },
         description: { ko: '지역의 숨겨진 유산을 발굴하여 기록하는 기록가', en: 'A recorder who excavates and records hidden local heritage', ja: '지역의 숨겨진 유산을 발굴하여 기록하는 기록가', zh: '发掘并记录地区隐藏遗产的记录者' },
-        imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2574&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-9-local_heritage.png',
         subcategory: 'local_heritage'
     },
     {
@@ -522,7 +522,7 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '서유나', en: 'Yu-na Seo', ja: 'ソ・ユナ', zh: '徐宥娜' },
         type: { ko: '트래블 큐레이터', en: 'Travel Curator', ja: 'トラ벨큐레이터', zh: '旅游策展人' },
         description: { ko: '문화와 여행을 결합하여 새로운 여정을 제안하는 큐레이터', en: 'A curator suggesting new journeys by combining culture and travel', ja: '문화와 여행을 결합하여 새로운 여정을 제안하는 큐레이터', zh: '结合文化与旅游并推荐新行程的策展人' },
-        imageUrl: 'https://images.unsplash.com/photo-1548142813-c348350df52b?q=80&w=2578&auto=format&fit=crop',
+        imageUrl: '/assets/artists/artist-10-travel_curation.png',
         subcategory: 'travel_curation'
     }
 ];

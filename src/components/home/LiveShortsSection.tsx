@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LIVE_SHORTS } from '../../data/mockData';
 import { LiveShort } from '../../types';
@@ -73,6 +73,18 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number }> = ({ item, ind
 };
 
 export const LiveShortsSection: React.FC = () => {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     return (
         <section className="h-screen w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden pt-28 pb-8">
             <div className="container mx-auto px-6 mb-8 lg:mb-12 flex justify-between items-end shrink-0">
@@ -91,22 +103,23 @@ export const LiveShortsSection: React.FC = () => {
                 </motion.div>
             </div>
 
-            <div className="w-full px-6 py-4 cursor-grab active:cursor-grabbing">
+            <div className={`w-full px-6 py-4 cursor-grab active:cursor-grabbing ${isMobile ? 'h-[70vh]' : ''}`}>
                 <Swiper
+                    direction={isMobile ? 'vertical' : 'horizontal'}
                     modules={[FreeMode, Mousewheel]}
                     freeMode={true}
                     mousewheel={{ forceToAxis: true }}
-                    spaceBetween={16}
-                    slidesPerView={1.2}
+                    spaceBetween={isMobile ? 12 : 16}
+                    slidesPerView={isMobile ? 1.5 : 1.2}
                     breakpoints={{
-                        640: { slidesPerView: 2.2, spaceBetween: 24 },
-                        1024: { slidesPerView: 3.5, spaceBetween: 24 },
-                        1280: { slidesPerView: 4.5, spaceBetween: 24 }
+                        640: { slidesPerView: 2.2, spaceBetween: 24, direction: 'horizontal' },
+                        1024: { slidesPerView: 3.5, spaceBetween: 24, direction: 'horizontal' },
+                        1280: { slidesPerView: 4.5, spaceBetween: 24, direction: 'horizontal' }
                     }}
-                    className="w-full"
+                    className={`w-full ${isMobile ? 'h-full' : ''}`}
                 >
                     {LIVE_SHORTS.map((item, index) => (
-                        <SwiperSlide key={item.id}>
+                        <SwiperSlide key={item.id} className={isMobile ? '!h-auto' : ''}>
                             <LiveShortItem item={item} index={index} />
                         </SwiperSlide>
                     ))}

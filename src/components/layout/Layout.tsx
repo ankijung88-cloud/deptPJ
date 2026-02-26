@@ -13,7 +13,7 @@ export const Layout: React.FC = () => {
     const isLandingPage = location.pathname === '/';
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
-    const [activeEffect, setActiveEffect] = useState<MouseEffectType>('2d');
+    const [activeEffect, setActiveEffect] = useState<MouseEffectType>('none');
 
     const toggleEffect = () => {
         setActiveEffect(prev => {
