@@ -24,6 +24,7 @@ export const HeroSection: React.FC = () => {
     const [isFloorGuideModalOpen, setIsFloorGuideModalOpen] = React.useState(false);
 
     const handleVideoPlayback = (swiper: any) => {
+        if (!swiper || !swiper.el) return;
         // 모든 비디오 엘리먼트를 찾아서 정지 및 음소거
         const allVideos = swiper.el.querySelectorAll('video');
         allVideos.forEach((v: HTMLVideoElement) => {

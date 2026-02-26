@@ -68,3 +68,26 @@ CREATE TABLE IF NOT EXISTS live_shorts (
     location TEXT,               -- 한국어 원문
     view_count INTEGER DEFAULT 0
 );
+
+-- ==========================================
+-- ROW LEVEL SECURITY (RLS) POLICIES
+-- 사용자 화면(프론트엔드)에서 데이터를 누구나 읽을 수(SELECT) 있게 허용합니다.
+-- ==========================================
+
+-- RLS 활성화
+ALTER TABLE nav_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE floor_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE featured_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE artists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE calendar_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE brand_spotlights ENABLE ROW LEVEL SECURITY;
+ALTER TABLE live_shorts ENABLE ROW LEVEL SECURITY;
+
+-- public(모든 사용자)에게 SELECT 권한 부여
+CREATE POLICY "Allow public read access to nav_items" ON nav_items FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to floor_categories" ON floor_categories FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to featured_items" ON featured_items FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to artists" ON artists FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to calendar_events" ON calendar_events FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to brand_spotlights" ON brand_spotlights FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to live_shorts" ON live_shorts FOR SELECT USING (true);

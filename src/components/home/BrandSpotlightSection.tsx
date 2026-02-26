@@ -14,10 +14,15 @@ export const BrandSpotlightSection: React.FC = () => {
         let mounted = true;
         const fetchBrands = async () => {
             try {
+                console.log("BrandSpotlightSection: Fetching brands...");
                 const data = await getBrandSpotlights();
+                console.log("BrandSpotlightSection: Fetched brands count:", data.length);
+                if (data.length > 0) {
+                    console.log("BrandSpotlightSection: First brand sample:", data[0]);
+                }
                 if (mounted) setBrands(data);
             } catch (error) {
-                console.error("Failed to fetch brand spotlights", error);
+                console.error("BrandSpotlightSection: Failed to fetch brand spotlights", error);
             }
         };
         fetchBrands();
@@ -25,7 +30,7 @@ export const BrandSpotlightSection: React.FC = () => {
     }, []);
 
     return (
-        <section className="h-screen w-full snap-start bg-charcoal relative flex flex-col justify-center overflow-hidden pt-20 pb-8">
+        <section className="min-h-screen w-full snap-start bg-charcoal relative flex flex-col pt-28 pb-12 md:pt-24 md:pb-16 overflow-hidden">
             <div className="container mx-auto px-6 mb-8 lg:mb-12 flex justify-between items-end shrink-0">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -39,29 +44,22 @@ export const BrandSpotlightSection: React.FC = () => {
                 </motion.div>
             </div>
 
-            <div className="flex-grow flex items-center">
-                <div className="w-full flex overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 gap-8">
-                    {brands.map((brand, index) => (
-                        <motion.div
+            <div className="w-full h-full overflow-x-auto overflow-y-hidden no-scrollbar">
+                <div className="flex flex-col md:flex-row px-6 md:px-12 gap-8 md:gap-12 pb-10 min-h-[400px]">
+                    {(() => { console.log("BrandSpotlightSection: Rendering brands list, length:", brands.length); return null; })()}
+                    {brands.map((brand) => (
+                        <div
                             key={brand.id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.2 }}
-                            className="min-w-[80vw] md:min-w-[900px] h-[60vh] snap-center relative rounded-3xl overflow-hidden group"
+                            className="w-full md:w-[600px] lg:w-[800px] h-[50vh] md:h-[60vh] shrink-0 snap-center md:snap-start relative rounded-3xl overflow-hidden group shadow-2xl border-2 border-white/10"
                         >
                             <img
                                 src={brand.imageUrl}
                                 alt="brand"
-                                className="absolute inset-0 w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
+                                className="absolute inset-0 w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700"
                             />
 
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent p-12 md:p-20 flex flex-col justify-center">
-                                <motion.div
-                                    initial={{ opacity: 0, x: -30 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.2 + 0.3 }}
-                                    className="max-w-2xl"
-                                >
+                            <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-black/90 via-black/40 to-transparent p-8 md:p-20 flex flex-col justify-end md:justify-center">
+                                <div className="max-w-2xl opacity-100 transform-none">
                                     <div className="flex gap-2 mb-6">
                                         {brand.tags.map((tag, tIdx) => (
                                             <span key={tIdx} className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold text-dancheong-green uppercase border border-white/10">
@@ -72,23 +70,25 @@ export const BrandSpotlightSection: React.FC = () => {
                                     <h4 className="text-xl md:text-2xl font-serif text-dancheong-green mb-2">
                                         {getLocalizedText(brand.brandName, i18n.language)}
                                     </h4>
-                                    <h5 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8 leading-tight">
+                                    <h5 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-6 md:mb-8 leading-tight">
                                         <AutoTranslatedText text={getLocalizedText(brand.title, i18n.language)} />
                                     </h5>
                                     <p className="text-white/60 text-base md:text-lg font-light leading-relaxed mb-10">
                                         <AutoTranslatedText text={getLocalizedText(brand.description, i18n.language)} />
                                     </p>
-                                    <button className="w-fit text-white border-b border-white/30 pb-2 hover:border-white transition-colors uppercase tracking-widest text-sm font-bold">
+                                    <button className="w-fit text-white border-b border-white/50 pb-1 hover:border-white transition-colors uppercase tracking-widest text-xs md:text-sm font-bold">
                                         <AutoTranslatedText text="Explore Collection" />
                                     </button>
-                                </motion.div>
+                                </div>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
-                    {/* Placeholder for "Coming Soon" */}
-                    <div className="min-w-[80vw] md:min-w-[400px] h-[60vh] snap-center rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-white/10 font-serif italic text-2xl">
-                        Discover more brands soon
-                    </div>
+                    {/* Placeholder for "Coming Soon" - Only show if no brands are loaded */}
+                    {brands.length === 0 && (
+                        <div className="w-full md:min-w-[400px] h-32 md:h-[60vh] shrink-0 snap-center rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-white/20 font-serif italic text-xl px-12 text-center">
+                            Discover more brands soon (No data in DB)
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

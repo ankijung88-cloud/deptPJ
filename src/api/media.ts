@@ -11,6 +11,7 @@ export const getLiveShorts = async (): Promise<LiveShort[]> => {
         id: item.id,
         title: item.title,
         videoUrl: item.video_url,
+        thumbnailUrl: item.thumbnail_url || 'https://images.unsplash.com/photo-1541535650810-10d26f597a65?auto=format&fit=crop&q=80',
         location: item.location,
         viewCount: item.view_count
     }));

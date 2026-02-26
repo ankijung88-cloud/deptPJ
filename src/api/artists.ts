@@ -10,7 +10,7 @@ export const getArtists = async (): Promise<Artist[]> => {
     return (data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
-        type: item.type,
+        type: item.artist_type,
         description: item.description,
         imageUrl: item.image_url,
         subcategory: item.subcategory

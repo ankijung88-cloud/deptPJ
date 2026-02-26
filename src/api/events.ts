@@ -9,7 +9,7 @@ export const getCalendarEvents = async (): Promise<CalendarEvent[]> => {
     }
     return (data || []).map((item: any) => ({
         id: item.id,
-        date: item.date,
+        date: item.event_date,
         title: item.title,
         category: item.category,
         imageUrl: item.image_url
