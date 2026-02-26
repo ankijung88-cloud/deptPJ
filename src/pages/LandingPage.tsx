@@ -1,10 +1,7 @@
 import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
 import { FloorGuideSection } from '../components/home/FloorGuideSection';
-import { CalendarSection } from '../components/home/CalendarSection';
-import { ArtistSection } from '../components/home/ArtistSection';
-import { FeaturedSection } from '../components/home/FeaturedSection';
-import { BrandSpotlightSection } from '../components/home/BrandSpotlightSection';
+import { CalendarEventsCombinedSection } from '../components/home/CalendarEventsCombinedSection';
 import { LiveShortsSection } from '../components/home/LiveShortsSection';
 import { AboutSection } from '../components/home/AboutSection';
 
@@ -14,13 +11,10 @@ const LandingPage: React.FC = () => {
     return (
         <div className="h-screen overflow-y-auto snap-y snap-mandatory no-scrollbar">
             <HeroSection />
-            <CalendarSection />
             <FloorGuideSection />
-            <ArtistSection />
-            <FeaturedSection />
-            <BrandSpotlightSection />
-            <LiveShortsSection />
+            <CalendarEventsCombinedSection />
             <AboutSection />
+            <LiveShortsSection />
             <div className="snap-start">
                 <Footer />
             </div>

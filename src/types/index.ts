@@ -29,6 +29,7 @@ export interface FeaturedItem {
     closedDays?: string[];
     videoUrl?: string;
     user_id?: string;
+    eventDates?: string[]; // YYYY-MM-DD format
 }
 
 export interface FloorContent {

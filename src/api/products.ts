@@ -13,7 +13,15 @@ const mapToFeaturedItem = (item: any): FeaturedItem => ({
     price: item.price,
     closedDays: item.closed_days || [],
     videoUrl: item.video_url,
-    user_id: item.user_id
+    user_id: item.user_id,
+    eventDates: item.event_dates || (
+        // Injecting mock dates for demonstration if not in DB
+        item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
+            item.id === 'global-artist-collab-2026' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 5).toString().padStart(2, '0')}`) :
+                item.id === 'k-culture-brand-collab' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 10).toString().padStart(2, '0')}`) :
+                    item.id === 'hanbok-symphony' ? Array.from({ length: 31 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
+                        []
+    )
 });
 
 export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
