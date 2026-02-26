@@ -11,10 +11,12 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
+
 const slides = [
     {
         id: 1,
-        src: '/video/trend.mp4',
+        src: `${SUPABASE_MEDIA_URL}/video/trend.mp4`,
         poster: '',
         hasSound: false,
         titleKey: 'nav.trend',
@@ -22,7 +24,7 @@ const slides = [
     },
     {
         id: 2,
-        src: '/video/popup_store.mp4',
+        src: `${SUPABASE_MEDIA_URL}/video/popup_store.mp4`,
         poster: '',
         hasSound: true,
         titleKey: 'nav.store',
@@ -30,7 +32,7 @@ const slides = [
     },
     {
         id: 3,
-        src: '/video/festival.mp4',
+        src: `${SUPABASE_MEDIA_URL}/video/festival.mp4`,
         poster: '',
         hasSound: false,
         titleKey: 'nav.tickets',
@@ -38,7 +40,7 @@ const slides = [
     },
     {
         id: 4,
-        src: '/video/active.mp4',
+        src: `${SUPABASE_MEDIA_URL}/video/active.mp4`,
         poster: '',
         hasSound: true,
         titleKey: 'nav.art',
@@ -46,7 +48,7 @@ const slides = [
     },
     {
         id: 5,
-        src: '/video/travel.mp4',
+        src: `${SUPABASE_MEDIA_URL}/video/travel.mp4`,
         poster: '',
         hasSound: false,
         titleKey: 'nav.travel',

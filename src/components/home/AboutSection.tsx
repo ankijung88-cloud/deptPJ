@@ -8,6 +8,8 @@ export const AboutSection: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+    const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
+
     return (
         <section className="h-screen w-full snap-start bg-black overflow-hidden flex flex-col justify-center relative">
             {/* Background Narrative Typography */}
@@ -32,7 +34,7 @@ export const AboutSection: React.FC = () => {
                         >
                             <video
                                 className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
-                                src="/video/k-culture.mp4"
+                                src={`${SUPABASE_MEDIA_URL}/video/k-culture.mp4`}
                                 autoPlay
                                 muted
                                 loop
@@ -51,7 +53,7 @@ export const AboutSection: React.FC = () => {
                         >
                             <video
                                 className="w-full h-full object-cover opacity-80"
-                                src="/video/modern_tradition.mp4"
+                                src={`${SUPABASE_MEDIA_URL}/video/modern_tradition.mp4`}
                                 autoPlay
                                 muted
                                 loop
