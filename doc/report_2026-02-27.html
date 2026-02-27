@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEPT 홍보 서비스 개발 보고서 — 2026.02.27</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 32px 36px;
+    background: linear-gradient(160deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(200,50,50,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .page::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(50,100,200,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  /* 헤더 */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .header-left { max-width: 65%; }
+  .header .dept-logo {
+    font-size: 28px;
+    font-weight: 900;
+    color: #c83232;
+    letter-spacing: 3px;
+  }
+  .header .subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+  .header .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 12px;
+    background: linear-gradient(135deg, #fff 0%, #c8a0a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.4;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.8;
+  }
+  .header-right .date {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, #c83232, rgba(255,255,255,0.1), transparent);
+    margin-bottom: 24px;
+  }
+
+  /* 요약 카드 */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .summary-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .summary-card .num {
+    font-size: 28px;
+    font-weight: 900;
+    color: #c83232;
+  }
+  .summary-card .label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* 섹션 */
+  .section {
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .section-title .icon {
+    width: 24px;
+    height: 24px;
+    background: #c83232;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .section-title .tag {
+    font-size: 9px;
+    background: rgba(200,50,50,0.2);
+    color: #e88;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+
+  /* 변경 리스트 */
+  .change-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .change-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .change-item .file {
+    font-size: 9px;
+    color: rgba(255,255,255,0.3);
+    font-family: monospace;
+    margin-bottom: 4px;
+  }
+  .change-item .desc {
+    color: rgba(255,255,255,0.7);
+  }
+  .change-item .badge {
+    display: inline-block;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  .badge-new { background: #22c55e30; color: #4ade80; }
+  .badge-mod { background: #3b82f630; color: #60a5fa; }
+  .badge-del { background: #ef444430; color: #f87171; }
+
+  /* 풀 와이드 아이템 */
+  .change-full {
+    grid-column: 1 / -1;
+  }
+
+  /* 플로우 다이어그램 */
+  .flow-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-step {
+    background: rgba(200,50,50,0.15);
+    border: 1px solid rgba(200,50,50,0.3);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    min-width: 100px;
+  }
+  .flow-arrow {
+    color: rgba(255,255,255,0.3);
+    font-size: 14px;
+  }
+
+  /* i18n 테이블 */
+  .lang-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+  }
+  .lang-table th {
+    background: rgba(200,50,50,0.15);
+    color: #fff;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .lang-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+  }
+  .lang-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* 푸터 */
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    left: 36px;
+    right: 36px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  @media print {
+    body { background: #0f0f1a; }
+    .page { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <div class="dept-logo">DEPT</div>
+      <div class="subtitle">PROMOTION & EVENTS</div>
+      <div class="report-title">홍보 서비스 개발 가이드<br>일일 작업 보고서</div>
+    </div>
+    <div class="header-right">
+      <div class="date">2026. 02. 27 (목)</div>
+      <div>프로젝트: deptPJ-main</div>
+      <div>프레임워크: React + TypeScript</div>
+      <div>스타일링: TailwindCSS</div>
+      <div>다국어: i18next (5개국어)</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 요약 카드 -->
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="num">12</div>
+      <div class="label">수정된 파일</div>
+    </div>
+    <div class="summary-card">
+      <div class="num">2</div>
+      <div class="label">신규 컴포넌트</div>
+    </div>
+    <div class="summary-card">
+      <div class="num">40</div>
+      <div class="label">이벤트 데이터</div>
+    </div>
+    <div class="summary-card">
+      <div class="num">5</div>
+      <div class="label">지원 언어</div>
+    </div>
+  </div>
+
+  <!-- 1. 이벤트 데이터 국제화 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🌐</span>
+      이벤트 카드 국제화 (i18n)
+      <span class="tag">핵심 변경</span>
+    </div>
+    <div class="change-grid">
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>src/data/events.ts</div>
+        <div class="desc">이벤트 title/summary를 하드코딩된 한국어에서 i18n 키(events.ev01.title 등)로 교체. 40건의 이벤트 데이터 — 매월 최소 3건, 2월은 진행 중 5건 보장.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>src/components/Events/EventCard.tsx</div>
+        <div class="desc">useTranslation 훅 추가, t() 함수로 제목/설명을 동적 번역. 가로형 배너 카드 UI로 전면 재디자인.</div>
+      </div>
+      <div class="change-item change-full">
+        <div class="file"><span class="badge badge-mod">수정</span>src/i18n/index.ts</div>
+        <div class="desc">5개 언어(ko, en, ja, zh, th)에 이벤트 번역 키 추가 — events.ev01~ev20 title/summary × 5언어 = 200개 키. calendar.* 번역 키 17개(ended, ongoing, upcoming, tab_*, no_events, close 등) × 5언어 병합.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 이벤트 배너 UI -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🎨</span>
+      이벤트 배너 카드 재디자인
+      <span class="tag">UI/UX</span>
+    </div>
+    <div class="change-grid">
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>EventCard.tsx</div>
+        <div class="desc">썸네일+텍스트 분리형 → 이미지 배경 위 그라데이션 오버레이 가로형 배너로 변경. hover 시 이미지 확대 애니메이션. 종료 이벤트 흑백+투명 처리.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>EventList.tsx</div>
+        <div class="desc">flex-col + gap + flex-1 레이아웃으로 카드가 패널 공간을 균등 분배. 최소 높이 110px.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>EventsDashboard.tsx</div>
+        <div class="desc">기본 5건 표시, 전체보기 버튼 상시 고정, 탭 토글(재클릭 해제), 상태별 번갈아 혼합 배치(interleave). 그리드 비율 5:7(달력:배너).</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-new">신규</span>EventModal.tsx</div>
+        <div class="desc">전체보기 모달 컴포넌트 — ESC/배경 클릭 닫기, 스크롤 잠금, max-w-4xl 대형 모달. i18n 탭 레이블 표시.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 달력 기능 개선 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📅</span>
+      달력(Calendar) 기능 개선
+    </div>
+    <div class="change-grid">
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>CalendarHeader.tsx</div>
+        <div class="desc">헤더 클릭 → 년월 선택 드롭다운(4×3 월 그리드, 년도 좌우 이동, 현재 월 하이라이트, "오늘" 바로가기, 외부 클릭 닫기). i18n 지원.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>Calendar.tsx</div>
+        <div class="desc">onChangeYearMonth 콜백 추가. 항상 6행(42칸) 고정 그리드 — auto-rows-fr로 높이 균등 분배. h-full flex-col로 우측 패널과 높이 동기화.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>CalendarDayCell.tsx</div>
+        <div class="desc">단일 도트 마커(우선순위: 진행 중 > 예정 > 종료). 날짜 폰트 및 간격 조정.</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>Legend.tsx</div>
+        <div class="desc">범례 폰트 14px, 도트 3px, 간격 확대, font-medium 적용.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>DEPT 홍보 서비스 개발 보고서</span>
+    <span>1 / 2</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <div class="report-title" style="margin-top:0">추가 개선 사항 및 기술 요약</div>
+    </div>
+    <div class="header-right">
+      <div class="date">2026. 02. 27</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 4. 탭 & 네비게이션 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🔀</span>
+      탭 & 네비게이션 개선
+    </div>
+    <div class="change-grid">
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>EventTabs.tsx</div>
+        <div class="desc">activeTab null 허용(전체보기). 폰트 15px 세미볼드, 도트 크기/배지 확대. 같은 탭 재클릭 시 해제(토글).</div>
+      </div>
+      <div class="change-item">
+        <div class="file"><span class="badge badge-mod">수정</span>EventDetailPage.tsx</div>
+        <div class="desc">뒤로가기: Link to="/" → navigate(-1)로 변경. 이전 섹션 스크롤 위치 복원.</div>
+      </div>
+      <div class="change-item change-full">
+        <div class="file"><span class="badge badge-mod">수정</span>LandingPage.tsx</div>
+        <div class="desc">sessionStorage 기반 스크롤 위치 저장/복원 로직 추가. 페이지 이탈 시 scrollTop 저장, 복귀 시 자동 복원 — 뒤로가기 시 이벤트 섹션으로 바로 이동.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 이미지 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🖼️</span>
+      이미지 리소스
+    </div>
+    <div class="change-grid">
+      <div class="change-item change-full">
+        <div class="file"><span class="badge badge-mod">수정</span>src/data/events.ts — IMG 상수</div>
+        <div class="desc">loremflickr.com 키워드 기반 테마 이미지(600×400) 사용. 20가지 고유 키워드(shopping, fashion, chocolate, concert, wine, gallery 등). lock 매개변수로 동일 이미지 고정 로드.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사용자 흐름 다이어그램 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🔄</span>
+      사용자 인터랙션 흐름
+    </div>
+    <div class="flow-box">
+      <div class="flow-row" style="margin-bottom:12px;">
+        <div class="flow-step">랜딩 페이지<br><small style="opacity:0.5">스크롤 위치 저장</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">캘린더 탐색<br><small style="opacity:0.5">년/월/일 선택</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">탭 필터링<br><small style="opacity:0.5">종료/진행 중/예정</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">이벤트 카드<br><small style="opacity:0.5">배너형 5건 표시</small></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-step">카드 클릭<br><small style="opacity:0.5">상세 페이지 이동</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">이벤트 상세<br><small style="opacity:0.5">히어로+설명+안내</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">뒤로가기<br><small style="opacity:0.5">navigate(-1)</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">이전 위치 복원<br><small style="opacity:0.5">sessionStorage</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- i18n 테이블 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🌏</span>
+      다국어 지원 현황
+    </div>
+    <table class="lang-table">
+      <thead>
+        <tr>
+          <th>언어</th>
+          <th>코드</th>
+          <th>이벤트 키</th>
+          <th>캘린더 키</th>
+          <th>총 번역 수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>🇰🇷 한국어</td><td>ko</td><td>40개</td><td>17개</td><td>57개</td></tr>
+        <tr><td>🇺🇸 영어</td><td>en</td><td>40개</td><td>17개</td><td>57개</td></tr>
+        <tr><td>🇯🇵 일본어</td><td>ja</td><td>40개</td><td>17개</td><td>57개</td></tr>
+        <tr><td>🇨🇳 중국어</td><td>zh</td><td>40개</td><td>17개</td><td>57개</td></tr>
+        <tr><td>🇹🇭 태국어</td><td>th</td><td>40개</td><td>17개</td><td>57개</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 수정 파일 목록 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📁</span>
+      변경 파일 전체 목록
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;">
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/data/events.ts</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/i18n/index.ts</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Events/EventCard.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Events/EventList.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Events/EventTabs.tsx</div>
+      <div><span class="badge badge-new" style="font-size:7px">신규</span> src/components/Events/EventModal.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/pages/EventsDashboard.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/pages/EventDetailPage.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/pages/LandingPage.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Calendar/Calendar.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Calendar/CalendarHeader.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Calendar/CalendarDayCell.tsx</div>
+      <div><span class="badge badge-mod" style="font-size:7px">수정</span> src/components/Calendar/Legend.tsx</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>DEPT 홍보 서비스 개발 보고서 — Confidential</span>
+    <span>2 / 2</span>
+  </div>
+</div>
+
+</body>
+</html>

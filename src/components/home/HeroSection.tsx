@@ -12,7 +12,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const slides = [
-    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: true, categoryKey: 'trend' },
+    { id: 1, src: '/video/trand.mp4', poster: '', hasSound: true, categoryKey: 'trend' },
     { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true, categoryKey: 'popup' },
     { id: 3, src: '/video/festival.mp4', poster: '', hasSound: true, categoryKey: 'performance_exhibition' },
     { id: 4, src: '/video/experience.mp4', poster: '', hasSound: true, categoryKey: 'activity_style' },

@@ -16,6 +16,7 @@ import SubCategoryPage from './pages/SubCategoryPage';
 import AboutPage from './pages/AboutPage';
 
 import AllProductsPage from './pages/AllProductsPage';
+import EventDetailPage from './pages/EventDetailPage';
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route element={<Layout />}>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/detail/:id" element={<DetailPage />} />
+                    <Route path="/event/:id" element={<EventDetailPage />} />
                     <Route path="/floor/:id" element={<FloorIntroPage />} />
                     <Route path="/floor/:id/articles" element={<FloorContentPage />} />
                     <Route path="/category/:subId" element={<SubCategoryPage />} />

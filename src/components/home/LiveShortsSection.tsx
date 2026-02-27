@@ -159,7 +159,7 @@ export const LiveShortsSection: React.FC = () => {
     }, []);
 
     return (
-        <section className="h-screen w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden py-16">
+        <section className="h-screen w-full snap-start bg-charcoal relative flex flex-col justify-center overflow-hidden py-16">
             <div className="container mx-auto px-6 mb-8 flex justify-between items-end shrink-0">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
