@@ -6,16 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { Eye, MapPin, X, Play } from 'lucide-react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-coverflow';
 
-const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => void }> = ({ item, index, onClick }) => {
+const LiveShortItem: React.FC<{ item: LiveShort; index: number; isHovered: boolean; onHover: () => void; onClick: () => void }> = ({ item, index, isHovered, onHover, onClick }) => {
     const { i18n } = useTranslation();
-    const [isHovered, setIsHovered] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
@@ -29,19 +22,25 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.05 }}
-            className="w-full aspect-[9/16] relative rounded-xl overflow-hidden group shadow-lg cursor-pointer bg-charcoal border border-white/5 mx-auto max-w-[320px] sm:max-w-full"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{
+                duration: 0.8,
+                delay: index * 0.1
+            }}
+            className={`relative h-full min-w-0 rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer border border-white/5 
+                transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] origin-center
+                ${isHovered ? 'flex-[6] sm:flex-[5] lg:flex-[6] shadow-[0_0_50px_rgba(255,61,0,0.15)] z-10' : 'flex-1 opacity-70 hover:opacity-100 z-0'}
+            `}
+            onMouseEnter={onHover}
             onClick={onClick}
         >
             {/* Thumbnail Image */}
             <img
                 src={item.thumbnailUrl}
                 alt={getLocalizedText(item.title, i18n.language)}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-100'}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isHovered ? 'opacity-0' : 'opacity-100'}`}
             />
 
             {/* Video Element for Hover Play */}
@@ -51,29 +50,33 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
                 loop
                 muted
                 playsInline
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ${isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className={`absolute inset-0 transition-all duration-700 ${isHovered ? 'bg-gradient-to-t from-black/90 via-black/20 to-transparent' : 'bg-black/40'}`} />
 
-            {/* Play indicator icon to show it's a video */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <Play className="text-white fill-white ml-1" size={24} />
+            {/* Content Details - Only fully visible when hovered */}
+            <div className={`absolute inset-0 flex flex-col justify-end p-4 md:p-10 z-20 pointer-events-none transition-all duration-700 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+                <div className="flex items-center gap-2 text-white/90 text-[10px] md:text-sm mb-2 md:mb-4 uppercase font-bold tracking-[0.2em] bg-black/40 px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit backdrop-blur-md border border-white/10 shadow-xl">
+                    <MapPin size={12} className="text-dancheong-red" />
+                    <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
+                </div>
+                <h4 className="text-white text-lg sm:text-2xl md:text-3xl lg:text-4xl font-serif font-bold leading-tight line-clamp-2 mb-2 md:mb-4 drop-shadow-lg max-w-[95%]">
+                    <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                </h4>
+                <div className="flex items-center gap-2 text-[10px] md:text-sm text-white/50 font-medium tracking-widest hidden sm:flex">
+                    <Eye size={14} className="text-white/40" />
+                    {item.viewCount.toLocaleString()} VIEWS
                 </div>
             </div>
 
-            <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 z-10 pointer-events-none">
-                <div className="flex items-center gap-1 text-white/70 text-[10px] md:text-xs mb-2 uppercase font-bold tracking-tighter bg-black/40 px-2 py-1 rounded-full w-fit backdrop-blur-sm">
-                    <MapPin size={10} className="text-[#FF3D00]" />
-                    <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
+            {/* Unhovered state icon & small title */}
+            <div className={`absolute inset-0 flex flex-col justify-end items-center pb-8 md:pb-10 transition-opacity duration-500 pointer-events-none ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg mb-0 md:mb-6">
+                    <Play className="text-white fill-white ml-0.5 md:ml-1 opacity-50" size={14} />
                 </div>
-                <h4 className="text-white text-sm md:text-base font-bold leading-tight line-clamp-2 mb-2">
+                <div className="hidden sm:block w-full truncate px-4 text-center transform -rotate-90 origin-center text-white/60 font-bold tracking-widest text-xs lg:text-sm uppercase whitespace-nowrap absolute top-1/2 -translate-y-1/2">
                     <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                </h4>
-                <div className="flex items-center gap-1 text-[10px] md:text-xs text-white/60">
-                    <Eye size={10} />
-                    {item.viewCount.toLocaleString()}
                 </div>
             </div>
         </motion.div>
@@ -89,7 +92,7 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/95 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/95 backdrop-blur-3xl"
             onClick={onClose}
         >
             <button
@@ -100,10 +103,11 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
             </button>
 
             <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="relative w-full max-w-[450px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl"
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, type: "spring", damping: 25 }}
+                className="relative w-full max-w-[450px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] border border-white/10"
                 onClick={(e) => e.stopPropagation()}
             >
                 <video
@@ -116,17 +120,17 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
                     className="w-full h-full object-cover"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent pointer-events-none" />
 
                 <div className="absolute bottom-0 left-0 right-0 p-8 pointer-events-none">
-                    <div className="flex items-center gap-2 text-[#FF3D00] text-xs font-bold uppercase tracking-widest mb-3">
+                    <div className="flex items-center gap-2 text-[#FF3D00] text-xs font-bold uppercase tracking-widest mb-3 bg-black/50 w-fit px-3 py-1.5 rounded-full backdrop-blur-sm">
                         <MapPin size={12} />
                         <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
                     </div>
-                    <h2 className="text-white text-2xl md:text-3xl font-bold mb-4">
+                    <h2 className="text-white text-2xl md:text-3xl font-bold mb-4 drop-shadow-lg">
                         <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                     </h2>
-                    <div className="flex items-center gap-2 text-white/60 text-sm">
+                    <div className="flex items-center gap-2 text-white/60 text-sm font-medium tracking-wider">
                         <Eye size={14} />
                         {item.viewCount.toLocaleString()} views
                     </div>
@@ -139,13 +143,48 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
 export const LiveShortsSection: React.FC = () => {
     const [shorts, setShorts] = useState<LiveShort[]>([]);
     const [selectedShort, setSelectedShort] = useState<LiveShort | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(7);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            let newItems = 7; // Desktop
+            if (width < 640) newItems = 3;      // Mobile
+            else if (width < 1024) newItems = 5; // Tablet
+
+            setItemsPerPage(prev => {
+                if (prev !== newItems) {
+                    setCurrentPage(0); // Viewport 변경 시 페이지 초기화
+                    setHoveredIndex(0); // 포커스 초기화
+                    return newItems;
+                }
+                return prev;
+            });
+        };
+
+        handleResize(); // Initial check
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         let mounted = true;
         const fetchShorts = async () => {
             try {
                 const data = await getLiveShorts();
-                if (mounted) setShorts(data);
+                if (mounted) {
+                    let displayData = [...data];
+                    // 테스트 용도로 데이터가 부족할 경우 의도적으로 10개 이상으로 복제
+                    if (displayData.length > 0 && displayData.length < 15) {
+                        while (displayData.length < 15) {
+                            displayData.push(data[displayData.length % data.length]);
+                        }
+                    }
+                    setShorts(displayData);
+                    setHoveredIndex(0); // 첫 번째 카드를 기본 포커스로 설정
+                }
             } catch (error) {
                 console.error("Failed to fetch live shorts", error);
             }
@@ -156,85 +195,92 @@ export const LiveShortsSection: React.FC = () => {
         };
     }, []);
 
+    const totalPages = Math.ceil(shorts.length / itemsPerPage);
+    const currentShorts = shorts.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
+    const handleCardClick = (item: LiveShort, index: number) => {
+        // 모바일/터치 환경: 클릭(터치) 시 현재 아이템이 활성화(팽창)되어 있지 않다면 먼저 팽창시키고, 이미 팽창된 상태에서 클릭하면 모달 오픈
+        if (hoveredIndex === index) {
+            setSelectedShort(item);
+        } else {
+            setHoveredIndex(index);
+        }
+    };
+
     return (
-        <section className="min-h-[80vh] w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden py-24">
-            <div className="container mx-auto px-6 mb-8 lg:mb-12 flex justify-between items-end shrink-0">
+        <section className="h-[100dvh] min-h-[500px] w-full snap-start bg-black relative flex flex-col justify-center py-6 sm:py-10 md:py-20 lg:py-24 overflow-hidden">
+            <div className="container mx-auto px-6 mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-end shrink-0 z-20">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                 >
-                    <h2 className="text-sm font-bold tracking-widest text-[#FF3D00] mb-3 uppercase flex items-center gap-2">
+                    <div className="flex items-center gap-3 mb-4">
                         <span className="w-2 h-2 bg-[#FF3D00] rounded-full animate-ping" />
-                        Instant Live
-                    </h2>
-                    <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
+                        <h2 className="text-sm font-bold tracking-[0.3em] text-[#FF3D00] uppercase">
+                            Instant Live
+                        </h2>
+                    </div>
+                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white tracking-tight">
                         <AutoTranslatedText text="실시간 현장 쇼츠" />
                     </h3>
                 </motion.div>
+
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="text-white/40 text-sm md:text-base font-light mt-4 sm:mt-0 tracking-widest hidden sm:block pr-6 lg:pr-12"
+                >
+                    마우스를 올려 생생한 현장을 확인하세요
+                </motion.p>
             </div>
 
-            <div className="w-full pl-6 md:pl-12 lg:pl-24">
-                <style>
-                    {`
-                    /* Wrapper와 Slide가 정확히 동일한 linear 속도로 움직여야 끊기는 역현상이 발생하지 않습니다 */
-                    .smooth-swiper .swiper-wrapper,
-                    .smooth-swiper .swiper-slide {
-                        transition-timing-function: linear !important;
-                    }
-                    /* 개별 카드 투명도 조절 */
-                    .smooth-swiper .swiper-slide {
-                        opacity: 0.3;
-                    }
-                    .smooth-swiper .swiper-slide-next,
-                    .smooth-swiper .swiper-slide-prev {
-                        opacity: 0.7;
-                    }
-                    .smooth-swiper .swiper-slide-active {
-                        opacity: 1;
-                    }
-                    `}
-                </style>
-                <Swiper
-                    modules={[Autoplay, Navigation, Pagination, EffectCoverflow]}
-                    effect="coverflow"
-                    coverflowEffect={{
-                        rotate: 35, // 둥글게 말리는 원형 회전 효과 강화
-                        stretch: -20, // 카드를 모아 원기둥 형태 느낌 구성
-                        depth: 400, // 깊이감을 늘려 완벽한 3D 형태로 구성
-                        modifier: 1,
-                        slideShadows: false, // 그림자 렌더링 연산 부하 및 잔상으로 인한 끊김 방지
-                        scale: 0.85,
-                    }}
-                    spaceBetween={10}
-                    slidesPerView={1.5}
-                    centeredSlides={true}
-                    loop={true}
-                    speed={2500} // 기존 5000에서 2500으로 변경하여 슬라이드 속도 상향 조정
-                    autoplay={{
-                        delay: 0,
-                        disableOnInteraction: false,
-                        pauseOnMouseEnter: true, // 호버 시 안정적인 정지
-                    }}
-                    breakpoints={{
-                        480: { slidesPerView: 2.5 },
-                        768: { slidesPerView: 3.5 },
-                        1024: { slidesPerView: 5 }
-                    }}
-                    className="w-full pb-12 smooth-swiper"
-                >
-                    {/* 데이터 개수가 부족하여 루프에서 끊기는 현상을 방지하고자 배열을 임의로 곱함 */}
-                    {[...shorts, ...shorts, ...shorts, ...shorts, ...shorts].map((item, index) => (
-                        <SwiperSlide key={`${item.id}-${index}`}>
+            <div className="flex-1 w-full min-h-0 relative z-20 px-6 md:px-12 lg:px-24">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentPage} /* 페이지가 바뀔 때마다 트리거 */
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.5 }}
+                        className="flex flex-row h-full gap-2 md:gap-4 lg:gap-6 w-full"
+                        onMouseLeave={() => setHoveredIndex(0)}
+                    >
+                        {currentShorts.map((item, index) => (
                             <LiveShortItem
+                                key={`${item.id}-${currentPage}-${index}`}
                                 item={item}
                                 index={index}
-                                onClick={() => setSelectedShort(item)}
+                                isHovered={hoveredIndex === index}
+                                onHover={() => setHoveredIndex(index)}
+                                onClick={() => handleCardClick(item, index)}
                             />
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
+                        ))}
+                    </motion.div>
+                </AnimatePresence>
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="container mx-auto px-6 mt-8 flex justify-center items-center gap-3 z-20">
+                    {Array.from({ length: totalPages }).map((_, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => {
+                                setCurrentPage(idx);
+                                setHoveredIndex(0); // 페이지 변경 시 포커스 초기화
+                            }}
+                            className={`transition-all duration-300 rounded-full ${currentPage === idx
+                                ? 'w-10 h-2 bg-[#FF3D00] shadow-[0_0_10px_rgba(255,61,0,0.5)]'
+                                : 'w-2 h-2 bg-white/20 hover:bg-white/50'
+                                }`}
+                            aria-label={`Go to page ${idx + 1}`}
+                        />
+                    ))}
+                </div>
+            )}
 
             <AnimatePresence>
                 {selectedShort && (
@@ -244,6 +290,9 @@ export const LiveShortsSection: React.FC = () => {
                     />
                 )}
             </AnimatePresence>
+
+            {/* Ambient Lighting Background */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 rounded-full blur-[150px] pointer-events-none z-0" />
         </section>
     );
 };

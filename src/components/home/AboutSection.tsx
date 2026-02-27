@@ -14,8 +14,8 @@ export const AboutSection: React.FC = () => {
         <section className="h-screen w-full snap-start bg-black overflow-hidden flex flex-col justify-center relative">
             {/* Background Narrative Typography */}
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center items-center pointer-events-none opacity-[0.03] select-none">
-                <span className="text-[25vw] font-serif font-bold whitespace-nowrap leading-none tracking-tighter text-white">
-                    HERITAGE
+                <span className="text-[20vw] font-serif font-bold whitespace-nowrap leading-none tracking-tighter text-white">
+                    DEPARTMENT
                 </span>
             </div>
 
@@ -30,7 +30,7 @@ export const AboutSection: React.FC = () => {
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1.2, ease: "easeOut" }}
-                            className="relative z-20 w-4/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] group border border-white/10"
+                            className="relative z-20 w-4/5 md:w-[85%] aspect-[16/10] rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] group"
                         >
                             <video
                                 className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
@@ -49,7 +49,7 @@ export const AboutSection: React.FC = () => {
                             whileInView={{ opacity: 1, x: 0, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-                            className="absolute -bottom-8 right-0 md:right-10 z-30 w-1/2 aspect-square rounded-2xl overflow-hidden border border-dancheong-red/20 shadow-2xl backdrop-blur-sm shadow-dancheong-red/10"
+                            className="absolute -bottom-8 right-0 md:right-4 z-30 w-1/2 md:w-[45%] aspect-square rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm shadow-dancheong-red/10"
                         >
                             <video
                                 className="w-full h-full object-cover opacity-80"
@@ -73,13 +73,13 @@ export const AboutSection: React.FC = () => {
                     </div>
 
                     {/* Content Layer (Right) */}
-                    <div className="w-full lg:w-2/5 lg:-ml-20 relative z-40">
+                    <div className="w-full lg:w-2/5 lg:-ml-12 relative z-40">
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="bg-charcoal/40 backdrop-blur-xl border border-white/5 p-8 md:p-12 rounded-3xl shadow-2xl"
+                            className="bg-charcoal/30 backdrop-blur-3xl p-8 md:p-12 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)]"
                         >
                             <div className="flex items-center gap-3 mb-6">
                                 <span className="w-8 h-[1px] bg-dancheong-red"></span>
@@ -88,13 +88,17 @@ export const AboutSection: React.FC = () => {
                                 </h2>
                             </div>
 
-                            <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-8 leading-tight">
-                                {t('about.title')}
+                            <h3 className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-6 leading-tight max-w-[90%]">
+                                <span className="drop-shadow-sm">{t('about.title')}</span>
                             </h3>
 
-                            <div className="space-y-6 text-base md:text-lg text-white/60 font-light leading-relaxed">
+                            <p className="text-sm md:text-base text-white/50 mb-6 font-medium italic tracking-wide">
+                                {t('about.subtitle')}
+                            </p>
+
+                            <div className="space-y-6 text-sm md:text-base text-white/70 font-light leading-relaxed">
                                 <p className="relative">
-                                    <span className="absolute -left-6 top-0 text-3xl font-serif text-dancheong-red/30">"</span>
+                                    <span className="absolute -left-5 top-0 text-3xl font-serif text-dancheong-red/30">"</span>
                                     {t('about.description1')}
                                 </p>
                                 <p>
@@ -102,14 +106,14 @@ export const AboutSection: React.FC = () => {
                                 </p>
                             </div>
 
-                            <div className="mt-12 group">
+                            <div className="mt-10 group">
                                 <button
                                     onClick={() => navigate('/about')}
-                                    className="relative flex items-center space-x-4 bg-white/5 hover:bg-dancheong-red text-white py-4 px-8 rounded-full overflow-hidden transition-all duration-500 shadow-xl"
+                                    className="relative flex items-center space-x-4 bg-white/5 hover:bg-dancheong-red text-white py-3.5 px-8 rounded-full overflow-hidden transition-all duration-500 shadow-xl border border-white/5 hover:border-transparent"
                                 >
-                                    <span className="font-medium tracking-wider">{t('about.cta')}</span>
+                                    <span className="font-medium tracking-wider text-sm">{t('about.cta')}</span>
                                     <div className="w-8 h-8 rounded-full bg-dancheong-red group-hover:bg-white flex items-center justify-center transition-colors duration-500">
-                                        <ArrowUpRight className="text-white group-hover:text-dancheong-red" size={18} />
+                                        <ArrowUpRight className="text-white group-hover:text-dancheong-red" size={16} />
                                     </div>
                                     {/* Liquid Background Hover Effect */}
                                     <div className="absolute inset-0 bg-dancheong-red -z-10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />

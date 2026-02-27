@@ -1,28 +1,83 @@
 import { supabase } from '../lib/supabaseClient';
 import { FeaturedItem } from '../types';
 
-const mapToFeaturedItem = (item: any): FeaturedItem => ({
-    id: item.id,
-    title: item.title,
-    category: item.category,
-    subcategory: item.subcategory,
-    description: item.description,
-    imageUrl: item.image_url,
-    date: item.event_date,
-    location: item.location,
-    price: item.price,
-    closedDays: item.closed_days || [],
-    videoUrl: item.video_url,
-    user_id: item.user_id,
-    eventDates: item.event_dates || (
-        // Injecting mock dates for demonstration if not in DB
-        item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
-            item.id === 'global-artist-collab-2026' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 5).toString().padStart(2, '0')}`) :
-                item.id === 'k-culture-brand-collab' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 10).toString().padStart(2, '0')}`) :
-                    item.id === 'hanbok-symphony' ? Array.from({ length: 31 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
-                        []
-    )
-});
+const extractDateString = (dateObj: any): string => {
+    if (!dateObj) return '';
+    if (typeof dateObj === 'string') return dateObj;
+    return dateObj.ko || dateObj.en || Object.values(dateObj)[0] || '';
+};
+
+const generateDateRange = (dateString: string): string[] => {
+    if (!dateString) return [];
+
+    // Check for "YYYY.MM.DD" or "YYYY-MM-DD" patterns and "~" or "-" separators
+    const normalized = dateString
+        .replace(/\./g, '-')
+        .replace(/\s+-\s+/g, '~')
+        .replace(/\s*~\s*/g, '~');
+
+    // Extract dates using regex
+    const dateRegex = /\d{4}-\d{1,2}-\d{1,2}/g;
+    const matches = normalized.match(dateRegex);
+
+    if (!matches) return [];
+
+    if (matches.length === 2 && normalized.includes('~')) {
+        const start = new Date(matches[0]);
+        const end = new Date(matches[1]);
+
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+            const dates: string[] = [];
+            const current = new Date(start);
+            // Cap at a reasonable max days (e.g., 365) to prevent infinite loops
+            let maxDays = 365;
+            while (current <= end && maxDays-- > 0) {
+                dates.push(current.toISOString().split('T')[0]);
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        }
+    } else if (matches.length >= 1) {
+        // Single date or multiple specific dates
+        return matches.filter(m => {
+            const d = new Date(m);
+            return !isNaN(d.getTime());
+        }).map(m => new Date(m).toISOString().split('T')[0]);
+    }
+
+    return [];
+};
+
+const mapToFeaturedItem = (item: any): FeaturedItem => {
+    let parsedEventDates = item.event_dates || [];
+    if (!parsedEventDates.length && item.event_date) {
+        const dateStr = extractDateString(item.event_date);
+        parsedEventDates = generateDateRange(dateStr);
+    }
+
+    return {
+        id: item.id,
+        title: item.title,
+        category: item.category,
+        subcategory: item.subcategory,
+        description: item.description,
+        imageUrl: item.image_url,
+        date: item.event_date,
+        location: item.location,
+        price: item.price,
+        closedDays: item.closed_days || [],
+        videoUrl: item.video_url,
+        user_id: item.user_id,
+        eventDates: parsedEventDates.length > 0 ? parsedEventDates : (
+            // Injecting mock dates for demonstration if not in DB
+            item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
+                item.id === 'global-artist-collab-2026' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 5).toString().padStart(2, '0')}`) :
+                    item.id === 'k-culture-brand-collab' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 10).toString().padStart(2, '0')}`) :
+                        item.id === 'hanbok-symphony' ? Array.from({ length: 31 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
+                            []
+        )
+    };
+};
 
 export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
     const { data, error } = await supabase.from('featured_items').select('*');

@@ -77,11 +77,11 @@ const resources = {
                 "no_content": "등록된 콘텐츠가 없습니다."
             },
             "about": {
-                "title": "문화의 시선, 교류의 중심",
-                "subtitle": "전통과 현대, 그리고 당신을 잇는 가교",
-                "description1": "department은 한국 문화의 정수를 발굴하고 세계와 공유하는 문화 홍보 및 교류의 전초기지입니다.",
-                "description2": "단순한 홍보를 넘어, 깊이 있는 전시와 체험을 통해 우리 문화의 새로운 가치를 발견하고 교류의 가치를 실현합니다.",
-                "cta": "문화 비전 보기"
+                "title": "취향이 살아 숨쉬는 공간, department",
+                "subtitle": "전통의 깊이와 현대의 감각이 교차하는 아트 갤러리 백화점",
+                "description1": "department은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
+                "description2": "가장 트렌디한 글로벌 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
+                "cta": "브랜드 철학 보기"
             },
             "auth": {
                 "login": "로그인",
@@ -256,7 +256,7 @@ const resources = {
             "nav": {
                 "about": "About",
                 "store": "Store",
-                "gallery": "Taste Gallery",
+                "gallery": "Department",
                 "trend": "K-Trend / Pop-up",
                 "tickets": "Tickets",
                 "art": "Activity / Style",
@@ -317,6 +317,13 @@ const resources = {
                 "title": "Featured & Events",
                 "subtitle": "Special Experiences at Culture Dept.",
                 "no_content": "No content registered yet."
+            },
+            "about": {
+                "title": "A Living Exhibition, department",
+                "subtitle": "An Art Gallery Mall where profound heritage meets modern aesthetic.",
+                "description1": "Beyond a traditional retail space, department is a premium cultural curation platform designed to inspire your everyday life.",
+                "description2": "From the trendiest global K-Culture to timeless heritage, we curate sophisticated exhibitions and artistic experiences that captivate your senses.",
+                "cta": "Discover Our Philosophy"
             },
             "auth": {
                 "login": "Login",
@@ -489,7 +496,7 @@ const resources = {
             "nav": {
                 "about": "紹介",
                 "store": "ストア",
-                "gallery": "趣向館",
+                "gallery": "Department",
                 "trend": "トレンド / ポップアップ",
                 "tickets": "公演 / 展示",
                 "art": "アート / スタイル",
@@ -562,6 +569,13 @@ const resources = {
                 "subtitle": "Culture Dept.で出会う特別な体験",
                 "no_content": "登録されたコンテンツがありません。"
             },
+            "about": {
+                "title": "好みが息づく空間、department",
+                "subtitle": "伝統の深みと現代の感覚が交差するアートギャラリーデパート",
+                "description1": "departmentは単なる消費空間を超え、日常にインスピレーションを吹き込むプレミアム文化キュレーションプラットフォームです。",
+                "description2": "最もトレンディなグローバルK-カルチャーから歳月の深みを抱くヘリテージまで、あなたの視線を引きつける質の高い展示と芸術的体験を提供します。",
+                "cta": "ブランド哲学を見る"
+            },
             "auth": {
                 "login": "ログイン",
                 "register": "新規登録",
@@ -631,7 +645,7 @@ const resources = {
             "nav": {
                 "about": "介绍",
                 "store": "商店",
-                "gallery": "趣味馆",
+                "gallery": "Department",
                 "trend": "流行趋势 / 快闪店",
                 "tickets": "演出 / 展览",
                 "art": "艺术 / 风格",
@@ -703,6 +717,13 @@ const resources = {
                 "title": "推荐 & 活动",
                 "subtitle": "在 Culture Dept. 遇见的特别体验",
                 "no_content": "暂无已注册的内容。"
+            },
+            "about": {
+                "title": "品味焕发生机的空间，department",
+                "subtitle": "传统底蕴与现代感官交汇的艺术画廊百货",
+                "description1": "department 超越了单纯的消费空间，是为日常生活注入灵感的高端文化内容策展平台。",
+                "description2": "从最前沿的全球K-Culture到承载岁月厚重的文化遗产，我们为您提供引人入胜的高水准展览与艺术体验。",
+                "cta": "探索品牌理念"
             },
             "auth": {
                 "login": "登录",

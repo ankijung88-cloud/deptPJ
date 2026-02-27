@@ -18,15 +18,30 @@ export const CalendarEventsCombinedSection: React.FC = () => {
     const { t, i18n } = useTranslation();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]); // Default to today or a specific date in March 2026 for demo
+    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
-    // For demo purpose, let's set a default date in March 2026 if today is not in March
-    useEffect(() => {
-        const today = new Date();
-        if (today.getMonth() !== 2 || today.getFullYear() !== 2026) {
-            setSelectedDate('2026-03-05');
-        }
-    }, []);
+    // Current displayed month in calendar
+    const [currentMonth, setCurrentMonth] = useState<Date>(() => {
+        const d = new Date();
+        d.setDate(1); // Set to 1st to avoid overflowing months
+        return d;
+    });
+
+    const handlePrevMonth = () => {
+        setCurrentMonth(prev => {
+            const newDate = new Date(prev);
+            newDate.setMonth(newDate.getMonth() - 1);
+            return newDate;
+        });
+    };
+
+    const handleNextMonth = () => {
+        setCurrentMonth(prev => {
+            const newDate = new Date(prev);
+            newDate.setMonth(newDate.getMonth() + 1);
+            return newDate;
+        });
+    };
 
     useEffect(() => {
         let mounted = true;
@@ -47,11 +62,19 @@ export const CalendarEventsCombinedSection: React.FC = () => {
     }, []);
 
     // Calendar logic
-    const days = Array.from({ length: 31 }, (_, i) => i + 1);
-    const startDayOffset = 0; // 2026-03-01 is Sunday
+    const year = currentMonth.getFullYear();
+    const monthIndex = currentMonth.getMonth();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const startDayOffset = new Date(year, monthIndex, 1).getDay();
+    const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const currentMonthName = monthNames[monthIndex];
 
     const handleDateClick = (day: number) => {
-        const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
+        const m = (monthIndex + 1).toString().padStart(2, '0');
+        const d = day.toString().padStart(2, '0');
+        const dateStr = `${year}-${m}-${d}`;
         setSelectedDate(dateStr);
     };
 
@@ -109,16 +132,26 @@ export const CalendarEventsCombinedSection: React.FC = () => {
                 <div className="lg:col-span-4 space-y-6 relative z-20">
                     <div className="bg-charcoal/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 shadow-xl">
                         <div className="flex items-center justify-between mb-6">
-                            <h4 className="text-white font-serif italic text-lg flex items-center gap-2">
-                                <CalendarIcon size={18} className="text-dancheong-red" />
-                                March 2026
-                            </h4>
+                            <div className="flex items-center gap-3">
+                                <h4 className="text-white font-serif italic text-lg flex items-center gap-2">
+                                    <CalendarIcon size={18} className="text-dancheong-red" />
+                                    {currentMonthName} {year}
+                                </h4>
+                                <div className="flex gap-1 bg-white/5 rounded-full p-0.5">
+                                    <button onClick={handlePrevMonth} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white">
+                                        <ChevronLeft size={14} />
+                                    </button>
+                                    <button onClick={handleNextMonth} className="p-1.5 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white">
+                                        <ChevronRight size={14} />
+                                    </button>
+                                </div>
+                            </div>
                             <div className="text-white/40 text-xs font-medium">SELECT A DATE</div>
                         </div>
 
                         <div className="grid grid-cols-7 gap-1 md:gap-2">
-                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                                <div key={day} className="text-[10px] font-bold text-white/20 text-center pb-2">
+                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                                <div key={`day-header-${idx}`} className="text-[10px] font-bold text-white/20 text-center pb-2">
                                     {day}
                                 </div>
                             ))}
@@ -126,7 +159,9 @@ export const CalendarEventsCombinedSection: React.FC = () => {
                                 <div key={`empty-${i}`} />
                             ))}
                             {days.map(day => {
-                                const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
+                                const m = (monthIndex + 1).toString().padStart(2, '0');
+                                const d = day.toString().padStart(2, '0');
+                                const dateStr = `${year}-${m}-${d}`;
                                 const isSelected = selectedDate === dateStr;
                                 const hasEvents = products.some(p => p.eventDates?.includes(dateStr));
 
@@ -312,7 +347,7 @@ export const CalendarEventsCombinedSection: React.FC = () => {
                                             Please select another date on the calendar.
                                         </p>
                                         <button
-                                            onClick={() => setSelectedDate('2026-03-05')}
+                                            onClick={() => setSelectedDate('')}
                                             className="text-dancheong-red text-xs font-bold tracking-widest uppercase hover:underline"
                                         >
                                             Show all events
