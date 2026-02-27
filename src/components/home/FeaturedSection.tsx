@@ -8,7 +8,7 @@ export const FeaturedSection: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <section className="min-h-[100dvh] w-full snap-start bg-[#2a2a2a] relative flex flex-col justify-center overflow-hidden pt-24 pb-12">
+        <section className="h-[100dvh] w-full snap-start bg-[#2a2a2a] relative flex flex-col overflow-hidden pt-24 pb-8">
             {/* 헤더 */}
             <div className="container mx-auto px-6 mb-6 shrink-0">
                 <motion.div

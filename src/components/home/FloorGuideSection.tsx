@@ -243,7 +243,7 @@ export const FloorGuideSection: React.FC = () => {
         <motion.section
             ref={sectionRef}
             className="w-full snap-start bg-charcoal overflow-hidden flex"
-            style={{ height: '80vh', padding: '24px 20px', gap: '8px', perspective: '1200px' }}
+            style={{ height: '100dvh', padding: '60px 48px', gap: '8px', perspective: '1200px' }}
             variants={containerVariants}
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
