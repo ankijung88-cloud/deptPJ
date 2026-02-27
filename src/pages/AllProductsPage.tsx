@@ -96,7 +96,11 @@ const AllProductsPage: React.FC = () => {
                                             <span className="bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full uppercase tracking-wider border border-white/10">
                                                 {(() => {
                                                     const displayKey = item.subcategory || item.category;
-                                                    return t(`nav.${displayKey.toLowerCase()}`) || displayKey;
+                                                    const key = `nav.${displayKey.toLowerCase()}`;
+                                                    const translated = t(key);
+                                                    const fallbackText = displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
+                                                    const textToDisplay = translated === key ? fallbackText : translated;
+                                                    return <AutoTranslatedText text={textToDisplay} />;
                                                 })()}
                                             </span>
                                         </div>

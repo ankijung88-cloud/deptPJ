@@ -212,7 +212,11 @@ const CategoryPage: React.FC = () => {
                                             {(() => {
                                                 const displayKey = item.subcategory || item.category;
                                                 // Support both lower and upper case keys in nav translations
-                                                return t(`nav.${displayKey.toLowerCase()}`) || displayKey;
+                                                const key = `nav.${displayKey.toLowerCase()}`;
+                                                const translated = t(key);
+                                                const fallbackText = displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
+                                                const textToDisplay = translated === key ? fallbackText : translated;
+                                                return <AutoTranslatedText text={textToDisplay} />;
                                             })()}
                                         </span>
                                     </div>
