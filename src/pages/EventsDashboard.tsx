@@ -112,7 +112,7 @@ const EventsDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 h-[600px]">
         {/* 좌측: 캘린더 */}
         <div className="h-full">
           <Calendar
