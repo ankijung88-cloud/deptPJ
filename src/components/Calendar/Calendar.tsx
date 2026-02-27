@@ -83,7 +83,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, selectedDate, onSelectDate 
   }, [currentYear, currentMonth, selectedDate, onSelectDate]);
 
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 h-full flex flex-col">
+    <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7">
       <CalendarHeader
         year={currentYear}
         month={currentMonth}
@@ -102,7 +102,7 @@ const Calendar: React.FC<CalendarProps> = ({ events, selectedDate, onSelectDate 
       </div>
 
       {/* 날짜 그리드 — 항상 6행(42칸) 고정 */}
-      <div className="grid grid-cols-7 gap-1.5 flex-1 auto-rows-fr">
+      <div className="grid grid-cols-7 gap-x-1.5 gap-y-0" style={{ gridTemplateRows: 'repeat(6, 48px)' }}>
         {/* 앞쪽 빈 셀 */}
         {Array.from({ length: firstDayOfWeek }).map((_, i) => (
           <div key={`empty-${i}`} />

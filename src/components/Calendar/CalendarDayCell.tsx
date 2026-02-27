@@ -62,10 +62,10 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
     >
       <span className={isToday && !isSelected ? 'font-bold' : ''}>{day}</span>
 
-      {/* 단일 도트 — 우선순위 기반 하나의 색상만 표시 */}
+      {/* 단일 도트 — 숫자 아래 고정 위치 */}
       {style && (
         <span
-          className={`absolute bottom-1.5 w-[6px] h-[6px] rounded-full ${style.dot}`}
+          className={`absolute bottom-1 w-[5px] h-[5px] rounded-full ${style.dot}`}
           style={{ boxShadow: style.glow }}
         />
       )}

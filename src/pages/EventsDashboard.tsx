@@ -15,14 +15,12 @@ const TAB_LABELS: Record<EventStatus, string> = {
   UPCOMING: 'calendar.tab_upcoming',
 };
 
-/** 상태별로 번갈아 섞기: ONGOING → ENDED → UPCOMING → ONGOING → ... */
+/** 상태별로 번갈아 섞기 */
 function interleaveByStatus(events: CalendarEventWithStatus[]): CalendarEventWithStatus[] {
   const buckets: Record<EventStatus, CalendarEventWithStatus[]> = {
     ONGOING: [], UPCOMING: [], ENDED: [],
   };
   for (const ev of events) buckets[ev.status].push(ev);
-
-  // 각 버킷 내부 정렬
   buckets.ONGOING.sort((a, b) => a.endAt.localeCompare(b.endAt));
   buckets.UPCOMING.sort((a, b) => a.startAt.localeCompare(b.startAt));
   buckets.ENDED.sort((a, b) => b.endAt.localeCompare(a.endAt));
@@ -31,7 +29,6 @@ function interleaveByStatus(events: CalendarEventWithStatus[]): CalendarEventWit
   const result: CalendarEventWithStatus[] = [];
   const indices = { ONGOING: 0, UPCOMING: 0, ENDED: 0 };
   const total = events.length;
-
   let round = 0;
   while (result.length < total) {
     const status = order[round % 3];
@@ -40,10 +37,8 @@ function interleaveByStatus(events: CalendarEventWithStatus[]): CalendarEventWit
       indices[status]++;
     }
     round++;
-    // 무한루프 방지
     if (round > total * 3) break;
   }
-
   return result;
 }
 
@@ -54,29 +49,53 @@ const EventsDashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // 기본: 오늘 기준 상태 (달력 도트 표시용)
   const eventsWithStatus = useMemo(() => withStatus(MOCK_EVENTS, now), [now]);
+
+  // 선택 날짜 기준으로 상태 재계산 — 선택 날짜가 없으면 오늘 기준
+  const referenceDate = useMemo(() => {
+    if (selectedDate) return new Date(selectedDate + 'T00:00:00');
+    return now;
+  }, [selectedDate, now]);
+
+  const eventsForDisplay = useMemo(() => withStatus(MOCK_EVENTS, referenceDate), [referenceDate]);
 
   const counts = useMemo(() => {
     const c: Record<EventStatus, number> = { ENDED: 0, ONGOING: 0, UPCOMING: 0 };
-    for (const ev of eventsWithStatus) c[ev.status]++;
+    for (const ev of eventsForDisplay) c[ev.status]++;
     return c;
-  }, [eventsWithStatus]);
+  }, [eventsForDisplay]);
 
-  // 이벤트 목록: 탭 선택 시 필터, null이면 상태별 번갈아 혼합
+  // 이벤트 필터: 날짜 선택 시 해당 날짜와 겹치는 이벤트만 + 탭 필터
   const filteredEvents = useMemo(() => {
-    if (activeTab) {
-      const result = eventsWithStatus.filter(ev => ev.status === activeTab);
-      if (activeTab === 'ONGOING') result.sort((a, b) => a.endAt.localeCompare(b.endAt));
-      else if (activeTab === 'ENDED') result.sort((a, b) => b.endAt.localeCompare(a.endAt));
-      else result.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      return result;
-    }
-    return interleaveByStatus(eventsWithStatus);
-  }, [eventsWithStatus, activeTab]);
+    let pool = eventsForDisplay;
 
+    // 날짜 선택 시 해당 날짜에 겹치는 이벤트만
+    if (selectedDate) {
+      pool = pool.filter(ev => isOverlappingDate(ev.startAt, ev.endAt, selectedDate));
+    }
+
+    // 탭 필터
+    if (activeTab) {
+      pool = pool.filter(ev => ev.status === activeTab);
+      if (activeTab === 'ONGOING') pool.sort((a, b) => a.endAt.localeCompare(b.endAt));
+      else if (activeTab === 'ENDED') pool.sort((a, b) => b.endAt.localeCompare(a.endAt));
+      else pool.sort((a, b) => a.startAt.localeCompare(b.startAt));
+      return pool;
+    }
+
+    return interleaveByStatus(pool);
+  }, [eventsForDisplay, activeTab, selectedDate]);
+
+  // 날짜 클릭: 해당 날짜 기준 상태 재계산 + 탭 자동 전환
   const handleSelectDate = useCallback((dateKey: string | null) => {
     if (dateKey && dateKey !== selectedDate) {
-      const overlapping = eventsWithStatus.filter(ev =>
+      setSelectedDate(dateKey);
+
+      // 선택 날짜 기준으로 겹치는 이벤트의 상태 확인
+      const refDate = new Date(dateKey + 'T00:00:00');
+      const recalculated = withStatus(MOCK_EVENTS, refDate);
+      const overlapping = recalculated.filter(ev =>
         isOverlappingDate(ev.startAt, ev.endAt, dateKey)
       );
       const statuses = new Set(overlapping.map(ev => ev.status));
@@ -85,16 +104,15 @@ const EventsDashboard: React.FC = () => {
       else if (statuses.has('UPCOMING')) setActiveTab('UPCOMING');
       else if (statuses.has('ENDED')) setActiveTab('ENDED');
       else setActiveTab(null);
-
-      setSelectedDate(dateKey);
     } else {
       setSelectedDate(null);
+      setActiveTab(null);
     }
-  }, [selectedDate, eventsWithStatus]);
+  }, [selectedDate]);
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 items-start">
         {/* 좌측: 캘린더 */}
         <div>
           <Calendar
