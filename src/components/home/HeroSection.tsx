@@ -12,43 +12,44 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const slides = [
-    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: false },
-    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true },
-    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: false },
-    { id: 4, src: '/video/active.mp4', poster: '', hasSound: true },
-    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: false }
+    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: true, category: '트렌드' },
+    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true, category: '팝업' },
+    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: true, category: '공연/전시' },
+    { id: 4, src: '/video/experience.mp4', poster: '', hasSound: true, category: '활동/스타일' },
+    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: true, category: '로컬' }
 ];
 
 export const HeroSection: React.FC = () => {
     const { t } = useTranslation();
     const [isFloorGuideModalOpen, setIsFloorGuideModalOpen] = React.useState(false);
+    const [activeIndex, setActiveIndex] = React.useState(0);
 
     const handleVideoPlayback = (swiper: any) => {
         if (!swiper || !swiper.el) return;
-        // 모든 비디오 엘리먼트를 찾아서 정지 및 음소거
+        
+        // 1. 모든 비디오를 일시 중지하고 무음 모드로 전환하여 무분별한 런타임 리소스 해제
         const allVideos = swiper.el.querySelectorAll('video');
         allVideos.forEach((v: HTMLVideoElement) => {
             v.pause();
             v.muted = true;
         });
 
-        // 현재 활성화된 슬라이드 내의 비디오만 재생
-        // Swiper loop mode에서는 activeIndex가 복제본을 가리킬 수 있으므로 
-        // 쿼리 셀렉터를 통해 현재 화면에 보이는 active 슬라이드를 공략합니다.
+        // 2. 현재 활성화된 슬라이드를 타켓팅 (정확한 Swiper 루프 돔)
         const activeSlide = swiper.el.querySelector('.swiper-slide-active');
         if (!activeSlide) return;
 
         const activeVideo = activeSlide.querySelector('video') as HTMLVideoElement;
         if (activeVideo) {
-            // 소리 유무 데이터 속성에 따라 음소거 토글
-            activeVideo.muted = activeVideo.dataset.hasSound !== 'true';
+            // Header.tsx에서 세팅한 전역 음소거 상태(window.__GLOBAL_MUTED__) 연동
+            const isMutedGlobally = typeof window !== 'undefined' ? (window as any).__GLOBAL_MUTED__ : true;
+            activeVideo.muted = isMutedGlobally || activeVideo.dataset.hasSound !== 'true';
 
-            // 재생 시도 (브라우저 자동재생 정책 대응)
+            // 안정적 재생 시도
             const playPromise = activeVideo.play();
             if (playPromise !== undefined) {
                 playPromise.catch((error) => {
-                    console.log("Autoplay prevented, retrying muted:", error);
-                    activeVideo.muted = true;
+                    console.error("Autoplay prevented:", error);
+                    activeVideo.muted = true; // 강제 무음 후 재시도
                     activeVideo.play().catch(e => console.error("Final play attempt failed:", e));
                 });
             }
@@ -116,20 +117,29 @@ export const HeroSection: React.FC = () => {
                             return `<button class="${className}" aria-label="${index + 1}번 슬라이드로 이동"></button>`;
                         }
                     }}
-                    onSlideChangeTransitionEnd={handleVideoPlayback}
+                    onSlideChange={(swiper) => {
+                        setActiveIndex(swiper.realIndex);
+                        // 슬라이드 전환 직후 즉시 재생 시도
+                        handleVideoPlayback(swiper);
+                        // 전환 애니메이션이 끝난 후에도 한번 더 재생 보장 (loop 복제 슬라이드 대응)
+                        setTimeout(() => handleVideoPlayback(swiper), 100);
+                        setTimeout(() => handleVideoPlayback(swiper), 900);
+                    }}
                     onSwiper={(swiper) => {
                         // 초기 로딩 시 첫 번째 비디오 재생 보장
                         setTimeout(() => handleVideoPlayback(swiper), 300);
+                        setTimeout(() => handleVideoPlayback(swiper), 1000);
                     }}
                     className="w-full h-full"
                 >
                     {slides.map((slide) => (
                         <SwiperSlide key={slide.id} className="relative w-full h-full overflow-hidden">
                             <video
-                                muted={!slide.hasSound}
+                                muted={true}
+                                playsInline={true}
+                                autoPlay={true}
                                 data-has-sound={slide.hasSound}
-                                playsInline
-                                preload="auto"
+                                preload="auto" // 브라우저가 새 영상(4,5번)을 캐싱하지 않아 검은 화면에서 멈추는 오류 방지
                                 loop
                                 className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover -translate-x-1/2 -translate-y-1/2 opacity-70"
                             >
@@ -145,22 +155,14 @@ export const HeroSection: React.FC = () => {
             <div className="relative z-20 container mx-auto px-6 h-full flex flex-col justify-center items-start pointer-events-none">
                 <div className="pointer-events-auto">
                     <motion.h1
+                        key={activeIndex} // 리렌더링 시 애니메이션 재실행
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight"
                     >
-                        {t('hero.title')}
+                        {slides[activeIndex].category}
                     </motion.h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl font-light"
-                    >
-                        {t('hero.subtitle')}
-                    </motion.p>
 
                     <motion.button
                         initial={{ opacity: 0, scale: 0.9 }}

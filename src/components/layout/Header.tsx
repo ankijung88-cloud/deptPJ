@@ -69,6 +69,11 @@ const Header: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        // 전역 객체에 현재 Mute 상태를 기록하여 라우팅/슬라이드 변경 시에도 상태 유지
+        if (typeof window !== 'undefined') {
+            (window as any).__GLOBAL_MUTED__ = isGlobalMuted;
+        }
+
         // 전역 음소거 상태가 변경될 때마다 화면 내 모든 비디오 엘리먼트에 토글을 적용합니다.
         const videos = document.querySelectorAll('video');
         videos.forEach(video => {
@@ -144,13 +149,13 @@ const Header: React.FC = () => {
                 ? 'bg-black/40 backdrop-blur-md border-b border-white/10 h-16'
                 : 'bg-transparent border-b border-transparent h-20'
                 }`}>
-                <div className={`container mx-auto px-4 flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
+                <div className={`container mx-auto px-4 relative flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
                     <Link to="/" className="flex items-center space-x-2 group">
                         <img src="/department_circle_logo.png" alt="department logo" className="h-[56px] w-[56px] object-contain transition-transform duration-300 group-hover:scale-110" />
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden xl:flex items-center space-x-6 font-sans">
+                    <nav className="absolute left-1/2 -translate-x-1/2 hidden xl:flex items-center gap-10 font-sans">
                         {navItems.map((item) => (
                             <div
                                 key={item.id}
@@ -158,7 +163,7 @@ const Header: React.FC = () => {
                             >
                                 <button
                                     onClick={() => setActiveDropdown(activeDropdown === item.id ? null : item.id)}
-                                    className={`flex items-center text-[18px] font-bold text-white/70 hover:text-white transition-all duration-300 gap-1.5 px-6 ${isScrolled ? 'h-16' : 'h-20'}`}
+                                    className={`flex items-center text-[20px] font-bold text-white/70 hover:text-white transition-all duration-300 gap-2 px-4 ${isScrolled ? 'h-16' : 'h-20'}`}
                                 >
                                     {item.label}
                                     <ChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === item.id ? 'rotate-180' : ''}`} />

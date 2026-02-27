@@ -7,7 +7,7 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { Eye, MapPin, X, Play } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination, EffectCoverflow, FreeMode } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -48,7 +48,7 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
             {/* Video Element for Hover Play */}
             <video
                 ref={videoRef}
-                src={item.videoUrl}
+                src={isHovered ? item.videoUrl : undefined}
                 loop
                 muted
                 playsInline
@@ -140,7 +140,6 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
 export const LiveShortsSection: React.FC = () => {
     const [shorts, setShorts] = useState<LiveShort[]>([]);
     const [selectedShort, setSelectedShort] = useState<LiveShort | null>(null);
-    const [swiperInstance, setSwiperInstance] = useState<any>(null);
 
     useEffect(() => {
         let mounted = true;
@@ -159,8 +158,8 @@ export const LiveShortsSection: React.FC = () => {
     }, []);
 
     return (
-        <section className="min-h-[80vh] w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden py-24">
-            <div className="container mx-auto px-6 mb-8 lg:mb-12 flex justify-between items-end shrink-0">
+        <section className="h-screen w-full snap-start bg-black relative flex flex-col justify-center overflow-hidden py-16">
+            <div className="container mx-auto px-6 mb-8 flex justify-between items-end shrink-0">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -212,9 +211,7 @@ export const LiveShortsSection: React.FC = () => {
                     slidesPerView={1.5}
                     centeredSlides={true}
                     loop={true}
-                    loopedSlides={shorts.length * 2} // 루프 렌더링 범위 확보
                     speed={5000} // 일정하고 부드러운 속도
-                    onSwiper={setSwiperInstance}
                     autoplay={{
                         delay: 0,
                         disableOnInteraction: false,
@@ -227,8 +224,8 @@ export const LiveShortsSection: React.FC = () => {
                     }}
                     className="w-full pb-12 smooth-swiper"
                 >
-                    {/* 데이터 개수가 부족하여 루프에서 끊기는 현상을 방지하고자 배열을 임의로 곱함 */}
-                    {[...shorts, ...shorts, ...shorts, ...shorts, ...shorts].map((item, index) => (
+                    {/* 브라우저 디코더 한계 초과를 막기 위해 원본 배열만 렌더링 (Swiper Loop가 자동 복제 지원) */}
+                    {shorts.map((item, index) => (
                         <SwiperSlide key={`${item.id}-${index}`}>
                             <LiveShortItem
                                 item={item}

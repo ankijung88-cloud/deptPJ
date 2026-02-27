@@ -101,7 +101,7 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ja: '時間を超えて続く高貴な遺産。',
             zh: '跨越时间流传的高贵遗产。'
         },
-        bgImage: 'https://images.unsplash.com/photo-1543431690-3b6be2c3cb19?q=80&w=2560&auto=format&fit=crop',
+        bgImage: '/images/archive_bg.png',
         content: [
             {
                 type: 'text',
@@ -530,28 +530,31 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
 export const CALENDAR_EVENTS: CalendarEvent[] = [
     {
         id: 'cal-1',
-        date: '2026-03-05',
+        date: '2026-02-20',
+        endDate: '2026-02-25',
         title: { ko: '글로벌 K-컬처 포럼', en: 'Global K-Culture Forum', ja: 'グローバルK-カルチャーフォーラム', zh: '全球 K-Culture 论坛' },
         category: 'global',
         imageUrl: 'https://images.unsplash.com/photo-1540575861501-7c00117fb3c9?q=80&w=2670&auto=format&fit=crop'
     },
     {
         id: 'cal-2',
-        date: '2026-03-12',
+        date: '2026-02-26',
+        endDate: '2026-03-05',
         title: { ko: '전통 달항아리 특별전', en: 'Traditional Moon Jar Exhibition', ja: '伝統月壺特別展', zh: '传统月亮罐特别展' },
         category: 'heritage',
         imageUrl: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=2673&auto=format&fit=crop'
     },
     {
         id: 'cal-3',
-        date: '2026-03-20',
+        date: '2026-03-05',
         title: { ko: '미디어 아트 라이브 쇼', en: 'Media Art Live Show', ja: 'メディアアートライブショー', zh: '媒体艺术现场表演' },
         category: 'media',
         imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop'
     },
     {
         id: 'cal-4',
-        date: '2026-03-28',
+        date: '2026-03-15',
+        endDate: '2026-03-20',
         title: { ko: 'K-스타일 패션 위크', en: 'K-Style Fashion Week', ja: 'K-スタイルファッションウィーク', zh: 'K-Style 时尚周' },
         category: 'kstyle',
         imageUrl: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2574&auto=format&fit=crop'
@@ -582,7 +585,7 @@ export const LIVE_SHORTS: LiveShort[] = [
         id: 'short-1',
         title: { ko: '글로벌 K-컬쳐', en: 'Tradition Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
         videoUrl: '/video/k-culture.mp4',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1541535650810-10d26f597a65?auto=format&fit=crop&q=80',
+        thumbnailUrl: '/images/global_k_culture.png',
         location: { ko: '1F 글로벌 K-컬쳐', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
         viewCount: 12500
     },
