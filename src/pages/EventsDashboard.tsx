@@ -56,23 +56,30 @@ const EventsDashboard: React.FC = () => {
 
   const eventsWithStatus = useMemo(() => withStatus(MOCK_EVENTS, now), [now]);
 
+  // 날짜 선택 유무에 따른 1차 필터
+  const dateFilteredEvents = useMemo(() => {
+    if (!selectedDate) return eventsWithStatus;
+    return eventsWithStatus.filter(ev => isOverlappingDate(ev.startAt, ev.endAt, selectedDate));
+  }, [eventsWithStatus, selectedDate]);
+
   const counts = useMemo(() => {
     const c: Record<EventStatus, number> = { ENDED: 0, ONGOING: 0, UPCOMING: 0 };
-    for (const ev of eventsWithStatus) c[ev.status]++;
+    for (const ev of dateFilteredEvents) c[ev.status]++;
     return c;
-  }, [eventsWithStatus]);
+  }, [dateFilteredEvents]);
 
-  // 이벤트 목록: 탭 선택 시 필터, null이면 상태별 번갈아 혼합
+  // 이벤트 목록: 탭 선택 시 정렬/필터, null이면 상태별 번갈아 혼합
   const filteredEvents = useMemo(() => {
+    let result = [...dateFilteredEvents];
     if (activeTab) {
-      const result = eventsWithStatus.filter(ev => ev.status === activeTab);
+      result = result.filter(ev => ev.status === activeTab);
       if (activeTab === 'ONGOING') result.sort((a, b) => a.endAt.localeCompare(b.endAt));
       else if (activeTab === 'ENDED') result.sort((a, b) => b.endAt.localeCompare(a.endAt));
       else result.sort((a, b) => a.startAt.localeCompare(b.startAt));
       return result;
     }
-    return interleaveByStatus(eventsWithStatus);
-  }, [eventsWithStatus, activeTab]);
+    return interleaveByStatus(result);
+  }, [dateFilteredEvents, activeTab]);
 
   const handleSelectDate = useCallback((dateKey: string | null) => {
     if (dateKey && dateKey !== selectedDate) {
@@ -94,9 +101,9 @@ const EventsDashboard: React.FC = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 h-[600px]">
         {/* 좌측: 캘린더 */}
-        <div>
+        <div className="h-full">
           <Calendar
             events={eventsWithStatus}
             selectedDate={selectedDate}
@@ -105,18 +112,20 @@ const EventsDashboard: React.FC = () => {
         </div>
 
         {/* 우측: 탭 + 리스트 */}
-        <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl flex flex-col overflow-hidden">
-          <EventTabs
-            activeTab={activeTab}
-            counts={counts}
-            onTabChange={(tab) => setActiveTab(prev => prev === tab ? null : tab)}
-          />
-
-          <div className="flex-1 px-3 py-3 flex flex-col">
-            <EventList events={filteredEvents.slice(0, 5)} />
+        <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl flex flex-col overflow-hidden h-full">
+          <div className="shrink-0">
+            <EventTabs
+              activeTab={activeTab}
+              counts={counts}
+              onTabChange={(tab) => setActiveTab(prev => prev === tab ? null : tab)}
+            />
           </div>
 
-          <div className="px-5 py-3 border-t border-white/[0.06] text-right">
+          <div className="flex-1 px-3 py-3 overflow-hidden">
+            <EventList events={filteredEvents} />
+          </div>
+
+          <div className="px-5 py-3 border-t border-white/[0.06] text-right shrink-0">
             <button
               onClick={() => setModalOpen(true)}
               className="text-xs text-white/40 hover:text-white transition-colors"

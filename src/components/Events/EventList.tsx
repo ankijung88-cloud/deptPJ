@@ -19,7 +19,7 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
   }
 
   return (
-    <div className="flex flex-col gap-2 flex-1">
+    <div className="flex flex-col gap-2 h-full overflow-y-auto pr-2 custom-scrollbar">
       {events.map(ev => (
         <EventCard key={ev.id} event={ev} />
       ))}

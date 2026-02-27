@@ -26,19 +26,20 @@ export const HeroSection: React.FC = () => {
 
     const handleVideoPlayback = (swiper: any) => {
         if (!swiper || !swiper.el) return;
-        
-        // 1. 모든 비디오를 일시 중지하고 무음 모드로 전환하여 무분별한 런타임 리소스 해제
-        const allVideos = swiper.el.querySelectorAll('video');
-        allVideos.forEach((v: HTMLVideoElement) => {
-            v.pause();
-            v.muted = true;
-        });
 
         // 2. 현재 활성화된 슬라이드를 타켓팅 (정확한 Swiper 루프 돔)
         const activeSlide = swiper.el.querySelector('.swiper-slide-active');
-        if (!activeSlide) return;
+        const activeVideo = activeSlide ? activeSlide.querySelector('video') as HTMLVideoElement : null;
 
-        const activeVideo = activeSlide.querySelector('video') as HTMLVideoElement;
+        // 1. 모든 비디오를 일시 중지하고 무음 모드로 전환하여 무분별한 런타임 리소스 해제
+        const allVideos = swiper.el.querySelectorAll('video');
+        allVideos.forEach((v: HTMLVideoElement) => {
+            if (v !== activeVideo) {
+                v.pause();
+                v.muted = true;
+            }
+        });
+
         if (activeVideo) {
             // Header.tsx에서 세팅한 전역 음소거 상태(window.__GLOBAL_MUTED__) 연동
             const isMutedGlobally = typeof window !== 'undefined' ? (window as any).__GLOBAL_MUTED__ : true;
@@ -48,9 +49,18 @@ export const HeroSection: React.FC = () => {
             const playPromise = activeVideo.play();
             if (playPromise !== undefined) {
                 playPromise.catch((error) => {
-                    console.error("Autoplay prevented:", error);
-                    activeVideo.muted = true; // 강제 무음 후 재시도
-                    activeVideo.play().catch(e => console.error("Final play attempt failed:", e));
+                    if (error.name !== 'AbortError') {
+                        console.error("Autoplay prevented:", error);
+                        activeVideo.muted = true; // 강제 무음 후 재시도
+                        const retryPromise = activeVideo.play();
+                        if (retryPromise !== undefined) {
+                            retryPromise.catch(e => {
+                                if (e.name !== 'AbortError') {
+                                    console.error("Final play attempt failed:", e);
+                                }
+                            });
+                        }
+                    }
                 });
             }
         }

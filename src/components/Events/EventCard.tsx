@@ -14,11 +14,11 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
   const badgeLabel = event.status === 'ENDED' ? t('calendar.ended', '종료')
     : event.status === 'ONGOING' ? t('calendar.ongoing', '진행 중')
-    : t('calendar.upcoming', '예정');
+      : t('calendar.upcoming', '예정');
 
   const badgeColor = event.status === 'ENDED' ? 'bg-red-500/70 text-white'
     : event.status === 'ONGOING' ? 'bg-blue-500/70 text-white'
-    : 'bg-emerald-500/70 text-white';
+      : 'bg-emerald-500/70 text-white';
 
   const title = t(event.title, event.title);
   const summary = t(event.summary, event.summary);
@@ -35,9 +35,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         category: event.status,
       }}
       className={`
-        block relative w-full flex-1 min-h-[110px] rounded-xl overflow-hidden group
+        block relative w-full shrink-0 rounded-xl overflow-hidden group
         ${isEnded ? 'opacity-60' : ''}
       `}
+      style={{ height: 'calc((100% - 32px) / 5)', minHeight: '85px' }}
     >
       {/* 배경 이미지 */}
       <img

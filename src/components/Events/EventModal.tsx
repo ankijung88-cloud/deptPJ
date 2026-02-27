@@ -62,7 +62,9 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, events, tabLab
           ) : (
             <div className="space-y-1">
               {events.map(ev => (
-                <EventCard key={ev.id} event={ev} />
+                <div key={ev.id} className="h-[85px]">
+                  <EventCard event={ev} />
+                </div>
               ))}
             </div>
           )}

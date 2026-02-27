@@ -21,7 +21,14 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
 
     useEffect(() => {
         if (isHovered && videoRef.current) {
-            videoRef.current.play().catch(error => console.error('Auto-play failed', error));
+            const playPromise = videoRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    if (error.name !== 'AbortError') {
+                        console.error('Auto-play failed', error);
+                    }
+                });
+            }
         } else if (!isHovered && videoRef.current) {
             videoRef.current.pause();
             videoRef.current.currentTime = 0; // Reset video to start when not hovered
@@ -56,13 +63,13 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-            
+
             {/* Play indicator icon to show it's a video */}
-             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                 <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
                     <Play className="text-white fill-white ml-1" size={24} />
-                 </div>
-             </div>
+                </div>
+            </div>
 
             <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 z-10 pointer-events-none">
                 <div className="flex items-center gap-1 text-white/70 text-[10px] md:text-xs mb-2 uppercase font-bold tracking-tighter bg-black/40 px-2 py-1 rounded-full w-fit backdrop-blur-sm">
@@ -206,7 +213,7 @@ export const LiveShortsSection: React.FC = () => {
                         depth: 400, // 깊이감을 늘려 완벽한 3D 형태로 구성
                         modifier: 1,
                         slideShadows: false, // 그림자 렌더링 연산 부하 및 잔상으로 인한 끊김 방지
-                        scale: 0.85, 
+                        scale: 0.85,
                     }}
                     spaceBetween={10}
                     slidesPerView={1.5}

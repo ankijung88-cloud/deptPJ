@@ -14,10 +14,13 @@ const AboutPage: React.FC = () => {
             {/* Hero Section */}
             <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
-                    <img
-                        src="https://images.unsplash.com/photo-1533552865985-703cb2c3dfb6?q=80&w=2560&auto=format&fit=crop"
-                        alt="Cultural Heritage"
-                        className="w-full h-full object-cover grayscale opacity-40"
+                    <video
+                        src="/video/caravan_trip.mp4"
+                        className="w-full h-full object-cover grayscale opacity-30"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1a1a1a]"></div>
                 </div>
@@ -35,10 +38,10 @@ const AboutPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.8 }}
-                        className="text-xl md:text-2xl font-light text-white/70 max-w-3xl mx-auto"
+                        className="text-xl md:text-2xl font-light text-white/70 max-w-3xl mx-auto leading-relaxed"
                     >
-                        전통의 깊이를 현대의 감각으로 담아내는 공간,<br />
-                        문화백화점의 이야기를 들려드립니다.
+                        일상에 스며드는 감각적 영감,<br />
+                        프리미엄 컬처 스토어 DEPARTMENT의 이야기를 들려드립니다.
                     </motion.p>
                     <motion.div
                         initial={{ width: 0 }}
@@ -58,17 +61,25 @@ const AboutPage: React.FC = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h2 className="text-3xl font-serif font-bold mb-8 text-dancheong-green">우리의 철학</h2>
-                        <div className="space-y-6 text-lg text-white/70 leading-relaxed font-light">
+                        <h2 className="text-3xl font-serif font-bold mb-8 text-dancheong-green">감각적 영감이 머무는 곳</h2>
+                        <div className="space-y-6 text-lg text-white/80 leading-relaxed font-light break-keep">
                             <p>
-                                대한민국은 찬란한 문화유산을 가진 나라입니다.
-                                하지만 빠르게 변화하는 현대 사회 속에서 우리의 전통은 점차 잊혀가는 유물이 되어가기도 합니다.
+                                DEPARTMENT은 시간을 초월한 고유의 미학과 동시대의 트렌드가 조화롭게 공존하는 프리미엄 컬처 스토어입니다.
                             </p>
                             <p>
-                                문화백화점은 이러한 고민에서 시작되었습니다.
-                                "어떻게 하면 전통 문화가 우리의 일상 속에 자연스럽게 스며들 수 있을까?"
-                                우리는 전통을 박물관 속에 가두지 않고, 오늘의 라이프스타일로 재해석하여 새로운 생명력을 불어넣고자 합니다.
+                                단순한 소비의 공간을 넘어, 당신의 일상에 낯설고도 우아한 영감을 제안합니다. 매장 곳곳에 스며든 예술적 큐레이션 속에서 오직 당신만을 위한 새로운 취향을 발견해 보세요.
                             </p>
+                            <div className="pt-6 mt-6 border-t border-white/10 space-y-4">
+                                <p className="text-white/60">
+                                    <strong className="text-dancheong-red font-normal mr-2">계승</strong>시간이 빚어낸 전통의 깊이를 온전히 보존합니다.
+                                </p>
+                                <p className="text-white/60">
+                                    <strong className="text-dancheong-green font-normal mr-2">혁신</strong>현대의 감각으로 재해석하여 새로운 가치를 더합니다.
+                                </p>
+                                <p className="text-white/60">
+                                    <strong className="text-blue-400 font-normal mr-2">공존</strong>서로 다른 취향과 세계가 자연스럽게 어우러집니다.
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                     <motion.div
@@ -78,40 +89,13 @@ const AboutPage: React.FC = () => {
                         transition={{ duration: 0.8 }}
                         className="relative aspect-square"
                     >
-                        <img
-                            src="https://images.unsplash.com/photo-1543431690-3b6be2c3cb19?q=80&w=2560&auto=format&fit=crop"
-                            alt="Philosophy"
-                            className="w-full h-full object-cover rounded-2xl shadow-2xl"
-                        />
+                        <div className="w-full h-full bg-black/50 rounded-2xl shadow-2xl backdrop-blur-sm border border-white/10 flex items-center justify-center overflow-hidden">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_100%)]"></div>
+                            <h3 className="text-4xl md:text-5xl font-serif font-bold text-white/20 tracking-[0.3em] z-10">DEPARTMENT</h3>
+                        </div>
                         <div className="absolute -top-6 -left-6 w-32 h-32 border-t-2 border-l-2 border-dancheong-red"></div>
                         <div className="absolute -bottom-6 -right-6 w-32 h-32 border-b-2 border-r-2 border-dancheong-green"></div>
                     </motion.div>
-                </div>
-            </section>
-
-            {/* Values Section */}
-            <section className="py-24 bg-[#222]">
-                <div className="container mx-auto px-6">
-                    <h2 className="text-3xl font-serif font-bold mb-16 text-center">핵심 가치</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {[
-                            { title: '계승 (Inheritance)', desc: '장인의 정신과 전통의 기법을 온전히 보존하고 이어갑니다.' },
-                            { title: '혁신 (Innovation)', desc: '한계 없는 상상력으로 전통을 현대적인 감각으로 재창조합니다.' },
-                            { title: '공존 (Coexistence)', desc: '과거와 현재, 예술과 일상이 완벽하게 어우러지는 경험을 선사합니다.' }
-                        ].map((value, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.2 }}
-                                className="p-8 border border-white/10 hover:border-dancheong-green transition-colors group"
-                            >
-                                <h3 className="text-xl font-bold mb-4 group-hover:text-dancheong-green">{value.title}</h3>
-                                <p className="text-white/60 font-light">{value.desc}</p>
-                            </motion.div>
-                        ))}
-                    </div>
                 </div>
             </section>
         </div>

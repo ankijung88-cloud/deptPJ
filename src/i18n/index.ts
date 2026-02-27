@@ -21,16 +21,17 @@ const resources = {
                 "travel": "지역 / 여행",
                 "community": "커뮤니티",
 
-                "global_k_culture": "글로벌 K-컬처",
-                "modern_heritage": "전통의 현대화",
-                "exchange_booth": "문화 교류 부스",
-                "collab_project": "협업 프로젝트",
-                "traditional_arts": "전통 예술",
-                "media_arts": "현대 미디어 아트",
-                "culture_class": "문화 체험 클래스",
-                "global_k_style": "글로벌 K-스타일",
+                "global": "글로벌 K-컬처",
+                "heritage": "전통의 현대화",
+                "exchange": "문화 교류 부스",
+                "collab": "협업 프로젝트",
+                "traditional": "전통 예술",
+                "media": "현대 미디어 아트",
+                "class": "문화 체험 클래스",
+                "kstyle": "글로벌 K-스타일",
                 "local_heritage": "지역 문화 유산",
                 "travel_curation": "여행 큐레이션",
+                "fashion": "시각 예술 / 패션",
 
                 "notice": "공지사항",
                 "qna": "Q&A",
@@ -92,11 +93,11 @@ const resources = {
                 "view_all": "전체 추천 보기"
             },
             "about": {
-                "title": "문화의 시선, 교류의 중심",
-                "subtitle": "전통과 현대, 그리고 당신을 잇는 가교",
-                "description1": "department은 한국 문화의 정수를 발굴하고 세계와 공유하는 문화 홍보 및 교류의 전초기지입니다.",
-                "description2": "단순한 홍보를 넘어, 깊이 있는 전시와 체험을 통해 우리 문화의 새로운 가치를 발견하고 교류의 가치를 실현합니다.",
-                "cta": "문화 비전 보기"
+                "title": "일상에 스며드는\n감각적 영감",
+                "subtitle": "Brand Concept",
+                "description1": "DEPARTMENT은 한국의 다채로운 매력과 글로벌 K-트렌드를 한곳에 모은 프리미엄 컬처 스토어입니다.",
+                "description2": "물건이 아닌 영감을 큐레이션하며, 층마다 새롭게 펼쳐지는 당신만의 문화적 취향을 발견해 보세요.",
+                "cta": "공간 안내 보기"
             },
             "auth": {
                 "login": "로그인",
@@ -335,16 +336,16 @@ const resources = {
                 "exhibition": "Exhibition",
                 "mypage": "My Page",
                 "login": "Login",
-                "global_k_culture": "Global K-Culture",
-                "modern_heritage": "Modern Heritage",
-                "exchange_booth": "Cultural Exchange",
-                "collab_project": "Collaboration",
-                "traditional_arts": "Traditional Arts",
-                "media_arts": "Media Art",
-                "culture_class": "Culture Class",
-                "global_k_style": "Global K-Style",
+                "global": "Global K-Culture",
+                "heritage": "Modern Heritage",
+                "exchange": "Cultural Exchange",
+                "traditional": "Traditional Arts",
+                "media": "Media Art",
+                "class": "Culture Class",
+                "kstyle": "Global K-Style",
                 "local_heritage": "Local Heritage",
-                "travel_curation": "Travel Curation"
+                "travel_curation": "Travel Curation",
+                "fashion": "Visual Arts / Fashion"
             },
             "category": {
                 "trend": {
@@ -399,11 +400,11 @@ const resources = {
                 "view_all": "View All"
             },
             "about": {
-                "title": "A Cultural Perspective, A Hub for Exchange",
-                "subtitle": "A bridge connecting tradition, modernity, and you",
-                "description1": "department is a cultural promotion and exchange outpost that discovers the essence of Korean culture and shares it with the world.",
-                "description2": "Beyond simple promotion, we discover new values of our culture and realize the value of exchange through in-depth exhibitions and experiences.",
-                "cta": "View Cultural Vision"
+                "title": "Sensory Inspiration\nSeeping into Everyday Life",
+                "subtitle": "Brand Concept",
+                "description1": "DEPARTMENT is a premium culture store bringing together the diverse charms of Korea and global K-trends.",
+                "description2": "Curating inspiration rather than objects, discover your own cultural taste unfolding uniquely on every floor.",
+                "cta": "View Space Guide"
             },
             "auth": {
                 "login": "Login",
@@ -717,11 +718,11 @@ const resources = {
                 "view_all": "全体を見る"
             },
             "about": {
-                "title": "文化の視点、交流の中心",
-                "subtitle": "伝統と現代、そしてあなたをつなぐ架け橋",
-                "description1": "departmentは韓国文化の精髄を発掘し世界と共有する文化広報および交流の前哨基地です。",
-                "description2": "単なる広報を超え、深い展示と体験を通じて私たちの文化の新たな価値を発見し、交流の価値を実現します。",
-                "cta": "文化ビジョンを見る"
+                "title": "日常に溶け込む\n感覚的なインスピレーション",
+                "subtitle": "Brand Concept",
+                "description1": "DEPARTMENTは、韓国の多彩な魅力とグローバルK-トレンドを一堂に集めたプレミアムカルチャーストアです。",
+                "description2": "モノではなくインスピレーションをキュレーションし、フロアごとに新しく展開されるあなただけの文化的趣向を発見してください。",
+                "cta": "空間案内を見る"
             },
             "auth": {
                 "login": "ログイン",
@@ -1051,324 +1052,324 @@ const resources = {
         }
     },
     th: {
-    "translation": {
-        "floor_guide": "แผนผังชั้น",
-        "floor_guide_subtitle": "Floor Guide",
-        "nav": {
-            "about": "เกี่ยวกับ",
-            "store": "ร้านค้า",
-            "gallery": "แกลลอรี่",
-            "trend": "เทรนด์ / ป๊อปอัป",
-            "tickets": "การแสดง / นิทรรศการ",
-            "art": "กิจกรรม / สไตล์",
-            "style": "รูปภาพ / วิดีโอ",
-            "travel": "ท้องถิ่น / ท่องเที่ยว",
-            "community": "ชุมชน",
-            "popup": "ป๊อปอัปสโตร์",
-            "collab": "ทำงานร่วมกัน",
-            "new": "มาใหม่",
-            "performance": "การแสดง",
-            "exhibition": "นิทรรศการ",
-            "booking": "การจอง",
-            "class": "คลาส",
-            "fashion": "แฟชั่น",
-            "photo": "รูปภาพ",
-            "video": "วิดีโอ",
-            "media": "สื่อ",
-            "local": "สถานที่ท้องถิ่น",
-            "course": "เส้นทางแนะนำ",
-            "guide": "ไกด์",
-            "notice": "ประกาศ",
-            "qna": "ถาม-ตอบ",
-            "reviews": "รีวิว",
-            "mypage": "หน้าของฉัน",
-            "login": "เข้าสู่ระบบ",
-            "global_k_culture": "โกลบอล เค-คัลเจอร์",
-            "modern_heritage": "มรดกสมัยใหม่",
-            "exchange_booth": "บูธแลกเปลี่ยนวัฒนธรรม",
-            "collab_project": "โปรเจกต์ความร่วมมือ",
-            "traditional_arts": "ศิลปะดั้งเดิม",
-            "media_arts": "มีเดียอาร์ต",
-            "culture_class": "คลาสวัฒนธรรม",
-            "global_k_style": "โกลบอล เค-สไตล์",
-            "local_heritage": "มรดกท้องถิ่น",
-            "travel_curation": "การท่องเที่ยวคัดสรร"
-        },
-        "category": {
-            "trend": {
-                "title": "เทรนด์ / ป๊อปอัป",
-                "description": "เทรนด์ K-Culture ที่เร็วที่สุดและร้อนแรงที่สุด"
+        "translation": {
+            "floor_guide": "แผนผังชั้น",
+            "floor_guide_subtitle": "Floor Guide",
+            "nav": {
+                "about": "เกี่ยวกับ",
+                "store": "ร้านค้า",
+                "gallery": "แกลลอรี่",
+                "trend": "เทรนด์ / ป๊อปอัป",
+                "tickets": "การแสดง / นิทรรศการ",
+                "art": "กิจกรรม / สไตล์",
+                "style": "รูปภาพ / วิดีโอ",
+                "travel": "ท้องถิ่น / ท่องเที่ยว",
+                "community": "ชุมชน",
+                "popup": "ป๊อปอัปสโตร์",
+                "collab": "ทำงานร่วมกัน",
+                "new": "มาใหม่",
+                "performance": "การแสดง",
+                "exhibition": "นิทรรศการ",
+                "booking": "การจอง",
+                "class": "คลาส",
+                "fashion": "แฟชั่น",
+                "photo": "รูปภาพ",
+                "video": "วิดีโอ",
+                "media": "สื่อ",
+                "local": "สถานที่ท้องถิ่น",
+                "course": "เส้นทางแนะนำ",
+                "guide": "ไกด์",
+                "notice": "ประกาศ",
+                "qna": "ถาม-ตอบ",
+                "reviews": "รีวิว",
+                "mypage": "หน้าของฉัน",
+                "login": "เข้าสู่ระบบ",
+                "global_k_culture": "โกลบอล เค-คัลเจอร์",
+                "modern_heritage": "มรดกสมัยใหม่",
+                "exchange_booth": "บูธแลกเปลี่ยนวัฒนธรรม",
+                "collab_project": "โปรเจกต์ความร่วมมือ",
+                "traditional_arts": "ศิลปะดั้งเดิม",
+                "media_arts": "มีเดียอาร์ต",
+                "culture_class": "คลาสวัฒนธรรม",
+                "global_k_style": "โกลบอล เค-สไตล์",
+                "local_heritage": "มรดกท้องถิ่น",
+                "travel_curation": "การท่องเที่ยวคัดสรร"
             },
-            "tickets": {
-                "title": "การแสดง / นิทรรศการ",
-                "description": "เวทีแห่งความประทับใจและตื่นเต้น เวลาแห่งการพบปะศิลปะ"
-            },
-            "art": {
-                "title": "กิจกรรม / สไตล์",
-                "description": "ความกลมกลืนของกิจกรรมและสไตล์"
-            },
-            "style": {
-                "title": "รูปภาพ / วิดีโอ",
-                "description": "ทัศนศิลป์และสื่อเชิงสร้างสรรค์"
-            },
-            "travel": {
-                "title": "ท้องถิ่น / ท่องเที่ยว",
-                "description": "ค้นหาความงามที่ซ่อนอยู่ในทุกมุมของเกาหลี"
-            },
-            "community": {
-                "title": "ชุมชน",
-                "description": "พื้นที่แบ่งปันความชอบและสนุกด้วยกัน"
-            }
-        },
-        "hero": {
-            "title": "สัมผัสความงามของเกาหลีด้วยความรู้สึกที่ทันสมัย",
-            "subtitle": "พื้นที่วัฒนธรรมที่ผสมผสานความดั้งเดิมและความทันสมัย, department",
-            "cta": "ดูแผนผังชั้น",
-            "promotion_title": "มุมมองทางวัฒนธรรม จุดเริ่มต้นของการแลกเปลี่ยน",
-            "promotion_subtitle": "เราแบ่งปันแก่นแท้ของวัฒนธรรมเกาหลีที่ดั้งเดิมและสมัยใหม่ผสานกันสู่สายตาโลก",
-            "promotion_cta": "เจาะลึกการแลกเปลี่ยนวัฒนธรรม"
-        },
-        "featured": {
-            "title": "แนะนำ & กิจกรรม",
-            "subtitle": "ประสบการณ์สุดพิเศษที่ Culture Dept.",
-            "no_content": "ยังไม่มีเนื้อหาที่ลงทะเบียน",
-            "event_ongoing": "อีเวนต์ที่กำลังจัดอยู่",
-            "event_upcoming": "อีเวนต์ที่กำลังจะมา",
-            "event_archived": "อีเวนต์ที่สิ้นสุดแล้ว",
-            "event_ongoing_desc": "อีเวนต์พิเศษที่กำลังดำเนินอยู่",
-            "event_upcoming_desc": "อีเวนต์พิเศษที่กำลังจะมา",
-            "event_archived_desc": "อีเวนต์นี้สิ้นสุดแล้ว",
-            "monthly_recommendations": "แนะนำประจำเดือน",
-            "ongoing": "กำลังจัด",
-            "upcoming": "เร็วๆ นี้",
-            "archived": "สิ้นสุด",
-            "image_pending": "รอการอัปโหลดภาพ",
-            "no_events": "ไม่มีอีเวนต์",
-            "no_events_desc": "วันนี้ไม่มีอีเวนต์ที่กำหนดไว้",
-            "back_to_recommendations": "ดูแนะนำทั้งหมด",
-            "view_all": "ดูทั้งหมด"
-        },
-        "about": {
-            "title": "มุมมองวัฒนธรรม ศูนย์กลางการแลกเปลี่ยน",
-            "subtitle": "สะพานที่เชื่อมต่อประเพณี สมัยใหม่ และคุณ",
-            "description1": "department คือฐานที่มั่นของการส่งเสริมวัฒนธรรมและการแลกเปลี่ยนที่ค้นพบแก่นแท้ของวัฒนธรรมเกาหลีและแบ่งปันกับโลก",
-            "description2": "เหนือกว่าการส่งเสริมธรรมดา ค้นพบคุณค่าใหม่ของวัฒนธรรมผ่านนิทรรศการและประสบการณ์เชิงลึก และทำให้คุณค่าของการแลกเปลี่ยนเป็นจริง",
-            "cta": "ดูวิสัยทัศน์วัฒนธรรม"
-        },
-        "auth": {
-            "login": "เข้าสู่ระบบ",
-            "register": "สมัครสมาชิก",
-            "email": "อีเมล",
-            "password": "รหัสผ่าน",
-            "name": "ชื่อ",
-            "logout": "ออกจากระบบ",
-            "welcome": "ยินดีต้อนรับ",
-            "login_title": "เข้าสู่ระบบ",
-            "register_title": "สมัครสมาชิก",
-            "no_account": "ยังไม่มีบัญชีใช่ไหม?",
-            "have_account": "มีบัญชีอยู่แล้วใช่ไหม?",
-            "signup": "ลงทะเบียน",
-            "submit": "ยืนยัน",
-            "loading": "กำลังดำเนินการ...",
-            "error_generic": "เกิดข้อผิดพลาด",
-            "forgot_password": "ลืมรหัสผ่าน",
-            "find_id": "ค้นหาอีเมล",
-            "reset_password_sent": "อีเมลรีเซ็ตรหัสผ่านถูกส่งแล้ว",
-            "find_email_success": "อีเมลของคุณคือ {{email}}",
-            "find_email_not_found": "ไม่พบบัญชีที่ลงทะเบียนด้วยข้อมูลนี้",
-            "social_login": "เข้าสู่ระบบด้วยโซเชียล",
-            "google_login": "ดำเนินการต่อด้วย Google",
-            "signup_success_check_email": "สมัครสมาชิกสำเร็จ! โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชีของคุณ",
-            "rate_limit_exceeded": "ส่งคำขอมากเกินไป โปรดลองอีกครั้งในภายหลัง"
-        },
-        "footer": {
-            "address": "123 โซกงโร, จุงกู, โซล",
-            "copyright": "© 2026 Culture Dept. Store. All rights reserved.",
-            "privacy": "นโยบายความเป็นส่วนตัว",
-            "terms": "ข้อตกลงและเงื่อนไข",
-            "shop": "SHOP",
-            "support": "สนับสนุน",
-            "contact": "ติดต่อ",
-            "description": "แพลตฟอร์มวัฒนธรรมระดับพรีเมียมที่นำเสนอความงามของศิลปะและวัฒนธรรมเกาหลีสู่สายตาโลก",
-            "notice": "ประกาศ",
-            "faq": "คำถามที่พบบ่อย",
-            "inquiry": "สอบถามแบบ 1:1",
-            "weekdays": "วันธรรมดา 10:00 - 18:00 (หยุดเสาร์-อาทิตย์และวันหยุดนักขัตฤกษ์)"
-        },
-        "artist": {
-            "title": "ศิลปินแห่งปี 10 คน"
-        },
-        "calendar": {
-            "title": "ปฏิทินวัฒนธรรมประจำเดือน",
-            "event_desc": "อย่าพลาดกิจกรรมวัฒนธรรมพิเศษในวันที่เลือก",
-            "hover_hint": "เลือกวันที่เพื่อดู",
-            "ended": "สิ้นสุดแล้ว",
-            "ongoing": "กำลังดำเนินการ",
-            "upcoming": "กำลังจะมาถึง",
-            "tab_ended": "กิจกรรมที่สิ้นสุดแล้ว",
-            "tab_ongoing": "กิจกรรมที่กำลังดำเนินการ",
-            "tab_upcoming": "กิจกรรมที่กำลังจะมาถึง",
-            "no_events": "ไม่มีกิจกรรมที่เกี่ยวข้อง",
-            "close": "ปิด",
-            "show_all": "ดูทั้งหมด",
-            "show_less": "แสดงน้อยลง ↑",
-            "count_suffix": "รายการ",
-            "prev_month": "เดือนก่อนหน้า",
-            "next_month": "เดือนถัดไป"
-        },
-        "events": {
-            "ev01": { "title": "ลดราคาพิเศษต้อนรับปีใหม่", "summary": "ลดสูงสุด 50% ทั่วทั้งอาคารเพื่อฉลองปีใหม่" },
-            "ev02": { "title": "สัปดาห์แฟชั่นฤดูหนาว", "summary": "พรีวิวคอลเล็กชั่น 2026 S/S และแฟชั่นโชว์" },
-            "ev03": { "title": "เทศกาลช็อกโกแลตวาเลนไทน์", "summary": "พบช็อกโกแลตพรีเมียมจากทั่วโลก" },
-            "ev04": { "title": "ประสบการณ์วัฒนธรรมตรุษจีน", "summary": "สวมชุดประจำชาติ เกมพื้นบ้าน บูธอาหาร" },
-            "ev05": { "title": "คลาสเสริมสวย ซีซั่น 1", "summary": "คลาสเสริมสวยกับช่างแต่งหน้ามืออาชีพ" },
-            "ev06": { "title": "เทศกาลของตกแต่งบ้านฤดูใบไม้ผลิ", "summary": "ลดราคาสินค้าตกแต่งบ้านถึงเครื่องครัว" },
-            "ev07": { "title": "นิทรรศการ K-คัลเจอร์ระดับโลก", "summary": "นิทรรศการพิเศษเกี่ยวกับวัฒนธรรมเกาหลี" },
-            "ev08": { "title": "บูธแลกเปลี่ยนวัฒนธรรม", "summary": "บูธสัมผัสวัฒนธรรมจากหลายประเทศ" },
-            "ev09": { "title": "ชิมไวน์พรีเมียม", "summary": "ชิมไวน์ระดับโลกที่คัดสรรโดยซอมเมลิเยร์" },
-            "ev10": { "title": "นิทรรศการศิลปะพิเศษ", "summary": "ผลงานศิลปะร่วมสมัยจากศิลปินรุ่นใหม่ 15 คน" },
-            "ev11": { "title": "ตลาดดอกไม้ฤดูใบไม้ผลิ", "summary": "ตลาดพิเศษกับดอกไม้สดใส" },
-            "ev12": { "title": "เทศกาลเด็ก", "summary": "โปรแกรมประสบการณ์พิเศษสำหรับเด็กๆ" },
-            "ev13": { "title": "คลาสทำอาหารฤดูใบไม้ผลิ", "summary": "เรียนสูตรอาหารฤดูใบไม้ผลิจากเชฟชื่อดัง" },
-            "ev14": { "title": "โชว์เครื่องประดับหรูหรา", "summary": "โชว์เคสสินค้าใหม่จากแบรนด์เครื่องประดับระดับโลก" },
-            "ev15": { "title": "นิทรรศการศิลปะดิจิทัล", "summary": "การติดตั้งศิลปะดิจิทัลแบบดื่มด่ำ" },
-            "ev16": { "title": "ป๊อปอัพเครื่องสำอางฤดูใบไม้ผลิ", "summary": "ป๊อปอัพสโตร์แบรนด์เครื่องสำอางยอดนิยม" },
-            "ev17": { "title": "ตลาดไลฟ์สไตล์รักษ์โลก", "summary": "ตลาดพิเศษสำหรับวิถีชีวิตที่ยั่งยืน" },
-            "ev18": { "title": "การแข่งขันศิลปะเด็ก", "summary": "การแข่งขันและนิทรรศการสำหรับอายุ 5-13 ปี" },
-            "ev19": { "title": "งานแสดงสินค้าไอที", "summary": "ทดลองใช้งานและราคาพิเศษอุปกรณ์ไอทีล่าสุด" },
-            "ev20": { "title": "คลาสโยคะเพื่อสุขภาพ", "summary": "โยคะเพื่อการผ่อนคลายกับครูผู้เชี่ยวชาญ" }
-        },
-        "shorts": {
-            "title": "ไลฟ์ชอร์ต"
-        },
-        "brand": {
-            "title": "แบรนด์สปอตไลท์"
-        },
-        "common": {
-            "view_all": "ดูทั้งหมด",
-            "view_details": "ดูรายละเอียด",
-            "date": "วันที่",
-            "location": "สถานที่",
-            "price": "ราคา",
-            "loading": "กำลังโหลด...",
-            "error": "เกิดข้อผิดพลาด",
-            "no_content": "ไม่มีเนื้อหา",
-            "back_home": "กลับหน้าแรก",
-            "back": "กลับ",
-            "booking": "การจอง",
-            "share": "แชร์",
-            "duration": "ระยะเวลา",
-            "duration_value": "ประมาณ 90 นาที",
-            "detail_intro": "รายละเอียดแนะนำ",
-            "download": "ดาวน์โหลด",
-            "register_product": "ลงทะเบียนสินค้า",
-            "guest": "ผู้เยี่ยมชม",
-            "share_modal": {
-                "title": "แชร์",
-                "copy_link": "คัดลอกลิงก์",
-                "copied": "คัดลอกลิงก์แล้ว",
-                "sns": {
-                    "kakao": "KakaoTalk",
-                    "facebook": "Facebook",
-                    "twitter": "Twitter",
-                    "more": "เพิ่มเติม"
+            "category": {
+                "trend": {
+                    "title": "เทรนด์ / ป๊อปอัป",
+                    "description": "เทรนด์ K-Culture ที่เร็วที่สุดและร้อนแรงที่สุด"
+                },
+                "tickets": {
+                    "title": "การแสดง / นิทรรศการ",
+                    "description": "เวทีแห่งความประทับใจและตื่นเต้น เวลาแห่งการพบปะศิลปะ"
+                },
+                "art": {
+                    "title": "กิจกรรม / สไตล์",
+                    "description": "ความกลมกลืนของกิจกรรมและสไตล์"
+                },
+                "style": {
+                    "title": "รูปภาพ / วิดีโอ",
+                    "description": "ทัศนศิลป์และสื่อเชิงสร้างสรรค์"
+                },
+                "travel": {
+                    "title": "ท้องถิ่น / ท่องเที่ยว",
+                    "description": "ค้นหาความงามที่ซ่อนอยู่ในทุกมุมของเกาหลี"
+                },
+                "community": {
+                    "title": "ชุมชน",
+                    "description": "พื้นที่แบ่งปันความชอบและสนุกด้วยกัน"
                 }
             },
-            "close": "ปิด"
-        },
-        "search": {
-            "placeholder": "กรอกคำค้นหา...",
-            "no_results": "ไม่พบผลลัพธ์การค้นหา",
-            "results_for": "ผลลัพธ์การค้นหาสำหรับ '{{query}}'",
-            "close": "ปิด"
-        },
-        "admin": {
-            "sidebar": {
-                "title": "ระบบแอดมิน",
-                "products": "จัดการสินค้า",
-                "users": "จัดการสมาชิก",
-                "bookings": "ประวัติโปรแกรม",
-                "logout": "ออกจากระบบ"
+            "hero": {
+                "title": "สัมผัสความงามของเกาหลีด้วยความรู้สึกที่ทันสมัย",
+                "subtitle": "พื้นที่วัฒนธรรมที่ผสมผสานความดั้งเดิมและความทันสมัย, department",
+                "cta": "ดูแผนผังชั้น",
+                "promotion_title": "มุมมองทางวัฒนธรรม จุดเริ่มต้นของการแลกเปลี่ยน",
+                "promotion_subtitle": "เราแบ่งปันแก่นแท้ของวัฒนธรรมเกาหลีที่ดั้งเดิมและสมัยใหม่ผสานกันสู่สายตาโลก",
+                "promotion_cta": "เจาะลึกการแลกเปลี่ยนวัฒนธรรม"
             },
-            "product": {
-                "title": "จัดการสินค้า",
-                "add": "เพิ่มสินค้า",
-                "edit": "แก้ไขสินค้า",
-                "delete_confirm": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?",
-                "search_placeholder": "ค้นหาจากชื่อสินค้า...",
-                "table": {
-                    "image": "รูปภาพ",
-                    "title": "ชื่อสินค้า",
-                    "category": "หมวดหมู่",
-                    "price": "ราคา",
-                    "actions": "จัดการ"
+            "featured": {
+                "title": "แนะนำ & กิจกรรม",
+                "subtitle": "ประสบการณ์สุดพิเศษที่ Culture Dept.",
+                "no_content": "ยังไม่มีเนื้อหาที่ลงทะเบียน",
+                "event_ongoing": "อีเวนต์ที่กำลังจัดอยู่",
+                "event_upcoming": "อีเวนต์ที่กำลังจะมา",
+                "event_archived": "อีเวนต์ที่สิ้นสุดแล้ว",
+                "event_ongoing_desc": "อีเวนต์พิเศษที่กำลังดำเนินอยู่",
+                "event_upcoming_desc": "อีเวนต์พิเศษที่กำลังจะมา",
+                "event_archived_desc": "อีเวนต์นี้สิ้นสุดแล้ว",
+                "monthly_recommendations": "แนะนำประจำเดือน",
+                "ongoing": "กำลังจัด",
+                "upcoming": "เร็วๆ นี้",
+                "archived": "สิ้นสุด",
+                "image_pending": "รอการอัปโหลดภาพ",
+                "no_events": "ไม่มีอีเวนต์",
+                "no_events_desc": "วันนี้ไม่มีอีเวนต์ที่กำหนดไว้",
+                "back_to_recommendations": "ดูแนะนำทั้งหมด",
+                "view_all": "ดูทั้งหมด"
+            },
+            "about": {
+                "title": "มุมมองวัฒนธรรม ศูนย์กลางการแลกเปลี่ยน",
+                "subtitle": "สะพานที่เชื่อมต่อประเพณี สมัยใหม่ และคุณ",
+                "description1": "department คือฐานที่มั่นของการส่งเสริมวัฒนธรรมและการแลกเปลี่ยนที่ค้นพบแก่นแท้ของวัฒนธรรมเกาหลีและแบ่งปันกับโลก",
+                "description2": "เหนือกว่าการส่งเสริมธรรมดา ค้นพบคุณค่าใหม่ของวัฒนธรรมผ่านนิทรรศการและประสบการณ์เชิงลึก และทำให้คุณค่าของการแลกเปลี่ยนเป็นจริง",
+                "cta": "ดูวิสัยทัศน์วัฒนธรรม"
+            },
+            "auth": {
+                "login": "เข้าสู่ระบบ",
+                "register": "สมัครสมาชิก",
+                "email": "อีเมล",
+                "password": "รหัสผ่าน",
+                "name": "ชื่อ",
+                "logout": "ออกจากระบบ",
+                "welcome": "ยินดีต้อนรับ",
+                "login_title": "เข้าสู่ระบบ",
+                "register_title": "สมัครสมาชิก",
+                "no_account": "ยังไม่มีบัญชีใช่ไหม?",
+                "have_account": "มีบัญชีอยู่แล้วใช่ไหม?",
+                "signup": "ลงทะเบียน",
+                "submit": "ยืนยัน",
+                "loading": "กำลังดำเนินการ...",
+                "error_generic": "เกิดข้อผิดพลาด",
+                "forgot_password": "ลืมรหัสผ่าน",
+                "find_id": "ค้นหาอีเมล",
+                "reset_password_sent": "อีเมลรีเซ็ตรหัสผ่านถูกส่งแล้ว",
+                "find_email_success": "อีเมลของคุณคือ {{email}}",
+                "find_email_not_found": "ไม่พบบัญชีที่ลงทะเบียนด้วยข้อมูลนี้",
+                "social_login": "เข้าสู่ระบบด้วยโซเชียล",
+                "google_login": "ดำเนินการต่อด้วย Google",
+                "signup_success_check_email": "สมัครสมาชิกสำเร็จ! โปรดตรวจสอบอีเมลเพื่อยืนยันบัญชีของคุณ",
+                "rate_limit_exceeded": "ส่งคำขอมากเกินไป โปรดลองอีกครั้งในภายหลัง"
+            },
+            "footer": {
+                "address": "123 โซกงโร, จุงกู, โซล",
+                "copyright": "© 2026 Culture Dept. Store. All rights reserved.",
+                "privacy": "นโยบายความเป็นส่วนตัว",
+                "terms": "ข้อตกลงและเงื่อนไข",
+                "shop": "SHOP",
+                "support": "สนับสนุน",
+                "contact": "ติดต่อ",
+                "description": "แพลตฟอร์มวัฒนธรรมระดับพรีเมียมที่นำเสนอความงามของศิลปะและวัฒนธรรมเกาหลีสู่สายตาโลก",
+                "notice": "ประกาศ",
+                "faq": "คำถามที่พบบ่อย",
+                "inquiry": "สอบถามแบบ 1:1",
+                "weekdays": "วันธรรมดา 10:00 - 18:00 (หยุดเสาร์-อาทิตย์และวันหยุดนักขัตฤกษ์)"
+            },
+            "artist": {
+                "title": "ศิลปินแห่งปี 10 คน"
+            },
+            "calendar": {
+                "title": "ปฏิทินวัฒนธรรมประจำเดือน",
+                "event_desc": "อย่าพลาดกิจกรรมวัฒนธรรมพิเศษในวันที่เลือก",
+                "hover_hint": "เลือกวันที่เพื่อดู",
+                "ended": "สิ้นสุดแล้ว",
+                "ongoing": "กำลังดำเนินการ",
+                "upcoming": "กำลังจะมาถึง",
+                "tab_ended": "กิจกรรมที่สิ้นสุดแล้ว",
+                "tab_ongoing": "กิจกรรมที่กำลังดำเนินการ",
+                "tab_upcoming": "กิจกรรมที่กำลังจะมาถึง",
+                "no_events": "ไม่มีกิจกรรมที่เกี่ยวข้อง",
+                "close": "ปิด",
+                "show_all": "ดูทั้งหมด",
+                "show_less": "แสดงน้อยลง ↑",
+                "count_suffix": "รายการ",
+                "prev_month": "เดือนก่อนหน้า",
+                "next_month": "เดือนถัดไป"
+            },
+            "events": {
+                "ev01": { "title": "ลดราคาพิเศษต้อนรับปีใหม่", "summary": "ลดสูงสุด 50% ทั่วทั้งอาคารเพื่อฉลองปีใหม่" },
+                "ev02": { "title": "สัปดาห์แฟชั่นฤดูหนาว", "summary": "พรีวิวคอลเล็กชั่น 2026 S/S และแฟชั่นโชว์" },
+                "ev03": { "title": "เทศกาลช็อกโกแลตวาเลนไทน์", "summary": "พบช็อกโกแลตพรีเมียมจากทั่วโลก" },
+                "ev04": { "title": "ประสบการณ์วัฒนธรรมตรุษจีน", "summary": "สวมชุดประจำชาติ เกมพื้นบ้าน บูธอาหาร" },
+                "ev05": { "title": "คลาสเสริมสวย ซีซั่น 1", "summary": "คลาสเสริมสวยกับช่างแต่งหน้ามืออาชีพ" },
+                "ev06": { "title": "เทศกาลของตกแต่งบ้านฤดูใบไม้ผลิ", "summary": "ลดราคาสินค้าตกแต่งบ้านถึงเครื่องครัว" },
+                "ev07": { "title": "นิทรรศการ K-คัลเจอร์ระดับโลก", "summary": "นิทรรศการพิเศษเกี่ยวกับวัฒนธรรมเกาหลี" },
+                "ev08": { "title": "บูธแลกเปลี่ยนวัฒนธรรม", "summary": "บูธสัมผัสวัฒนธรรมจากหลายประเทศ" },
+                "ev09": { "title": "ชิมไวน์พรีเมียม", "summary": "ชิมไวน์ระดับโลกที่คัดสรรโดยซอมเมลิเยร์" },
+                "ev10": { "title": "นิทรรศการศิลปะพิเศษ", "summary": "ผลงานศิลปะร่วมสมัยจากศิลปินรุ่นใหม่ 15 คน" },
+                "ev11": { "title": "ตลาดดอกไม้ฤดูใบไม้ผลิ", "summary": "ตลาดพิเศษกับดอกไม้สดใส" },
+                "ev12": { "title": "เทศกาลเด็ก", "summary": "โปรแกรมประสบการณ์พิเศษสำหรับเด็กๆ" },
+                "ev13": { "title": "คลาสทำอาหารฤดูใบไม้ผลิ", "summary": "เรียนสูตรอาหารฤดูใบไม้ผลิจากเชฟชื่อดัง" },
+                "ev14": { "title": "โชว์เครื่องประดับหรูหรา", "summary": "โชว์เคสสินค้าใหม่จากแบรนด์เครื่องประดับระดับโลก" },
+                "ev15": { "title": "นิทรรศการศิลปะดิจิทัล", "summary": "การติดตั้งศิลปะดิจิทัลแบบดื่มด่ำ" },
+                "ev16": { "title": "ป๊อปอัพเครื่องสำอางฤดูใบไม้ผลิ", "summary": "ป๊อปอัพสโตร์แบรนด์เครื่องสำอางยอดนิยม" },
+                "ev17": { "title": "ตลาดไลฟ์สไตล์รักษ์โลก", "summary": "ตลาดพิเศษสำหรับวิถีชีวิตที่ยั่งยืน" },
+                "ev18": { "title": "การแข่งขันศิลปะเด็ก", "summary": "การแข่งขันและนิทรรศการสำหรับอายุ 5-13 ปี" },
+                "ev19": { "title": "งานแสดงสินค้าไอที", "summary": "ทดลองใช้งานและราคาพิเศษอุปกรณ์ไอทีล่าสุด" },
+                "ev20": { "title": "คลาสโยคะเพื่อสุขภาพ", "summary": "โยคะเพื่อการผ่อนคลายกับครูผู้เชี่ยวชาญ" }
+            },
+            "shorts": {
+                "title": "ไลฟ์ชอร์ต"
+            },
+            "brand": {
+                "title": "แบรนด์สปอตไลท์"
+            },
+            "common": {
+                "view_all": "ดูทั้งหมด",
+                "view_details": "ดูรายละเอียด",
+                "date": "วันที่",
+                "location": "สถานที่",
+                "price": "ราคา",
+                "loading": "กำลังโหลด...",
+                "error": "เกิดข้อผิดพลาด",
+                "no_content": "ไม่มีเนื้อหา",
+                "back_home": "กลับหน้าแรก",
+                "back": "กลับ",
+                "booking": "การจอง",
+                "share": "แชร์",
+                "duration": "ระยะเวลา",
+                "duration_value": "ประมาณ 90 นาที",
+                "detail_intro": "รายละเอียดแนะนำ",
+                "download": "ดาวน์โหลด",
+                "register_product": "ลงทะเบียนสินค้า",
+                "guest": "ผู้เยี่ยมชม",
+                "share_modal": {
+                    "title": "แชร์",
+                    "copy_link": "คัดลอกลิงก์",
+                    "copied": "คัดลอกลิงก์แล้ว",
+                    "sns": {
+                        "kakao": "KakaoTalk",
+                        "facebook": "Facebook",
+                        "twitter": "Twitter",
+                        "more": "เพิ่มเติม"
+                    }
                 },
-                "form": {
-                    "basic_info": "ข้อมูลพื้นฐาน",
-                    "content_details": "รายละเอียด",
-                    "image_label": "รูปภาพสินค้า",
-                    "video_label": "URL ของวิดีโอ YouTube (ตัวเลือก)",
-                    "main_category": "หมวดหมู่หลัก (ชั้น)",
-                    "sub_category": "หมวดหมู่ย่อย",
-                    "manage_closed": "จัดการวันหยุดพักผ่อน",
-                    "closed_description": "คลิกที่วันในปฏิทินเพื่อตั้งเป็นวันหยุด (สีแดง: วันหยุด)",
-                    "selected_closed": "วันหยุดที่เลือก",
-                    "no_closed": "ไม่มีวันหยุดที่เลือก",
-                    "save": "บันทึก",
-                    "saving": "กำลังบันทึก...",
-                    "upload_image": "อัปโหลดภาพ",
-                    "uploading": "กำลังอัปโหลด...",
-                    "replace_image": "เปลี่ยนภาพ",
-                    "closed_day": "วันหยุด",
-                    "open_day": "เปิดบริการ"
+                "close": "ปิด"
+            },
+            "search": {
+                "placeholder": "กรอกคำค้นหา...",
+                "no_results": "ไม่พบผลลัพธ์การค้นหา",
+                "results_for": "ผลลัพธ์การค้นหาสำหรับ '{{query}}'",
+                "close": "ปิด"
+            },
+            "admin": {
+                "sidebar": {
+                    "title": "ระบบแอดมิน",
+                    "products": "จัดการสินค้า",
+                    "users": "จัดการสมาชิก",
+                    "bookings": "ประวัติโปรแกรม",
+                    "logout": "ออกจากระบบ"
+                },
+                "product": {
+                    "title": "จัดการสินค้า",
+                    "add": "เพิ่มสินค้า",
+                    "edit": "แก้ไขสินค้า",
+                    "delete_confirm": "คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?",
+                    "search_placeholder": "ค้นหาจากชื่อสินค้า...",
+                    "table": {
+                        "image": "รูปภาพ",
+                        "title": "ชื่อสินค้า",
+                        "category": "หมวดหมู่",
+                        "price": "ราคา",
+                        "actions": "จัดการ"
+                    },
+                    "form": {
+                        "basic_info": "ข้อมูลพื้นฐาน",
+                        "content_details": "รายละเอียด",
+                        "image_label": "รูปภาพสินค้า",
+                        "video_label": "URL ของวิดีโอ YouTube (ตัวเลือก)",
+                        "main_category": "หมวดหมู่หลัก (ชั้น)",
+                        "sub_category": "หมวดหมู่ย่อย",
+                        "manage_closed": "จัดการวันหยุดพักผ่อน",
+                        "closed_description": "คลิกที่วันในปฏิทินเพื่อตั้งเป็นวันหยุด (สีแดง: วันหยุด)",
+                        "selected_closed": "วันหยุดที่เลือก",
+                        "no_closed": "ไม่มีวันหยุดที่เลือก",
+                        "save": "บันทึก",
+                        "saving": "กำลังบันทึก...",
+                        "upload_image": "อัปโหลดภาพ",
+                        "uploading": "กำลังอัปโหลด...",
+                        "replace_image": "เปลี่ยนภาพ",
+                        "closed_day": "วันหยุด",
+                        "open_day": "เปิดบริการ"
+                    }
+                },
+                "user": {
+                    "title": "จัดการสมาชิก",
+                    "subtitle": "จัดการสมาชิกทั้งหมดและสิทธิ์",
+                    "search_placeholder": "ค้นหาชื่อหรืออีเมล",
+                    "table": {
+                        "user": "ผู้ใช้",
+                        "email": "อีเมล",
+                        "role": "สิทธิ์",
+                        "actions": "จัดการ"
+                    },
+                    "promote": "เลื่อนขั้น",
+                    "demote": "ลดขั้น",
+                    "delete": "ลบ",
+                    "no_users": "ไม่พบสมาชิกที่ค้นหา"
+                },
+                "booking": {
+                    "title": "จัดการประวัติโปรแกรม",
+                    "filter": {
+                        "status": "สถานะ",
+                        "payment": "ประเภท",
+                        "search": "ค้นหา",
+                        "from": "วันที่เริ่ม",
+                        "to": "วันที่สิ้นสุด",
+                        "all_status": "สถานะทั้งหมด",
+                        "all_methods": "ประเภททั้งหมด"
+                    },
+                    "table": {
+                        "date": "วันที่",
+                        "user": "ผู้ใช้",
+                        "product": "โปรแกรม / หมวดหมู่",
+                        "payment": "ประเภท",
+                        "amount": "จำนวน",
+                        "settlement": "สรุปข้อมูล",
+                        "status": "สถานะ",
+                        "actions": "จัดการ"
+                    },
+                    "settle": "ยืนยัน",
+                    "settle_confirm": "คุณต้องการยืนยันประวัตินี้หรือไม่?",
+                    "settle_error": "การจัดการล้มเหลว",
+                    "settled": "ยืนยันเสร็จสิ้น",
+                    "pending_settle": "รอดำเนินการ",
+                    "delete_confirm": "คุณต้องการลบประวัตินี้หรือไม่?"
                 }
-            },
-            "user": {
-                "title": "จัดการสมาชิก",
-                "subtitle": "จัดการสมาชิกทั้งหมดและสิทธิ์",
-                "search_placeholder": "ค้นหาชื่อหรืออีเมล",
-                "table": {
-                    "user": "ผู้ใช้",
-                    "email": "อีเมล",
-                    "role": "สิทธิ์",
-                    "actions": "จัดการ"
-                },
-                "promote": "เลื่อนขั้น",
-                "demote": "ลดขั้น",
-                "delete": "ลบ",
-                "no_users": "ไม่พบสมาชิกที่ค้นหา"
-            },
-            "booking": {
-                "title": "จัดการประวัติโปรแกรม",
-                "filter": {
-                    "status": "สถานะ",
-                    "payment": "ประเภท",
-                    "search": "ค้นหา",
-                    "from": "วันที่เริ่ม",
-                    "to": "วันที่สิ้นสุด",
-                    "all_status": "สถานะทั้งหมด",
-                    "all_methods": "ประเภททั้งหมด"
-                },
-                "table": {
-                    "date": "วันที่",
-                    "user": "ผู้ใช้",
-                    "product": "โปรแกรม / หมวดหมู่",
-                    "payment": "ประเภท",
-                    "amount": "จำนวน",
-                    "settlement": "สรุปข้อมูล",
-                    "status": "สถานะ",
-                    "actions": "จัดการ"
-                },
-                "settle": "ยืนยัน",
-                "settle_confirm": "คุณต้องการยืนยันประวัตินี้หรือไม่?",
-                "settle_error": "การจัดการล้มเหลว",
-                "settled": "ยืนยันเสร็จสิ้น",
-                "pending_settle": "รอดำเนินการ",
-                "delete_confirm": "คุณต้องการลบประวัตินี้หรือไม่?"
             }
         }
-    }
-},
+    },
 };
 
 i18n
