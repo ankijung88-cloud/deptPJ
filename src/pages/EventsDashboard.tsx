@@ -52,28 +52,21 @@ const EventsDashboard: React.FC = () => {
   // 기본: 오늘 기준 상태 (달력 도트 표시용)
   const eventsWithStatus = useMemo(() => withStatus(MOCK_EVENTS, now), [now]);
 
-  // 선택 날짜 기준으로 상태 재계산 — 선택 날짜가 없으면 오늘 기준
-  const referenceDate = useMemo(() => {
-    if (selectedDate) return new Date(selectedDate + 'T00:00:00');
-    return now;
-  }, [selectedDate, now]);
-
-  const eventsForDisplay = useMemo(() => withStatus(MOCK_EVENTS, referenceDate), [referenceDate]);
+  // 날짜 선택 유무에 따른 1차 필터
+  const dateFilteredEvents = useMemo(() => {
+    if (!selectedDate) return eventsWithStatus;
+    return eventsWithStatus.filter(ev => isOverlappingDate(ev.startAt, ev.endAt, selectedDate));
+  }, [eventsWithStatus, selectedDate]);
 
   const counts = useMemo(() => {
     const c: Record<EventStatus, number> = { ENDED: 0, ONGOING: 0, UPCOMING: 0 };
-    for (const ev of eventsForDisplay) c[ev.status]++;
+    for (const ev of dateFilteredEvents) c[ev.status]++;
     return c;
-  }, [eventsForDisplay]);
+  }, [dateFilteredEvents]);
 
   // 이벤트 필터: 날짜 선택 시 해당 날짜와 겹치는 이벤트만 + 탭 필터
   const filteredEvents = useMemo(() => {
-    let pool = eventsForDisplay;
-
-    // 날짜 선택 시 해당 날짜에 겹치는 이벤트만
-    if (selectedDate) {
-      pool = pool.filter(ev => isOverlappingDate(ev.startAt, ev.endAt, selectedDate));
-    }
+    let pool = [...dateFilteredEvents];
 
     // 탭 필터
     if (activeTab) {
@@ -85,17 +78,15 @@ const EventsDashboard: React.FC = () => {
     }
 
     return interleaveByStatus(pool);
-  }, [eventsForDisplay, activeTab, selectedDate]);
+  }, [dateFilteredEvents, activeTab]);
 
   // 날짜 클릭: 해당 날짜 기준 상태 재계산 + 탭 자동 전환
   const handleSelectDate = useCallback((dateKey: string | null) => {
     if (dateKey && dateKey !== selectedDate) {
       setSelectedDate(dateKey);
 
-      // 선택 날짜 기준으로 겹치는 이벤트의 상태 확인
-      const refDate = new Date(dateKey + 'T00:00:00');
-      const recalculated = withStatus(MOCK_EVENTS, refDate);
-      const overlapping = recalculated.filter(ev =>
+      // 선택 날짜 기준으로 겹치는 이벤트의 상태 확인 (항상 오늘 기준 상태 유지)
+      const overlapping = eventsWithStatus.filter(ev =>
         isOverlappingDate(ev.startAt, ev.endAt, dateKey)
       );
       const statuses = new Set(overlapping.map(ev => ev.status));
@@ -108,7 +99,7 @@ const EventsDashboard: React.FC = () => {
       setSelectedDate(null);
       setActiveTab(null);
     }
-  }, [selectedDate]);
+  }, [selectedDate, eventsWithStatus]);
 
   return (
     <>
