@@ -92,7 +92,7 @@ export const FeaturedSection: React.FC = () => {
             
             if (pseudoRandom < 70) {
                 const startDay = baseDay;
-                const duration = (pseudoRandom % 4) + 2;
+                const duration = (pseudoRandom % 16) + 20; // 20~35일 (약 한 달)
                 
                 const startDateObj = new Date(targetYear, targetMonth, startDay);
                 const endDateObj = new Date(targetYear, targetMonth, startDay + duration); 
@@ -395,83 +395,175 @@ export const FeaturedSection: React.FC = () => {
                 {/* 2. 우측: 이벤트 카테고리 탭 + 카드 리스트 */}
                 <div className="lg:col-span-7 min-h-0 relative rounded-[2rem] overflow-hidden shadow-2xl flex flex-col bg-black/30 border border-white/5">
                     <div className="flex flex-col h-full">
-                        {/* 카테고리 탭 */}
-                        <div className="px-5 pt-5 pb-3 shrink-0 border-b border-white/10">
-                            <div className="flex items-center justify-around w-full">
-                                {[
-                                    { key: 'ARCHIVE' as const, label: t('featured.event_archived', '종료된 이벤트'), count: archivedProducts.length },
-                                    { key: 'ONGOING' as const, label: t('featured.event_ongoing', '진행 중인 이벤트'), count: ongoingProducts.length },
-                                    { key: 'UPCOMING' as const, label: t('featured.event_upcoming', '진행 예정 이벤트'), count: upcomingProducts.length },
-                                ].map((tab) => (
+
+                        {/* 날짜 선택 시: 해당 날짜에 포함된 이벤트 표시 */}
+                        {selectedDate !== null ? (
+                            <>
+                                {/* 선택된 날짜 헤더 */}
+                                <div className="px-5 pt-5 pb-3 shrink-0 border-b border-white/10 flex items-center justify-between">
+                                    <h4 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                                        <CalendarIcon size={16} className="text-dancheong-red" />
+                                        {currentYear}.{(currentMonth + 1).toString().padStart(2, '0')}.{selectedDate.toString().padStart(2, '0')}
+                                        <span className="text-white/40 font-normal ml-1">
+                                            ({getEventsForDay(selectedDate).length}{t('featured.events_count', '건')})
+                                        </span>
+                                    </h4>
                                     <button
-                                        key={tab.key}
-                                        onClick={() => { setEventCategory(tab.key); setShowAll(false); }}
-                                        className={`text-sm font-bold pb-2 border-b-2 transition-all ${
-                                            eventCategory === tab.key
-                                                ? 'text-white border-white'
-                                                : 'text-white/35 border-transparent hover:text-white/60'
-                                        }`}
+                                        onClick={() => setSelectedDate(null)}
+                                        className="text-xs text-white/50 hover:text-white border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition-all"
                                     >
-                                        {tab.label} ({tab.count})
+                                        {t('common.close', '닫기')}
                                     </button>
-                                ))}
-                            </div>
-                        </div>
+                                </div>
 
-                        {/* 이벤트 카드 리스트 */}
-                        <div className="flex-1 overflow-y-auto px-5 pb-3 space-y-2 custom-scrollbar min-h-0 pt-3">
-                            {(() => {
-                                const categoryMap = { ONGOING: ongoingProducts, UPCOMING: upcomingProducts, ARCHIVE: archivedProducts };
-                                const items = categoryMap[eventCategory];
-                                const displayItems = showAll ? items : items.slice(0, 5);
-                                const isArchive = eventCategory === 'ARCHIVE';
+                                {/* 해당 날짜 이벤트 리스트 */}
+                                <div className="flex-1 overflow-y-auto px-5 pb-3 space-y-2 custom-scrollbar min-h-0 pt-3">
+                                    {(() => {
+                                        const dayEvents = getEventsForDay(selectedDate);
+                                        const selectedDateStr = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${selectedDate.toString().padStart(2, '0')}`;
 
-                                if (items.length === 0) {
-                                    return (
-                                        <div className="flex flex-col items-center justify-center py-16 text-white/30">
-                                            <CalendarIcon size={40} strokeWidth={1} className="mb-3" />
-                                            <p className="text-sm">{t('featured.no_events', '이벤트 없음')}</p>
-                                        </div>
-                                    );
-                                }
+                                        if (dayEvents.length === 0) {
+                                            return (
+                                                <div className="flex flex-col items-center justify-center py-16 text-white/30">
+                                                    <CalendarIcon size={40} strokeWidth={1} className="mb-3" />
+                                                    <p className="text-sm">{t('featured.no_events_on_date', '해당 날짜에 이벤트가 없습니다.')}</p>
+                                                </div>
+                                            );
+                                        }
 
-                                return displayItems.map((item, idx) => (
-                                    <Link
-                                        key={`${eventCategory}-${item.id}-${idx}`}
-                                        to={`/detail/${item.id}`}
-                                        className="flex gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-all group"
-                                    >
-                                        <div className={`w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-[#1a1a1a] ${isArchive ? 'opacity-60' : ''}`}>
-                                            <img
-                                                src={(item.imageUrl && (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('/'))) ? item.imageUrl : fallbackImages[idx % fallbackImages.length]}
-                                                alt=""
-                                                className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isArchive ? 'grayscale' : ''}`}
-                                                onError={(e) => { (e.target as HTMLImageElement).src = fallbackImages[idx % fallbackImages.length]; }}
-                                            />
-                                        </div>
-                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            <h5 className={`text-sm md:text-base font-bold line-clamp-1 break-words group-hover:text-dancheong-red transition-colors ${isArchive ? 'text-white/60' : 'text-white'}`}>
-                                                {typeof item.title === 'string' ? item.title : getLocalizedText(item.title, i18n.language)}
-                                            </h5>
-                                            <p className="text-xs text-white/50 line-clamp-1 mt-1 break-words">
-                                                {typeof item.description === 'string' ? item.description : getLocalizedText(item.description, i18n.language)}
-                                            </p>
-                                            {item.date && (
-                                                <span className={`text-[10px] mt-1 ${isArchive ? 'text-white/30' : 'text-white/40'}`}>📅 {typeof item.date === 'string' ? item.date : getLocalizedText(item.date, i18n.language)}</span>
-                                            )}
-                                        </div>
-                                        <div className="shrink-0 flex items-center">
-                                            <ArrowUpRight size={16} className="text-white/30 group-hover:text-white transition-colors" />
-                                        </div>
-                                    </Link>
-                                ));
-                            })()}
-                        </div>
+                                        return dayEvents.map((ev, idx) => {
+                                            const safeDate = ev.date || '';
+                                            const safeEndDate = ev.endDate || ev.date || '';
+                                            const todayStr = new Date().toLocaleDateString('en-CA');
+                                            const isOngoing = safeDate <= selectedDateStr && safeEndDate >= selectedDateStr;
+                                            const isArchived = safeEndDate < todayStr;
+                                            const statusLabel = isArchived ? t('featured.archived', '종료') : isOngoing ? t('featured.ongoing', '진행 중') : t('featured.upcoming', '예정');
+                                            const statusColor = isArchived ? 'bg-red-500/80' : isOngoing ? 'bg-blue-500/80' : 'bg-green-500/80';
+
+                                            // 날짜 문자열 포맷
+                                            const formatDate = (d: string) => d.replace(/-/g, '.');
+                                            const dateDisplay = safeEndDate && safeEndDate !== safeDate
+                                                ? `${formatDate(safeDate)} - ${formatDate(safeEndDate)}`
+                                                : formatDate(safeDate);
+
+                                            const imgSrc = (ev.imageUrl && (ev.imageUrl.startsWith('http') || ev.imageUrl.startsWith('/'))) ? ev.imageUrl : fallbackImages[idx % fallbackImages.length];
+
+                                            return (
+                                                <Link
+                                                    key={`date-${ev.id}-${idx}`}
+                                                    to={`/detail/${ev.id}`}
+                                                    className="flex gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-all group"
+                                                >
+                                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-[#1a1a1a]">
+                                                        <img
+                                                            src={imgSrc}
+                                                            alt=""
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                            onError={(e) => { (e.target as HTMLImageElement).src = fallbackImages[idx % fallbackImages.length]; }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold text-white w-fit mb-1.5 ${statusColor}`}>
+                                                            {statusLabel}
+                                                        </span>
+                                                        <h5 className="text-sm md:text-base font-bold text-white line-clamp-1 break-words group-hover:text-dancheong-red transition-colors">
+                                                            {typeof ev.title === 'string' ? ev.title : getLocalizedText(ev.title as any, i18n.language)}
+                                                        </h5>
+                                                        <p className="text-xs text-white/50 line-clamp-1 mt-1 break-words">
+                                                            {ev.description ? (typeof ev.description === 'string' ? ev.description : getLocalizedText(ev.description as any, i18n.language)) : t('featured.event_ongoing_desc', '현재 진행 중인 특별한 이벤트입니다.')}
+                                                        </p>
+                                                        <span className="text-[10px] text-white/40 mt-1">📅 {dateDisplay}</span>
+                                                    </div>
+                                                    <div className="shrink-0 flex items-center">
+                                                        <ArrowUpRight size={16} className="text-white/30 group-hover:text-white transition-colors" />
+                                                    </div>
+                                                </Link>
+                                            );
+                                        });
+                                    })()}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                {/* 기본 뷰: 카테고리 탭 */}
+                                <div className="px-5 pt-5 pb-3 shrink-0 border-b border-white/10">
+                                    <div className="flex items-center justify-around w-full">
+                                        {[
+                                            { key: 'ARCHIVE' as const, label: t('featured.event_archived', '종료된 이벤트'), count: archivedProducts.length },
+                                            { key: 'ONGOING' as const, label: t('featured.event_ongoing', '진행 중인 이벤트'), count: ongoingProducts.length },
+                                            { key: 'UPCOMING' as const, label: t('featured.event_upcoming', '진행 예정 이벤트'), count: upcomingProducts.length },
+                                        ].map((tab) => (
+                                            <button
+                                                key={tab.key}
+                                                onClick={() => { setEventCategory(tab.key); }}
+                                                className={`text-sm font-bold pb-2 border-b-2 transition-all ${
+                                                    eventCategory === tab.key
+                                                        ? 'text-white border-white'
+                                                        : 'text-white/35 border-transparent hover:text-white/60'
+                                                }`}
+                                            >
+                                                {tab.label} ({tab.count})
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 이벤트 카드 리스트 */}
+                                <div className="flex-1 overflow-y-auto px-5 pb-3 space-y-2 custom-scrollbar min-h-0 pt-3">
+                                    {(() => {
+                                        const categoryMap = { ONGOING: ongoingProducts, UPCOMING: upcomingProducts, ARCHIVE: archivedProducts };
+                                        const items = categoryMap[eventCategory];
+                                        const displayItems = items.slice(0, 5);
+                                        const isArchive = eventCategory === 'ARCHIVE';
+
+                                        if (items.length === 0) {
+                                            return (
+                                                <div className="flex flex-col items-center justify-center py-16 text-white/30">
+                                                    <CalendarIcon size={40} strokeWidth={1} className="mb-3" />
+                                                    <p className="text-sm">{t('featured.no_events', '이벤트 없음')}</p>
+                                                </div>
+                                            );
+                                        }
+
+                                        return displayItems.map((item, idx) => (
+                                            <Link
+                                                key={`${eventCategory}-${item.id}-${idx}`}
+                                                to={`/detail/${item.id}`}
+                                                className="flex gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-all group"
+                                            >
+                                                <div className={`w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-[#1a1a1a] ${isArchive ? 'opacity-60' : ''}`}>
+                                                    <img
+                                                        src={(item.imageUrl && (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('/'))) ? item.imageUrl : fallbackImages[idx % fallbackImages.length]}
+                                                        alt=""
+                                                        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isArchive ? 'grayscale' : ''}`}
+                                                        onError={(e) => { (e.target as HTMLImageElement).src = fallbackImages[idx % fallbackImages.length]; }}
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                                    <h5 className={`text-sm md:text-base font-bold line-clamp-1 break-words group-hover:text-dancheong-red transition-colors ${isArchive ? 'text-white/60' : 'text-white'}`}>
+                                                        {typeof item.title === 'string' ? item.title : getLocalizedText(item.title, i18n.language)}
+                                                    </h5>
+                                                    <p className="text-xs text-white/50 line-clamp-1 mt-1 break-words">
+                                                        {typeof item.description === 'string' ? item.description : getLocalizedText(item.description, i18n.language)}
+                                                    </p>
+                                                    {item.date && (
+                                                        <span className={`text-[10px] mt-1 ${isArchive ? 'text-white/30' : 'text-white/40'}`}>📅 {typeof item.date === 'string' ? item.date : getLocalizedText(item.date, i18n.language)}</span>
+                                                    )}
+                                                </div>
+                                                <div className="shrink-0 flex items-center">
+                                                    <ArrowUpRight size={16} className="text-white/30 group-hover:text-white transition-colors" />
+                                                </div>
+                                            </Link>
+                                        ));
+                                    })()}
+                                </div>
+                            </>
+                        )}
 
                         {/* 전체 보기 버튼 */}
                         <div className="px-5 py-3 border-t border-white/10 shrink-0 flex justify-end">
                             <button
-                                onClick={() => setShowAll(true)}
+                                onClick={() => { setSelectedDate(null); setShowAll(true); }}
                                 className="text-sm text-white/60 hover:text-white py-1.5 px-4 rounded-lg hover:bg-white/5 transition-all tracking-wide"
                             >
                                 {t('common.view_all', '전체 보기')} →

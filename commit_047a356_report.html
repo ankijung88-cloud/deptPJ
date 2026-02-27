@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>커밋 변경 보고서 - 047a356</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a2e; background: #fff; padding: 40px 50px; line-height: 1.7; font-size: 13px; }
+  
+  .header { text-align: center; margin-bottom: 35px; padding-bottom: 20px; border-bottom: 3px solid #c4302b; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .header .subtitle { font-size: 13px; color: #666; }
+  .header .commit-id { display: inline-block; background: #f0f0f0; padding: 4px 14px; border-radius: 20px; font-family: monospace; font-size: 12px; color: #c4302b; font-weight: 700; margin-top: 8px; }
+
+  .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+  .meta-table td { padding: 8px 14px; border: 1px solid #e0e0e0; }
+  .meta-table td:first-child { background: #f8f8f8; font-weight: 700; width: 140px; color: #333; }
+
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 12px; padding-left: 12px; border-left: 4px solid #c4302b; }
+  .section-title .emoji { margin-right: 6px; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; }
+  table th { background: #2a2a3a; color: #fff; padding: 8px 12px; text-align: left; font-weight: 500; }
+  table td { padding: 8px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  table tr:hover td { background: #fafafa; }
+  table .file { font-family: monospace; font-size: 11px; color: #c4302b; font-weight: 500; }
+  table .reason { color: #444; }
+
+  .subsection { font-size: 13px; font-weight: 700; color: #2a2a3a; margin: 14px 0 8px 0; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; color: #fff; }
+  .badge-add { background: #22c55e; }
+  .badge-mod { background: #3b82f6; }
+  .badge-del { background: #ef4444; }
+
+  .stats { display: flex; gap: 20px; justify-content: center; margin: 20px 0; }
+  .stat-box { text-align: center; padding: 12px 24px; border-radius: 10px; min-width: 120px; }
+  .stat-box.files { background: #f0f4ff; border: 1px solid #d0d8f0; }
+  .stat-box.added { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .stat-box.deleted { background: #fef2f2; border: 1px solid #fecaca; }
+  .stat-box .num { font-size: 24px; font-weight: 700; }
+  .stat-box .label { font-size: 11px; color: #666; margin-top: 2px; }
+  .stat-box.files .num { color: #3b82f6; }
+  .stat-box.added .num { color: #22c55e; }
+  .stat-box.deleted .num { color: #ef4444; }
+
+  .footer { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #e0e0e0; font-size: 11px; color: #999; }
+
+  @media print {
+    body { padding: 20px 30px; }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>커밋 변경 보고서</h1>
+  <div class="subtitle">DEPT 프로젝트 — 이벤트 섹션 카테고리 탭 UI 재설계 및 전체보기 모달 추가</div>
+  <div class="commit-id">047a356</div>
+</div>
+
+<div class="stats">
+  <div class="stat-box files">
+    <div class="num">24</div>
+    <div class="label">파일 변경</div>
+  </div>
+  <div class="stat-box added">
+    <div class="num">+1,112</div>
+    <div class="label">줄 추가</div>
+  </div>
+  <div class="stat-box deleted">
+    <div class="num">-372</div>
+    <div class="label">줄 삭제</div>
+  </div>
+</div>
+
+<table class="meta-table">
+  <tr><td>브랜치</td><td>feature/dept-m</td></tr>
+  <tr><td>커밋 해시</td><td style="font-family:monospace;">047a356</td></tr>
+  <tr><td>날짜</td><td>2026-02-27</td></tr>
+  <tr><td>저장소</td><td>https://github.com/ankijung88-cloud/deptPJ.git</td></tr>
+</table>
+
+<!-- 1. 추가 파일 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">📁</span> 추가된 파일 (1개)</div>
+  <table>
+    <thead><tr><th>파일</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">public/images/global_culture_exchange.png <span class="badge badge-add">NEW</span></td>
+        <td class="reason">"글로벌 문화 교류 주간" 이벤트 이미지가 Supabase에서 유효하지 않아 AI로 직접 생성하여 적용</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 2. 핵심 변경 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">⭐</span> 핵심 변경 — FeaturedSection.tsx</div>
+  <table>
+    <thead><tr><th>변경 내용</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Swiper 단일 배너 → <strong>카테고리 탭 UI</strong></td>
+        <td class="reason">종료/진행중/예정 3개 카테고리로 이벤트를 분류하여 5개씩 카드 리스트로 표시</td>
+      </tr>
+      <tr>
+        <td><strong>전체보기 모달</strong> 추가</td>
+        <td class="reason">"전체 보기" 클릭 시 오버레이 모달에서 5개 이상의 이벤트를 스크롤 조회 가능</td>
+      </tr>
+      <tr>
+        <td><strong>달력 마커 범례</strong> 추가</td>
+        <td class="reason">🔴종료 🔵진행중 🟢예정 색상의 의미를 사용자에게 시각적으로 안내</td>
+      </tr>
+      <tr>
+        <td>이벤트 생성 범위 확대</td>
+        <td class="reason">이전/현재/다음 월에서 3일 간격으로 생성하여 각 카테고리에 5개 이상 데이터 확보</td>
+      </tr>
+      <tr>
+        <td><code>useMemo</code> 위치 수정</td>
+        <td class="reason">조건부 return 뒤에 배치되어 발생한 "Rendered more hooks" React 에러 해결</td>
+      </tr>
+      <tr>
+        <td>이미지 fallback 로직 강화</td>
+        <td class="reason"><code>onError</code> 핸들러 + <code>ensureImage</code> 함수로 깨진 이미지를 대체 이미지로 자동 교체</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3. Swiper 정리 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🧹</span> Swiper 관련 코드 정리</div>
+  <table>
+    <thead><tr><th>변경 내용</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>Swiper</code>, <code>SwiperSlide</code>, <code>AnimatePresence</code> import 제거</td>
+        <td class="reason">카테고리 탭 방식으로 전환하여 더 이상 불필요</td>
+      </tr>
+      <tr>
+        <td>Swiper CSS (<code>swiper/css/*</code>) import 제거</td>
+        <td class="reason">미사용 코드 정리</td>
+      </tr>
+      <tr>
+        <td>Swiper 커스텀 페이지네이션 스타일 블록 제거</td>
+        <td class="reason">숫자형 페이지네이션 CSS가 더 이상 필요 없음</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4. API 수정 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🔧</span> API 및 데이터 수정</div>
+  <table>
+    <thead><tr><th>파일</th><th>변경 내용</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="file">src/api/products.ts <span class="badge badge-mod">MOD</span></td>
+        <td><code>imageUrl</code> fallback 로직 추가</td>
+        <td class="reason">Supabase <code>image_url</code>이 비어있을 때 mock 데이터의 유효한 URL을 사용</td>
+      </tr>
+      <tr>
+        <td class="file">src/data/mockData.ts <span class="badge badge-mod">MOD</span></td>
+        <td>"글로벌 문화 교류 주간" imageUrl 변경</td>
+        <td class="reason">Unsplash URL이 깨져서 직접 생성한 로컬 이미지로 교체</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 5. 다국어 및 UI 수정 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🌐</span> 다국어(i18n) 및 UI 수정 (이전 세션 누적분)</div>
+  <table>
+    <thead><tr><th>카테고리</th><th>파일</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>다국어 설정</strong></td>
+        <td class="file">i18n/index.ts, i18nUtils.ts, useAutoTranslate.ts</td>
+        <td class="reason">한/영/일/중/태국어 번역 리소스 및 유틸리티 함수 적용</td>
+      </tr>
+      <tr>
+        <td><strong>텍스트 오버플로우</strong></td>
+        <td class="file">AboutSection, FloorGuideSection, FloorGuideModal</td>
+        <td class="reason">긴 번역 텍스트가 잘리지 않도록 <code>break-words</code> + 폰트 크기 조정</td>
+      </tr>
+      <tr>
+        <td><strong>컴포넌트 번역</strong></td>
+        <td class="file">Header, HeroSection, ArtistSection, BrandSpotlightSection, CalendarSection, LiveShortsSection, LoginModal, SearchModal</td>
+        <td class="reason"><code>t()</code> 함수 기반 번역 키 적용 및 하드코딩된 한국어 문자열 제거</td>
+      </tr>
+      <tr>
+        <td><strong>API 번역</strong></td>
+        <td class="file">artists.ts, brands.ts, categories.ts, media.ts</td>
+        <td class="reason">API 데이터에 다국어 fallback 적용</td>
+      </tr>
+      <tr>
+        <td><strong>타입/스타일</strong></td>
+        <td class="file">types/index.ts, index.css</td>
+        <td class="reason">다국어 타입 정의 및 스크롤바 커스텀 스타일 추가</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 6. 삭제 -->
+<div class="section">
+  <div class="section-title"><span class="emoji">🗑️</span> 삭제된 코드 (372줄)</div>
+  <table>
+    <thead><tr><th>삭제 대상</th><th>사유</th></tr></thead>
+    <tbody>
+      <tr><td>Swiper 관련 코드 전체 (import, CSS, JSX)</td><td class="reason">카테고리 탭 UI로 전환하여 불필요</td></tr>
+      <tr><td>단일 배너 이벤트 표시 로직</td><td class="reason">5개 카드 리스트 방식으로 대체</td></tr>
+      <tr><td><code>showAllEvents</code> 인라인 전체보기 UI</td><td class="reason">모달 방식으로 대체</td></tr>
+      <tr><td>미사용 변수 (<code>activeEventsToDisplay</code> 등)</td><td class="reason">리팩토링으로 인해 더 이상 참조하지 않음</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  DEPT 프로젝트 · 커밋 변경 보고서 · 2026-02-27 · feature/dept-m
+</div>
+
+</body>
+</html>
