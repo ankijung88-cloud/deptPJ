@@ -16,9 +16,9 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     : event.status === 'ONGOING' ? t('calendar.ongoing', '진행 중')
       : t('calendar.upcoming', '예정');
 
-  const badgeColor = event.status === 'ENDED' ? 'bg-red-500/70 text-white'
-    : event.status === 'ONGOING' ? 'bg-blue-500/70 text-white'
-      : 'bg-emerald-500/70 text-white';
+  const style = event.status === 'ENDED' ? { dot: 'bg-red-400', text: 'text-red-300', glow: '0 0 6px rgba(248,113,113,0.5)' }
+    : event.status === 'ONGOING' ? { dot: 'bg-blue-400', text: 'text-blue-300', glow: '0 0 6px rgba(96,165,250,0.5)' }
+      : { dot: 'bg-emerald-400', text: 'text-emerald-300', glow: '0 0 6px rgba(52,211,153,0.5)' };
 
   const title = t(event.title, event.title);
   const summary = t(event.summary, event.summary);
@@ -59,9 +59,12 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="relative z-10 flex flex-col justify-center h-full px-4 py-2">
         {/* 상태 배지 + 기간 */}
         <div className="flex items-center gap-2 mb-1">
-          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badgeColor} backdrop-blur-sm`}>
-            {badgeLabel}
-          </span>
+          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/5 ${style.text}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} style={{ boxShadow: style.glow }} />
+            <span className="text-[10px] font-bold">
+              {badgeLabel}
+            </span>
+          </div>
           <span className="text-[10px] text-white/60">
             📅 {formatDateRange(event.startAt, event.endAt)}
           </span>
