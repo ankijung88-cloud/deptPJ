@@ -123,8 +123,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         switch (view) {
             case 'LOGIN': title = t('auth.login_title'); break;
             case 'SIGNUP': title = t('auth.register_title'); break;
-            case 'FIND_ID': title = t('auth.find_id'); subtitle = "가입 시 입력한 이름을 입력해 주세요."; break;
-            case 'FORGOT_PASSWORD': title = t('auth.forgot_password'); subtitle = "비밀번호 재설정을 위해 이메일을 입력해 주세요."; break;
+            case 'FIND_ID': title = t('auth.find_id'); subtitle = t('auth.find_id_subtitle', '가입 시 입력한 이름을 입력해 주세요.'); break;
+            case 'FORGOT_PASSWORD': title = t('auth.forgot_password'); subtitle = t('auth.forgot_password_subtitle', '비밀번호 재설정을 위해 이메일을 입력해 주세요.'); break;
         }
 
         return (
@@ -188,7 +188,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                             onClick={onClose}
                                             className="w-full bg-dancheong-red hover:bg-red-700 text-white font-bold py-4 rounded-lg transition-all"
                                         >
-                                            닫기
+                                            {t('common.close', '닫기')}
                                         </button>
                                     </div>
                                 ) : (
@@ -214,7 +214,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                     {isLoading ? <Loader2 size={20} className="animate-spin" /> : t('auth.submit')}
                                                 </button>
                                                 <div className="text-center">
-                                                    <button type="button" onClick={() => setView('LOGIN')} className="text-white/40 hover:text-white text-sm">로그인으로 돌아가기</button>
+                                                    <button type="button" onClick={() => setView('LOGIN')} className="text-white/40 hover:text-white text-sm">{t('auth.back_to_login', '로그인으로 돌아가기')}</button>
                                                 </div>
                                             </form>
                                         ) : view === 'FORGOT_PASSWORD' ? (
@@ -237,7 +237,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                     {isLoading ? <Loader2 size={20} className="animate-spin" /> : t('auth.submit')}
                                                 </button>
                                                 <div className="text-center">
-                                                    <button type="button" onClick={() => setView('LOGIN')} className="text-white/40 hover:text-white text-sm">로그인으로 돌아가기</button>
+                                                    <button type="button" onClick={() => setView('LOGIN')} className="text-white/40 hover:text-white text-sm">{t('auth.back_to_login', '로그인으로 돌아가기')}</button>
                                                 </div>
                                             </form>
                                         ) : (

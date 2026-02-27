@@ -5,14 +5,19 @@ export const getLocalizedText = (obj: LocalizedString | string, lang: string): s
     if (!obj) return '';
 
     // Exact match
-    if (obj[lang]) return obj[lang];
+    const exactMatch = obj[lang];
+    if (exactMatch) return exactMatch;
 
     // Partial match (e.g., 'ko-KR' -> 'ko')
     const shortLang = lang.split('-')[0];
-    if (obj[shortLang]) return obj[shortLang];
+    const shortMatch = obj[shortLang];
+    if (shortMatch) return shortMatch;
 
-    // Fallback to 'ko' or 'en' or first available
-    return obj['ko'] || obj['en'] || Object.values(obj)[0] || '';
+    // Fallback: prefer 'en' for non-Korean languages, then 'ko'
+    if (shortLang === 'ko') {
+        return obj['ko'] || obj['en'] || Object.values(obj)[0] || '';
+    }
+    return obj['en'] || obj['ko'] || Object.values(obj)[0] || '';
 };
 
 export const supportedLanguages = [
@@ -20,4 +25,5 @@ export const supportedLanguages = [
     { code: 'en', label: 'English' },
     { code: 'ja', label: '日本語' },
     { code: 'zh', label: '中文' },
+    { code: 'th', label: 'ภาษาไทย' },
 ];

@@ -7,7 +7,7 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const BrandSpotlightSection: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [brands, setBrands] = useState<BrandSpotlight[]>([]);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export const BrandSpotlightSection: React.FC = () => {
                 >
                     <h2 className="text-sm font-bold tracking-widest text-dancheong-green mb-3 uppercase">Brand Archive</h2>
                     <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="브랜드 스포트라이트" />
+                        {t('brand.title', '브랜드 스포트라이트')}
                     </h3>
                 </motion.div>
             </div>

@@ -63,7 +63,8 @@ export interface CalendarEvent {
     id: string;
     date: string; // ISO format or YYYY-MM-DD
     endDate?: string; // Optional end date for multi-day events
-    title: LocalizedString;
+    title: LocalizedString | string;
+    description?: LocalizedString | string;
     category: string;
     imageUrl?: string;
 }

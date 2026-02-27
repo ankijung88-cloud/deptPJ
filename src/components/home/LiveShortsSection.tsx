@@ -69,7 +69,7 @@ const LiveShortItem: React.FC<{ item: LiveShort; index: number; onClick: () => v
                     <MapPin size={10} className="text-[#FF3D00]" />
                     <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
                 </div>
-                <h4 className="text-white text-sm md:text-base font-bold leading-tight line-clamp-2 mb-2">
+                <h4 className="text-white text-sm md:text-base font-bold leading-tight line-clamp-2 mb-2 break-words">
                     <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                 </h4>
                 <div className="flex items-center gap-1 text-[10px] md:text-xs text-white/60">
@@ -138,6 +138,7 @@ const VideoModal: React.FC<{ item: LiveShort; onClose: () => void }> = ({ item, 
 };
 
 export const LiveShortsSection: React.FC = () => {
+    const { t } = useTranslation();
     const [shorts, setShorts] = useState<LiveShort[]>([]);
     const [selectedShort, setSelectedShort] = useState<LiveShort | null>(null);
 
@@ -170,7 +171,7 @@ export const LiveShortsSection: React.FC = () => {
                         Instant Live
                     </h2>
                     <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="실시간 현장 쇼츠" />
+                        {t('shorts.title', '실시간 현장 쇼츠')}
                     </h3>
                 </motion.div>
             </div>

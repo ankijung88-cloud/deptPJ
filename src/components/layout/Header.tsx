@@ -44,7 +44,7 @@ const Header: React.FC = () => {
     // Desktop dropdown state
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -103,42 +103,42 @@ const Header: React.FC = () => {
     const navItems: NavItem[] = [
         {
             id: 'trend',
-            label: '트렌드',
+            label: t('nav.trend', '트렌드').split('/')[0]?.trim() || t('nav.trend', '트렌드'),
             subitems: [
-                { id: 'global', label: '글로벌 K-컬처', path: '/category/global' },
-                { id: 'heritage', label: '전통의 현대화', path: '/category/heritage' }
+                { id: 'global', label: t('nav.global_k_culture', '글로벌 K-컬처'), path: '/category/global' },
+                { id: 'heritage', label: t('nav.modern_heritage', '전통의 현대화'), path: '/category/heritage' }
             ]
         },
         {
             id: 'popup',
-            label: '팝업',
+            label: t('nav.exchange_booth', '팝업').split('/')[0]?.trim() || '팝업',
             subitems: [
-                { id: 'exchange', label: '문화 교류 부스', path: '/category/exchange' },
-                { id: 'collab', label: '협업 프로젝트', path: '/category/collab' }
+                { id: 'exchange', label: t('nav.exchange_booth', '문화 교류 부스'), path: '/category/exchange' },
+                { id: 'collab', label: t('nav.collab_project', '협업 프로젝트'), path: '/category/collab' }
             ]
         },
         {
             id: 'performance_exhibition',
-            label: '공연/전시',
+            label: t('nav.tickets', '공연/전시'),
             subitems: [
-                { id: 'traditional', label: '전통 예술', path: '/category/traditional' },
-                { id: 'media', label: '현대 미디어 아트', path: '/category/media' }
+                { id: 'traditional', label: t('nav.traditional_arts', '전통 예술'), path: '/category/traditional' },
+                { id: 'media', label: t('nav.media_arts', '현대 미디어 아트'), path: '/category/media' }
             ]
         },
         {
             id: 'activity_style',
-            label: '활동/스타일',
+            label: t('nav.art', '활동/스타일'),
             subitems: [
-                { id: 'class', label: '문화 체험 클래스', path: '/category/class' },
-                { id: 'style', label: '글로벌 K-스타일', path: '/category/kstyle' }
+                { id: 'class', label: t('nav.culture_class', '문화 체험 클래스'), path: '/category/class' },
+                { id: 'style', label: t('nav.global_k_style', '글로벌 K-스타일'), path: '/category/kstyle' }
             ]
         },
         {
             id: 'local',
-            label: '로컬',
+            label: t('nav.travel', '로컬').split('/')[0]?.trim() || '로컬',
             subitems: [
-                { id: 'heritage', label: '지역 문화 유산', path: '/category/local_heritage' },
-                { id: 'travel', label: '여행 큐레이션', path: '/category/travel_curation' }
+                { id: 'heritage', label: t('nav.local_heritage', '지역 문화 유산'), path: '/category/local_heritage' },
+                { id: 'travel', label: t('nav.travel_curation', '여행 큐레이션'), path: '/category/travel_curation' }
             ]
         }
     ];
@@ -195,7 +195,7 @@ const Header: React.FC = () => {
                         <button
                             onClick={() => setIsGlobalMuted(!isGlobalMuted)}
                             className="flex items-center text-white/70 hover:text-white transition-colors gap-1"
-                            title={isGlobalMuted ? '소리 켜기' : '소리 끄기'}
+                            title={isGlobalMuted ? t('common.unmute', '소리 켜기') : t('common.mute', '소리 끄기')}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                         </button>
@@ -212,14 +212,14 @@ const Header: React.FC = () => {
                                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                                     className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'text-black/80 hover:text-black mr-2' : 'text-white/70 hover:text-white'
                                         }`}
-                                    title="검색"
+                                    title={t('search.placeholder', '검색')}
                                 >
                                     <Search size={20} />
                                 </button>
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    placeholder="검색어를 입력하세요."
+                                    placeholder={t('search.placeholder', '검색어를 입력하세요.')}
                                     className={`w-full bg-transparent text-black text-sm outline-none placeholder:text-gray-400 font-sans ${isSearchOpen ? 'opacity-100' : 'opacity-0'
                                         }`}
                                 />
@@ -271,7 +271,7 @@ const Header: React.FC = () => {
                         <button
                             onClick={() => setIsGlobalMuted(!isGlobalMuted)}
                             className="text-white/70 hover:text-white transition-colors relative z-10"
-                            title={isGlobalMuted ? '소리 켜기' : '소리 끄기'}
+                            title={isGlobalMuted ? t('common.unmute', '소리 켜기') : t('common.mute', '소리 끄기')}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                         </button>
@@ -283,7 +283,7 @@ const Header: React.FC = () => {
                             <input
                                 ref={mobileSearchInputRef}
                                 type="text"
-                                placeholder="검색어를 입력하세요."
+                                placeholder={t('search.placeholder', '검색어를 입력하세요.')}
                                 className="w-full bg-transparent text-black text-sm outline-none placeholder:text-gray-400 font-sans"
                             />
                         </div>

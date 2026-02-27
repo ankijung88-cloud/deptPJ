@@ -7,7 +7,7 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const CalendarSection: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
     const [events, setEvents] = useState<CalendarEvent[]>([]);
 
@@ -44,7 +44,7 @@ export const CalendarSection: React.FC = () => {
                 >
                     <h2 className="text-sm font-bold tracking-widest text-dancheong-red mb-3 uppercase">Culture Timeline</h2>
                     <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="이달의 문화 달력" />
+                        {t('calendar.title', '이달의 문화 달력')}
                     </h3>
                     <p className="text-white/40 text-sm md:text-base font-serif italic">March 2026</p>
                 </motion.div>
@@ -110,7 +110,7 @@ export const CalendarSection: React.FC = () => {
                                         <AutoTranslatedText text={getLocalizedText(events.find(e => e.id === selectedEvent)!.title, i18n.language)} />
                                     </h4>
                                     <p className="text-white/60 text-sm leading-relaxed">
-                                        <AutoTranslatedText text="선정된 일자에 진행되는 특별한 문화 행사를 놓치지 마세요. 상세 내용은 고객 센터로 문의 바랍니다." />
+                                        {t('calendar.event_desc', '선정된 일자에 진행되는 특별한 문화 행사를 놓치지 마세요.')}
                                     </p>
                                 </div>
                             </motion.div>
@@ -123,7 +123,7 @@ export const CalendarSection: React.FC = () => {
                                 <div className="w-20 h-20 border-2 border-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                                     <div className="w-10 h-[1px] bg-white/10 rotate-45" />
                                 </div>
-                                <p className="text-white/20 font-serif italic">Hover over highlighted dates</p>
+                                <p className="text-white/20 font-serif italic">{t('calendar.hover_hint', '날짜를 선택해 보세요')}</p>
                             </motion.div>
                         )}
                     </AnimatePresence>

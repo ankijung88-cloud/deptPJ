@@ -17,7 +17,13 @@ export const FloorGuideSection: React.FC = () => {
         const fetchFloors = async () => {
             try {
                 const data = await getFloorCategories();
-                if (mounted) setFloors(data);
+                // 항상 1F → 5F 순서로 정렬
+                const sorted = data.sort((a, b) => {
+                    const numA = parseInt(a.floor.replace(/\D/g, '')) || 0;
+                    const numB = parseInt(b.floor.replace(/\D/g, '')) || 0;
+                    return numA - numB;
+                });
+                if (mounted) setFloors(sorted);
             } catch (error) {
                 console.error("Error fetching floors", error);
             }
@@ -51,11 +57,11 @@ export const FloorGuideSection: React.FC = () => {
                                     {floor.floor}
                                 </span>
 
-                                <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-4 group-hover:text-dancheong-green transition-colors">
+                                <h3 className="text-base md:text-xl lg:text-2xl font-serif font-bold text-white mb-4 group-hover:text-dancheong-green transition-colors break-words leading-snug px-2">
                                     <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
                                 </h3>
 
-                                <p className="text-sm text-white/60 max-w-[200px] mx-auto opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                <p className="text-sm text-white/60 max-w-[280px] mx-auto break-words opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                                     <AutoTranslatedText text={getLocalizedText(floor.description, i18n.language)} />
                                 </p>
 

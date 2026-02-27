@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { AutoTranslatedText } from '../common/AutoTranslatedText';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { getFeaturedProducts } from '../../api/products';
@@ -9,13 +8,7 @@ import { FeaturedItem, CalendarEvent } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
 
 export const FeaturedSection: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
@@ -31,6 +24,8 @@ export const FeaturedSection: React.FC = () => {
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [eventCategory, setEventCategory] = useState<'ONGOING' | 'UPCOMING' | 'ARCHIVE'>('ONGOING');
+    const [showAll, setShowAll] = useState(false);
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
@@ -50,7 +45,7 @@ export const FeaturedSection: React.FC = () => {
                 }
             } catch (err: any) {
                 if (mounted) {
-                    setError(err.message || '데이터를 불러오지 못했습니다.');
+                    setError(err.message || t('common.error', '오류가 발생했습니다.'));
                 }
             } finally {
                 if (mounted) {
@@ -73,54 +68,95 @@ export const FeaturedSection: React.FC = () => {
 
     const generatedEvents = useMemo(() => {
         const events: CalendarEvent[] = [];
-        const todayStr = new Date().toLocaleDateString('en-CA');
+        const todayObj = new Date();
+        const todayStr = todayObj.toLocaleDateString('en-CA');
         const images = [
             'https://images.unsplash.com/photo-1540575861501-7c00117fb3c9?q=80&w=2670&auto=format&fit=crop',
             'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=2673&auto=format&fit=crop',
             'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2574&auto=format&fit=crop'
+            'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2574&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=2671&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=2574&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=2680&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1545987796-200d7b122a92?q=80&w=2670&auto=format&fit=crop'
         ];
-        
-        for (let baseDay = 1; baseDay <= daysInMonth; baseDay += 5) { // 5일 간격으로 이벤트 하나씩 생성
-            const pseudoRandom = (baseDay * currentMonth * currentYear * 17) % 100;
+        // 현재 월 + 이전/다음 월에서 이벤트를 생성하여 각 카테고리에 충분한 데이터 확보
+        for (let monthOffset = -1; monthOffset <= 1; monthOffset++) {
+            const targetDate = new Date(currentYear, currentMonth + monthOffset, 1);
+            const targetYear = targetDate.getFullYear();
+            const targetMonth = targetDate.getMonth();
+            const targetDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
             
-            if (pseudoRandom < 80) { // 확률 80% 로 배치
+            for (let baseDay = 2; baseDay <= targetDaysInMonth; baseDay += 3) {
+                const pseudoRandom = ((baseDay + 1) * (targetMonth + 3) * (targetYear % 100 + 7) * 17) % 100;
+            
+            if (pseudoRandom < 70) {
                 const startDay = baseDay;
+                const duration = (pseudoRandom % 4) + 2;
                 
-                // 이벤트 기간을 한 달로 설정
-                const startDateObj = new Date(currentYear, currentMonth, startDay);
-                const endDateObj = new Date(currentYear, currentMonth + 1, startDay); // 정확히 1달 뒤
+                const startDateObj = new Date(targetYear, targetMonth, startDay);
+                const endDateObj = new Date(targetYear, targetMonth, startDay + duration); 
                 
                 const dateStr = `${startDateObj.getFullYear()}-${(startDateObj.getMonth() + 1).toString().padStart(2, '0')}-${startDateObj.getDate().toString().padStart(2, '0')}`;
                 const endDateStr = `${endDateObj.getFullYear()}-${(endDateObj.getMonth() + 1).toString().padStart(2, '0')}-${endDateObj.getDate().toString().padStart(2, '0')}`;
                 
                 let titleStr = '';
+                let descStr = '';
                 let cat = 'EVENT';
                 
-                // 오늘 날짜(`todayStr`)를 기준으로 이벤트 상태 판단
                 if (endDateStr < todayStr) {
-                    titleStr = `종료된 아카이브 전시`;
+                    titleStr = t('featured.event_archived', '종료된 이벤트');
+                    descStr = t('featured.event_archived_desc', '이미 종료된 이벤트입니다.');
                     cat = 'ARCHIVE';
                 } else if (dateStr > todayStr) {
-                    titleStr = `오픈 예정 특별 공연`;
+                    titleStr = t('featured.event_upcoming', '진행 예정 이벤트');
+                    descStr = t('featured.event_upcoming_desc', '곧 만나볼 수 있는 특별한 이벤트입니다.');
                     cat = 'UPCOMING';
                 } else {
-                    titleStr = `진행 중인 특별 기획전`;
+                    titleStr = t('featured.event_ongoing', '진행 중인 이벤트');
+                    descStr = t('featured.event_ongoing_desc', '현재 진행 중인 특별한 이벤트입니다.');
                     cat = 'ONGOING';
                 }
 
                 events.push({
-                    id: `dummy-${currentMonthStr}-${startDay}`,
+                    id: `dummy-${targetYear}-${(targetMonth+1).toString().padStart(2,'0')}-${startDay}`,
                     date: dateStr,
                     endDate: endDateStr,
-                    title: { ko: titleStr, en: titleStr },
+                    title: titleStr,
+                    description: descStr,
                     category: cat,
-                    imageUrl: images[startDay % images.length]
+                    imageUrl: images[(startDay + monthOffset + 5) % images.length]
                 });
             }
+            }
         }
+
+        // 현재 날짜를 포함하는 "진행중" 이벤트 랜덤 추가 (파란색 마커)
+        if (currentYear === todayObj.getFullYear() && currentMonth === todayObj.getMonth()) {
+            const todayDay = todayObj.getDate();
+            const ongoingDays = [todayDay, Math.max(1, todayDay - 2), Math.min(daysInMonth, todayDay + 3)];
+            const uniqueDays = [...new Set(ongoingDays)];
+            uniqueDays.forEach((d, idx) => {
+                const startD = Math.max(1, d - 1);
+                const endD = Math.min(daysInMonth, d + 2);
+                const sObj = new Date(currentYear, currentMonth, startD);
+                const eObj = new Date(currentYear, currentMonth, endD);
+                const sStr = `${sObj.getFullYear()}-${(sObj.getMonth()+1).toString().padStart(2,'0')}-${sObj.getDate().toString().padStart(2,'0')}`;
+                const eStr = `${eObj.getFullYear()}-${(eObj.getMonth()+1).toString().padStart(2,'0')}-${eObj.getDate().toString().padStart(2,'0')}`;
+                events.push({
+                    id: `ongoing-${currentMonthStr}-${d}-${idx}`,
+                    date: sStr,
+                    endDate: eStr,
+                    title: t('featured.event_ongoing', '진행 중인 이벤트'),
+                    description: t('featured.event_ongoing_desc', '현재 진행 중인 특별한 이벤트입니다.'),
+                    category: 'ONGOING',
+                    imageUrl: images[d % images.length]
+                });
+            });
+        }
+
         return events;
-    }, [currentYear, currentMonth, currentMonthStr, daysInMonth]);
+    }, [currentYear, currentMonth, currentMonthStr, daysInMonth, t]);
 
     const handlePrevMonth = () => {
         setTargetDate(new Date(currentYear, currentMonth - 1, 1));
@@ -147,6 +183,63 @@ export const FeaturedSection: React.FC = () => {
         });
     };
 
+    // 이벤트 분류: 진행중, 예정, 종료 (조건부 return 전에 훅 호출)
+    const allEventItems = useMemo(() => {
+        const todayStr = new Date().toLocaleDateString('en-CA');
+        const allEvents = [...(calendarEvents || []), ...generatedEvents];
+        return allEvents.map(ev => {
+            const safeDate = ev.date || '';
+            const safeEndDate = ev.endDate || ev.date || '';
+            const [year, month, day] = safeDate.includes('-') ? safeDate.split('-') : [safeDate, '', ''];
+            const [endYear, endMonth, endDay] = safeEndDate.includes('-') ? safeEndDate.split('-') : [safeEndDate, '', ''];
+            let dateStr = safeDate;
+            if (year && month && day) {
+                dateStr = endYear && endYear !== year ? `${year}.${month}.${day} - ${endYear}.${endMonth}.${endDay}` :
+                    (endMonth && endMonth !== month) || (endDay && endDay !== day) ? `${year}.${month}.${day} - ${endMonth}.${endDay}` :
+                        `${year}.${month}.${day}`;
+            }
+            let category = ev.category || 'EVENT';
+            if (!ev.category || ev.category === 'EVENT') {
+                if (safeEndDate < todayStr) category = 'ARCHIVE';
+                else if (safeDate > todayStr) category = 'UPCOMING';
+                else category = 'ONGOING';
+            }
+            return {
+                id: ev.id,
+                title: ev.title,
+                category,
+                imageUrl: ev.imageUrl || '',
+                description: ev.description || t('featured.event_ongoing_desc', '현재 진행 중인 특별한 이벤트입니다.'),
+                date: { ko: dateStr, en: dateStr }
+            } as unknown as FeaturedItem;
+        });
+    }, [calendarEvents, generatedEvents, t]);
+
+    // 이미지가 있는 이벤트만 필터링 (http URL만 유효)
+    const fallbackImages = [
+        'https://images.unsplash.com/photo-1540575861501-7c00117fb3c9?q=80&w=400&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=400&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=400&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=400&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=400&auto=format&fit=crop',
+    ];
+    const ensureImage = (items: FeaturedItem[]) => items.map((e, i) => ({
+        ...e,
+        imageUrl: (e.imageUrl && (e.imageUrl.startsWith('http') || e.imageUrl.startsWith('/'))) ? e.imageUrl : fallbackImages[i % fallbackImages.length]
+    })) as FeaturedItem[];
+    
+    const ongoingEvents = ensureImage(allEventItems.filter(e => e.category === 'ONGOING'));
+    const upcomingEvents = ensureImage(allEventItems.filter(e => e.category === 'UPCOMING'));
+    const archivedEvents = ensureImage(allEventItems.filter(e => e.category === 'ARCHIVE'));
+    
+    // 진행 중 이벤트가 5개 미만이면 products(추천 상품)로 보충
+    const productsReady = ensureImage(products);
+    const ongoingProducts = ongoingEvents.length >= 5 
+        ? ongoingEvents 
+        : [...ongoingEvents, ...productsReady.filter(p => !ongoingEvents.find(e => e.id === p.id))].slice(0, Math.max(5, ongoingEvents.length));
+    const upcomingProducts = upcomingEvents;
+    const archivedProducts = archivedEvents;
+
     if (loading) {
         return (
             <section className="h-screen w-full snap-start bg-[#2a2a2a] text-center flex flex-col items-center justify-center">
@@ -161,71 +254,14 @@ export const FeaturedSection: React.FC = () => {
     if (error) {
         return (
             <section className="h-screen w-full snap-start bg-[#2a2a2a] text-center flex flex-col items-center justify-center">
-                <div className="text-red-500 mb-4 font-bold">오류가 발생했습니다: {error}</div>
+                <div className="text-red-500 mb-4 font-bold">{t('common.error', '오류가 발생했습니다.')} {error}</div>
             </section>
         );
     }
 
-    // 우측 영역에 보여줄 배너 데이터 결정 로직
-    // 선택된 날짜에 이벤트가 있으면 해당 이벤트(들을) 우선 표시, 없으면 products(추천) 표시
-    const activeEventsToDisplay = selectedDate && getEventsForDay(selectedDate).length > 0
-        ? getEventsForDay(selectedDate).map(ev => {
-            const safeDate = ev.date || '';
-            const safeEndDate = ev.endDate || ev.date || '';
-            
-            const [year, month, day] = safeDate.includes('-') ? safeDate.split('-') : [safeDate, '', ''];
-            const [endYear, endMonth, endDay] = safeEndDate.includes('-') ? safeEndDate.split('-') : [safeEndDate, '', ''];
-            
-            let dateStr = safeDate;
-            if (year && month && day) {
-                dateStr = endYear && endYear !== year ? `${year}.${month}.${day} - ${endYear}.${endMonth}.${endDay}` :
-                    (endMonth && endMonth !== month) || (endDay && endDay !== day) ? `${year}.${month}.${day} - ${endMonth}.${endDay}` :
-                        `${year}.${month}.${day}`;
-            }
-            return {
-                id: ev.id,
-                title: ev.title,
-                category: ev.category,
-                imageUrl: ev.imageUrl || '',
-                description: { ko: '선택하신 일자에 진행되는 특별 문화 행사입니다.', en: 'Special cultural event for the selected date.' },
-                date: { ko: dateStr, en: dateStr }
-            } as unknown as FeaturedItem;
-        })
-        : products;
-
     return (
         <section className="h-[100dvh] w-full snap-start bg-[#2a2a2a] relative flex flex-col justify-center overflow-hidden pt-24 pb-12 min-h-[700px]">
-            <style>{`
-                .event-swiper .swiper-button-next,
-                .event-swiper .swiper-button-prev {
-                    color: white !important;
-                    background: transparent !important;
-                }
-                .event-swiper .swiper-button-next:after,
-                .event-swiper .swiper-button-prev:after {
-                    font-size: 16px;
-                }
-                
-                /* 숫자형 커스텀 페이지네이션 스타일 */
-                .event-swiper .swiper-pagination-fraction {
-                    bottom: 24px !important;
-                    left: 50% !important;
-                    right: auto !important;
-                    transform: translateX(-50%) !important;
-                    width: max-content !important;
-                    font-size: 14px;
-                    font-weight: 500;
-                    letter-spacing: 2px;
-                    background: rgba(0,0,0,0.5);
-                    padding: 4px 12px;
-                    border-radius: 20px;
-                    color: rgba(255,255,255,0.5); /* 전체 페이지 수 색상 (연한 흰색) */
-                }
-                .event-swiper .swiper-pagination-current {
-                    color: #ffffff; /* 현재 페이지 색상 (강조 흰색) */
-                    font-weight: 700;
-                }
-            `}</style>
+
 
             <div className="container mx-auto px-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shrink-0">
                 <motion.div
@@ -237,7 +273,7 @@ export const FeaturedSection: React.FC = () => {
                         <CalendarIcon size={16} /> Promotion & Events
                     </h2>
                     <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="추천 & 이벤트" />
+                        {t('featured.title', '추천 & 이벤트')}
                     </h3>
                 </motion.div>
                 
@@ -248,7 +284,7 @@ export const FeaturedSection: React.FC = () => {
                         onClick={() => setSelectedDate(null)}
                         className="text-sm border border-white/20 px-4 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition"
                     >
-                        전체 추천 보기
+                        {t('common.view_all', '전체 추천 보기')}
                     </motion.button>
                 )}
             </div>
@@ -267,7 +303,7 @@ export const FeaturedSection: React.FC = () => {
                             }}
                         >
                             <h4 className="text-xl font-serif font-bold text-white group-hover:text-dancheong-red transition-colors">
-                                {`${currentYear}년 ${currentMonth + 1}월`}
+                                {new Intl.DateTimeFormat(i18n.language, { year: 'numeric', month: 'long' }).format(new Date(currentYear, currentMonth))}
                             </h4>
                             <input 
                                 ref={dateInputRef}
@@ -339,116 +375,212 @@ export const FeaturedSection: React.FC = () => {
                             );
                         })}
                     </div>
-                </div>
-
-                {/* 2. 우측: 이벤트 배너 목록 */}
-                <div className="lg:col-span-7 min-h-0 flex flex-col">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4 mb-4 gap-4 md:gap-0">
-                        <h4 className="text-base md:text-lg font-bold text-white flex-shrink-0">
-                            <span>{selectedDate ? `${currentMonthStr.split('-')[0]}년 ${currentMonthStr.split('-')[1]}월 ${selectedDate}일 진행 이벤트` : '이달의 주요 추천 목록'}</span>
-                            <span className="text-white/40 font-normal text-xs md:text-sm ml-3">{activeEventsToDisplay.length}개의 항목</span>
-                        </h4>
-                        
-                        {/* 마커 색상 범례 (Legend) */}
-                        <div className="flex items-center gap-4 text-xs font-medium text-white/60 bg-white/5 px-3 py-1.5 rounded-full shrink-0 w-fit">
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                                <span>진행 중</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                <span>오픈 예정</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                                <span>종료 됨</span>
-                            </div>
+                    {/* 마커 색상 범례 */}
+                    <div className="flex items-center justify-center gap-5 mt-4 pt-3 border-t border-white/5">
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                            <span className="text-[10px] text-white/50">{t('featured.archived', '종료')}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span className="text-[10px] text-white/50">{t('featured.ongoing', '진행 중')}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                            <span className="text-[10px] text-white/50">{t('featured.upcoming', '예정')}</span>
                         </div>
                     </div>
+                </div>
 
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={selectedDate || 'all'}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                            className="flex-grow rounded-2xl overflow-hidden shadow-2xl relative"
-                        >
-                            {activeEventsToDisplay.length > 0 ? (
-                                <Swiper
-                                    modules={[Navigation, Pagination, Autoplay, EffectFade]}
-                                    effect="fade"
-                                    slidesPerView={1}
-                                    loop={activeEventsToDisplay.length > 1}
-                                    autoplay={{ delay: 4000, disableOnInteraction: false }}
-                                    navigation={activeEventsToDisplay.length > 1}
-                                    pagination={{ 
-                                        type: 'fraction',
-                                        renderFraction: function (currentClass, totalClass) {
-                                            return '<span class="' + currentClass + '"></span>' +
-                                                   ' / ' +
-                                                   '<span class="' + totalClass + '"></span>';
-                                        }
-                                    }}
-                                    className="event-swiper w-full h-full rounded-[2rem]"
-                                >
-                                    {activeEventsToDisplay.map((item, idx) => (
-                                        <SwiperSlide key={`${item.id}-${idx}`} className="h-full">
-                                            <div className="relative w-full h-full">
-                                                {item.imageUrl ? (
-                                                    <img
-                                                        src={item.imageUrl}
-                                                        alt={getLocalizedText(item.title, i18n.language) || 'Event Image'}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-[#1a1a1a] flex flex-col items-center justify-center text-white/30">
-                                                        <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                        </svg>
-                                                        <span className="text-sm font-medium tracking-wide">이미지 등록 예정</span>
-                                                    </div>
-                                                )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                                                <div className="absolute bottom-0 left-0 w-full p-6 md:p-8">
-                                                    <span className="px-3 py-1 bg-dancheong-red rounded-full text-[10px] md:text-xs font-bold text-white mb-3 inline-block">
-                                                        {item.category || 'EVENT'}
-                                                    </span>
-                                                    <h4 className="text-xl md:text-3xl font-bold text-white mb-2 line-clamp-1 md:line-clamp-2">
-                                                        <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                    </h4>
-                                                    <p className="text-white/70 text-sm md:text-base line-clamp-1 md:line-clamp-2 mb-4 max-w-xl">
-                                                        <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || '이벤트에 대한 상세 정보가 없습니다.'} />
-                                                    </p>
-                                                    
-                                                    <div className="flex justify-between items-center text-xs md:text-sm font-medium pt-3 border-t border-white/20">
-                                                        <div className="flex flex-col gap-1 text-white/60">
-                                                            <span>📅 {getLocalizedText(item.date, i18n.language)}</span>
-                                                            {item.location && <span>📍 {getLocalizedText(item.location, i18n.language)}</span>}
-                                                        </div>
-                                                        <Link to={`/detail/${item.id}`} className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-                                                            <ArrowUpRight size={20} />
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                    ))}
-                                </Swiper>
-                            ) : (
-                                <div className="w-full h-full min-h-[250px] flex flex-col items-center justify-center bg-black/20 rounded-[2rem] border border-white/5">
-                                    <CalendarIcon size={48} className="text-white/20 mb-4" />
-                                    <p className="text-white/40 text-lg">해당 날짜에 진행 예정인 일정이 없습니다.</p>
-                                    <button onClick={() => setSelectedDate(null)} className="mt-6 text-dancheong-red hover:underline text-sm font-bold tracking-widest uppercase">
-                                        추천 목록 보기
+                {/* 2. 우측: 이벤트 카테고리 탭 + 카드 리스트 */}
+                <div className="lg:col-span-7 min-h-0 relative rounded-[2rem] overflow-hidden shadow-2xl flex flex-col bg-black/30 border border-white/5">
+                    <div className="flex flex-col h-full">
+                        {/* 카테고리 탭 */}
+                        <div className="px-5 pt-5 pb-3 shrink-0 border-b border-white/10">
+                            <div className="flex items-center justify-around w-full">
+                                {[
+                                    { key: 'ARCHIVE' as const, label: t('featured.event_archived', '종료된 이벤트'), count: archivedProducts.length },
+                                    { key: 'ONGOING' as const, label: t('featured.event_ongoing', '진행 중인 이벤트'), count: ongoingProducts.length },
+                                    { key: 'UPCOMING' as const, label: t('featured.event_upcoming', '진행 예정 이벤트'), count: upcomingProducts.length },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() => { setEventCategory(tab.key); setShowAll(false); }}
+                                        className={`text-sm font-bold pb-2 border-b-2 transition-all ${
+                                            eventCategory === tab.key
+                                                ? 'text-white border-white'
+                                                : 'text-white/35 border-transparent hover:text-white/60'
+                                        }`}
+                                    >
+                                        {tab.label} ({tab.count})
                                     </button>
-                                </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 이벤트 카드 리스트 */}
+                        <div className="flex-1 overflow-y-auto px-5 pb-3 space-y-2 custom-scrollbar min-h-0 pt-3">
+                            {(() => {
+                                const categoryMap = { ONGOING: ongoingProducts, UPCOMING: upcomingProducts, ARCHIVE: archivedProducts };
+                                const items = categoryMap[eventCategory];
+                                const displayItems = showAll ? items : items.slice(0, 5);
+                                const isArchive = eventCategory === 'ARCHIVE';
+
+                                if (items.length === 0) {
+                                    return (
+                                        <div className="flex flex-col items-center justify-center py-16 text-white/30">
+                                            <CalendarIcon size={40} strokeWidth={1} className="mb-3" />
+                                            <p className="text-sm">{t('featured.no_events', '이벤트 없음')}</p>
+                                        </div>
+                                    );
+                                }
+
+                                return displayItems.map((item, idx) => (
+                                    <Link
+                                        key={`${eventCategory}-${item.id}-${idx}`}
+                                        to={`/detail/${item.id}`}
+                                        className="flex gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-all group"
+                                    >
+                                        <div className={`w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-[#1a1a1a] ${isArchive ? 'opacity-60' : ''}`}>
+                                            <img
+                                                src={(item.imageUrl && (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('/'))) ? item.imageUrl : fallbackImages[idx % fallbackImages.length]}
+                                                alt=""
+                                                className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isArchive ? 'grayscale' : ''}`}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = fallbackImages[idx % fallbackImages.length]; }}
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <h5 className={`text-sm md:text-base font-bold line-clamp-1 break-words group-hover:text-dancheong-red transition-colors ${isArchive ? 'text-white/60' : 'text-white'}`}>
+                                                {typeof item.title === 'string' ? item.title : getLocalizedText(item.title, i18n.language)}
+                                            </h5>
+                                            <p className="text-xs text-white/50 line-clamp-1 mt-1 break-words">
+                                                {typeof item.description === 'string' ? item.description : getLocalizedText(item.description, i18n.language)}
+                                            </p>
+                                            {item.date && (
+                                                <span className={`text-[10px] mt-1 ${isArchive ? 'text-white/30' : 'text-white/40'}`}>📅 {typeof item.date === 'string' ? item.date : getLocalizedText(item.date, i18n.language)}</span>
+                                            )}
+                                        </div>
+                                        <div className="shrink-0 flex items-center">
+                                            <ArrowUpRight size={16} className="text-white/30 group-hover:text-white transition-colors" />
+                                        </div>
+                                    </Link>
+                                ));
+                            })()}
+                        </div>
+
+                        {/* 전체 보기 버튼 */}
+                        <div className="px-5 py-3 border-t border-white/10 shrink-0 flex justify-end">
+                            <button
+                                onClick={() => setShowAll(true)}
+                                className="text-sm text-white/60 hover:text-white py-1.5 px-4 rounded-lg hover:bg-white/5 transition-all tracking-wide"
+                            >
+                                {t('common.view_all', '전체 보기')} →
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {/* 전체 보기 모달 */}
+            {showAll && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={() => setShowAll(false)}>
+                    {/* 배경 오버레이 */}
+                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+                    
+                    {/* 모달 본체 */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="relative bg-[#1a1a1a] rounded-2xl border border-white/10 shadow-2xl w-full max-w-3xl max-h-[80vh] flex flex-col overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* 모달 헤더 */}
+                        <div className="px-6 pt-5 pb-4 flex items-center justify-between shrink-0 border-b border-white/10">
+                            <h3 className="text-lg font-bold text-white">{t('featured.all_events', '전체 이벤트')}</h3>
+                            <button
+                                onClick={() => setShowAll(false)}
+                                className="text-white/40 hover:text-white text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-all"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* 모달 카테고리 탭 */}
+                        <div className="px-6 pt-4 pb-3 shrink-0 border-b border-white/5">
+                            <div className="flex items-center justify-around w-full">
+                                {[
+                                    { key: 'ARCHIVE' as const, label: t('featured.event_archived', '종료된 이벤트'), count: archivedProducts.length },
+                                    { key: 'ONGOING' as const, label: t('featured.event_ongoing', '진행 중인 이벤트'), count: ongoingProducts.length },
+                                    { key: 'UPCOMING' as const, label: t('featured.event_upcoming', '진행 예정 이벤트'), count: upcomingProducts.length },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() => setEventCategory(tab.key)}
+                                        className={`text-sm font-bold pb-2 border-b-2 transition-all ${
+                                            eventCategory === tab.key
+                                                ? 'text-white border-white'
+                                                : 'text-white/35 border-transparent hover:text-white/60'
+                                        }`}
+                                    >
+                                        {tab.label} ({tab.count})
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 모달 이벤트 리스트 */}
+                        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2 custom-scrollbar">
+                            {(() => {
+                                const categoryMap = { ONGOING: ongoingProducts, UPCOMING: upcomingProducts, ARCHIVE: archivedProducts };
+                                const items = categoryMap[eventCategory];
+                                const isArchive = eventCategory === 'ARCHIVE';
+
+                                if (items.length === 0) {
+                                    return (
+                                        <div className="flex flex-col items-center justify-center py-20 text-white/30">
+                                            <CalendarIcon size={48} strokeWidth={1} className="mb-4" />
+                                            <p className="text-sm">{t('featured.no_events', '이벤트 없음')}</p>
+                                        </div>
+                                    );
+                                }
+
+                                return items.map((item, idx) => (
+                                    <Link
+                                        key={`modal-${eventCategory}-${item.id}-${idx}`}
+                                        to={`/detail/${item.id}`}
+                                        className="flex gap-4 p-3 rounded-xl hover:bg-white/5 transition-all group"
+                                        onClick={() => setShowAll(false)}
+                                    >
+                                        <div className={`w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden shrink-0 bg-[#0a0a0a] ${isArchive ? 'opacity-50' : ''}`}>
+                                            <img
+                                                src={(item.imageUrl && (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('/'))) ? item.imageUrl : fallbackImages[idx % fallbackImages.length]}
+                                                alt=""
+                                                className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${isArchive ? 'grayscale' : ''}`}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = fallbackImages[idx % fallbackImages.length]; }}
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <h5 className={`text-sm md:text-base font-bold line-clamp-1 break-words group-hover:text-dancheong-red transition-colors ${isArchive ? 'text-white/50' : 'text-white'}`}>
+                                                {typeof item.title === 'string' ? item.title : getLocalizedText(item.title, i18n.language)}
+                                            </h5>
+                                            <p className="text-xs text-white/40 line-clamp-1 mt-1 break-words">
+                                                {typeof item.description === 'string' ? item.description : getLocalizedText(item.description, i18n.language)}
+                                            </p>
+                                            {item.date && (
+                                                <span className={`text-[10px] mt-1 ${isArchive ? 'text-white/25' : 'text-white/40'}`}>📅 {typeof item.date === 'string' ? item.date : getLocalizedText(item.date, i18n.language)}</span>
+                                            )}
+                                        </div>
+                                        <div className="shrink-0 flex items-center">
+                                            <ArrowUpRight size={16} className="text-white/20 group-hover:text-white transition-colors" />
+                                        </div>
+                                    </Link>
+                                ));
+                            })()}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </section>
     );
 };

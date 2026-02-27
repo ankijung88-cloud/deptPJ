@@ -42,7 +42,7 @@ export const AboutSection: React.FC = () => {
                         className="lg:w-1/2"
                     >
                         <h2 className="text-sm font-bold tracking-widest text-dancheong-green mb-4 uppercase">Heritage Hub</h2>
-                        <h3 className="text-4xl md:text-5xl font-serif font-bold text-white mb-8 leading-tight">
+                        <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8 leading-tight break-words">
                             {t('about.title')}
                         </h3>
                         <div className="space-y-6 text-lg text-white/70 font-light leading-relaxed">

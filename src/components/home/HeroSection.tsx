@@ -12,11 +12,11 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const slides = [
-    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: true, category: '트렌드' },
-    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true, category: '팝업' },
-    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: true, category: '공연/전시' },
-    { id: 4, src: '/video/experience.mp4', poster: '', hasSound: true, category: '활동/스타일' },
-    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: true, category: '로컬' }
+    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: true, categoryKey: 'trend' },
+    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true, categoryKey: 'popup' },
+    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: true, categoryKey: 'performance_exhibition' },
+    { id: 4, src: '/video/experience.mp4', poster: '', hasSound: true, categoryKey: 'activity_style' },
+    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: true, categoryKey: 'local' }
 ];
 
 export const HeroSection: React.FC = () => {
@@ -54,6 +54,14 @@ export const HeroSection: React.FC = () => {
                 });
             }
         }
+    };
+
+    const categoryLabels: Record<string, string> = {
+        trend: t('nav.trend', '트렌드'),
+        popup: t('nav.exchange_booth', '팝업').split('/')[0]?.trim() || '팝업',
+        performance_exhibition: t('nav.tickets', '공연/전시'),
+        activity_style: t('nav.art', '활동/스타일'),
+        local: t('nav.travel', '로컨').split('/')[0]?.trim() || '로컨'
     };
 
     return (
@@ -161,7 +169,7 @@ export const HeroSection: React.FC = () => {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight"
                     >
-                        {slides[activeIndex].category}
+                        {categoryLabels[slides[activeIndex].categoryKey] || slides[activeIndex].categoryKey}
                     </motion.h1>
 
                     <motion.button

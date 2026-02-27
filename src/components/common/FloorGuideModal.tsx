@@ -33,7 +33,13 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
         const fetchFloors = async () => {
             try {
                 const data = await getFloorCategories();
-                if (mounted) setFloors(data);
+                // 1F → 5F 순서로 정렬
+                const sorted = data.sort((a, b) => {
+                    const numA = parseInt(a.floor.replace(/\D/g, '')) || 0;
+                    const numB = parseInt(b.floor.replace(/\D/g, '')) || 0;
+                    return numA - numB;
+                });
+                if (mounted) setFloors(sorted);
             } catch (error) {
                 console.error("Error fetching floors for modal", error);
             }
@@ -108,7 +114,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                                 <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
                                                 <ChevronRight className="opacity-0 group-hover:opacity-100 transition-opacity text-dancheong-red" size={18} />
                                             </h3>
-                                            <p className="text-sm text-white/50 line-clamp-1 group-hover:text-white/70 transition-colors">
+                                            <p className="text-sm text-white/50 line-clamp-2 break-words group-hover:text-white/70 transition-colors">
                                                 <AutoTranslatedText text={getLocalizedText(floor.description, i18n.language)} />
                                             </p>
                                         </div>

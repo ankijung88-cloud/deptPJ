@@ -7,7 +7,7 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const ArtistSection: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [artists, setArtists] = useState<Artist[]>([]);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export const ArtistSection: React.FC = () => {
                 >
                     <h2 className="text-sm font-bold tracking-widest text-dancheong-red mb-3 uppercase">Creative Visionaries</h2>
                     <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="올해의 아티스트 10인" />
+                        {t('artist.title', '올해의 아티스트 10인')}
                     </h3>
                 </motion.div>
             </div>
@@ -69,7 +69,7 @@ export const ArtistSection: React.FC = () => {
                                     <h4 className="text-white font-bold text-lg mb-2">
                                         <AutoTranslatedText text={getLocalizedText(artist.name, i18n.language)} />
                                     </h4>
-                                    <p className="text-white/60 text-xs line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                    <p className="text-white/60 text-xs line-clamp-3 break-words opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
                                         <AutoTranslatedText text={getLocalizedText(artist.description, i18n.language)} />
                                     </p>
                                 </div>

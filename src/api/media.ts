@@ -22,12 +22,29 @@ export const getLiveShorts = async (): Promise<LiveShort[]> => {
             finalThumbnailUrl = fallbackShort.thumbnailUrl;
         }
 
+        // Merge multi-language data: use Supabase data but supplement with mock translations
+        const mergeLocalizedText = (dbValue: any, mockValue: any) => {
+            if (!dbValue) return mockValue;
+            if (typeof dbValue === 'string') {
+                // DB has plain string (Korean only) → use mock for multi-lang
+                if (typeof mockValue === 'object' && mockValue !== null) {
+                    return { ...mockValue, ko: dbValue };
+                }
+                return mockValue || { ko: dbValue };
+            }
+            // DB has object → merge with mock as fallback for missing keys
+            if (typeof mockValue === 'object' && mockValue !== null) {
+                return { ...mockValue, ...dbValue };
+            }
+            return dbValue;
+        };
+
         return {
             id: item.id,
-            title: item.title,
+            title: mergeLocalizedText(item.title, fallbackShort.title),
             videoUrl: finalVideoUrl,
             thumbnailUrl: finalThumbnailUrl,
-            location: item.location,
+            location: mergeLocalizedText(item.location, fallbackShort.location),
             viewCount: item.view_count || fallbackShort.viewCount
         };
     });

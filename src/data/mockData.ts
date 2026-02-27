@@ -60,13 +60,15 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ko: '글로벌 K-컬처 / 교류',
             en: 'Global K-Culture / Exchange',
             ja: 'グローバルK-カルチャー / 交流',
-            zh: '全球 K-Culture / 交流'
+            zh: '全球 K-Culture / 交流',
+            th: 'K-Culture โลก / การแลกเปลี่ยน'
         },
         description: {
             ko: '세계를 잇는 K-컬처의 역동적인 에너지.',
             en: 'Dynamic energy of K-Culture connecting the world.',
             ja: '世界をつなぐK-カルチャーのダイ나믹한 에너지。',
-            zh: '连接世界的 K-Culture 动态能量。'
+            zh: '连接世界的 K-Culture 动态能量。',
+            th: 'พลังงานอันเป็นไดนามิกของ K-Culture ที่เชื่อมต่อโลก'
         },
         bgImage: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=2560&auto=format&fit=crop',
         content: [
@@ -93,13 +95,15 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ko: '전통 예술 / 아카이브',
             en: 'Traditional Arts / Archive',
             ja: '伝統芸術 / アーカイブ',
-            zh: '传统艺术 / 档案'
+            zh: '传统艺术 / 档案',
+            th: 'ศิลปะดั้งเดิม / คลังข้อมูล'
         },
         description: {
             ko: '시간을 넘어 이어지는 고귀한 유산.',
             en: 'Noble heritage continuing across time.',
             ja: '時間を超えて続く高貴な遺産。',
-            zh: '跨越时间流传的高贵遗产。'
+            zh: '跨越时间流传的高贵遗产。',
+            th: 'มรดกอันสูงส่งที่สืบทอดข้ามกาลเวลา'
         },
         bgImage: '/images/archive_bg.png',
         content: [
@@ -125,13 +129,15 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ko: '문화 체험 / 클래스',
             en: 'Culture Experience / Class',
             ja: '文化体験 / クラス',
-            zh: '文化体验 / 课程'
+            zh: '文化体验 / 课程',
+            th: 'ประสบการณ์วัฒนธรรม / คลาส'
         },
         description: {
             ko: '손끝으로 느끼는 한국의 미.',
             en: 'Korean beauty at your fingertips.',
             ja: '指先で感じる韓国の美。',
-            zh: '指尖感受到的韩国之美。'
+            zh: '指尖感受到的韩国之美。',
+            th: 'ความงามของเกาหลีที่ปลายนิ้วมือ'
         },
         bgImage: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop',
         content: [
@@ -157,13 +163,15 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ko: 'K-스타일 / 시각 예술',
             en: 'K-Style / Visual Arts',
             ja: 'K-スタイル / 視覚芸術',
-            zh: 'K-Style / 视觉艺术'
+            zh: 'K-Style / 视觉艺术',
+            th: 'K-Style / ทัศนศิลป์'
         },
         description: {
             ko: '현대적으로 재해석된 한국의 멋.',
             en: 'Korean style reinterpreted for the modern era.',
             ja: '現代的に再解釈された韓国의 멋.',
-            zh: '现代重新演绎的韩国韵味。'
+            zh: '现代重新演绎的韩国韵味。',
+            th: 'สไตล์เกาหลีที่ตีความใหม่สมัยใหม่'
         },
         bgImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2560&auto=format&fit=crop',
         content: [
@@ -189,13 +197,15 @@ export const FLOOR_CATEGORIES: FloorCategory[] = [
             ko: '로컬 헤리티지 / 여행',
             en: 'Local Heritage / Travel',
             ja: 'ローカルヘリテージ / 旅行',
-            zh: '本地遗产 / 旅游'
+            zh: '本地遗产 / 旅游',
+            th: 'มรดกท้องถิ่น / ท่องเที่ยว'
         },
         description: {
             ko: '지역의 가치를 세계로 연결합니다.',
             en: 'Connecting local values to the world.',
             ja: '地域の価値を世界に繋げます。',
-            zh: '将地区价值连接到世界。'
+            zh: '将地区价值连接到世界。',
+            th: 'เชื่อมต่อคุณค่าท้องถิ่นสู่โลก'
         },
         bgImage: 'https://images.unsplash.com/photo-1596120364993-90dcc247f07e?q=80&w=2560&auto=format&fit=crop',
         content: [
@@ -229,7 +239,7 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
             ja: '世界中のアーティストが集まり、各国の文化を共有しコラボレーションする特別な週間です。',
             zh: '世界各地的艺术家齐聚一堂，分享各国文化并进行合作的特别周。'
         },
-        imageUrl: 'https://images.unsplash.com/photo-1526894198609-10b3cdf4be0b?q=80&w=2560&auto=format&fit=crop',
+        imageUrl: '/images/global_culture_exchange.png',
         date: { ko: '2026.05.01 - 2026.05.07', en: 'May 01 - May 07, 2026', ja: '2026.05.01 - 2026.05.07', zh: '2026.05.01 - 2026.05.07' },
         location: { ko: '1F 글로벌 라운지', en: '1F Global Lounge', ja: '1F グローバル라운지', zh: '1F 全球休息室' },
         price: { ko: '무료 참가', en: 'Free Participation', ja: '参加無料', zh: '免费参加' }
@@ -583,82 +593,82 @@ export const BRAND_SPOTLIGHTS: BrandSpotlight[] = [
 export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-1',
-        title: { ko: '글로벌 K-컬쳐', en: 'Tradition Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
+        title: { ko: '글로벌 K-컬쳐', en: 'Tradition Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演', th: 'การแสดงเต้นรำแบบดั้งเดิม' },
         videoUrl: '/video/k-culture.mp4',
         thumbnailUrl: '/images/global_k_culture.png',
-        location: { ko: '1F 글로벌 K-컬쳐', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
+        location: { ko: '1F 글로벌 K-컬쳐', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场', th: '1F ลานกลาง' },
         viewCount: 12500
     },
     {
         id: 'short-2',
-        title: { ko: '모던 트래디션', en: 'Modern Hanbok Runway', ja: 'モダン韓服ランウェイ', zh: '现代韩服秀' },
+        title: { ko: '모던 트래디션', en: 'Modern Hanbok Runway', ja: 'モダン韓服ランウェイ', zh: '现代韩服秀', th: 'รันเวย์ฮันบกสมัยใหม่' },
         videoUrl: '/video/modern_tradition.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1523805081326-8088f1c71e12?auto=format&fit=crop&q=80',
-        location: { ko: '2F 모던 트래디션', en: '2F Fashion Hall', ja: '2F ファッションホール', zh: '2F 时尚大厅' },
+        location: { ko: '2F 모던 트래디션', en: '2F Fashion Hall', ja: '2F ファッションホール', zh: '2F 时尚大厅', th: '2F ฮอลล์แฟชั่น' },
         viewCount: 18200
     },
     {
         id: 'short-3',
-        title: { ko: '트렌드 & 팝업', en: 'K-Beauty Trend Workshop', ja: 'K-Beauty トレンドワークショップ', zh: 'K-Beauty 趋势工作坊' },
+        title: { ko: '트렌드 & 팝업', en: 'K-Beauty Trend Workshop', ja: 'K-Beauty トレンドワークショップ', zh: 'K-Beauty 趋势工作坊', th: 'เวิร์คช็อปเทรนด์ K-Beauty' },
         videoUrl: '/video/trend.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80',
-        location: { ko: 'B1 트렌드 & 팝업', en: 'B1 Trend Area', ja: 'B1 トレンドエリア', zh: 'B1 趋势区' },
+        location: { ko: 'B1 트렌드 & 팝업', en: 'B1 Trend Area', ja: 'B1 トレンドエリア', zh: 'B1 趋势区', th: 'B1 โซนเทรนด์' },
         viewCount: 15400
     },
     {
         id: 'short-4',
-        title: { ko: '액티브 & 라이프', en: 'Taekwondo Demonstration', ja: 'テコンドー模範演武', zh: '跆拳道表演' },
+        title: { ko: '액티브 & 라이프', en: 'Taekwondo Demonstration', ja: 'テコンドー模範演武', zh: '跆拳道表演', th: 'การสาธิตเทควันโด' },
         videoUrl: '/video/active.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&q=80',
-        location: { ko: '3F 액티브 & 라이프', en: '3F Sports Zone', ja: '3F スポーツゾーン', zh: '3F 运动区' },
+        location: { ko: '3F 액티브 & 라이프', en: '3F Sports Zone', ja: '3F スポーツゾーン', zh: '3F 运动区', th: '3F โซนกีฬา' },
         viewCount: 21000
     },
     {
         id: 'short-5',
-        title: { ko: '트래블 & 시티', en: 'Gyeongbokgung Palace Virtual Tour', ja: '景福宮バーチャルツアー', zh: '景福宫虚拟导览' },
+        title: { ko: '트래블 & 시티', en: 'Gyeongbokgung Palace Virtual Tour', ja: '景福宮バーチャルツアー', zh: '景福宫虚拟导览', th: 'ทัวร์เสมือนพระราชวังเคียงบก' },
         videoUrl: '/video/travel.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1540960309257-ecf91f3a53e4?auto=format&fit=crop&q=80',
-        location: { ko: '4F 트래블 & 시티', en: '4F Gallery', ja: '4F ギャラリー', zh: '4F 画廊' },
+        location: { ko: '4F 트래블 & 시티', en: '4F Gallery', ja: '4F ギャラリー', zh: '4F 画廊', th: '4F แกลเลอรี' },
         viewCount: 23500
     },
     {
         id: 'short-6',
-        title: { ko: '디지털 아트 전시', en: 'Traditional Patterns Digital Art', ja: '伝統模様デジタルアート', zh: '传统图案数字艺术' },
+        title: { ko: '디지털 아트 전시', en: 'Traditional Patterns Digital Art', ja: '伝統模様デジタルアート', zh: '传统图案数字艺术', th: 'ศิลปะดิจิทัลลวดลายดั้งเดิม' },
         videoUrl: '/video/festival.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80',
-        location: { ko: '地下1F デジタルアート', en: 'Media Art Hall', ja: 'メディアアートホール', zh: '媒体艺术厅' },
+        location: { ko: '地下1F デジタルアート', en: 'Media Art Hall', ja: 'メディアアートホール', zh: '媒体艺术厅', th: 'ฮอลล์มีเดียอาร์ต' },
         viewCount: 31200
     },
     {
         id: 'short-7',
-        title: { ko: '달항아리 다도 체험 클래스', en: 'Moon Jar Tea Ceremony Class', ja: '月壺茶道体験クラス', zh: '月亮罐茶道体验课' },
+        title: { ko: '달항아리 다도 체험 클래스', en: 'Moon Jar Tea Ceremony Class', ja: '月壺茶道体験クラス', zh: '月亮罐茶道体验课', th: 'คลาสพิธีชงชาโถดวงจันทร์' },
         videoUrl: '/video/tea_ceremony.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80',
-        location: { ko: '4F 문화 체험 클래스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅' },
+        location: { ko: '4F 문화 체험 클래스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅', th: '5F ร้านอาหารเกาหลี' },
         viewCount: 14200
     },
     {
         id: 'short-8',
-        title: { ko: '디지털 한글 타이포그래피 전', en: 'Digital Hangeul Typography Exhibition', ja: 'デジタルハングルタイポグラフィ展', zh: '数字韩文版式展' },
+        title: { ko: '디지털 한글 타이포그래피 전', en: 'Digital Hangeul Typography Exhibition', ja: 'デジタルハングルタイポグラフィ展', zh: '数字韩文版式展', th: 'นิทรรศการตัวอักษรฮันกึลดิจิทัล' },
         videoUrl: '/video/hangeul_typo.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544522610-cfa5d9966144?auto=format&fit=crop&q=80',
-        location: { ko: '4F 글로벌 K-스타일', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院' },
+        location: { ko: '4F 글로벌 K-스타일', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院', th: '2F โรงละครศิลปะ' },
         viewCount: 27800
     },
     {
         id: 'short-9',
-        title: { ko: '가야금 현대 음악 라이브', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场' },
+        title: { ko: '가야금 현대 음악 라이브', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场', th: 'ดนตรีสมัยใหม่คายากึมสด' },
         videoUrl: '/video/gayageum_live.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1516057747705-0609711c1b31?auto=format&fit=crop&q=80',
-        location: { ko: '5F 지역 문화 유산', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区' },
+        location: { ko: '5F 지역 문화 유산', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区', th: '4F เลาจน์พักผ่อน' },
         viewCount: 19500
     },
     {
         id: 'short-10',
-        title: { ko: '전통 막걸리 양조 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程' },
+        title: { ko: '전통 막걸리 양조 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程', th: 'คลาสทำมักกอลลีแบบดั้งเดิม' },
         videoUrl: '/video/makgeolli_brew.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1510522134121-223ee21d4911?auto=format&fit=crop&q=80',
-        location: { ko: '5F 여행 큐레이션', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
+        location: { ko: '5F 여행 큐레이션', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街', th: 'B1 ถนนสายอาหาร' },
         viewCount: 26300
     }
 ];

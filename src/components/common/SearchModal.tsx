@@ -129,10 +129,10 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                                             <span className="text-xs font-bold text-dancheong-red mb-1 block">
                                                                 {item.category}
                                                             </span>
-                                                            <h3 className="text-white font-serif text-lg leading-tight mb-2 truncate group-hover:text-dancheong-red transition-colors">
+                                                            <h3 className="text-white font-serif text-lg leading-tight mb-2 line-clamp-2 break-words group-hover:text-dancheong-red transition-colors">
                                                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                                             </h3>
-                                                            <p className="text-white/60 text-sm line-clamp-2">
+                                                            <p className="text-white/60 text-sm line-clamp-2 break-words">
                                                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                                                             </p>
                                                         </div>
