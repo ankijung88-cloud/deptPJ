@@ -218,7 +218,7 @@ export const LiveShortsSection: React.FC = () => {
                     spaceBetween={10}
                     slidesPerView={1.5}
                     centeredSlides={true}
-                    loop={true}
+                    loop={shorts.length >= 5}
                     speed={5000} // 일정하고 부드러운 속도
                     autoplay={{
                         delay: 0,
