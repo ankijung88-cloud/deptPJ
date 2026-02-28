@@ -42,12 +42,12 @@ async function seedData() {
         const { error } = await supabase.from('floor_categories').upsert({
             id: category.id,
             floor: category.floor,
-            title: category.title.ko, // Extract base language
-            description: category.description.ko, // Extract base language
+            title: typeof category.title === 'string' ? category.title : category.title.ko, // Extract base language
+            description: typeof category.description === 'string' ? category.description : category.description.ko, // Extract base language
             bg_image: category.bgImage,
             content: category.content ? category.content.map(c => ({
                 type: c.type,
-                value: c.value.ko // Extract base language for content
+                value: typeof c.value === 'string' ? c.value : c.value.ko // Extract base language for content
             })) : [],
             subitems: category.subitems ? category.subitems.map(sub => ({
                 id: sub.id,

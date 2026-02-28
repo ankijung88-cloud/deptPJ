@@ -11,12 +11,15 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+const SUPABASE_BASE_URL = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_SUPABASE_URL : 'https://tjucpoqxzsolmmceguez.supabase.co';
+const STORAGE_URL = `${SUPABASE_BASE_URL}/storage/v1/object/public/dept-media/video`;
+
 const slides = [
-    { id: 1, src: '/video/trand.mp4', poster: '', hasSound: true, categoryKey: 'trend' },
-    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true, categoryKey: 'popup' },
-    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: true, categoryKey: 'performance_exhibition' },
-    { id: 4, src: '/video/experience.mp4', poster: '', hasSound: true, categoryKey: 'activity_style' },
-    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: true, categoryKey: 'local' }
+    { id: 1, src: `${STORAGE_URL}/trand.mp4`, poster: '', hasSound: true, categoryKey: 'trend' },
+    { id: 2, src: `${STORAGE_URL}/popup_store.mp4`, poster: '', hasSound: true, categoryKey: 'popup' },
+    { id: 3, src: `${STORAGE_URL}/festival.mp4`, poster: '', hasSound: true, categoryKey: 'performance_exhibition' },
+    { id: 4, src: `${STORAGE_URL}/experience.mp4`, poster: '', hasSound: true, categoryKey: 'activity_style' },
+    { id: 5, src: `${STORAGE_URL}/travel.mp4`, poster: '', hasSound: true, categoryKey: 'local' }
 ];
 
 export const HeroSection: React.FC = () => {

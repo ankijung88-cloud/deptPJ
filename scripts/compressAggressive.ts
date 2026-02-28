@@ -29,7 +29,7 @@ function compressVideoAggressively(inputPath: string, outputPath: string): Promi
     return new Promise((resolve, reject) => {
         console.log(`Aggressively compressing ${path.basename(inputPath)}... This may take a few minutes.`);
 
-        ffmpeg(inputPath)
+        (ffmpeg as any)(inputPath)
             .outputOptions([
                 '-crf 32',        // Much higher compression (lower quality, smaller size. 32 gets it very small)
                 '-preset fast',   // Fast preset for reasonable time
@@ -43,7 +43,7 @@ function compressVideoAggressively(inputPath: string, outputPath: string): Promi
                 console.log(`Successfully compressed ${path.basename(inputPath)}`);
                 resolve(outputPath);
             })
-            .on('error', (err) => {
+            .on('error', (err: any) => {
                 console.error(`Error compressing ${path.basename(inputPath)}:`, err);
                 reject(err);
             })
