@@ -5,7 +5,7 @@ import { getFloorCategories } from '../../api/categories';
 import { FloorCategory } from '../../types';
 import { ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getLocalizedText } from '../../utils/i18nParams';
+import { getLocalizedText } from '../../utils/i18nUtils';
 import { Link } from 'react-router-dom';
 
 // 개별 카드 컴포넌트 — 마우스 기반 3D 틸트 애니메이션

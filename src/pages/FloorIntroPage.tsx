@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getFloorCategories } from '../api/categories';
 import { FloorCategory } from '../types';
 import { motion } from 'framer-motion';
-import { getLocalizedText } from '../utils/i18nParams';
+import { getLocalizedText } from '../utils/i18nUtils';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 
