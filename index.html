@@ -5,12 +5,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; connect-src 'self' http://13.125.154.255:3000 https://api.iamport.kr https://tjucpoqxzsolmmceguez.supabase.co; img-src 'self' data: https: https://tjucpoqxzsolmmceguez.supabase.co; media-src 'self' https://tjucpoqxzsolmmceguez.supabase.co; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.iamport.kr;">
+    content="default-src 'self'; connect-src 'self' http://13.125.154.255:3000 https://api.iamport.kr https://tjucpoqxzsolmmceguez.supabase.co https://cdn.jsdelivr.net https://*.googleapis.com; img-src 'self' data: https: https://tjucpoqxzsolmmceguez.supabase.co; media-src 'self' https://tjucpoqxzsolmmceguez.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.iamport.kr; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;">
   <title>department</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@100..900&display=swap" rel="stylesheet">
   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 </head>
 
-<body>
+<body style="background-color: #2D3D36 !important;">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

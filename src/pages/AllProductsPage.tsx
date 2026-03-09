@@ -49,10 +49,10 @@ const AllProductsPage: React.FC = () => {
                         transition={{ duration: 0.8 }}
                     >
                         <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
-                            {t('featured.title')}
+                            <AutoTranslatedText text={t('featured.title')} />
                         </h1>
                         <p className="text-lg text-white/60 font-light">
-                            {t('featured.subtitle')}
+                            <AutoTranslatedText text={t('featured.subtitle')} />
                         </p>
                         <motion.div
                             initial={{ width: 0 }}
@@ -68,7 +68,7 @@ const AllProductsPage: React.FC = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-4">
                         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-dancheong-red"></div>
-                        <div className="text-white/60">{t('common.loading')}</div>
+                        <div className="text-white/60"><AutoTranslatedText text={t('common.loading')} /></div>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -127,7 +127,7 @@ const AllProductsPage: React.FC = () => {
                                                 })()}
                                             </span>
                                             <span className="text-xs text-white/30 group-hover:text-white/60 transition-colors uppercase tracking-widest">
-                                                VIEW DETAILS
+                                                <AutoTranslatedText text="VIEW DETAILS" />
                                             </span>
                                         </div>
                                     </div>

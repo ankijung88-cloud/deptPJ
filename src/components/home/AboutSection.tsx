@@ -1,134 +1,153 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight } from 'lucide-react';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { SUPABASE_MEDIA_URL } from '../../lib/supabaseClient';
 
 export const AboutSection: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const sectionRef = useRef<HTMLElement>(null);
 
-    const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start end", "end start"]
+    });
+
+
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+    // Parallax Transforms
+    const bgScale = useTransform(smoothProgress, [0, 0.5, 1], [1.2, 1, 1.2]);
+    const textLayerY = useTransform(smoothProgress, [0, 1], [100, -100]);
+    const giantTextX = useTransform(smoothProgress, [0, 1], [-100, 100]);
+    const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     return (
-        <section className="h-screen w-full snap-start bg-black overflow-hidden flex flex-col justify-center relative">
-            {/* Background Narrative Typography */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center items-center pointer-events-none opacity-[0.03] select-none">
-                <span className="text-[20vw] font-serif font-bold whitespace-nowrap leading-none tracking-tighter text-white">
-                    DEPARTMENT
+        <section
+            ref={sectionRef}
+            className="min-h-[150vh] w-full bg-dancheong-deep-bg overflow-hidden relative py-40 flex flex-col items-center"
+        >
+            {/* Immersive Background Layer */}
+            <motion.div
+                style={{ scale: bgScale, opacity }}
+                className="absolute inset-0 z-0"
+            >
+                <video
+                    className="w-full h-full object-cover opacity-20 grayscale brightness-50"
+                    src={`${SUPABASE_MEDIA_URL}/video/k-culture.mp4`}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-dancheong-deep-bg via-transparent to-dancheong-deep-bg" />
+            </motion.div>
+
+            {/* Giant Background Typography - Increased Vibrancy */}
+            <motion.div
+                style={{ x: giantTextX }}
+                className="absolute inset-x-0 top-1/4 -translate-y-1/2 flex justify-center items-center pointer-events-none opacity-[0.05] select-none z-0 overflow-hidden"
+            >
+                <span className="text-[40vw] font-serif font-black whitespace-nowrap leading-none tracking-tighter text-dancheong-white/10 italic">
+                    S A N S U
                 </span>
-            </div>
+            </motion.div>
 
-            <div className="container mx-auto px-6 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-0">
+            {/* Narrative Content Blocks */}
+            <div className="lossless-layout relative z-10 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
 
-                    {/* Media Layer Group (Left) */}
-                    <div className="w-full lg:w-3/5 relative min-h-[400px] md:min-h-[500px]">
-                        {/* Main Media Layer */}
+                    {/* Left: Brand Essence Card */}
+                    <div className="lg:col-span-12 flex justify-center mb-40">
                         <motion.div
-                            initial={{ opacity: 0, x: -60, y: 20 }}
-                            whileInView={{ opacity: 1, x: 0, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.2, ease: "easeOut" }}
-                            className="relative z-20 w-4/5 md:w-[85%] aspect-[16/10] rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] group"
+                            style={{ y: textLayerY, opacity }}
+                            className="max-w-4xl text-center space-y-8"
                         >
-                            <video
-                                className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
-                                src={`${SUPABASE_MEDIA_URL}/video/k-culture.mp4`}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                            ></video>
-                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
-                        </motion.div>
+                            <div className="flex flex-col items-center gap-4">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: 120 }}
+                                    className="dancheong-rafter-line opacity-40"
+                                />
+                                <span className="text-xs font-black tracking-[0.6em] text-dancheong-gold uppercase">
+                                    <AutoTranslatedText text="Identity of Silence" />
+                                </span>
+                            </div>
 
-                        {/* Secondary Design Elements (Overlapping) */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 100, scale: 0.8 }}
-                            whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-                            className="absolute -bottom-8 right-0 md:right-4 z-30 w-1/2 md:w-[45%] aspect-square rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm shadow-dancheong-red/10"
-                        >
-                            <video
-                                className="w-full h-full object-cover opacity-80"
-                                src={`${SUPABASE_MEDIA_URL}/video/modern_tradition.mp4`}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                            ></video>
-                            <div className="absolute inset-0 bg-dancheong-red/10 mix-blend-overlay" />
+                            <h2 className="text-5xl md:text-[12rem] font-serif font-black text-dancheong-white tracking-tighter leading-[0.9] drop-shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+                                <span className="block text-dancheong-red/40 font-light italic mb-4 text-4xl md:text-6xl"><AutoTranslatedText text="본질을 비추는" /></span>
+                                <AutoTranslatedText text="공간의 아카이브" />
+                            </h2>
                         </motion.div>
-
-                        {/* Floating Decorative Box */}
-                        <motion.div
-                            initial={{ opacity: 0, y: -40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: 0.6 }}
-                            className="absolute -top-10 left-20 w-32 h-32 bg-dancheong-green/10 -z-10 rounded-full blur-3xl"
-                        ></motion.div>
                     </div>
 
-                    {/* Content Layer (Right) */}
-                    <div className="w-full lg:w-2/5 lg:-ml-12 relative z-40">
+                    {/* Right: Detailed Story Card */}
+                    <div className="lg:col-span-7 lg:col-start-6">
                         <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 1, ease: "easeOut" }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="bg-charcoal/30 backdrop-blur-3xl p-8 md:p-12 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                            className="bg-dancheong-deep-bg/80 backdrop-blur-3xl p-10 md:p-16 rounded-[3rem] border border-dancheong-border relative group shadow-[0_40px_100px_rgba(0,0,0,0.6)]"
                         >
-                            <div className="flex items-center gap-3 mb-6">
-                                <span className="w-8 h-[1px] bg-dancheong-red"></span>
-                                <h2 className="text-xs md:text-sm font-bold tracking-[0.3em] text-dancheong-red uppercase">
-                                    Identity & Heritage
-                                </h2>
-                            </div>
+                            {/* Accent Glow */}
+                            <div className="absolute -top-3 -left-3 w-12 h-12 bg-dancheong-vibrant-teal/20 rounded-full blur-xl opacity-40 group-hover:opacity-100 transition-opacity duration-1000" />
 
-                            <h3 className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-6 leading-tight max-w-[90%]">
-                                <span className="drop-shadow-sm">{t('about.title')}</span>
-                            </h3>
+                            <div className="space-y-12">
+                                <div className="space-y-6">
+                                    <h3 className="text-2xl md:text-4xl font-serif font-bold text-shadow-premium text-dancheong-white">
+                                        <AutoTranslatedText text={t('about.title')} />
+                                    </h3>
+                                    <p className="text-dancheong-white/40 text-lg font-light leading-relaxed italic">
+                                        <AutoTranslatedText text={t('about.subtitle')} />
+                                    </p>
+                                </div>
 
-                            <p className="text-sm md:text-base text-white/50 mb-6 font-medium italic tracking-wide">
-                                {t('about.subtitle')}
-                            </p>
+                                <div className="space-y-8 text-white/80 font-light leading-relaxed text-2xl">
+                                    <p className="border-l-4 border-dancheong-red pl-12">
+                                        <AutoTranslatedText text={t('about.description1')} />
+                                    </p>
+                                    <p className="opacity-60 pl-12 border-l border-white/10">
+                                        <AutoTranslatedText text={t('about.description2')} />
+                                    </p>
+                                </div>
 
-                            <div className="space-y-6 text-sm md:text-base text-white/70 font-light leading-relaxed">
-                                <p className="relative">
-                                    <span className="absolute -left-5 top-0 text-3xl font-serif text-dancheong-red/30">"</span>
-                                    {t('about.description1')}
-                                </p>
-                                <p>
-                                    {t('about.description2')}
-                                </p>
-                            </div>
-
-                            <div className="mt-10 group">
-                                <button
+                                <motion.button
                                     onClick={() => navigate('/about')}
-                                    className="relative flex items-center space-x-4 bg-white/5 hover:bg-dancheong-red text-white py-3.5 px-8 rounded-full overflow-hidden transition-all duration-500 shadow-xl border border-white/5 hover:border-transparent"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="group relative flex items-center gap-6 bg-dancheong-gold/5 border border-dancheong-border text-dancheong-white py-5 px-10 rounded-full transition-all duration-500 hover:bg-dancheong-gold/10"
                                 >
-                                    <span className="font-medium tracking-wider text-sm">{t('about.cta')}</span>
-                                    <div className="w-8 h-8 rounded-full bg-dancheong-red group-hover:bg-white flex items-center justify-center transition-colors duration-500">
-                                        <ArrowUpRight className="text-white group-hover:text-dancheong-red" size={16} />
+                                    <span className="font-bold tracking-[0.3em] text-xs uppercase"><AutoTranslatedText text="Discovery Full Story" /></span>
+                                    <div className="w-10 h-10 rounded-full bg-dancheong-white/5 flex items-center justify-center group-hover:rotate-45 transition-transform duration-500 border border-dancheong-white/10">
+                                        <ArrowUpRight size={18} />
                                     </div>
-                                    {/* Liquid Background Hover Effect */}
-                                    <div className="absolute inset-0 bg-dancheong-red -z-10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
-                                </button>
+                                </motion.button>
                             </div>
                         </motion.div>
                     </div>
-
                 </div>
             </div>
 
-            {/* Corner Decorative Element */}
-            <div className="absolute right-0 bottom-0 opacity-10">
-                <div className="w-64 h-64 bg-dancheong-red rounded-tl-full blur-[100px]" />
-            </div>
+            {/* Bottom Floating Visual Fragment */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 0.5, scale: 1 }}
+                viewport={{ once: true }}
+                className="absolute bottom-20 left-10 w-64 aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 hidden lg:block shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+            >
+                <video
+                    className="w-full h-full object-cover"
+                    src={`${SUPABASE_MEDIA_URL}/video/modern_tradition.mp4`}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                />
+            </motion.div>
         </section>
     );
 };

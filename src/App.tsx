@@ -16,6 +16,9 @@ import SubCategoryPage from './pages/SubCategoryPage';
 import AboutPage from './pages/AboutPage';
 
 import AllProductsPage from './pages/AllProductsPage';
+import InspirationPage from './pages/InspirationPage';
+import CulturePulsePage from './pages/CulturePulsePage';
+import LiveShortsPage from './pages/LiveShortsPage';
 
 function App() {
     return (
@@ -24,15 +27,19 @@ function App() {
                 {/* Public Store Routes */}
                 <Route element={<Layout />}>
                     <Route path="/" element={<LandingPage />} />
+                    <Route path="/inspiration" element={<InspirationPage />} />
+                    <Route path="/pulse" element={<CulturePulsePage />} />
+                    <Route path="/shorts" element={<LiveShortsPage />} />
                     <Route path="/detail/:id" element={<DetailPage />} />
                     <Route path="/floor/:id" element={<FloorIntroPage />} />
                     <Route path="/floor/:id/articles" element={<FloorContentPage />} />
                     <Route path="/category/:subId" element={<SubCategoryPage />} />
                     <Route path="/floor-guide" element={<FloorGuidePage />} />
-                    <Route path="/about" element={<AboutPage />} />
                     <Route path="/:category" element={<CategoryPage />} />
                     <Route path="/all-products" element={<AllProductsPage />} />
                 </Route>
+                {/* Presentation Pages (No Layout/Navbar) */}
+                <Route path="/about" element={<AboutPage />} />
             </Routes>
         </Router>
     );

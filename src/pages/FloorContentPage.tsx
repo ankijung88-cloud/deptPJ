@@ -10,12 +10,13 @@ import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
-    'trend': ['Trend', 'trend', 'popup', 'collab', 'new', 'discount', '트렌드', '팝업', '할인상품', '신상품'],
-    'tickets': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', '공연', '전시'],
-    'art': ['Art', 'art', 'class', 'fashion', '활동', '예술', '클래스', '스타일'],
-    'style': ['Style', 'style', 'photo', 'video', 'media', '사진', '영상', '미디어'],
-    'travel': ['Travel', 'travel', 'local', 'course', 'guide', '여행', '로컬'],
-    'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티', '공지사항', '후기']
+    'floor1': ['Trend', 'trend', 'global', 'window', 'exchange', '글로벌'],
+    'floor2': ['Trend', 'popup', 'collab', 'pop', 'sync', '팝업', '협업'],
+    'floor3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
+    'floor4': ['Art', 'art', 'class', 'talk', 'interview', '문화', '토크', '인터뷰'],
+    'floor5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브'],
+    'floor6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산'],
+    'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
 };
 
 const FloorContentPage: React.FC = () => {
@@ -73,8 +74,8 @@ const FloorContentPage: React.FC = () => {
     if (!floorData) {
         return (
             <div className="min-h-screen pt-32 text-center bg-charcoal text-white">
-                <h2 className="text-2xl font-bold">존재하지 않는 층입니다.</h2>
-                <Link to="/" className="text-dancheong-red mt-4 inline-block">홈으로 가기</Link>
+                <h2 className="text-2xl font-bold"><AutoTranslatedText text="존재하지 않는 층입니다." /></h2>
+                <Link to="/inspiration" className="text-dancheong-red mt-4 inline-block"><AutoTranslatedText text="홈으로 가기" /></Link>
             </div>
         );
     }
@@ -99,7 +100,7 @@ const FloorContentPage: React.FC = () => {
                         transition={{ duration: 0.8 }}
                     >
                         <span className="text-dancheong-red font-bold tracking-[0.3em] uppercase mb-4 block text-sm">
-                            {floorData.floor} Contents
+                            <AutoTranslatedText text={`${floorData.floor} Contents`} />
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 tracking-tight">
                             <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />

@@ -15,12 +15,13 @@ const CONFIG = {
     glowBlur: 65,                     // 네온 빛 번짐 강도
 
     // Motion & Physics
-    minSpeed: 0.2,                    // 떨어지는 최소 속도
-    maxSpeed: 0.5,                    // 떨어지는 최대 속도
-    decayMin: 0.005,                  // 꽃잎이 흐려지는 속도 최소치
-    decayMax: 0.02,                   // 꽃잎이 흐려지는 속도 최대치
-    angleRotationBase: 0.006,         // 꽃잎이 회전하는 속도 배율
-    spreadMultiplier: 15.0,           // 옆으로 퍼지는 확산 배율
+    minSpeed: 0.1,                    // 떨어지는 최소 속도
+    maxSpeed: 0.3,                    // 떨어지는 최대 속도
+    decayMin: 0.003,                  // 꽃잎이 흐려지는 속도 최소치
+    decayMax: 0.015,                  // 꽃잎이 흐려지는 속도 최대치
+    angleRotationBase: 0.004,         // 꽃잎이 회전하는 속도 배율
+    spreadMultiplier: 12.0,           // 옆으로 퍼지는 확산 배율
+    lerpFactor: 0.12,                 // 커서 따라가는 부드러움 (낮을수록 더 실크처럼 움직임)
 };
 
 function randomBetween(min: number, max: number) {
@@ -117,27 +118,28 @@ export const CustomCursor: React.FC = () => {
         resizeCanvas();
 
         const particles: Particle[] = [];
-        let mouse = { x: width / 2, y: height / 2 };
-        let lastMouse = { x: width / 2, y: height / 2 };
+        let physicalMouse = { x: width / 2, y: height / 2 };
+        let displayMouse = { x: width / 2, y: height / 2 };
+        let lastPhysicalMouse = { x: width / 2, y: height / 2 };
         let isHovering = false;
 
         const handlePointerMove = (e: PointerEvent) => {
-            lastMouse.x = mouse.x;
-            lastMouse.y = mouse.y;
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            lastPhysicalMouse.x = physicalMouse.x;
+            lastPhysicalMouse.y = physicalMouse.y;
+            physicalMouse.x = e.clientX;
+            physicalMouse.y = e.clientY;
             isHovering = true;
 
-            const dx = mouse.x - lastMouse.x;
-            const dy = mouse.y - lastMouse.y;
+            const dx = physicalMouse.x - lastPhysicalMouse.x;
+            const dy = physicalMouse.y - lastPhysicalMouse.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             const particlesToGenerate = Math.max(1, Math.floor(distance / CONFIG.distanceToGenerate));
 
             for (let i = 0; i < particlesToGenerate; i++) {
                 const t = i / particlesToGenerate;
-                const x = lastMouse.x + dx * t;
-                const y = lastMouse.y + dy * t;
+                const x = lastPhysicalMouse.x + dx * t;
+                const y = lastPhysicalMouse.y + dy * t;
                 particles.push(new Particle(x, y));
             }
         };
@@ -173,12 +175,47 @@ export const CustomCursor: React.FC = () => {
             ctx.globalCompositeOperation = 'source-over';
 
             if (isHovering) {
-                ctx.beginPath();
-                ctx.arc(mouse.x, mouse.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.fill();
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+                // Check for magnetic elements at PHYSICAL mouse
+                const hoveredEl = document.elementFromPoint(physicalMouse.x, physicalMouse.y);
+                const magneticEl = hoveredEl?.closest('.magnetic-target') as HTMLElement;
+
+                if (magneticEl) {
+                    const rect = magneticEl.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    // Pulled target position (45% pull towards center)
+                    const targetX = physicalMouse.x + (centerX - physicalMouse.x) * 0.45;
+                    const targetY = physicalMouse.y + (centerY - physicalMouse.y) * 0.45;
+
+                    displayMouse.x += (targetX - displayMouse.x) * CONFIG.lerpFactor;
+                    displayMouse.y += (targetY - displayMouse.y) * CONFIG.lerpFactor;
+
+                    // Ultra-minimal premium pointer
+                    ctx.beginPath();
+                    ctx.arc(displayMouse.x, displayMouse.y, 18, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)'; // Dancheong Gold Border
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Active dot
+                    ctx.beginPath();
+                    ctx.arc(displayMouse.x, displayMouse.y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(161, 45, 39, 0.9)'; // Dancheong Red (Jangdan)
+                    ctx.fill();
+                } else {
+                    // Smooth Silk Follow
+                    displayMouse.x += (physicalMouse.x - displayMouse.x) * CONFIG.lerpFactor;
+                    displayMouse.y += (physicalMouse.y - displayMouse.y) * CONFIG.lerpFactor;
+
+                    ctx.beginPath();
+                    ctx.arc(displayMouse.x, displayMouse.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(245, 245, 220, 0.9)'; // Dancheong White (Oksun)
+                    ctx.fill();
+                }
+
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = 'rgba(212, 175, 55, 0.2)';
             }
 
             animationFrameId = requestAnimationFrame(animate);

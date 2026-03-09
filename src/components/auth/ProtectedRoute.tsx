@@ -30,7 +30,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
         return (
             <div className="min-h-screen flex items-center justify-center bg-charcoal text-white font-serif">
                 <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 border-4 border-dancheong-red border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <div className="w-12 h-12 border-4 border-white/20 border-t-white/60 rounded-full animate-spin mb-4"></div>
                     <p className="text-white/60 mb-4 animate-pulse">Verifying access...</p>
                     {showReset && (
                         <div className="flex flex-col items-center gap-2 animate-fade-in">

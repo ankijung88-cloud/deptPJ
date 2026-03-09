@@ -22,4 +22,6 @@ export const supabase = createClient<any>(
     }
 );
 
+export const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
+
 console.log('Supabase: Client created object exists:', !!supabase);

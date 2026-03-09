@@ -92,7 +92,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     placeholder={t('search.placeholder')}
-                                    className="w-full bg-transparent border-b-2 border-white/20 py-4 pl-12 pr-4 text-3xl md:text-5xl font-serif text-white placeholder:text-white/20 focus:outline-none focus:border-dancheong-red transition-colors"
+                                    className="w-full bg-transparent border-b-2 border-white/20 py-4 pl-12 pr-4 text-3xl md:text-5xl font-serif text-white placeholder:text-white/20 focus:outline-none focus:border-white transition-colors"
                                     autoFocus
                                 />
                             </div>
@@ -100,12 +100,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                             {/* Results */}
                             <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {loading ? (
-                                    <div className="text-center py-10 text-white/50">{t('common.loading')}</div>
+                                    <div className="text-center py-10 text-white/50"><AutoTranslatedText text={t('common.loading')} /></div>
                                 ) : (
                                     <>
                                         {query && results.length > 0 && (
                                             <p className="text-white/40 mb-6 text-sm">
-                                                {t('search.results_for', { query })} ({results.length})
+                                                <AutoTranslatedText text={t('search.results_for', { query })} /> ({results.length})
                                             </p>
                                         )}
 
@@ -126,10 +126,10 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <span className="text-xs font-bold text-dancheong-red mb-1 block">
+                                                            <span className="text-xs font-bold text-white/40 mb-1 block">
                                                                 {item.category}
                                                             </span>
-                                                            <h3 className="text-white font-serif text-lg leading-tight mb-2 truncate group-hover:text-dancheong-red transition-colors">
+                                                            <h3 className="text-white font-serif text-lg leading-tight mb-2 truncate group-hover:text-white/80 transition-colors">
                                                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                                             </h3>
                                                             <p className="text-white/60 text-sm line-clamp-2">
@@ -145,7 +145,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
                                         ) : (
                                             query && (
                                                 <div className="text-center py-20">
-                                                    <p className="text-white/40 text-lg">{t('search.no_results')}</p>
+                                                    <p className="text-white/40 text-lg"><AutoTranslatedText text={t('search.no_results')} /></p>
                                                 </div>
                                             )
                                         )}

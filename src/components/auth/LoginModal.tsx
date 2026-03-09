@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Lock, ArrowRight, Loader2, Mail } from 'lucide-react';
+import { Mail, Lock, User, X, Loader2, ArrowRight } from 'lucide-react';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -129,8 +130,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         return (
             <div className="text-center mb-10">
-                <h2 className="text-3xl font-serif font-bold text-white mb-2">{title}</h2>
-                <p className="text-white/60 text-sm">{subtitle}</p>
+                <h2 className="text-3xl font-serif font-bold text-white mb-2"><AutoTranslatedText text={title} /></h2>
+                <p className="text-white/60 text-sm"><AutoTranslatedText text={subtitle} /></p>
             </div>
         );
     };
@@ -175,20 +176,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
                                 {error && (
                                     <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
-                                        {error}
+                                        <AutoTranslatedText text={error} />
                                     </div>
                                 )}
 
                                 {successMessage ? (
                                     <div className="mb-6 space-y-4 text-center">
                                         <div className="p-4 bg-dancheong-green/10 border border-dancheong-green/20 rounded-lg text-dancheong-green text-sm">
-                                            {successMessage}
+                                            <AutoTranslatedText text={successMessage} />
                                         </div>
                                         <button
                                             onClick={onClose}
-                                            className="w-full bg-dancheong-red hover:bg-red-700 text-white font-bold py-4 rounded-lg transition-all"
+                                            className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-lg transition-all"
                                         >
-                                            닫기
+                                            <AutoTranslatedText text="닫기" />
                                         </button>
                                     </div>
                                 ) : (
@@ -197,7 +198,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                         {view === 'FIND_ID' ? (
                                             <form className="space-y-6" onSubmit={handleFindId}>
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block">{t('auth.name')}</label>
+                                                    <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block"><AutoTranslatedText text={t('auth.name')} /></label>
                                                     <div className="relative">
                                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={20} />
                                                         <input
@@ -210,7 +211,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                         />
                                                     </div>
                                                 </div>
-                                                <button type="submit" disabled={isLoading} className="w-full bg-dancheong-red hover:bg-red-700 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                                                <button type="submit" disabled={isLoading} className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 border border-white/5">
                                                     {isLoading ? <Loader2 size={20} className="animate-spin" /> : t('auth.submit')}
                                                 </button>
                                                 <div className="text-center">
@@ -233,7 +234,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                         />
                                                     </div>
                                                 </div>
-                                                <button type="submit" disabled={isLoading} className="w-full bg-dancheong-red hover:bg-red-700 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                                                <button type="submit" disabled={isLoading} className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 border border-white/5">
                                                     {isLoading ? <Loader2 size={20} className="animate-spin" /> : t('auth.submit')}
                                                 </button>
                                                 <div className="text-center">
@@ -244,7 +245,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                             <form className="space-y-6" onSubmit={handleSubmit}>
                                                 {view === 'SIGNUP' && (
                                                     <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block">{t('auth.name')}</label>
+                                                        <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block"><AutoTranslatedText text={t('auth.name')} /></label>
                                                         <div className="relative">
                                                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={20} />
                                                             <input
@@ -276,7 +277,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                 </div>
 
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block">{t('auth.password')}</label>
+                                                    <label className="text-xs font-bold text-dancheong-green uppercase tracking-wider block"><AutoTranslatedText text={t('auth.password')} /></label>
                                                     <div className="relative">
                                                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={20} />
                                                         <input
@@ -294,9 +295,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                 {view === 'LOGIN' && (
                                                     <div className="flex items-center justify-center text-sm">
                                                         <div className="flex items-center gap-4">
-                                                            <button type="button" onClick={() => setView('FIND_ID')} className="text-white/60 hover:text-white transition-colors">{t('auth.find_id')}</button>
+                                                            <button type="button" onClick={() => setView('FIND_ID')} className="text-white/60 hover:text-white transition-colors"><AutoTranslatedText text={t('auth.find_id')} /></button>
                                                             <span className="text-white/20">|</span>
-                                                            <button type="button" onClick={() => setView('FORGOT_PASSWORD')} className="text-white/60 hover:text-white transition-colors">{t('auth.forgot_password')}</button>
+                                                            <button type="button" onClick={() => setView('FORGOT_PASSWORD')} className="text-white/60 hover:text-white transition-colors"><AutoTranslatedText text={t('auth.forgot_password')} /></button>
                                                         </div>
                                                     </div>
                                                 )}
@@ -304,13 +305,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                                                 <button
                                                     type="submit"
                                                     disabled={isLoading}
-                                                    className="w-full bg-dancheong-red hover:bg-red-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed border border-white/5"
                                                 >
                                                     {isLoading ? (
                                                         <Loader2 size={20} className="animate-spin" />
                                                     ) : (
                                                         <>
-                                                            {view === 'LOGIN' ? t('auth.login') : t('auth.signup')}
+                                                            <AutoTranslatedText text={view === 'LOGIN' ? t('auth.login') : t('auth.signup')} />
                                                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                                         </>
                                                     )}
@@ -323,16 +324,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
                                 <div className="mt-8 pt-8 border-t border-white/10 text-center">
                                     <p className="text-white/60 text-sm">
-                                        {view === 'LOGIN' ? t('auth.no_account') : t('auth.have_account')}
+                                        <AutoTranslatedText text={view === 'LOGIN' ? t('auth.no_account') : t('auth.have_account')} />
                                         <button
                                             onClick={() => {
                                                 setView(view === 'LOGIN' ? 'SIGNUP' : 'LOGIN');
                                                 setError(null);
                                                 setSuccessMessage(null);
                                             }}
-                                            className="text-dancheong-red font-bold hover:underline ml-1"
+                                            className="text-white/60 font-bold hover:text-white hover:underline ml-1 transition-colors"
                                         >
-                                            {view === 'LOGIN' ? t('auth.register') : t('auth.login')}
+                                            <AutoTranslatedText text={view === 'LOGIN' ? t('auth.register') : t('auth.login')} />
                                         </button>
                                     </p>
                                 </div>

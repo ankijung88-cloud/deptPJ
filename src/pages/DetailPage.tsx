@@ -40,7 +40,7 @@ export const DetailPage: React.FC = () => {
         return (
             <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-charcoal">
                 <div className="text-center">
-                    <p>{t('common.loading')}</p>
+                    <p><AutoTranslatedText text={t('common.loading')} /></p>
                 </div>
             </div>
         );
@@ -50,8 +50,8 @@ export const DetailPage: React.FC = () => {
         return (
             <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-charcoal">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
-                    <Link to="/" className="text-dancheong-red hover:underline">{t('common.back_home')}</Link>
+                    <h2 className="text-2xl font-bold mb-4"><AutoTranslatedText text={t('common.item_not_found')} /></h2>
+                    <Link to="/" className="text-dancheong-red hover:underline"><AutoTranslatedText text={t('common.back_home')} /></Link>
                 </div>
             </div>
         );
@@ -70,10 +70,10 @@ export const DetailPage: React.FC = () => {
 
                 {/* Content Overlay */}
                 <div className="absolute inset-x-0 top-0 bottom-16 z-20 pointer-events-none">
-                    <div className="container mx-auto px-6 h-full flex flex-col justify-end">
+                    <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
                         <Link to="/" className="inline-flex items-center text-white/60 hover:text-white mb-6 transition-colors pointer-events-auto">
                             <ArrowLeft size={20} className="mr-2" />
-                            {t('common.back')}
+                            <AutoTranslatedText text={t('common.back')} />
                         </Link>
 
                         <motion.div
@@ -93,7 +93,7 @@ export const DetailPage: React.FC = () => {
                                     })()}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4"><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h1>
+                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 text-shadow-premium"><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h1>
 
                             <div className="flex flex-wrap gap-6 text-white/80 text-sm">
                                 <div className="flex items-center">
@@ -113,10 +113,10 @@ export const DetailPage: React.FC = () => {
             </div>
 
             {/* Content Body */}
-            <div className="container mx-auto px-6 py-12 relative max-w-4xl">
+            <div className="lossless-layout mx-auto px-6 py-12 relative max-w-4xl">
                 <div className="space-y-8">
                     <section>
-                        <h3 className="text-2xl font-bold font-serif mb-6 border-l-4 border-dancheong-green pl-4">{t('common.detail_intro')}</h3>
+                        <h3 className="text-2xl font-bold font-serif mb-6 border-l-4 border-dancheong-green pl-4"><AutoTranslatedText text={t('common.detail_intro')} /></h3>
                         <p className="text-lg leading-relaxed text-white/80 whitespace-pre-line min-h-[500px]">
                             <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                         </p>

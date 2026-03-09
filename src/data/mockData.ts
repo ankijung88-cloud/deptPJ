@@ -1,217 +1,198 @@
-import { Artist, BrandSpotlight, CalendarEvent, FeaturedItem, FloorCategory, LiveShort, NavItem } from '../types';
+import { Artist, BrandSpotlight, CalendarEvent, FeaturedItem, FloorCategory, LiveShort } from '../types';
 
-export const NAV_ITEMS: NavItem[] = [
-    {
-        id: 'trend',
-        href: '/trend',
-        subitems: [
-            { id: 'global', label: 'global_k_culture', href: '/trend?filter=global' },
-            { id: 'heritage', label: 'modern_heritage', href: '/trend?filter=heritage' }
-        ]
-    },
-    {
-        id: 'popup',
-        href: '/popup',
-        subitems: [
-            { id: 'exchange', label: 'exchange_booth', href: '/popup?filter=exchange' },
-            { id: 'collab', label: 'collab_project', href: '/popup?filter=collab' }
-        ]
-    },
-    {
-        id: 'tickets',
-        href: '/tickets',
-        subitems: [
-            { id: 'traditional', label: 'traditional_arts', href: '/tickets?filter=traditional' },
-            { id: 'media', label: 'media_arts', href: '/tickets?filter=media' }
-        ]
-    },
-    {
-        id: 'style',
-        href: '/style',
-        subitems: [
-            { id: 'class', label: 'culture_class', href: '/style?filter=class' },
-            { id: 'kstyle', label: 'global_k_style', href: '/style?filter=kstyle' }
-        ]
-    },
-    {
-        id: 'travel',
-        href: '/travel',
-        subitems: [
-            { id: 'local_heritage', label: 'local_heritage', href: '/travel?filter=local' },
-            { id: 'travel_curation', label: 'travel_curation', href: '/travel?filter=course' }
-        ]
-    },
-    {
-        id: 'community',
-        href: '/community',
-        subitems: [
-            { id: 'notice', label: 'notice', href: '/community?filter=notice' },
-            { id: 'qna', label: 'qna', href: '/community?filter=qna' },
-            { id: 'reviews', label: 'reviews', href: '/community?filter=reviews' }
-        ]
-    },
-];
+// NAV_ITEMS removed as they are integrated into Header.tsx directly to avoid duplication and inconsistencies.
 
 export const FLOOR_CATEGORIES: FloorCategory[] = [
     {
-        id: 'trend',
+        id: 'floor1',
         floor: '1F',
         title: {
-            ko: '글로벌 K-컬처 / 교류',
-            en: 'Global K-Culture / Exchange',
-            ja: 'グローバルK-カルチャー / 交流',
-            zh: '全球 K-Culture / 交流'
+            ko: '글로벌 K-컬처 트렌드',
+            en: 'Global K-Culture Trends',
+            ja: 'グローバルK-カルチャートレンド',
+            zh: '全球 K-Culture 趋势'
         },
         description: {
-            ko: '세계를 잇는 K-컬처의 역동적인 에너지.',
-            en: 'Dynamic energy of K-Culture connecting the world.',
-            ja: '世界をつなぐK-カルチャーのダイ나믹한 에너지。',
-            zh: '连接世界的 K-Culture 动态能量。'
+            ko: '최신 트렌드를 선도하는 디지털 쇼윈도이자 글로벌 게이트웨이.',
+            en: 'Digital showwindow and global gateway leading the latest trends.',
+            ja: '最新トレンドを先導するデジタルショーウィンドウ。',
+            zh: '引领最新趋势的数字橱窗。'
         },
         bgImage: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=2560&auto=format&fit=crop',
         content: [
             {
                 type: 'text',
                 value: {
-                    ko: '1층은 한국 문화의 현재를 세계와 공유하는 역동적인 교류의 장입니다. 글로벌 아티스트와의 협업, 국가 간 문화 교류 프로젝트를 통해 새로운 영감을 발견하세요.',
-                    en: 'The 1st floor is a dynamic field of exchange sharing the present of Korean culture with the world. Discover new inspiration through collaborations with global artists and cross-national cultural exchange projects.',
-                    ja: '1階は韓国文化の現在を世界と共有するダイナミックな交流の場です。グローバルアーティストとの協業、国家間の文化交流プロジェクトを通じて新しいインスピレーションを発見してください。',
-                    zh: '1楼是与世界分享韩国文化现状的充满动态交流的场所。通过与全球艺术家的合作、国家间的文化交流项目发现新的灵感。'
+                    ko: '1층은 한국 문화의 현재를 세계와 공유하는 디지털 쇼윈도입니다. 글로벌 사용자의 시선을 즉각적으로 포착하는 메인 관문으로서, 가장 빠르고 핫한 K-컬처의 흐름을 전시합니다.',
+                    en: 'The 1st floor is a digital showwindow sharing the present of Korean culture with the world. As the main gateway capturing the attention of global users, it exhibits the fastest K-Culture trends.',
+                    ja: '1階は韓国文化の現在を世界と共有するデジタルショーウィンドウです。',
+                    zh: '1楼是与世界分享韩国文化现状的数字橱窗。'
                 }
             }
         ],
         subitems: [
-            { id: 'global', label: { ko: '글로벌 K-컬처', en: 'Global K-Culture', ja: 'グローバルK-カルチャー', zh: '全球 K-Culture' } },
-            { id: 'exchange', label: { ko: '문화 교류', en: 'Cultural Exchange', ja: '文化交流', zh: '文化交流' } },
-            { id: 'collab', label: { ko: '협업 프로젝트', en: 'Collaboration Project', ja: 'コラボプロジェクト', zh: '合作项目' } }
+            { id: 'global', label: { ko: '글로벌 트렌드', en: 'Global Trends', ja: 'グローバルトレンド', zh: '全球趋势' } },
+            { id: 'window', label: { ko: '디지털 쇼윈도', en: 'Digital Showwindow', ja: 'デジタルショーウィンドウ', zh: '数字橱窗' } }
         ]
     },
     {
-        id: 'tickets',
+        id: 'floor2',
         floor: '2F',
         title: {
-            ko: '전통 예술 / 아카이브',
-            en: 'Traditional Arts / Archive',
-            ja: '伝統芸術 / アーカイブ',
-            zh: '传统艺术 / 档案'
+            ko: '콜라보레이션 & 팝업',
+            en: 'Collaboration & Pop-up',
+            ja: 'コラボレーション＆ポップアップ',
+            zh: '合作与快闪'
         },
         description: {
-            ko: '시간을 넘어 이어지는 고귀한 유산.',
-            en: 'Noble heritage continuing across time.',
-            ja: '時間を超えて続く高貴な遺産。',
-            zh: '跨越时间流传的高贵遗产。'
+            ko: '브랜드와 아티스트의 시너지를 조명하는 역동적인 가변 공간.',
+            en: 'A dynamic variable space highlighting the synergy between brands and artists.',
+            ja: 'ブランドとアーティストのシナジーを照らす空間。',
+            zh: '展示品牌与艺术家协同效应的空间。'
         },
         bgImage: 'https://images.unsplash.com/photo-1543431690-3b6be2c3cb19?q=80&w=2560&auto=format&fit=crop',
         content: [
             {
                 type: 'text',
                 value: {
-                    ko: '2층은 한국 예술의 정수를 보존하고 홍보하는 아카이브 공간입니다. 무형문화재의 디지털 기록물과 현대 미디어 기법으로 재 탄생한 전통 공연을 감상할 수 있습니다.',
-                    en: 'The 2nd floor is an archive space aimed at preserving and promoting the essence of Korean arts. You can appreciate digital records of intangible cultural properties and traditional performances reborn with modern media techniques.',
-                    ja: '2階は韓国芸術の精髄を保存し広めるアーカイブ空間です。無形文化財のデジタル記録物と現代メディア技法で再誕生した伝統公演を鑑賞することができます。',
-                    zh: '2楼是保存和宣传韩国艺术精华的档案空间。可以欣赏到无形文化遗产的数字化记录和通过现代媒体技术重新诞生的传统演出。'
+                    ko: '2층은 브랜드와 아티스트의 협업을 통해 탄생한 시너지 공간입니다. 플랫폼의 무한한 확장성을 증명하는 다이내믹 팝업 구역으로, 매번 새로운 주제의 전시가 펼쳐집니다.',
+                    en: 'The 2nd floor is a synergy space born from collaborations between brands and artists. It is a dynamic pop-up zone proving the infinite scalability of the platform.',
+                    ja: '2階はブランドとアーティストの協業を通じて誕生したシナジー空間です。',
+                    zh: '2楼是品牌与艺术家合作诞生的协同空间。'
                 }
             }
         ],
         subitems: [
-            { id: 'traditional', label: { ko: '전통 예술', en: 'Traditional Arts', ja: '伝統芸術', zh: '传统艺术' } },
-            { id: 'media', label: { ko: '미디어 아카이브', en: 'Media Archive', ja: 'メディアアーカイブ', zh: '媒体档案' } }
+            { id: 'sync', label: { ko: '시너지 공간', en: 'Synergy Space', ja: 'シナジー空間', zh: '协同空间' } },
+            { id: 'pop', label: { ko: '다이내믹 팝업', en: 'Dynamic Pop-up', ja: 'ダイナミックポップアップ', zh: '动态快闪' } }
         ]
     },
     {
-        id: 'art',
+        id: 'floor3',
         floor: '3F',
         title: {
-            ko: '문화 체험 / 클래스',
-            en: 'Culture Experience / Class',
-            ja: '文化体験 / クラス',
-            zh: '文化体验 / 课程'
+            ko: '퍼포먼스 & 전시',
+            en: 'Performance & Exhibition',
+            ja: 'パフォーマンス＆展示',
+            zh: '表演与展览'
         },
         description: {
-            ko: '손끝으로 느끼는 한국의 미.',
-            en: 'Korean beauty at your fingertips.',
-            ja: '指先で感じる韓国の美。',
-            zh: '指尖感受到的韩国之美。'
+            ko: '예술적 몰입감을 극대화하는 멀티미디어 가상 갤러리.',
+            en: 'A multimedia virtual gallery that maximizes artistic immersion.',
+            ja: '芸術的な没入感を極大化するバーチャルギャラリー。',
+            zh: '最大限度提高艺术沉浸感的虚拟画廊。'
         },
         bgImage: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop',
         content: [
             {
                 type: 'text',
                 value: {
-                    ko: '3층은 직접 경험하며 배우는 문화 교류 학교입니다. 전문가와 함께하는 다도, 서예, 공예 클래스를 통해 한국의 미를 깊이 있게 이해하고 자신의 감각을 더해보세요.',
-                    en: 'The 3rd floor is a cultural exchange school to learn through direct experience. Deepen your understanding of Korean beauty through tea ceremony, calligraphy, and craft classes with experts.',
-                    ja: '3階은 직접 경험하며 배우는 문화 교류 학교입니다. 전문가와 함께하는 다도, 서예, 공예 클래스를 통해 한국의 미를 깊이 있게 이해하고 자신의 감각을 더해보세요.',
-                    zh: '3楼是通过亲自体验学习的文化交流学校。通过专家指导的茶道、书法、工艺课程，深入了解韩国之美并加入自己的感悟。'
+                    ko: '3층은 예술적 몰입감을 극대화하는 몰입형 전시 공간입니다. 에디토리얼 특화 인터페이스를 통해 현장감 넘치는 온라인 전시와 공연 실황을 제공합니다.',
+                    en: 'The 3rd floor is an immersive exhibition space that maximizes artistic immersion. It provides realistic online exhibitions and live performances.',
+                    ja: '3階は芸術的な没入感を極大化する没入型展示空間です。',
+                    zh: '3楼是最大限度地提高艺术沉浸感的沉浸式展览空间。'
                 }
             }
         ],
         subitems: [
-            { id: 'class', label: { ko: '문화 체험 클래스', en: 'Culture Class', ja: '文化体験クラス', zh: '文化体验课' } },
-            { id: 'heritage', label: { ko: '전통 공예', en: 'Traditional Craft', ja: '伝統工芸', zh: '传统工艺' } }
+            { id: 'performance', label: { ko: '공연 실황', en: 'Live Performance', ja: 'ライブパフォーマンス', zh: '现场表演' } },
+            { id: 'exhibit', label: { ko: '가상 전시', en: 'Virtual Exhibit', ja: '仮想展示', zh: '虚拟展览' } }
         ]
     },
     {
-        id: 'style',
+        id: 'floor4',
         floor: '4F',
         title: {
-            ko: 'K-스타일 / 시각 예술',
-            en: 'K-Style / Visual Arts',
-            ja: 'K-スタイル / 視覚芸術',
-            zh: 'K-Style / 视觉艺术'
+            ko: '컬처 토크',
+            en: 'Culture Talk',
+            ja: 'カルチャートーク',
+            zh: '文化对话'
         },
         description: {
-            ko: '현대적으로 재해석된 한국의 멋.',
-            en: 'Korean style reinterpreted for the modern era.',
-            ja: '現代的に再解釈された韓国의 멋.',
-            zh: '现代重新演绎的韩国韵味。'
+            ko: '문화의 깊이를 더하는 담론과 아티스트의 철학이 만나는 곳.',
+            en: 'A place where discourse adding depth to culture and artist philosophy meet.',
+            ja: '文化の深みを加える談論と探求の場。',
+            zh: '增加文化深度的论述和探索场所。'
         },
         bgImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2560&auto=format&fit=crop',
         content: [
             {
                 type: 'text',
                 value: {
-                    ko: '4층은 한국의 미적 요소를 현대 패션과 사진으로 선보이는 갤러리입니다. 한복의 곡선을 살린 모던 스타일링과 젊은 사진작가들이 시선에 담은 문화 지형도를 만나보세요.',
-                    en: 'The 4th floor is a gallery presenting Korean aesthetic elements through modern fashion and photography. Meet modern styling highlighting the curves of Hanbok and cultural mappings captured through the eyes of young photographers.',
-                    ja: '4층은 한국의 미적 요소를 현대 패션과 사진으로 선보이는 갤러리입니다. 한복의 곡선을 살린 모던 스타일링과 젊은 사진작가들이 시선에 담은 문화 지형도를 만나보세요.',
-                    zh: '4楼是通过现代时尚和摄影展现韩国审美要素的画廊。可以见到体现韩服曲线的现代造型和年轻摄影师捕捉到的文化地貌。'
+                    ko: '4층은 다양한 문화적 담론이 생산되는 소통의 공간입니다. 아티스트의 심도 있는 인터뷰와 탐구를 통해 일상의 영감을 나누는 인문학적 공간입니다.',
+                    en: 'The 4th floor is a communication space where various cultural discourses are produced. Share daily inspiration through in-depth artist interviews.',
+                    ja: '4階は多様な文化的談論が生産される疎通の空間です。',
+                    zh: '4楼是产生各种文化论述的交流空间。'
                 }
             }
         ],
         subitems: [
-            { id: 'kstyle', label: { ko: 'K-스타일', en: 'K-Style', ja: 'K-スタイル', zh: 'K-Style' } },
-            { id: 'fashion', label: { ko: '시각 예술 / 패션', en: 'Visual Arts / Fashion', ja: '視覚芸術 / ファッション', zh: '视觉艺术 / 时尚' } }
+            { id: 'talk', label: { ko: '문화 담론', en: 'Cultural Talk', ja: '文化談論', zh: '文化对话' } },
+            { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview', ja: 'アーティストインタビュー', zh: '艺术家访谈' } }
         ]
     },
     {
-        id: 'travel',
+        id: 'floor5',
         floor: '5F',
         title: {
-            ko: '로컬 헤리티지 / 여행',
-            en: 'Local Heritage / Travel',
-            ja: 'ローカルヘリテージ / 旅行',
-            zh: '本地遗产 / 旅游'
+            ko: '패션 아카이브',
+            en: 'Fashion Archive',
+            ja: 'ファッションアーカイブ',
+            zh: '时尚档案'
         },
         description: {
-            ko: '지역의 가치를 세계로 연결합니다.',
-            en: 'Connecting local values to the world.',
-            ja: '地域の価値を世界に繋げます。',
-            zh: '将地区价值连接到世界。'
+            ko: '한국적 미학이 깃든 현대 패션과 스타일의 기록.',
+            en: 'A record of modern fashion and style infused with Korean aesthetics.',
+            ja: '韓国的美学が宿る現代ファッションの記録。',
+            zh: '富有韩国美学的现代时尚记录。'
+        },
+        bgImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=2560&auto=format&fit=crop',
+        content: [
+            {
+                type: 'text',
+                value: {
+                    ko: '5층은 한복의 곡선과 색채를 현대적으로 재해석한 패션 아카이브입니다. 시대를 앞서가는 K-스타일의 본질을 아카이빙하고 새로운 패러다임을 제시합니다.',
+                    en: 'The 5th floor is a fashion archive reinterpreting the curves and colors of Hanbok in a modern way. It archives the essence of style.',
+                    ja: '5階は韓服の曲線と色彩を現代的に再解釈したファッションアーカイブです。',
+                    zh: '5楼是将韩服线条和色彩进行现代重新诠释的时尚档案馆。'
+                }
+            }
+        ],
+        subitems: [
+            { id: 'archive', label: { ko: '패션 아카이브', en: 'Fashion Archive', ja: 'ファッションアーカイブ', zh: '时尚档案' } },
+            { id: 'collection', label: { ko: '시즌 컬렉션', en: 'Season Collection', ja: 'シーズンコレクション', zh: '季度系列' } }
+        ]
+    },
+    {
+        id: 'floor6',
+        floor: '6F',
+        title: {
+            ko: '로컬 헤리티지',
+            en: 'Local Heritage',
+            ja: 'ローカルヘリテージ',
+            zh: '本地遗产'
+        },
+        description: {
+            ko: '진정성과 뿌리가 되는 가장 높은 곳의 앵커 공간.',
+            en: 'A top-floor anchor space providing authenticity and roots.',
+            ja: '真正性と根幹となる戦略的アンカー。',
+            zh: '作为真实性和根基的战略锚点。'
         },
         bgImage: 'https://images.unsplash.com/photo-1596120364993-90dcc247f07e?q=80&w=2560&auto=format&fit=crop',
         content: [
             {
                 type: 'text',
                 value: {
-                    ko: '5층은 대한민국 각 지역의 고유한 문화를 큐레이팅하는 여행 라운지입니다. 지역색이 담긴 홍보물과 현지인들이 추천하는 특별한 코스를 통해 진정한 한국의 정취를 홍보합니다.',
-                    en: 'The 5th floor is a travel lounge curating the unique culture of each region in South Korea. We promote the true mood of Korea through promotional materials with regional characteristics and special courses recommended by locals.',
-                    ja: '5층은 대한민국 각 지역의 고유한 문화를 큐레이팅하는 여행 라운지입니다. 지역색이 담긴 홍보물과 현지인들이 추천하는 특별한 코스를 통해 진정한 한국의 정취를 홍보합니다.',
-                    zh: '5楼是通过策划韩国各地区独特文化的旅游休息室。通过带有地域特色的宣传品和当地人推荐的特别路线宣传真正的韩国情调。'
+                    ko: '6층은 플랫폼의 뿌리가 되는 로컬 문화유산을 재조명하는 전략적 앵커입니다. 가장 높은 곳에서 브랜드의 진정성을 확보하는 독창적 헤리티지 공간입니다.',
+                    en: 'The 6th floor is a strategic anchor highlighting local cultural heritage. It is a unique heritage space ensuring brand authenticity at the highest point.',
+                    ja: '6階はプラットフォームの根幹となるローカル文化遺産を再照明する空間です。',
+                    zh: '6楼是重新审视作为平台根基的当地文化遗产的空间。'
                 }
             }
         ],
         subitems: [
-            { id: 'local_heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage', ja: '地域文化遺産', zh: '本地文化遗产' } },
-            { id: 'travel_curation', label: { ko: '여행 큐레이션', en: 'Travel Curation', ja: '旅行キュレーション', zh: '旅游策展' } }
+            { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage', ja: '地域文化遺産', zh: '本地文化遗产' } },
+            { id: 'travel', label: { ko: '전략적 앵커', en: 'Strategic Anchor', ja: '戦略的アンカー', zh: '战略锚点' } }
         ]
     },
 ];
@@ -580,50 +561,50 @@ export const BRAND_SPOTLIGHTS: BrandSpotlight[] = [
 export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-1',
-        title: { ko: '글로벌 K-컬쳐', en: 'Tradition Dance Guerrilla Performance', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
+        title: { ko: '글로벌 K-컬처: 전통 무무 게릴라 공연', en: 'Global K-Culture: Tradition Dance Guerrilla', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
         videoUrl: '/video/k-culture.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1541535650810-10d26f597a65?auto=format&fit=crop&q=80',
-        location: { ko: '1F 글로벌 K-컬쳐', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
+        location: { ko: '1F 글로벌 K-컬처', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
         viewCount: 12500
     },
     {
         id: 'short-2',
-        title: { ko: '모던 트래디션', en: 'Modern Hanbok Runway', ja: 'モダン韓服ランウェイ', zh: '现代韩服秀' },
+        title: { ko: '모던 트래디션: 한복 런웨이 실황', en: 'Modern Tradition: Hanbok Runway', ja: 'モダン韓服ランウェイ', zh: '现代韩服秀' },
         videoUrl: '/video/modern_tradition.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1523805081326-8088f1c71e12?auto=format&fit=crop&q=80',
-        location: { ko: '2F 모던 트래디션', en: '2F Fashion Hall', ja: '2F ファッションホール', zh: '2F 时尚大厅' },
+        location: { ko: '2F 콜라보레이션 & 팝업', en: '2F Fashion Hall', ja: '2F ファッションホール', zh: '2F 时尚大厅' },
         viewCount: 18200
     },
     {
         id: 'short-3',
-        title: { ko: '트렌드 & 팝업', en: 'K-Beauty Trend Workshop', ja: 'K-Beauty トレンドワークショップ', zh: 'K-Beauty 趋势工作坊' },
+        title: { ko: '트렌드 & 팝업: K-뷰티 워크숍', en: 'K-Beauty Trend Workshop', ja: 'K-Beauty トレンドワークショップ', zh: 'K-Beauty 趋势工作坊' },
         videoUrl: '/video/trend.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80',
-        location: { ko: 'B1 트렌드 & 팝업', en: 'B1 Trend Area', ja: 'B1 トレンドエリア', zh: 'B1 趋势区' },
+        location: { ko: '1F 디지털 쇼윈도', en: 'B1 Trend Area', ja: 'B1 トレンドエリア', zh: 'B1 趋势区' },
         viewCount: 15400
     },
     {
         id: 'short-4',
-        title: { ko: '액티브 & 라이프', en: 'Taekwondo Demonstration', ja: 'テコンドー模範演武', zh: '跆拳道表演' },
+        title: { ko: '액티브 & 라이프: 태권도 모범 연무', en: 'Taekwondo Demonstration', ja: 'テコンドー模範演武', zh: '跆拳道表演' },
         videoUrl: '/video/active.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&q=80',
-        location: { ko: '3F 액티브 & 라이프', en: '3F Sports Zone', ja: '3F スポーツゾーン', zh: '3F 运动区' },
+        location: { ko: '3F 퍼포먼스 & 전시', en: '3F Sports Zone', ja: '3F スポーツゾーン', zh: '3F 运动区' },
         viewCount: 21000
     },
     {
         id: 'short-5',
-        title: { ko: '트래블 & 시티', en: 'Gyeongbokgung Palace Virtual Tour', ja: '景福宮バーチャルツアー', zh: '景福宫虚拟导览' },
+        title: { ko: '트래블 & 시티: 경복궁 가상 투어', en: 'Gyeongbokgung Palace Virtual Tour', ja: '景福宮バーチャルツアー', zh: '景福宫虚拟导览' },
         videoUrl: '/video/travel.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1540960309257-ecf91f3a53e4?auto=format&fit=crop&q=80',
-        location: { ko: '4F 트래블 & 시티', en: '4F Gallery', ja: '4F ギャラリー', zh: '4F 画廊' },
+        location: { ko: '4F 컬처 토크', en: '4F Gallery', ja: '4F ギャラリー', zh: '4F 画廊' },
         viewCount: 23500
     },
     {
         id: 'short-6',
-        title: { ko: '디지털 아트 전시', en: 'Traditional Patterns Digital Art', ja: '伝統模様デジタルアート', zh: '传统图案数字艺术' },
+        title: { ko: '디지털 아트 전시: 전통 문양의 재탄생', en: 'Traditional Patterns Digital Art', ja: '伝統模様デジタルアート', zh: '传统图案数字艺术' },
         videoUrl: '/video/festival.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80',
-        location: { ko: '地下1F デジタルアート', en: 'Media Art Hall', ja: 'メディアアートホール', zh: '媒体艺术厅' },
+        location: { ko: '3F 가상 갤러리', en: 'Media Art Hall', ja: 'メディアアートホール', zh: '媒体艺术厅' },
         viewCount: 31200
     },
     {
@@ -631,7 +612,7 @@ export const LIVE_SHORTS: LiveShort[] = [
         title: { ko: '달항아리 다도 체험 클래스', en: 'Moon Jar Tea Ceremony Class', ja: '月壺茶道体験クラス', zh: '月亮罐茶道体验课' },
         videoUrl: '/video/tea_ceremony.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80',
-        location: { ko: '4F 문화 체험 클래스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅' },
+        location: { ko: '4F 컬처 스페이스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅' },
         viewCount: 14200
     },
     {
@@ -639,23 +620,23 @@ export const LIVE_SHORTS: LiveShort[] = [
         title: { ko: '디지털 한글 타이포그래피 전', en: 'Digital Hangeul Typography Exhibition', ja: 'デジタルハングルタイポグラフィ展', zh: '数字韩文版式展' },
         videoUrl: '/video/hangeul_typo.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544522610-cfa5d9966144?auto=format&fit=crop&q=80',
-        location: { ko: '4F 글로벌 K-스타일', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院' },
+        location: { ko: '1F 글로벌 라운지', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院' },
         viewCount: 27800
     },
     {
         id: 'short-9',
-        title: { ko: '가야금 현대 음악 라이브', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场' },
+        title: { ko: '가야금 현대 음악 라이브 쇼케이스', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场' },
         videoUrl: '/video/gayageum_live.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1516057747705-0609711c1b31?auto=format&fit=crop&q=80',
-        location: { ko: '5F 지역 문화 유산', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区' },
+        location: { ko: '6F 로컬 헤리티지', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区' },
         viewCount: 19500
     },
     {
         id: 'short-10',
-        title: { ko: '전통 막걸리 양조 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程' },
+        title: { ko: '전통 막걸리 양조 원데이 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程' },
         videoUrl: '/video/makgeolli_brew.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1510522134121-223ee21d4911?auto=format&fit=crop&q=80',
-        location: { ko: '5F 여행 큐레이션', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
+        location: { ko: '6F 컬처 아카이브', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
         viewCount: 26300
     }
 ];

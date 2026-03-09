@@ -15,6 +15,12 @@ import { useNavigate } from 'react-router-dom';
 // Mapping URL paths to Internal Categories (for filtering)
 // Includes legacy keys for backward compatibility
 const CATEGORY_FILTERS: Record<string, string[]> = {
+    'floor1': ['Trend', 'trend', 'global', 'window', 'exchange', '글로벌'],
+    'floor2': ['Trend', 'popup', 'collab', 'pop', 'sync', '팝업', '협업'],
+    'floor3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
+    'floor4': ['Art', 'art', 'class', 'talk', 'interview', '문화', '토크', '인터뷰'],
+    'floor5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브'],
+    'floor6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산'],
     'trend': ['Trend', 'trend', 'popup', 'collab', 'new', 'discount', '트렌드', '팝업', '할인상품', '신상품'],
     'tickets': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', '공연', '전시'],
     'art': ['Art', 'art', 'class', 'fashion', '활동', '예술', '클래스', '스타일'],
@@ -123,19 +129,19 @@ const CategoryPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">
+                        <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight text-shadow-premium">
                             {(() => {
-                                if (categoryId === 'trend' && filter === 'discount') return '할인상품';
-                                if (categoryId === 'trend' && filter === 'new') return '신상품';
+                                if (categoryId === 'trend' && filter === 'discount') return <AutoTranslatedText text="할인상품" />;
+                                if (categoryId === 'trend' && filter === 'new') return <AutoTranslatedText text="신상품" />;
                                 return floorData ? (
                                     <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                                 ) : (
-                                    categoryId
+                                    <AutoTranslatedText text={categoryId} />
                                 );
                             })()}
                         </h1>
                         {floorData && (
-                            <p className="text-xl md:text-2xl text-white/80 font-light max-w-2xl mx-auto">
+                            <p className="text-xl md:text-2xl text-white/80 font-light max-w-2xl mx-auto text-shadow-premium">
                                 <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                             </p>
                         )}
@@ -163,25 +169,25 @@ const CategoryPage: React.FC = () => {
                                 className="inline-flex items-center bg-white/10 hover:bg-dancheong-red text-white px-6 py-3 rounded-full backdrop-blur-md transition-all border border-white/20 hover:border-dancheong-red group"
                             >
                                 <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
-                                {t('common.register_product')}
+                                <AutoTranslatedText text={t('common.register_product')} />
                             </button>
                         </motion.div>
                     </motion.div>
                 </div>
             </header>
 
-            <div className="container mx-auto px-6">
+            <div className="lossless-layout">
                 {/* Loading State */}
                 {loading && (
                     <div className="text-white text-center py-20">
-                        {t('common.loading')}
+                        <AutoTranslatedText text={t('common.loading')} />
                     </div>
                 )}
 
                 {/* Empty State */}
                 {!loading && items.length === 0 && (
                     <div className="text-white/50 text-center py-20">
-                        {t('common.no_content')}
+                        <AutoTranslatedText text={t('common.no_content')} />
                     </div>
                 )}
 
@@ -199,7 +205,7 @@ const CategoryPage: React.FC = () => {
                                     damping: 20,
                                     delay: index * 0.05
                                 }}
-                                className="bg-[#2a2a2a] rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                                className="bg-charcoal/50 backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl hover:shadow-dancheong-red/20 transition-all duration-500 transform hover:-translate-y-2 border border-white/5 group-hover:border-dancheong-red/30"
                             >
                                 <div className="relative aspect-[4/3] overflow-hidden">
                                     <img
@@ -244,7 +250,7 @@ const CategoryPage: React.FC = () => {
                                             })()}
                                         </span>
                                         <span className="text-xs text-white/30 group-hover:text-white/60 transition-colors uppercase tracking-widest">
-                                            VIEW DETAILS
+                                            <AutoTranslatedText text="VIEW DETAILS" />
                                         </span>
                                     </div>
                                 </div>

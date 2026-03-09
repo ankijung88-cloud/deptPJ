@@ -5,6 +5,7 @@ import { FloorCategory } from '../types';
 import { motion } from 'framer-motion';
 import { getLocalizedText } from '../utils/i18nParams';
 import { useTranslation } from 'react-i18next';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { ArrowRight } from 'lucide-react';
 
 const FloorIntroPage: React.FC = () => {
@@ -33,13 +34,13 @@ const FloorIntroPage: React.FC = () => {
         return () => { mounted = false; };
     }, [id]);
 
-    if (loading) return <div className="min-h-screen pt-32 text-center bg-charcoal text-white">Loading...</div>;
+    if (loading) return <div className="min-h-screen pt-32 text-center bg-charcoal text-white"><AutoTranslatedText text="Loading..." /></div>;
 
     if (!floorData) {
         return (
             <div className="min-h-screen pt-32 text-center bg-charcoal text-white">
-                <h2 className="text-2xl font-bold">존재하지 않는 층입니다.</h2>
-                <Link to="/" className="text-dancheong-red mt-4 inline-block">홈으로 가기</Link>
+                <h2 className="text-2xl font-bold"><AutoTranslatedText text="존재하지 않는 층입니다." /></h2>
+                <Link to="/inspiration" className="text-dancheong-red mt-4 inline-block"><AutoTranslatedText text="홈으로 가기" /></Link>
             </div>
         )
     }
@@ -61,7 +62,7 @@ const FloorIntroPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="inline-block text-dancheong-green font-bold tracking-widest mb-4 text-xl"
                     >
-                        {floorData.floor}
+                        <AutoTranslatedText text={floorData.floor} />
                     </motion.span>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -69,7 +70,7 @@ const FloorIntroPage: React.FC = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-serif font-bold mb-6"
                     >
-                        {getLocalizedText(floorData.title, i18n.language)}
+                        <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -77,7 +78,7 @@ const FloorIntroPage: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-white/60 text-lg max-w-2xl mx-auto mb-8"
                     >
-                        {getLocalizedText(floorData.description, i18n.language)}
+                        <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                     </motion.p>
 
                     <motion.div
@@ -89,7 +90,7 @@ const FloorIntroPage: React.FC = () => {
                             to={`/floor/${floorData.id}/articles`}
                             className="inline-flex items-center gap-2 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all text-white font-medium group"
                         >
-                            전체 내용 보기
+                            <AutoTranslatedText text="전체 내용 보기" />
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
@@ -110,7 +111,7 @@ const FloorIntroPage: React.FC = () => {
                             >
                                 {block.type === 'text' && (
                                     <p className="text-lg leading-relaxed text-white/80 whitespace-pre-line">
-                                        {getLocalizedText(block.value, i18n.language)}
+                                        <AutoTranslatedText text={getLocalizedText(block.value, i18n.language)} />
                                     </p>
                                 )}
                                 {block.type === 'image' && (
@@ -122,7 +123,7 @@ const FloorIntroPage: React.FC = () => {
                                         />
                                         {block.caption && (
                                             <figcaption className="mt-3 text-center text-sm text-white/50 italic">
-                                                {getLocalizedText(block.caption, i18n.language)}
+                                                <AutoTranslatedText text={getLocalizedText(block.caption, i18n.language)} />
                                             </figcaption>
                                         )}
                                     </figure>
@@ -147,12 +148,12 @@ const FloorIntroPage: React.FC = () => {
             {/* Bottom CTA */}
             <section className="py-20 bg-[#2a2a2a] border-t border-white/5">
                 <div className="container mx-auto px-6 text-center">
-                    <h3 className="text-2xl font-bold mb-8">더 많은 소식이 궁금하신가요?</h3>
+                    <h3 className="text-2xl font-bold mb-8"><AutoTranslatedText text="더 많은 소식이 궁금하신가요?" /></h3>
                     <Link
                         to={`/floor/${floorData.id}/articles`}
                         className="inline-flex items-center gap-2 px-10 py-4 bg-dancheong-red hover:bg-red-700 text-white rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
                     >
-                        {getLocalizedText(floorData.title, i18n.language)} 자세히 보기
+                        <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} /> <AutoTranslatedText text="자세히 보기" />
                         <ArrowRight size={20} />
                     </Link>
                 </div>
