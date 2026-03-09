@@ -150,7 +150,7 @@ export const HeroSection: React.FC = () => {
                         className="absolute inset-0 z-40 bg-black flex items-center justify-center"
                     >
                         {/* Arrival Space Background */}
-                        <div className="absolute inset-0 z-0">
+                        <div className="absolute inset-0 z-0 bg-[#2D3D36]">
                             <img
                                 src={arrivalImg}
                                 alt="Virtual Gateway"
@@ -160,7 +160,8 @@ export const HeroSection: React.FC = () => {
                                     e.currentTarget.style.display = 'none';
                                 }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#2D3D36] via-transparent to-[#2D3D36]/60" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#2D3D36] via-[#2D3D36]/40 to-[#2D3D36]/80" />
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]" />
                         </div>
 
                         {/* Arrival UI */}
