@@ -562,7 +562,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-1',
         title: { ko: '글로벌 K-컬처: 전통 무무 게릴라 공연', en: 'Global K-Culture: Tradition Dance Guerrilla', ja: '伝統舞踊ゲリラ公演', zh: '传统舞蹈快闪表演' },
-        videoUrl: '/video/k-culture.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/k-culture.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1541535650810-10d26f597a65?auto=format&fit=crop&q=80',
         location: { ko: '1F 글로벌 K-컬처', en: '1F Central Plaza', ja: '1F 中央広場', zh: '1F 中央广场' },
         viewCount: 12500
@@ -570,7 +570,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-2',
         title: { ko: '모던 트래디션: 한복 런웨이 실황', en: 'Modern Tradition: Hanbok Runway', ja: 'モダン韓服ランウェイ', zh: '现代韩服秀' },
-        videoUrl: '/video/modern_tradition.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/modern_tradition.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1523805081326-8088f1c71e12?auto=format&fit=crop&q=80',
         location: { ko: '2F 콜라보레이션 & 팝업', en: '2F Fashion Hall', ja: '2F ファッションホール', zh: '2F 时尚大厅' },
         viewCount: 18200
@@ -578,7 +578,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-3',
         title: { ko: '트렌드 & 팝업: K-뷰티 워크숍', en: 'K-Beauty Trend Workshop', ja: 'K-Beauty トレンドワークショップ', zh: 'K-Beauty 趋势工作坊' },
-        videoUrl: '/video/trend.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/trend.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&q=80',
         location: { ko: '1F 디지털 쇼윈도', en: 'B1 Trend Area', ja: 'B1 トレンドエリア', zh: 'B1 趋势区' },
         viewCount: 15400
@@ -586,7 +586,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-4',
         title: { ko: '액티브 & 라이프: 태권도 모범 연무', en: 'Taekwondo Demonstration', ja: 'テコンドー模範演武', zh: '跆拳道表演' },
-        videoUrl: '/video/active.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/active.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&q=80',
         location: { ko: '3F 퍼포먼스 & 전시', en: '3F Sports Zone', ja: '3F スポーツゾーン', zh: '3F 运动区' },
         viewCount: 21000
@@ -594,7 +594,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-5',
         title: { ko: '트래블 & 시티: 경복궁 가상 투어', en: 'Gyeongbokgung Palace Virtual Tour', ja: '景福宮バーチャルツアー', zh: '景福宫虚拟导览' },
-        videoUrl: '/video/travel.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/travel.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1540960309257-ecf91f3a53e4?auto=format&fit=crop&q=80',
         location: { ko: '4F 컬처 토크', en: '4F Gallery', ja: '4F ギャラリー', zh: '4F 画廊' },
         viewCount: 23500
@@ -602,7 +602,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-6',
         title: { ko: '디지털 아트 전시: 전통 문양의 재탄생', en: 'Traditional Patterns Digital Art', ja: '伝統模様デジタルアート', zh: '传统图案数字艺术' },
-        videoUrl: '/video/festival.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/festival.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80',
         location: { ko: '3F 가상 갤러리', en: 'Media Art Hall', ja: 'メディアアートホール', zh: '媒体艺术厅' },
         viewCount: 31200
@@ -610,7 +610,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-7',
         title: { ko: '달항아리 다도 체험 클래스', en: 'Moon Jar Tea Ceremony Class', ja: '月壺茶道体験クラス', zh: '月亮罐茶道体验课' },
-        videoUrl: '/video/tea_ceremony.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/tea_ceremony.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80',
         location: { ko: '4F 컬처 스페이스', en: '5F Korean Dining', ja: '5F コリアンダイニング', zh: '5F 韩国餐厅' },
         viewCount: 14200
@@ -618,7 +618,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-8',
         title: { ko: '디지털 한글 타이포그래피 전', en: 'Digital Hangeul Typography Exhibition', ja: 'デジタルハングルタイポグラフィ展', zh: '数字韩文版式展' },
-        videoUrl: '/video/hangeul_typo.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/hangeul_typo.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1544522610-cfa5d9966144?auto=format&fit=crop&q=80',
         location: { ko: '1F 글로벌 라운지', en: '2F Art Theater', ja: '2F アートシアター', zh: '2F 艺术影院' },
         viewCount: 27800
@@ -626,7 +626,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-9',
         title: { ko: '가야금 현대 음악 라이브 쇼케이스', en: 'Gayageum Modern Music Live', ja: 'カヤグム現代音楽ライブ', zh: '伽倻琴现代音乐现场' },
-        videoUrl: '/video/gayageum_live.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/gayageum_live.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1516057747705-0609711c1b31?auto=format&fit=crop&q=80',
         location: { ko: '6F 로컬 헤리티지', en: '4F Rest Lounge', ja: '4F レストラウンジ', zh: '4F 休息区' },
         viewCount: 19500
@@ -634,7 +634,7 @@ export const LIVE_SHORTS: LiveShort[] = [
     {
         id: 'short-10',
         title: { ko: '전통 막걸리 양조 원데이 클래스', en: 'Traditional Makgeolli Brewing Class', ja: '伝統マッコリ醸造クラス', zh: '传统马格利酿造课程' },
-        videoUrl: '/video/makgeolli_brew.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/makgeolli_brew.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1510522134121-223ee21d4911?auto=format&fit=crop&q=80',
         location: { ko: '6F 컬처 아카이브', en: 'B1 Gourmet Street', ja: 'B1 ゴルメストリート', zh: 'B1 美食街' },
         viewCount: 26300

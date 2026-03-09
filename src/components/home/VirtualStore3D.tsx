@@ -26,7 +26,7 @@ const FLOORS = [
         title: 'LOCAL HERITAGE',
         label: '6F',
         color: '#8B3A36',
-        videoUrl: '/video/festival.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/festival.mp4',
         subcategories: [
             { id: 'heritage', label: '지역 문화 유산' },
             { id: 'travel', label: '전략적 앵커' },
@@ -40,7 +40,7 @@ const FLOORS = [
         title: 'FASHION ARCHIVE',
         label: '5F',
         color: '#2D3D36',
-        videoUrl: '/video/modern_tradition.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/modern_tradition.mp4',
         subcategories: [
             { id: 'archive', label: '패션 아카이브' },
             { id: 'collection', label: '시즌 컬렉션' },
@@ -54,7 +54,7 @@ const FLOORS = [
         title: 'CULTURE TALK',
         label: '4F',
         color: '#D4AF37',
-        videoUrl: '/video/travel.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/travel.mp4',
         subcategories: [
             { id: 'talk', label: '문화 담론' },
             { id: 'interview', label: '아티스트 인터뷰' },
@@ -68,7 +68,7 @@ const FLOORS = [
         title: 'PERFORMANCE & EXHIBITION',
         label: '3F',
         color: '#1A2A3A',
-        videoUrl: '/video/active.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/active.mp4',
         subcategories: [
             { id: 'performance', label: '공연 실황' },
             { id: 'exhibit', label: '가상 전시' },
@@ -82,7 +82,7 @@ const FLOORS = [
         title: 'COLLABORATION & POP-UP',
         label: '2F',
         color: '#4A5D23',
-        videoUrl: '/video/trend.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/trend.mp4',
         subcategories: [
             { id: 'sync', label: '시너지 공간' },
             { id: 'pop', label: '다이내믹 팝업' },
@@ -96,7 +96,7 @@ const FLOORS = [
         title: 'K-CULTURE TRENDS',
         label: '1F',
         color: '#5A3D2B',
-        videoUrl: '/video/k-culture.mp4',
+        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/k-culture.mp4',
         subcategories: [
             { id: 'global', label: '글로벌 트렌드' },
             { id: 'window', label: '디지털 쇼윈도' },
@@ -436,6 +436,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
     const navigate = useNavigate();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
+    const [videoError, setVideoError] = useState(false);
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -649,19 +650,35 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                         >
                             <video
                                 ref={videoRef}
-                                src={activeFloorData.videoUrl}
+                                key={activeFloorData.videoUrl}
                                 autoPlay
                                 loop
-                                playsInline
                                 muted={isMuted}
-                                className="w-full h-full object-contain"
+                                playsInline
+                                src={activeFloorData.videoUrl}
+                                onError={() => {
+                                    console.error("Video load failed:", activeFloorData.videoUrl);
+                                    setVideoError(true);
+                                }}
+                                onLoadedData={() => setVideoError(false)}
                                 onLoadedMetadata={(e) => {
                                     const video = e.currentTarget;
                                     if (video.videoWidth && video.videoHeight) {
                                         setVideoAspectRatio(video.videoWidth / video.videoHeight);
                                     }
                                 }}
+                                className={`w-full h-full object-cover transition-transform duration-700 ${videoError ? 'opacity-0' : 'opacity-100'}`}
                             />
+                            {videoError && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                                    <div className="w-16 h-16 rounded-full border border-dancheong-gold/30 flex items-center justify-center mb-4">
+                                        <div className="w-8 h-8 rounded-full bg-dancheong-gold/20 animate-pulse" />
+                                    </div>
+                                    <p className="text-dancheong-gold/60 text-sm font-medium uppercase tracking-widest">
+                                        Preview Loading or Unavailable
+                                    </p>
+                                </div>
+                            )}
 
                             <div className="absolute bottom-10 right-10 flex items-center gap-4">
                                 <button
