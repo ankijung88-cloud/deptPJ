@@ -72,14 +72,14 @@ export const InspirationSection: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center justify-center pt-24 border-t-4 border-dancheong-border">
                         <div className="space-y-6 text-center md:text-left">
-                            <span className="text-xs font-black tracking-[1em] text-white opacity-60 uppercase">Heritage</span>
+                            <span className="text-xs font-black tracking-[1em] text-white opacity-60 uppercase"><AutoTranslatedText text="Heritage" /></span>
                             <p className="text-2xl md:text-4xl text-dancheong-white font-black leading-tight tracking-tighter">
                                 <AutoTranslatedText text="전통의 결을 살린" /><br />
                                 <AutoTranslatedText text="현대적 해석" />
                             </p>
                         </div>
                         <div className="space-y-6 text-center md:text-right">
-                            <span className="text-xs font-black tracking-[1em] text-white opacity-60 uppercase">Innovation</span>
+                            <span className="text-xs font-black tracking-[1em] text-white opacity-60 uppercase"><AutoTranslatedText text="Innovation" /></span>
                             <p className="text-2xl md:text-4xl text-dancheong-white font-black leading-tight tracking-tighter">
                                 <AutoTranslatedText text="경계를 허무는" /><br />
                                 <AutoTranslatedText text="기술적 예술성" />

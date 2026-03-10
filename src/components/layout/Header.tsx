@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
+import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 
 interface SubItem {
     id: string;
@@ -28,6 +29,27 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+
+    // Dynamic Theme Detection
+    const getThemeData = () => {
+        const path = location.pathname;
+        if (path.startsWith('/category/')) {
+            const subId = path.split('/')[2];
+            return { id: subId, floor: getFloorBySubId(subId) || '1' };
+        }
+        if (path.startsWith('/floor/')) {
+            const floorId = path.split('/')[2] || '1';
+            return { id: floorId, floor: floorId.charAt(0) || '1' };
+        }
+        if (path.startsWith('/detail/')) {
+            const itemId = path.split('/')[2] || '';
+            return { id: itemId, floor: 'default' };
+        }
+        return { id: '', floor: 'default' };
+    };
+
+    const { id: themeId, floor: themeFloor } = getThemeData();
+    const theme = getJoseonThemeById(themeId, themeFloor);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const mobileSearchInputRef = useRef<HTMLInputElement>(null);
@@ -159,19 +181,20 @@ const Header: React.FC = () => {
     ];
 
     return (
-        <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ${isScrolled
-            ? 'bg-[#1A2420]/95 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
-            : 'bg-gradient-to-b from-[#1E2924] to-[#1E2924]/90 shadow-[0_15px_40px_rgba(0,0,0,0.4)]'
-            }`}
+        <header
+            className={`fixed top-0 inset-x-0 z-50 transition-all duration-700`}
             style={{
+                backgroundColor: isScrolled ? `${theme.bgColor}f2` : theme.bgColor,
+                backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+                boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.5)' : '0 15px 40px rgba(0,0,0,0.4)',
                 borderBottomLeftRadius: isScrolled ? '0' : '50% 16px',
                 borderBottomRightRadius: isScrolled ? '0' : '50% 16px'
             }}
         >
             {/* Gyeongbokgung Eaves (Cheoma) Decoration Line */}
             <div className={`absolute bottom-0 left-0 right-0 pointer-events-none flex flex-col justify-end transition-opacity duration-700 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
-                <div className="w-full h-[1px] bg-dancheong-gold/40" />
-                <div className="w-full h-[3px] bg-dancheong-red/90" />
+                <div style={{ width: '100%', height: '1px', backgroundColor: `${theme.accentColor}66` }} />
+                <div style={{ width: '100%', height: '3px', backgroundColor: `${theme.highlightColor}e6` }} />
                 <div className="w-full h-[1px] bg-[#000000]/60" />
             </div>
 
@@ -182,49 +205,77 @@ const Header: React.FC = () => {
 
                 {/* Desktop Navigation */}
                 {!is3DStorePage && !isAboutPage && (
-                    <nav className="hidden xl:flex items-center space-x-2 font-serif">
-                        {navItems.map((item) => (
-                            <div
-                                key={item.id}
-                                className="relative group desktop-nav-item"
-                                onMouseEnter={() => setActiveDropdown(item.id)}
-                                onMouseLeave={() => setActiveDropdown(null)}
-                            >
-                                <Link
-                                    to={`/inspiration?floor=${item.level}`}
-                                    className={`flex items-start text-[16px] xl:text-[18px] font-medium tracking-wider transition-colors duration-300 gap-1.5 px-3 xl:px-4 py-6 ${activeDropdown === item.id ? 'text-dancheong-gold' : 'text-dancheong-white/80 hover:text-dancheong-white'}`}
+                    <nav className="hidden xl:flex items-center space-x-8 font-serif">
+                        {navItems.map((item) => {
+                            const floorNum = item.label.split(' | ')[0];   // "1F"
+                            const floorTitle = item.label.split(' | ')[1]; // "K-컬처 트렌드"
+                            const isActive = activeDropdown === item.id;
+                            return (
+                                <div
+                                    key={item.id}
+                                    className="relative flex flex-col items-center desktop-nav-item"
+                                    onMouseEnter={() => setActiveDropdown(item.id)}
+                                    onMouseLeave={() => setActiveDropdown(null)}
                                 >
-                                    <div className="flex flex-col text-left leading-tight">
-                                        <span className="whitespace-nowrap font-bold text-dancheong-gold/60 text-[12px] mb-0.5">
-                                            <AutoTranslatedText text={item.label.split(' | ')[0]} />
+                                    {/* Elevator button (No longer a link, just a dropdown trigger) */}
+                                    <div
+                                        className="flex items-center justify-center w-[60px] h-[60px] rounded-full my-4 transition-all duration-200 select-none cursor-pointer"
+                                        style={{
+                                            background: isActive
+                                                ? `radial-gradient(circle at 40% 35%, ${theme.accentColor}55, ${theme.bgColor}cc)`
+                                                : 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.12), rgba(255,255,255,0.03))',
+                                            boxShadow: isActive
+                                                ? `0 0 18px 4px ${theme.accentColor}66, inset 0 2px 4px rgba(0,0,0,0.6), inset 0 -1px 2px rgba(255,255,255,0.08)`
+                                                : 'inset 0 3px 6px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.4)',
+                                            border: isActive
+                                                ? `1.5px solid ${theme.accentColor}99`
+                                                : '1.5px solid rgba(255,255,255,0.12)',
+                                            transform: isActive ? 'scale(0.95)' : 'scale(1)',
+                                        }}
+                                    >
+                                        <span
+                                            className="font-black text-[18px] tracking-widest"
+                                            style={{
+                                                color: isActive ? theme.accentColor : 'rgba(255,255,255,0.75)',
+                                                textShadow: isActive ? `0 0 12px ${theme.accentColor}` : '0 1px 2px rgba(0,0,0,0.8)',
+                                            }}
+                                        >
+                                            {floorNum}
                                         </span>
-                                        <div className="flex flex-col text-[14px] xl:text-[16px]">
-                                            {item.label.split(' | ')[1].split(' ').map((word, idx) => (
-                                                <span key={idx} className="whitespace-nowrap"><AutoTranslatedText text={word} /></span>
+                                    </div>
+
+                                    {/* Floor title text below button */}
+                                    <div
+                                        className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap text-[18px] font-black tracking-widest text-center ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
+                                        style={{ color: theme.accentColor, textShadow: `0 0 10px ${theme.accentColor}44` }}
+                                    >
+                                        <AutoTranslatedText text={floorTitle} />
+                                    </div>
+
+                                    {/* Dropdown sub-items */}
+                                    <div
+                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 backdrop-blur-xl rounded-b-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
+                                        style={{ backgroundColor: `${theme.bgColor}f2`, borderTop: `2px solid ${theme.accentColor}` }}
+                                    >
+                                        <div className="py-2 flex flex-col relative font-sans">
+                                            {item.subitems.map((sub) => (
+                                                <Link
+                                                    key={sub.id}
+                                                    to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
+                                                    className="px-5 py-3 text-sm tracking-wide text-dancheong-white/70 hover:bg-white/5 transition-all duration-200 text-left relative group/item"
+                                                    onMouseEnter={e => (e.currentTarget.style.color = theme.highlightColor)}
+                                                    onMouseLeave={e => (e.currentTarget.style.color = '')}
+                                                    onClick={() => setActiveDropdown(null)}
+                                                >
+                                                    <span className="relative z-10"><AutoTranslatedText text={sub.label} /></span>
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 transition-all duration-300 group-hover/item:h-3/5" style={{ backgroundColor: theme.highlightColor }} />
+                                                </Link>
                                             ))}
                                         </div>
                                     </div>
-                                    <ChevronDown size={12} className={`transition-transform duration-300 mt-1 shrink-0 ${activeDropdown === item.id ? 'rotate-180 text-dancheong-gold' : 'text-dancheong-white/50'}`} />
-                                </Link>
-
-                                {/* Dropdown Menu - Sub eaves style */}
-                                <div className={`absolute top-full left-1/2 -translate-x-1/2 w-52 bg-[#1A2420]/95 backdrop-blur-xl border-t-2 border-dancheong-red rounded-b-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-400 origin-top ${activeDropdown === item.id ? 'opacity-100 visible translate-y-1 scale-100' : 'opacity-0 invisible -translate-y-2 scale-95'}`}>
-                                    <div className="py-2 flex flex-col relative font-sans">
-                                        {item.subitems.map((sub) => (
-                                            <Link
-                                                key={sub.id}
-                                                to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
-                                                className="px-5 py-3 text-sm tracking-wide text-dancheong-white/70 hover:text-dancheong-gold hover:bg-white/5 transition-all duration-200 text-left relative group/item"
-                                                onClick={() => setActiveDropdown(null)}
-                                            >
-                                                <span className="relative z-10"><AutoTranslatedText text={sub.label} /></span>
-                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-dancheong-gold transition-all duration-300 group-hover/item:h-3/5" />
-                                            </Link>
-                                        ))}
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </nav>
                 )}
 
@@ -233,8 +284,10 @@ const Header: React.FC = () => {
                     <div className="hidden lg:flex items-center space-x-6 font-sans">
                         <button
                             onClick={() => setIsGlobalMuted(!isGlobalMuted)}
-                            className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70 hover:text-dancheong-gold'}`}
-                            title={isGlobalMuted ? '소리 켜기' : '소리 끄기'}
+                            className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
+                            onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
+                            onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
+                            title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                         >
                             {isGlobalMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                         </button>
@@ -244,13 +297,14 @@ const Header: React.FC = () => {
                         {/* Search */}
                         <div className="relative flex items-center justify-end">
                             <div
-                                className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? 'bg-white/10 border border-dancheong-gold/40 backdrop-blur-md w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
+                                className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/10 backdrop-blur-md w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
                                     }`}
+                                style={isSearchOpen ? { border: `1px solid ${theme.borderColor}/40` } : {}}
                             >
                                 <button
                                     onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                    className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'text-dancheong-gold mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70 hover:text-dancheong-gold')
-                                        }`}
+                                    className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70')}`}
+                                    style={isSearchOpen ? theme.highlightStyle : {}}
                                     title="검색"
                                 >
                                     <Search size={18} />
@@ -258,14 +312,16 @@ const Header: React.FC = () => {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    placeholder={i18n.language === 'ko' ? "검색어를 입력하세요." : "Enter search term..."}
+                                    placeholder={t('search.placeholder')}
                                     className={`w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
                                         }`}
                                 />
                                 {isSearchOpen && (
                                     <button
                                         onClick={() => setIsSearchOpen(false)}
-                                        className="text-dancheong-white/50 hover:text-dancheong-gold shrink-0 ml-1 transition-colors"
+                                        className="text-dancheong-white/50 shrink-0 ml-1 transition-colors"
+                                        onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                        onMouseLeave={e => e.currentTarget.style.color = ''}
                                     >
                                         <X size={16} />
                                     </button>
@@ -282,31 +338,40 @@ const Header: React.FC = () => {
                     <div className="flex items-center space-x-4 lg:hidden relative">
                         <button
                             onClick={() => setIsGlobalMuted(!isGlobalMuted)}
-                            className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70 hover:text-dancheong-gold'}`}
+                            className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
+                            onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
+                            onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
                             title={isGlobalMuted ? '소리 켜기' : '소리 끄기'}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                         </button>
 
-                        <div className={`flex items-center absolute right-[3.5rem] transition-all duration-400 ease-in-out overflow-hidden rounded-full ${isSearchOpen ? 'bg-[#1A2420]/90 border border-dancheong-gold/30 backdrop-blur-md w-[200px] pl-3 pr-2 py-1.5 opacity-100 visible shadow-lg' : 'bg-transparent border border-transparent w-0 opacity-0 invisible pl-0 py-1'
-                            }`}
+                        <div
+                            className={`flex items-center absolute right-[3.5rem] transition-all duration-400 ease-in-out overflow-hidden rounded-full ${isSearchOpen ? 'pl-3 pr-2 py-1.5 opacity-100 visible shadow-lg w-[200px]' : 'bg-transparent border border-transparent w-0 opacity-0 invisible pl-0 py-1'}`}
+                            style={isSearchOpen ? { backgroundColor: `${theme.bgColor}e6`, border: `1px solid ${theme.accentColor}55` } : {}}
                         >
-                            <Search size={18} className="text-dancheong-gold shrink-0 mr-2" />
+                            <Search size={18} className="shrink-0 mr-2" style={theme.highlightStyle} />
                             <input
                                 ref={mobileSearchInputRef}
                                 type="text"
-                                placeholder="검색어를 입력하세요."
+                                placeholder={t('search.placeholder')}
                                 className="w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide"
                             />
                         </div>
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
-                            className={`transition-colors relative z-10 ${isSearchOpen ? 'text-dancheong-gold' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70 hover:text-dancheong-gold')}`}
+                            className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
+                            style={isSearchOpen ? theme.highlightStyle : {}}
                         >
                             {isSearchOpen ? <X size={20} /> : <Search size={20} />}
                         </button>
                         {!is3DStorePage && (
-                            <button className="text-dancheong-white/90 hover:text-dancheong-gold transition-colors relative z-10" onClick={toggleMenu}>
+                            <button
+                                className="text-dancheong-white/90 transition-colors relative z-10"
+                                onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                onMouseLeave={e => e.currentTarget.style.color = ''}
+                                onClick={toggleMenu}
+                            >
                                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                             </button>
                         )}
@@ -316,32 +381,41 @@ const Header: React.FC = () => {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <div className="lg:hidden bg-[#1A2420]/95 backdrop-blur-2xl border-t-2 border-dancheong-red h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-right duration-300 font-sans shadow-inner">
+                <div
+                    className={`lg:hidden backdrop-blur-2xl h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-right duration-300 font-sans shadow-inner`}
+                    style={{ backgroundColor: `${theme.bgColor}f2`, borderTop: `2px solid ${theme.accentColor}` }}
+                >
                     <div className="flex flex-col p-6 space-y-6">
                         {navItems.map((item) => (
                             <div key={item.id} className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <Link
                                         to={`/inspiration?floor=${item.level}`}
-                                        className="text-dancheong-white/90 hover:text-dancheong-gold text-lg font-serif font-medium tracking-wide py-1 transition-colors"
+                                        className="text-dancheong-white/90 text-lg font-serif font-medium tracking-wide py-1 transition-colors"
+                                        onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                        onMouseLeave={e => e.currentTarget.style.color = ''}
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <AutoTranslatedText text={item.label} />
                                     </Link>
                                     <button
                                         onClick={() => toggleMobileSubMenu(item.id)}
-                                        className="p-2 text-dancheong-white/40 hover:text-dancheong-gold transition-colors"
+                                        className="p-2 text-dancheong-white/40 transition-colors"
+                                        onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                        onMouseLeave={e => e.currentTarget.style.color = ''}
                                     >
-                                        <ChevronDown size={20} className={`transition-transform ${expandedMobileMenu === item.id ? 'rotate-180 text-dancheong-gold' : ''}`} />
+                                        <ChevronDown size={20} className={`transition-transform ${expandedMobileMenu === item.id ? 'rotate-180' : ''}`} style={expandedMobileMenu === item.id ? theme.highlightStyle : {}} />
                                     </button>
                                 </div>
                                 {expandedMobileMenu === item.id && (
-                                    <div className="flex flex-col mt-3 pl-4 space-y-4 border-l-2 border-dancheong-gold/20 ml-1">
+                                    <div className={`flex flex-col mt-3 pl-4 space-y-4 ml-1`} style={{ borderLeft: `2px solid ${theme.accentColor}33` }}>
                                         {item.subitems.map((sub) => (
                                             <Link
                                                 key={sub.id}
                                                 to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
-                                                className="text-dancheong-white/60 hover:text-dancheong-gold text-base tracking-wide transition-colors"
+                                                className="text-dancheong-white/60 text-base tracking-wide transition-colors"
+                                                onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                                onMouseLeave={e => e.currentTarget.style.color = ''}
                                                 onClick={() => setIsMenuOpen(false)}
                                             >
                                                 <AutoTranslatedText text={sub.label} />
@@ -356,7 +430,7 @@ const Header: React.FC = () => {
 
                         {/* Mobile Language Selector */}
                         <div className="py-2">
-                            <p className="text-xs text-dancheong-gold/60 mb-3 uppercase font-bold tracking-widest font-serif">Language</p>
+                            <p className="text-xs text-dancheong-white/60 mb-3 uppercase font-bold tracking-widest font-serif" style={{ color: `${theme.accentColor}99` }}>Language</p>
                             <div className="grid grid-cols-3 gap-2">
                                 {i18n.language && supportedLanguages.map((lang) => (
                                     <button
@@ -365,10 +439,8 @@ const Header: React.FC = () => {
                                             i18n.changeLanguage(lang.code);
                                             setIsMenuOpen(false);
                                         }}
-                                        className={`text-center px-2 py-2.5 rounded-lg text-[11px] transition-all tracking-wide ${i18n.language === lang.code
-                                            ? 'bg-dancheong-red text-white font-bold shadow-lg shadow-dancheong-red/20'
-                                            : 'bg-white/5 text-dancheong-white/60 hover:text-dancheong-gold hover:bg-white/10'
-                                            }`}
+                                        className={`text-center px-2 py-2.5 rounded-lg text-[11px] transition-all tracking-wide text-dancheong-white/60 hover:bg-white/10`}
+                                        style={i18n.language === lang.code ? { ...theme.bgHighlightStyle, color: 'white', fontWeight: 'bold' } : {}}
                                     >
                                         {lang.label}
                                     </button>

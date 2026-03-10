@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
+import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
 
 
 
@@ -36,11 +37,14 @@ export const DetailPage: React.FC = () => {
         fetchItem();
     }, [id]);
 
+    const floorNumber = item ? (getFloorBySubId(item.subcategory || '') || '1') : '1';
+    const theme = getJoseonThemeById(id || '', floorNumber);
+
     if (loading) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-charcoal">
+            <div className="min-h-screen pt-24 flex items-center justify-center" style={theme.bgStyle}>
                 <div className="text-center">
-                    <p><AutoTranslatedText text={t('common.loading')} /></p>
+                    <p className="animate-pulse text-lg font-bold" style={theme.accentStyle}>{t('common.loading')}</p>
                 </div>
             </div>
         );
@@ -48,17 +52,17 @@ export const DetailPage: React.FC = () => {
 
     if (!item) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-charcoal">
+            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-cyber-pine">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4"><AutoTranslatedText text={t('common.item_not_found')} /></h2>
-                    <Link to="/" className="text-dancheong-red hover:underline"><AutoTranslatedText text={t('common.back_home')} /></Link>
+                    <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
+                    <Link to="/" style={theme.highlightStyle} className="hover:underline">{t('common.back_home')}</Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <article className="pt-20 min-h-screen bg-charcoal text-white">
+        <article className="pt-20 min-h-screen" style={theme.bgStyle}>
             {/* Header / Hero */}
             <div className="relative h-[60vh] w-full group">
                 <div
@@ -81,8 +85,8 @@ export const DetailPage: React.FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="pointer-events-auto"
                         >
-                            <div className="inline-block border-b-2 border-dancheong-red mb-4 pb-1">
-                                <span className="text-xl font-serif font-bold tracking-wider">
+                            <div className="inline-block border-b-2 mb-4 pb-1" style={{ borderBottomColor: theme.accentColor }}>
+                                <span className="text-xl font-serif font-bold tracking-wider" style={theme.accentStyle}>
                                     {(() => {
                                         const displayKey = (item as any).subcategory || item.category;
                                         const key = `nav.${displayKey.toLowerCase()}`;
@@ -93,15 +97,15 @@ export const DetailPage: React.FC = () => {
                                     })()}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 text-shadow-premium"><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h1>
+                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4" style={theme.textPrimaryStyle}><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h1>
 
                             <div className="flex flex-wrap gap-6 text-white/80 text-sm">
                                 <div className="flex items-center">
-                                    <CalendarIcon size={16} className="mr-2 text-dancheong-green" />
+                                    <CalendarIcon size={16} className="mr-2" style={theme.accentStyle} />
                                     <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
                                 </div>
                                 <div className="flex items-center">
-                                    <MapPin size={16} className="mr-2 text-dancheong-green" />
+                                    <MapPin size={16} className="mr-2" style={theme.accentStyle} />
                                     <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
                                 </div>
                             </div>
@@ -109,15 +113,17 @@ export const DetailPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-transparent h-[40%] mt-auto" />
+                <div className="absolute inset-0 z-0 pointer-events-none h-[40%] mt-auto" style={{ background: `linear-gradient(to top, ${theme.bgColor}cc, transparent)` }} />
             </div>
 
             {/* Content Body */}
-            <div className="lossless-layout mx-auto px-6 py-12 relative max-w-4xl">
+            <div className="mx-auto px-6 py-12 relative max-w-4xl">
+                {/* Colored accent band at top */}
+                <div className="h-1 w-full rounded mb-8" style={{ background: `linear-gradient(to right, ${theme.accentColor}, ${theme.color4}, ${theme.color5})` }} />
                 <div className="space-y-8">
-                    <section>
-                        <h3 className="text-2xl font-bold font-serif mb-6 border-l-4 border-dancheong-green pl-4"><AutoTranslatedText text={t('common.detail_intro')} /></h3>
-                        <p className="text-lg leading-relaxed text-white/80 whitespace-pre-line min-h-[500px]">
+                    <section className="rounded-2xl p-8" style={{ backgroundColor: theme.color1, border: `1px solid ${theme.color3}` }}>
+                        <h3 className="text-2xl font-bold font-serif mb-6 border-l-4 pl-4" style={{ borderLeftColor: theme.accentColor, color: theme.textPrimary }}>{t('common.detail_intro')}</h3>
+                        <p className="text-lg leading-relaxed whitespace-pre-line min-h-[500px]" style={{ color: theme.textSecondary }}>
                             <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                         </p>
                     </section>

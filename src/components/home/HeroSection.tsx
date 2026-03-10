@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useTransform, useSpring, animate, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 import { HeroPortal3D } from './HeroPortal3D';
@@ -11,6 +12,7 @@ export const HeroSection: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [phase, setPhase] = useState<PortalPhase>('hero');
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     // Motion Values for timed animation
     const portalVelocity = useMotionValue(2);
@@ -58,7 +60,7 @@ export const HeroSection: React.FC = () => {
     const arrivalImg = "/images/arrival_gateway.png";
 
     return (
-        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-dancheong-deep-bg" style={{ backgroundColor: '#2D3D36' }}>
+        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#1A2420]" style={{ backgroundColor: '#1A2420' }}>
             <AnimatePresence mode="wait">
                 {phase !== 'arrived' ? (
                     <motion.div
@@ -90,7 +92,7 @@ export const HeroSection: React.FC = () => {
                             >
                                 <source src={videoUrl} type="video/mp4" />
                             </video>
-                            <div className="absolute inset-0 bg-gradient-to-b from-dancheong-deep-bg/40 via-transparent to-dancheong-deep-bg/80 z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-b from-[#1A2420]/40 via-transparent to-[#1A2420]/80 z-10" />
                             <div className="absolute inset-0 bg-black/20 z-10" />
                         </motion.div>
 
@@ -106,37 +108,37 @@ export const HeroSection: React.FC = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="inline-block mb-6 px-4 py-1 border border-dancheong-red/30 bg-dancheong-red/5 backdrop-blur-md rounded-full text-dancheong-red text-sm font-medium tracking-widest uppercase"
+                                className="inline-block mb-6 px-4 py-1 border border-[#00FFC2]/30 bg-[#00FFC2]/5 backdrop-blur-md rounded-full text-[#00FFC2] text-sm font-medium tracking-widest uppercase"
                             >
-                                <AutoTranslatedText text="Korean Heritage & Modern Space" />
+                                <AutoTranslatedText text={t('hero.tagline')} />
                             </motion.div>
 
                             <motion.h1
-                                className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-dancheong-white"
+                                className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
                             >
-                                <AutoTranslatedText text="DEPARTMENT" /> <br className="hidden sm:block" />
-                                <span className="text-dancheong-red/80"><AutoTranslatedText text="OF K-CULTURE" /></span>
+                                <AutoTranslatedText text={t('hero.title_main')} /> <br className="hidden sm:block" />
+                                <span className="text-[#FFD700]/80"><AutoTranslatedText text={t('hero.title_sub')} /></span>
                             </motion.h1>
 
                             <motion.p
-                                className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-dancheong-white/80 leading-relaxed font-medium break-keep px-4 sm:px-0"
+                                className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/80 leading-relaxed font-medium break-keep px-4 sm:px-0"
                             >
-                                <AutoTranslatedText text="전통과 현대가 어우러진 새로운 공간의 재해석. 우리의 유산에서 영감을 얻어 시대를 앞서가는 경험을 제안합니다." />
+                                <AutoTranslatedText text={t('hero.description')} />
                             </motion.p>
 
                             <motion.div className="flex flex-col md:flex-row items-center justify-center gap-6">
                                 <button
                                     onClick={handleExplore}
                                     disabled={phase === 'warping'}
-                                    className="px-10 py-4 bg-dancheong-red text-dancheong-white font-semibold rounded-sm hover:bg-dancheong-red-dark transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(235,59,45,0.4)] tracking-wider uppercase disabled:opacity-50"
+                                    className="px-10 py-4 bg-[#FF3B30] text-white font-semibold rounded-sm hover:bg-[#e6352b] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,59,48,0.4)] tracking-wider uppercase disabled:opacity-50"
                                 >
-                                    <AutoTranslatedText text={phase === 'warping' ? 'Warping...' : 'Explore Collection'} />
+                                    {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                                 </button>
                                 <button
                                     onClick={() => navigate('/about')}
                                     className="px-10 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-sm hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
                                 >
-                                    <AutoTranslatedText text="Watch Story" />
+                                    <AutoTranslatedText text={t('hero.story')} />
                                 </button>
                             </motion.div>
                         </motion.div>
@@ -147,10 +149,10 @@ export const HeroSection: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1.5 }}
-                        className="absolute inset-0 z-40 bg-black flex items-center justify-center"
+                        className="absolute inset-0 z-40 bg-[#1A2420] flex items-center justify-center"
                     >
                         {/* Arrival Space Background */}
-                        <div className="absolute inset-0 z-0 bg-[#2D3D36]">
+                        <div className="absolute inset-0 z-0 bg-[#0A0D17]">
                             <img
                                 src={arrivalImg}
                                 alt="Virtual Gateway"
@@ -160,7 +162,7 @@ export const HeroSection: React.FC = () => {
                                     e.currentTarget.style.display = 'none';
                                 }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#2D3D36] via-[#2D3D36]/40 to-[#2D3D36]/80" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#1A2420] via-[#1A2420]/40 to-[#1A2420]/80" />
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]" />
                         </div>
 
@@ -170,17 +172,17 @@ export const HeroSection: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5, duration: 1 }}
-                                className="text-5xl md:text-7xl font-serif text-dancheong-white mb-6"
+                                className="text-5xl md:text-7xl font-serif text-white mb-6"
                             >
-                                <AutoTranslatedText text="가상의 공간에 도착했습니다" />
+                                <AutoTranslatedText text={t('hero.arrived')} />
                             </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 1.2, duration: 1 }}
-                                className="text-dancheong-white/60 tracking-[0.4em] uppercase text-sm"
+                                className="text-white/60 tracking-[0.4em] uppercase text-sm"
                             >
-                                <AutoTranslatedText text="Welcome to the Virtual Gateway" />
+                                <AutoTranslatedText text={t('hero.welcome')} />
                             </motion.p>
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -192,9 +194,9 @@ export const HeroSection: React.FC = () => {
                                     onClick={() => {
                                         navigate('/inspiration');
                                     }}
-                                    className="px-8 py-3 border border-dancheong-gold/30 text-dancheong-gold rounded-full hover:bg-dancheong-gold/10 transition-all duration-300 pointer-events-auto"
+                                    className="px-8 py-3 border border-[#FFD700]/30 text-[#FFD700] rounded-full hover:bg-[#FFD700]/10 transition-all duration-300 pointer-events-auto"
                                 >
-                                    <AutoTranslatedText text="시작하기" />
+                                    <AutoTranslatedText text={t('hero.start')} />
                                 </button>
                             </motion.div>
                         </div>

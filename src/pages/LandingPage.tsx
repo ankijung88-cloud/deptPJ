@@ -4,7 +4,7 @@ const LandingPage: React.FC = () => {
     return (
         <div
             className="bg-dancheong-deep-bg selection:bg-dancheong-red/30"
-            style={{ backgroundColor: '#2D3D36' }}
+            style={{ backgroundColor: '#05070D' }}
         >
             {/* Ambient Background Glows - Heritage Tones */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

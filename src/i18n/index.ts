@@ -23,7 +23,12 @@ const resources = {
 
                 "notice": "공지사항",
                 "qna": "Q&A",
-                "reviews": "후기"
+                "reviews": "후기",
+                "tickets": "티켓 예매",
+                "art": "아트 컬렉션",
+                "travel": "로컬 여행",
+                "sound_on": "소리 켜기",
+                "sound_off": "소리 끄기"
             },
             "category": {
                 "trend": {
@@ -58,8 +63,51 @@ const resources = {
                 "cta": "층별 안내 보기",
                 "promotion_title": "문화의 시선, 교류의 시작",
                 "promotion_subtitle": "전통과 현대가 어우러지는 한국 문화의 정수를 세계와 공유합니다.",
-                "promotion_cta": "문화 교류 알아보기"
+                "promotion_cta": "문화 교류 알아보기",
+                "tagline": "한국의 유산과 현대적 공간",
+                "title_main": "디파트먼트",
+                "title_sub": "OF K-CULTURE",
+                "description": "전통과 현대가 어우러진 새로운 공간의 재해석. 우리의 유산에서 영감을 얻어 시대를 앞서가는 경험을 제안합니다.",
+                "warping": "워핑 중...",
+                "explore": "컬렉션 둘러보기",
+                "story": "브랜드 스토리",
+                "arrived": "가상의 공간에 도착했습니다",
+                "welcome": "Welcome to the Virtual Gateway",
+                "start": "시작하기"
             },
+            "subcategory": {
+                "global": "글로벌 트렌드",
+                "window": "디지털 쇼윈도",
+                "f1_kpop": "K-팝 스테이지",
+                "f1_library": "트렌드 라이브러리",
+                "f1_tech": "한류 테크존",
+                "sync": "시너지 공간",
+                "pop": "다이내믹 팝업",
+                "f2_lab": "브랜드 랩",
+                "f2_art": "아트 콜라보",
+                "f2_gallery": "한정판 갤러리",
+                "performance": "공연 실황",
+                "exhibit": "가상 전시",
+                "f3_media": "미디어 아트 홀",
+                "f3_lounge": "아티스트 라운지",
+                "f3_audio": "사운드 아카이브",
+                "talk": "문화 담론",
+                "interview": "아티스트 인터뷰",
+                "f4_plus": "토크 플러스",
+                "f4_book": "도서관 섹션",
+                "f4_seminar": "세미나 룸",
+                "archive": "패션 아카이브",
+                "collection": "시즌 컬렉션",
+                "f5_material": "소재 도서관",
+                "f5_fitting": "피팅 스튜디오",
+                "f5_textile": "텍스타일 룸",
+                "heritage": "지역 문화 유산",
+                "travel": "전략적 앵커",
+                "f6_gourmet": "미식 아카이브",
+                "f6_craft": "지역 공예관",
+                "f6_tour": "헤리티지 투어"
+            },
+            "subcategory_desc": "전통의 깊이와 현대적 감각이 교차하는 지점에서 발견한 새로운 영감의 기록들을 탐색합니다.",
             "featured": {
                 "title": "추천 & 이벤트",
                 "subtitle": "Culture Dept.에서 만나는 특별한 경험",
@@ -69,7 +117,7 @@ const resources = {
                 "title": "취향이 살아 숨쉬는 공간, department",
                 "subtitle": "전통의 깊이와 현대의 감각이 교차하는 아트 갤러리 백화점",
                 "description1": "department은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
-                "description2": "가장 트렌디한 글로벌 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
+                "description2": "가장 트렌디한 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
                 "cta": "브랜드 철학 보기"
             },
             "auth": {
@@ -143,7 +191,12 @@ const resources = {
                     }
                 },
                 "register_product": "상품 등록",
-                "guest": "게스트"
+                "guest": "게스트",
+                "not_found": "카테고리를 찾을 수 없습니다",
+                "not_found_desc": "요청하신 페이지가 존재하지 않거나 현재 준비 중입니다.",
+                "go_inspiration": "인스피레이션 홈으로",
+                "no_info": "정보 없음",
+                "loading_content": "컨텐츠를 불러오는 중..."
             },
             "search": {
                 "placeholder": "검색어를 입력하세요...",
@@ -252,6 +305,11 @@ const resources = {
                 "floor4": "4F | CULTURE TALK",
                 "floor5": "5F | FASHION ARCHIVE",
                 "floor6": "6F | LOCAL HERITAGE",
+                "tickets": "Tickets",
+                "art": "Art Collection",
+                "travel": "Local Travel",
+                "sound_on": "Sound On",
+                "sound_off": "Sound Off"
             },
             "category": {
                 "trend": {
@@ -283,8 +341,51 @@ const resources = {
             "hero": {
                 "title": "Discover the Beauty of Korea",
                 "subtitle": "Where Tradition Meets Modernity, department",
-                "cta": "Explore Floors"
+                "cta": "Explore Floors",
+                "tagline": "Korean Heritage x Modern Space",
+                "title_main": "DEPARTMENT",
+                "title_sub": "OF K-CULTURE",
+                "description": "Reinterpretation of space where tradition and modernity harmonize. Inspired by our heritage, we propose forward-thinking experiences.",
+                "warping": "Warping...",
+                "explore": "Explore Collection",
+                "story": "Brand Story",
+                "arrived": "Arrived at Virtual Space",
+                "welcome": "Welcome to the Virtual Gateway",
+                "start": "Start"
             },
+            "subcategory": {
+                "global": "Global Trends",
+                "window": "Digital Show Window",
+                "f1_kpop": "K-Pop Stage",
+                "f1_library": "Trend Library",
+                "f1_tech": "K-Wave Tech Zone",
+                "sync": "Synergy Space",
+                "pop": "Dynamic Pop-up",
+                "f2_lab": "Brand Lab",
+                "f2_art": "Art Collaboration",
+                "f2_gallery": "Limited Edition Gallery",
+                "performance": "Live Performance",
+                "exhibit": "Virtual Exhibition",
+                "f3_media": "Media Art Hall",
+                "f3_lounge": "Artist Lounge",
+                "f3_audio": "Sound Archive",
+                "talk": "Cultural Discourse",
+                "interview": "Artist Interview",
+                "f4_plus": "Talk Plus",
+                "f4_book": "Library Section",
+                "f4_seminar": "Seminar Room",
+                "archive": "Fashion Archive",
+                "collection": "Season Collection",
+                "f5_material": "Material Library",
+                "f5_fitting": "Fitting Studio",
+                "f5_textile": "Textile Room",
+                "heritage": "Local Cultural Heritage",
+                "travel": "Strategic Anchor",
+                "f6_gourmet": "Gourmet Archive",
+                "f6_craft": "Local Craft Center",
+                "f6_tour": "Heritage Tour"
+            },
+            "subcategory_desc": "Exploring records of new inspiration found at the intersection of traditional depth and modern sense.",
             "featured": {
                 "title": "Featured & Events",
                 "subtitle": "Special Experiences at Culture Dept.",
@@ -294,7 +395,7 @@ const resources = {
                 "title": "A Living Exhibition, department",
                 "subtitle": "An Art Gallery Mall where profound heritage meets modern aesthetic.",
                 "description1": "Beyond a traditional retail space, department is a premium cultural curation platform designed to inspire your everyday life.",
-                "description2": "From the trendiest global K-Culture to timeless heritage, we curate sophisticated exhibitions and artistic experiences that captivate your senses.",
+                "description2": "From the trendiest K-Culture to timeless heritage, we curate sophisticated exhibitions and artistic experiences that captivate your senses.",
                 "cta": "Discover Our Philosophy"
             },
             "auth": {
@@ -367,7 +468,12 @@ const resources = {
                 "close": "Close",
                 "download": "Download",
                 "register_product": "Register Product",
-                "guest": "Guest"
+                "guest": "Guest",
+                "not_found": "Category Not Found",
+                "not_found_desc": "The requested page does not exist or is currently being prepared.",
+                "go_inspiration": "Back to Inspiration",
+                "no_info": "No Information",
+                "loading_content": "Loading contents..."
             },
             "search": {
                 "placeholder": "Enter search term...",
@@ -480,7 +586,12 @@ const resources = {
                 "qna": "Q&A",
                 "reviews": "レビュー",
                 "mypage": "マイページ",
-                "login": "ログイン"
+                "login": "ログイン",
+                "tickets": "チケット予約",
+                "art": "アートコレクション",
+                "travel": "ローカル旅行",
+                "sound_on": "音声をオンにする",
+                "sound_off": "音声をオフにする"
             },
             "category": {
                 "trend": {
@@ -512,8 +623,51 @@ const resources = {
             "hero": {
                 "title": "韓国の美、現代的な感覚で出会う",
                 "subtitle": "伝統と現代が共存する複合文化空間, department",
-                "cta": "フロアガイドを見る"
+                "cta": "フロアガイドを見る",
+                "tagline": "韓国の遺産と現代的空間",
+                "title_main": "デパートメント",
+                "title_sub": "OF K-CULTURE",
+                "description": "伝統と現代が調和した新しい空間の再解釈。私たちの遺産からインスピレーションを得て、時代を先取りする体験を提案します。",
+                "warping": "ワーピング中...",
+                "explore": "コレクションを見る",
+                "story": "ブランドストーリー",
+                "arrived": "仮想空間に到着しました",
+                "welcome": "Welcome to the Virtual Gateway",
+                "start": "開始する"
             },
+            "subcategory": {
+                "global": "グローバルトレンド",
+                "window": "デジタルショーウィンドウ",
+                "f1_kpop": "K-POPステージ",
+                "f1_library": "トレンドライブラリ",
+                "f1_tech": "韓流テックゾーン",
+                "sync": "シナジー空間",
+                "pop": "ダイナミックポップアップ",
+                "f2_lab": "ブランドラボ",
+                "f2_art": "アートコラボ",
+                "f2_gallery": "限定版ギャラリー",
+                "performance": "公演実況",
+                "exhibit": "仮想展示",
+                "f3_media": "メディアアートホール",
+                "f3_lounge": "アーティストラウンジ",
+                "f3_audio": "サウンドアーカイブ",
+                "talk": "文化談論",
+                "interview": "アーティストインタビュー",
+                "f4_plus": "トークプラス",
+                "f4_book": "図書館セクション",
+                "f4_seminar": "セミナールーム",
+                "archive": "ファッションアーカイブ",
+                "collection": "シーズンコレクション",
+                "f5_material": "素材ライ브러리",
+                "f5_fitting": "フィッティングスタジオ",
+                "f5_textile": "テキスタイルルーム",
+                "heritage": "地域文化遺産",
+                "travel": "戦略的アンカー",
+                "f6_gourmet": "美食アーカイブ",
+                "f6_craft": "地域工芸館",
+                "f6_tour": "ヘリテージツアー"
+            },
+            "subcategory_desc": "伝統の深みと現代的な感覚が交差する地点で発見した、新しいインスピレーションの記録を探求します。",
             "featured": {
                 "title": "おすすめ & イベント",
                 "subtitle": "Culture Dept.で出会う特別な体験",
@@ -523,7 +677,7 @@ const resources = {
                 "title": "好みが息づく空間、department",
                 "subtitle": "伝統の深みと現代の感覚が交差するアートギャラリーデパート",
                 "description1": "departmentは単なる消費空間を超え、日常にインスピレーションを吹き込むプレミアム文化キュレーションプラットフォームです。",
-                "description2": "最もトレンディなグローバルK-カルチャーから歳月の深みを抱くヘリテージまで、あなたの視線を引きつける質の高い展示と芸術的体験を提供します。",
+                "description2": "最もトレンディなグローバルG-カルチャーから歳月の深みを抱くヘリテージまで、あなたの視線を引きつける質の高い展示と芸術的体験を提供します。",
                 "cta": "ブランド哲学を見る"
             },
             "auth": {
@@ -578,7 +732,12 @@ const resources = {
                 "duration_value": "約90分",
                 "detail_intro": "詳細紹介",
                 "download": "ダウンロード",
-                "register_product": "商品登録"
+                "register_product": "商品登録",
+                "not_found": "カテゴリーが見つかりません",
+                "not_found_desc": "リクエストされたページが存在しないか、現在準備中です。",
+                "go_inspiration": "インスピレーションホームへ",
+                "no_info": "情報なし",
+                "loading_content": "コンテンツを読み込み中..."
             },
             "search": {
                 "placeholder": "検索語を入力してください...",
@@ -607,7 +766,12 @@ const resources = {
                 "qna": "问答",
                 "reviews": "评论",
                 "mypage": "个人中心",
-                "login": "登录"
+                "login": "登录",
+                "tickets": "门票预订",
+                "art": "艺术收藏",
+                "travel": "本地旅游",
+                "sound_on": "开启声音",
+                "sound_off": "关闭声音"
             },
             "category": {
                 "trend": {
@@ -639,8 +803,51 @@ const resources = {
             "hero": {
                 "title": "以现代感邂逅韩国之美",
                 "subtitle": "传统与现代共存的综合文化空间, department",
-                "cta": "查看楼层指南"
+                "cta": "查看楼层指南",
+                "tagline": "韩国遗产与现代空间",
+                "title_main": "DEPARTMENT",
+                "title_sub": "OF K-CULTURE",
+                "description": "传统与现代融合的全新空间诠释。从我们的遗产中汲取灵感，为您带来领先时代的体验。",
+                "warping": "正在进入...",
+                "explore": "浏览系列",
+                "story": "品牌故事",
+                "arrived": "已抵达虚拟空间",
+                "welcome": "Welcome to the Virtual Gateway",
+                "start": "开始"
             },
+            "subcategory": {
+                "global": "全球趋势",
+                "window": "数字橱窗",
+                "f1_kpop": "K-Pop 舞台",
+                "f1_library": "趋势图书馆",
+                "f1_tech": "韩流科技区",
+                "sync": "协同空间",
+                "pop": "动态快闪店",
+                "f2_lab": "品牌实验室",
+                "f2_art": "艺术协作",
+                "f2_gallery": "限量版画廊",
+                "performance": "演出实况",
+                "exhibit": "虚拟展览",
+                "f3_media": "媒体艺术厅",
+                "f3_lounge": "艺术家休息室",
+                "f3_audio": "声音档案馆",
+                "talk": "文化讨论",
+                "interview": "艺术家采访",
+                "f4_plus": "对话 Plus",
+                "f4_book": "图书馆板块",
+                "f4_seminar": "研讨室",
+                "archive": "时尚档案馆",
+                "collection": "季度系列",
+                "f5_material": "材料图书馆",
+                "f5_fitting": "试衣工作室",
+                "f5_textile": "纺织室",
+                "heritage": "地方文化遗产",
+                "travel": "战略锚点",
+                "f6_gourmet": "美食档案馆",
+                "f6_craft": "地方工艺馆",
+                "f6_tour": "遗产之旅"
+            },
+            "subcategory_desc": "探索在传统深度与现代感官交汇点发现的新灵感记录。",
             "featured": {
                 "title": "推荐 & 活动",
                 "subtitle": "在 Culture Dept. 遇见的特别体验",
@@ -650,7 +857,7 @@ const resources = {
                 "title": "品味焕发生机的空间，department",
                 "subtitle": "传统底蕴与现代感官交汇的艺术画廊百货",
                 "description1": "department 超越了单纯的消费空间，是为日常生活注入灵感的高端文化内容策展平台。",
-                "description2": "从最前沿的全球K-Culture到承载岁月厚重的文化遗产，我们为您提供引人入胜的高水准展览与艺术体验。",
+                "description2": "从最前沿的全球G-Culture到承载岁月厚重的文化遗产，我们为您提供引人入胜的高水准展览与艺术体验。",
                 "cta": "探索品牌理念"
             },
             "auth": {
@@ -705,7 +912,12 @@ const resources = {
                 "duration_value": "约90分钟",
                 "detail_intro": "详细介绍",
                 "download": "下载",
-                "register_product": "注册商品"
+                "register_product": "注册商品",
+                "not_found": "未找到分类",
+                "not_found_desc": "所请求的页面不存在或正在准备中。",
+                "go_inspiration": "返回灵感首页",
+                "no_info": "暂无信息",
+                "loading_content": "正在加载内容..."
             },
             "search": {
                 "placeholder": "请输入搜索词...",
@@ -742,6 +954,11 @@ i18n
         lng: 'ko', // Default language
         fallbackLng: 'ko',
         supportedLngs: ['ko', 'en', 'ja', 'zh', 'fr', 'de', 'es', 'it', 'ru', 'pt', 'nl', 'pl', 'sv', 'ar', 'tr', 'fa', 'he', 'vi', 'th', 'id', 'hi'],
+        detection: {
+            order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
+            caches: ['localStorage', 'cookie'],
+            convertDetectedLanguage: (lng) => lng.split('-')[0], // Always use short code
+        },
         interpolation: {
             escapeValue: false // react already safes from xss
         }

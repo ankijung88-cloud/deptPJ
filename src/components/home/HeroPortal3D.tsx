@@ -79,10 +79,10 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                     <bufferAttribute attach="attributes-position" count={pos.length / 3} array={pos} itemSize={3} />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={0.2}
-                    color="#F5F5DC" // Oksun (Softer than pure white)
+                    size={0.15}
+                    color="#00FFC2" // Neon Mint
                     transparent
-                    opacity={0.6}
+                    opacity={0.8}
                     sizeAttenuation={true}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
@@ -92,7 +92,7 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                 <bufferGeometry>
                     <bufferAttribute attach="attributes-position" count={linePos.length / 3} array={linePos} itemSize={3} />
                 </bufferGeometry>
-                <lineBasicMaterial color="#D4AF37" transparent opacity={0.25} blending={THREE.AdditiveBlending} />
+                <lineBasicMaterial color="#FFB347" transparent opacity={0.4} blending={THREE.AdditiveBlending} />
             </lineSegments>
         </group>
     );
@@ -102,9 +102,9 @@ export const HeroPortal3D: React.FC<{ velocity: MotionValue<number> }> = ({ velo
     return (
         <div className="absolute inset-0 z-0 bg-transparent">
             <Canvas gl={{ alpha: true, antialias: true }} camera={{ position: [0, 0, 5], fov: 75 }}>
-                <ambientLight intensity={0.8} />
-                <pointLight position={[0, 0, 0]} intensity={1.5} color="#D4AF37" />
-                <StarPortal count={1200} velocity={velocity} />
+                <ambientLight intensity={0.5} />
+                <pointLight position={[0, 0, 0]} intensity={2.5} color="#FFD700" />
+                <StarPortal count={1500} velocity={velocity} />
             </Canvas>
         </div>
     );

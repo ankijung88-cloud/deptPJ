@@ -299,7 +299,7 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
         id: 'hanbok-symphony',
         title: { ko: '한복 심포니: 현대적 재해석', en: 'Hanbok Symphony: Modern Reinterpretation', ja: '韓服シンフォニー：現代的再解釈', zh: '韩복交响曲：现代诠释' },
         category: 'Style',
-        subcategory: 'kstyle',
+        subcategory: 'gstyle',
         description: {
             ko: '한복의 전통적인 선과 현대적인 감각이 만나 새로운 패션의 지평을 엽니다.',
             en: 'Traditional lines of Hanbok meet modern sensibility to open a new horizon in fashion.',
@@ -349,7 +349,7 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
         category: 'Trend',
         subcategory: 'collab',
         description: {
-            ko: '국제적인 K-POP 아티스트와 지역 장인이 협업한 한정판 굿즈를 만날 수 있습니다.',
+            ko: '국제적인 K-팝 아티스트와 지역 장인이 협업한 한정판 굿즈를 만날 수 있습니다.',
             en: 'Meet limited edition goods produced in collaboration with international K-POP artists and local artisans.',
             ja: '국제적인 K-POP 아티스트와 지역 장인이 협업한 한정판 굿즈를 만날 수 있습니다.',
             zh: '可以见到由国际 K-POP 艺人与当地工匠联名创作的限量版周边。'
@@ -393,7 +393,7 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
     },
     {
         id: 'global-kfood-fest',
-        title: { ko: '글로벌 K-푸드 페스타', en: 'Global K-Food Fest', ja: 'グローバルK-フードフェスタ', zh: '全球 K-Food 美食节' },
+        title: { ko: 'K-푸드 페스타', en: 'K-Food Fest', ja: 'K-フードフェスタ', zh: 'K-Food 美食节' },
         category: 'Trend',
         subcategory: 'global',
         description: {
@@ -409,7 +409,7 @@ export const FEATURED_ITEMS: FeaturedItem[] = [
     },
     {
         id: 'pansori-cinema',
-        title: { ko: '판소리 미드나잇 시네마', en: 'Pansori Midnight Cinema', ja: 'パンソ리深夜시네마', zh: '盘索里深夜剧场' },
+        title: { ko: '판소리 미드나잇 시네마', en: 'Pansori Midnight Cinema', ja: 'パンソリ深夜시네마', zh: '盘索里深夜剧场' },
         category: 'Exhibition',
         subcategory: 'traditional',
         description: {
@@ -487,22 +487,22 @@ export const ARTISTS_OF_THE_YEAR: Artist[] = [
         name: { ko: '임하늘', en: 'Ha-neul Lim', ja: 'イム・ハヌル', zh: '任河那' },
         type: { ko: 'K-스타일 디자이너', en: 'K-Style Designer', ja: 'K-スタイルデザイナー', zh: 'K-Style 设计师' },
         description: { ko: '한복의 철학을 현대적 의상으로 풀어내는 디자이너', en: 'A designer unraveling the philosophy of Hanbok into modern clothing', ja: '한복의 철학을 현대적 의상으로 풀어내는 디자이너', zh: '将韩服哲学融入现代服饰的设计师' },
-        imageUrl: '/assets/artists/artist-8-kstyle.png',
-        subcategory: 'kstyle'
+        imageUrl: '/assets/artists/artist-8-gstyle.png',
+        subcategory: 'gstyle'
     },
     {
         id: 'artist-9',
         name: { ko: '송민호', en: 'Min-ho Song', ja: 'ソン・ミンホ', zh: '宋旻浩' },
-        type: { ko: '로컬 헤리티지 아카이브', en: 'Local Heritage Archivist', ja: '로컬 헤리티지 아카이브', zh: '本地遗产档案员' },
-        description: { ko: '지역의 숨겨진 유산을 발굴하여 기록하는 기록가', en: 'A recorder who excavates and records hidden local heritage', ja: '지역의 숨겨진 유산을 발굴하여 기록하는 기록가', zh: '发掘并记录地区隐藏遗产的记录者' },
+        type: { ko: '로컬 헤리티지 아카이브', en: 'Local Heritage Archivist', ja: 'ロ컬 ヘリテージ アーカイブ', zh: '本地遗产档案员' },
+        description: { ko: '지역의 숨겨진 유산을 발굴하여 기록하는 기록가', en: 'A recorder who excavates and records hidden local heritage', ja: '地域の隠された遺産を発掘し記録する記録家', zh: '发掘并记录地区隐藏遗产的记录者' },
         imageUrl: '/assets/artists/artist-9-local_heritage.png',
         subcategory: 'local_heritage'
     },
     {
         id: 'artist-10',
         name: { ko: '서유나', en: 'Yu-na Seo', ja: 'ソ・ユナ', zh: '徐宥娜' },
-        type: { ko: '트래블 큐레이터', en: 'Travel Curator', ja: 'トラ벨큐레이터', zh: '旅游策展人' },
-        description: { ko: '문화와 여행을 결합하여 새로운 여정을 제안하는 큐레이터', en: 'A curator suggesting new journeys by combining culture and travel', ja: '문화와 여행을 결합하여 새로운 여정을 제안하는 큐레이터', zh: '结合文化与旅游并推荐新行程的策展人' },
+        type: { ko: '트래블 큐레이터', en: 'Travel Curator', ja: 'トラベルキュレーター', zh: '旅游策展人' },
+        description: { ko: '문화와 여행을 결합하여 새로운 여정을 제안하는 큐레이터', en: 'A curator suggesting new journeys by combining culture and travel', ja: '文化と旅行を結合して新しい旅程を提案するキュレーター', zh: '结合文化与旅游并推荐新行程的策展人' },
         imageUrl: '/assets/artists/artist-10-travel_curation.png',
         subcategory: 'travel_curation'
     }
@@ -534,7 +534,7 @@ export const CALENDAR_EVENTS: CalendarEvent[] = [
         id: 'cal-4',
         date: '2026-03-28',
         title: { ko: 'K-스타일 패션 위크', en: 'K-Style Fashion Week', ja: 'K-スタイルファッションウィーク', zh: 'K-Style 时尚周' },
-        category: 'kstyle',
+        category: 'gstyle',
         imageUrl: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2574&auto=format&fit=crop'
     }
 ];

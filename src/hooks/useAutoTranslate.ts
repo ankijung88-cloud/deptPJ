@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoogleGenAI } from '@google/genai';
-import i18n from 'i18next';
+import i18n from '../i18n';
 
 const translationCache = new Map<string, string>();
 
@@ -10,29 +10,31 @@ const translationCache = new Map<string, string>();
  * 현재 언어의 번역 값을 반환합니다.
  */
 function findTranslationByKoreanValue(koText: string, targetLang: string): string | null {
-    if (!koText || targetLang === 'ko') return null;
+    if (!koText) return null;
+
+    const langCode = targetLang.split('-')[0];
+    if (langCode === 'ko') return null;
 
     const koResources = i18n.getResourceBundle('ko', 'translation');
-    const targetResources = i18n.getResourceBundle(targetLang, 'translation');
+    const targetResources = i18n.getResourceBundle(langCode, 'translation');
 
     if (!koResources || !targetResources) return null;
 
-    function searchValue(obj: any, target: string, path: string[]): string[] | null {
-        for (const key of Object.keys(obj)) {
-            const val = obj[key];
-            if (typeof val === 'string') {
-                if (val === target) {
-                    return [...path, key];
-                }
-            } else if (typeof val === 'object' && val !== null) {
-                const found = searchValue(val, target, [...path, key]);
+    // Helper to find key path for a given value
+    const findKeyPath = (obj: any, targetValue: string, path: string[] = []): string[] | null => {
+        for (const [key, value] of Object.entries(obj)) {
+            if (value === targetValue) {
+                return [...path, key];
+            }
+            if (typeof value === 'object' && value !== null) {
+                const found = findKeyPath(value, targetValue, [...path, key]);
                 if (found) return found;
             }
         }
         return null;
     }
 
-    const keyPath = searchValue(koResources, koText, []);
+    const keyPath = findKeyPath(koResources, koText);
     if (!keyPath) return null;
 
     let targetVal: any = targetResources;
@@ -56,6 +58,41 @@ export const useAutoTranslate = (text: string | null | undefined) => {
     const [translatedText, setTranslatedText] = useState<string>(text || '');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    // Get primary language code (e.g., 'en-US' -> 'en')
+    const getTargetLang = () => {
+        const fullLang = i18nInstance.language || 'ko';
+        return fullLang.split('-')[0];
+    };
+
+    const targetLang = getTargetLang();
+
+    // Mapping for prompt quality - 21 supported languages in i18n/index.ts
+    const langNames: Record<string, string> = {
+        'en': 'English',
+        'ja': 'Japanese',
+        'zh': 'Chinese',
+        'fr': 'French',
+        'de': 'German',
+        'es': 'Spanish',
+        'it': 'Italian',
+        'ru': 'Russian',
+        'pt': 'Portuguese',
+        'nl': 'Dutch',
+        'pl': 'Polish',
+        'sv': 'Swedish',
+        'ar': 'Arabic',
+        'tr': 'Turkish',
+        'fa': 'Persian (Farsi)',
+        'he': 'Hebrew',
+        'vi': 'Vietnamese',
+        'th': 'Thai',
+        'id': 'Indonesian',
+        'hi': 'Hindi',
+        'ko': 'Korean'
+    };
+
+    const targetLangName = langNames[targetLang] || targetLang;
+
     useEffect(() => {
         const translate = async () => {
             if (!text || !text.trim()) {
@@ -63,10 +100,14 @@ export const useAutoTranslate = (text: string | null | undefined) => {
                 return;
             }
 
-            const targetLang = i18nInstance.language || 'ko';
+            // If target is Korean and input already contains Korean, skip to save API calls
+            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
+                setTranslatedText(text);
+                return;
+            }
 
-            // 한국어면 그대로 사용
-            if (targetLang === 'ko') {
+            // If target is English and input has no Korean (likely already English), skip
+            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
                 setTranslatedText(text);
                 return;
             }
@@ -89,28 +130,44 @@ export const useAutoTranslate = (text: string | null | undefined) => {
             // 2단계: Gemini AI를 통한 실시간 번역
             setIsLoading(true);
             try {
-                const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY || 'AIzaSyCTpbR424w2vIVEoab53Ng79k6QJjqQmDM';
+                const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 
-                const ai = new GoogleGenAI({ apiKey });
+                if (!apiKey) {
+                    console.warn('[AutoTranslate] No API Key provided. AI Translation skipped.');
+                    setIsLoading(false);
+                    return;
+                }
 
-                const prompt = `Translate the following Korean text to ${targetLang}. 
+                console.log(`[AutoTranslate] Requesting Gemini for: "${text}" to "${targetLang}"`);
+
+                const ai = new GoogleGenAI({
+                    apiKey,
+                    apiVersion: 'v1'
+                });
+
+                const prompt = `Translate the following text to ${targetLangName}. 
                 Output ONLY the translated text without any quotes or explanations.
+                If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${text}`;
 
                 const response = await ai.models.generateContent({
-                    model: 'gemini-1.5-flash', // 안정적인 기본 모델 사용
-                    contents: prompt,
+                    model: 'gemini-2.0-flash',
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 });
+
+                console.log('[AutoTranslate] Gemini Response:', response);
                 const translated = response.text?.trim();
 
                 if (translated) {
+                    console.log(`[AutoTranslate] Success: "${text.substring(0, 20)}..." -> "${translated.substring(0, 20)}..."`);
                     translationCache.set(cacheKey, translated);
                     setTranslatedText(translated);
                 } else {
+                    console.warn(`[AutoTranslate] Empty response from AI for: "${text.substring(0, 20)}..."`);
                     throw new Error('Empty response from AI');
                 }
             } catch (error) {
-                console.warn('[AutoTranslate] AI Translation failed, falling back to original:', error);
+                console.error('[AutoTranslate] AI Translation failed:', error);
                 setTranslatedText(text);
             } finally {
                 setIsLoading(false);

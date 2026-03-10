@@ -11,13 +11,14 @@ import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Volume2, VolumeX } from 'lucide-react';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { getContrastColor } from '../../utils/themeUtils';
 
 // --- Theme & Configuration ---
 const COLORS = {
-    paper: '#f5f4ef',       // Background blueprint paper color
-    line: '#2c3e50',        // Dark blueprint ink for edges
-    fill: '#ffffff',        // Solid fill for structural elements
-    highlight: '#e74c3c'    // Highlight color for interactions
+    paper: '#1A2420',       // Deep Pine Background
+    line: '#00FFC2',        // Neon Mint blueprint lines
+    fill: '#222B28',        // Slightly lighter pine for structure
+    highlight: '#FF3B30'    // Glitch Red highlight for interactions
 };
 
 const FLOORS = [
@@ -25,7 +26,7 @@ const FLOORS = [
         level: 6,
         title: 'LOCAL HERITAGE',
         label: '6F',
-        color: '#8B3A36',
+        color: '#FF3B30', // Red (South)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/festival.mp4',
         subcategories: [
             { id: 'heritage', label: '지역 문화 유산' },
@@ -39,7 +40,7 @@ const FLOORS = [
         level: 5,
         title: 'FASHION ARCHIVE',
         label: '5F',
-        color: '#2D3D36',
+        color: '#FFD700', // Yellow (Center)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/modern_tradition.mp4',
         subcategories: [
             { id: 'archive', label: '패션 아카이브' },
@@ -53,7 +54,7 @@ const FLOORS = [
         level: 4,
         title: 'CULTURE TALK',
         label: '4F',
-        color: '#D4AF37',
+        color: '#F8FAFF', // White (West)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/travel.mp4',
         subcategories: [
             { id: 'talk', label: '문화 담론' },
@@ -67,7 +68,7 @@ const FLOORS = [
         level: 3,
         title: 'PERFORMANCE & EXHIBITION',
         label: '3F',
-        color: '#1A2A3A',
+        color: '#0070FF', // Blue (East)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/active.mp4',
         subcategories: [
             { id: 'performance', label: '공연 실황' },
@@ -81,7 +82,7 @@ const FLOORS = [
         level: 2,
         title: 'COLLABORATION & POP-UP',
         label: '2F',
-        color: '#4A5D23',
+        color: '#00FFC2', // Cyan/Green (East/Neo-Dancheong Mint)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/trend.mp4',
         subcategories: [
             { id: 'sync', label: '시너지 공간' },
@@ -95,7 +96,7 @@ const FLOORS = [
         level: 1,
         title: 'K-CULTURE TRENDS',
         label: '1F',
-        color: '#5A3D2B',
+        color: '#0A0D17', // Black (North/Void Navy)
         videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/k-culture.mp4',
         subcategories: [
             { id: 'global', label: '글로벌 트렌드' },
@@ -134,13 +135,13 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
 const ElevatorCore = () => (
     <mesh position={[0, METRICS.floorHeight / 2, 0]}>
         <boxGeometry args={[METRICS.coreSize, METRICS.floorHeight, METRICS.coreSize]} />
-        <SolidMaterial color="#eaeaea" />
+        <SolidMaterial color={COLORS.fill} />
         <Edges color={COLORS.line} threshold={15} />
 
         {/* Fake Elevator Doors drawn on the front face */}
         <mesh position={[0, -0.2, METRICS.coreSize / 2 + 0.01]}>
             <planeGeometry args={[1.2, 2]} />
-            <meshBasicMaterial color="#dcdcdc" polygonOffset polygonOffsetFactor={-1} />
+            <meshBasicMaterial color="#1f2b26" polygonOffset polygonOffsetFactor={-1} />
             <Edges color={COLORS.line} />
             {/* Center split line for door */}
             <mesh position={[0, 0, 0]}>
@@ -249,16 +250,16 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
                         <div style={{
                             fontFamily: 'serif',
-                            color: active ? (floor.level === 6 ? '#D00012' : floor.color) : '#1a1a1a',
                             marginLeft: '12px',
                             display: 'flex',
                             alignItems: 'baseline',
                             gap: '12px',
                             whiteSpace: 'nowrap',
-                            // Aggressive halo/shadow for perfect readability over 3D geometry
-                            textShadow: '0 0 12px #fff, 0 0 8px #fff, 0 0 4px #fff, 2px 2px 0 #fff, -1px -1px 0 #fff',
+                            // Aggressive neon halo for perfect readability
+                            textShadow: '0 0 12px rgba(0, 255, 194, 0.4), 0 0 8px rgba(0, 255, 194, 0.2)',
                             transition: 'all 0.4s ease',
-                            transform: active ? 'scale(1.15) translateX(10px)' : 'scale(1)'
+                            transform: active ? 'scale(1.15) translateX(10px)' : 'scale(1)',
+                            color: active ? floor.color : '#ffffff'
                         }}>
                             <span style={{ fontSize: '42px', fontWeight: '900', lineHeight: 1 }}>
                                 {floor.label}
@@ -440,6 +441,14 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
 
+    const MODAL_COLORS = {
+        bg: '#1A2420',
+        line: '#00FFC2',
+        accent: activeFloorData?.color || '#FF3B30'
+    };
+
+    const buttonTextColor = getContrastColor(activeFloorData.color);
+
     // Keyboard support for closing video modal
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -498,19 +507,19 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer"
-            style={{ backgroundColor: '#f5f4ef' }}
+            style={{ backgroundColor: MODAL_COLORS.bg }}
             onClick={onClose}
         >
             {/* Background SVG lines mimicking architectural sketch */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
-                <line x1="0%" y1="20%" x2="100%" y2="80%" stroke={COLORS.line} strokeWidth="1.5" />
-                <line x1="10%" y1="0%" x2="90%" y2="100%" stroke={COLORS.line} strokeWidth="1" />
-                <line x1="30%" y1="0%" x2="40%" y2="100%" stroke={COLORS.line} strokeWidth="1.5" strokeDasharray="6 6" />
-                <line x1="80%" y1="0%" x2="60%" y2="100%" stroke={COLORS.line} strokeWidth="1" strokeDasharray="4 4" />
-                <line x1="0%" y1="60%" x2="100%" y2="40%" stroke={COLORS.line} strokeWidth="2" />
-                <line x1="100%" y1="10%" x2="0%" y2="90%" stroke={COLORS.line} strokeWidth="0.5" />
-                <line x1="50%" y1="0%" x2="50%" y2="100%" stroke={COLORS.line} strokeWidth="1" opacity={0.5} />
-                <line x1="0%" y1="50%" x2="100%" y2="50%" stroke={COLORS.line} strokeWidth="1" opacity={0.5} />
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+                <line x1="0%" y1="20%" x2="100%" y2="80%" stroke={MODAL_COLORS.line} strokeWidth="1.5" />
+                <line x1="10%" y1="0%" x2="90%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" />
+                <line x1="30%" y1="0%" x2="40%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1.5" strokeDasharray="6 6" />
+                <line x1="80%" y1="0%" x2="60%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" strokeDasharray="4 4" />
+                <line x1="0%" y1="60%" x2="100%" y2="40%" stroke={MODAL_COLORS.line} strokeWidth="2" />
+                <line x1="100%" y1="10%" x2="0%" y2="90%" stroke={MODAL_COLORS.line} strokeWidth="0.5" />
+                <line x1="50%" y1="0%" x2="50%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" opacity={0.1} />
+                <line x1="0%" y1="50%" x2="100%" y2="50%" stroke={MODAL_COLORS.line} strokeWidth="1" opacity={0.1} />
             </svg>
 
             {/* Close button removed as requested. Modal can be closed via backdrop click or the ENTER ZONE button below. */}
@@ -522,29 +531,29 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                 initial={{ opacity: 0, scale: 0.9, x: 50 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute right-12 bottom-12 bg-[#f5f4ef] border-2 shadow-2xl p-10 z-50 min-w-[500px] cursor-default"
-                style={{ borderColor: COLORS.line }}
+                className="absolute right-12 bottom-12 bg-[#1A2420]/80 backdrop-blur-xl border-2 shadow-2xl p-10 z-50 min-w-[500px] cursor-default"
+                style={{ borderColor: MODAL_COLORS.line }}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center gap-6 mb-6 pb-6 border-b-2" style={{ borderColor: activeFloorData.color }}>
                     <span className="text-8xl font-black font-serif" style={{ color: activeFloorData.color }}>
                         {activeFloorData.label}
                     </span>
-                    <span className="text-4xl font-black text-[#2c3e50] tracking-tighter leading-none break-words max-w-[250px]">
+                    <span className="text-4xl font-black text-white tracking-tighter leading-none break-words max-w-[250px]">
                         <AutoTranslatedText text={activeFloorData.title} />
                     </span>
                 </div>
-                <p className="text-[#2c3e50] font-sans text-sm font-medium leading-relaxed mb-8 tracking-wide">
+                <p className="text-white/80 font-sans text-sm font-medium leading-relaxed mb-8 tracking-wide">
                     <AutoTranslatedText text={`선택된 ${activeFloorData.label}층의 스페이스 다이어그램입니다.`} /><br />
                     <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
                 </p>
                 <button
                     onClick={(e) => { e.stopPropagation(); onClose(); }}
-                    className="w-full py-4 text-white font-bold tracking-widest text-lg transition-transform hover:bg-opacity-90 active:scale-95 flex justify-center items-center gap-4 shadow-md"
-                    style={{ backgroundColor: activeFloorData.color }}
+                    className="w-full py-4 font-bold tracking-widest text-lg transition-transform hover:bg-opacity-90 active:scale-95 flex justify-center items-center gap-4 shadow-md"
+                    style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
                 >
+                    <span className="font-serif font-black text-2xl leading-none relative -top-[2px]" style={{ color: buttonTextColor }}>→</span>
                     <AutoTranslatedText text="ENTER ZONE" />
-                    <span className="font-serif font-black text-2xl">→</span>
                 </button>
             </motion.div>
 
@@ -561,7 +570,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
             >
                 <div className="relative group cursor-pointer">
                     <div
-                        className="w-[300px] h-[300px] rounded-full overflow-hidden border-4 border-white shadow-[0_0_50px_rgba(0,0,0,0.2)] transition-transform duration-500 group-hover:scale-110"
+                        className="w-[300px] h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110"
                         style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
                     >
                         <video
@@ -578,7 +587,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
 
                     {/* Architectural decoration around video */}
                     <svg className="absolute inset-[-40px] w-[380px] h-[380px] pointer-events-none overflow-visible">
-                        <circle cx="190" cy="190" r="170" fill="none" stroke={COLORS.line} strokeWidth="1" strokeDasharray="5 5" className="animate-[spin_60s_linear_infinite]" />
+                        <circle cx="190" cy="190" r="170" fill="none" stroke={MODAL_COLORS.line} strokeWidth="1" strokeDasharray="5 5" className="animate-[spin_60s_linear_infinite]" />
                         <circle cx="190" cy="190" r="185" fill="none" stroke={activeFloorData.color} strokeWidth="0.5" opacity="0.3" />
                     </svg>
 
@@ -593,7 +602,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                     </div>
 
                     <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#2c3e50] bg-white/80 px-4 py-1.5 rounded-full border border-[#2c3e50]/10">
+                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#00FFC2] bg-black/40 px-4 py-1.5 rounded-full border border-[#00FFC2]/30 backdrop-blur-md">
                             <AutoTranslatedText text="Click to Expand View" />
                         </span>
                     </div>
@@ -699,12 +708,12 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                 if (frag.type === 0) { // Dark Solid
                     bg = COLORS.line; border = 'transparent'; textColor = COLORS.paper;
                 } else if (frag.type === 1) { // Brand Color Solid
-                    bg = activeFloorData.color; border = 'transparent'; textColor = '#ffffff';
-                } else if (frag.type === 2) { // Light Paper with Border
-                    bg = COLORS.paper; border = COLORS.line; textColor = COLORS.line;
+                    bg = activeFloorData.color; border = 'transparent'; textColor = getContrastColor(activeFloorData.color);
+                } else if (frag.type === 2) { // Cyber Paper with Border
+                    bg = '#1A2420'; border = MODAL_COLORS.line; textColor = MODAL_COLORS.line;
                 } else { // Translucent Brand Color
                     bg = activeFloorData.color + '40'; // 25% opacity hex
-                    border = activeFloorData.color; textColor = COLORS.line;
+                    border = activeFloorData.color; textColor = getContrastColor(activeFloorData.color);
                 }
 
                 return (
@@ -771,12 +780,12 @@ export const VirtualStore3D: React.FC = () => {
 
             {/* Blueprint Header */}
             <div className="absolute top-40 left-16 pointer-events-none z-10 opacity-80">
-                <h1 className="text-[#2c3e50] text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4">
+                <h1 className="text-[#00FFC2] text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.4)]">
                     <AutoTranslatedText text="CULTURAL" /><br />
                     <AutoTranslatedText text="ARCHIVE" />
                 </h1>
-                <div className="h-[2px] w-24 bg-[#2c3e50] mb-2"></div>
-                <p className="text-[#2c3e50] font-mono text-sm tracking-[0.2em] font-bold">
+                <div className="h-[2px] w-24 bg-[#00FFC2] mb-2 shadow-[0_0_10px_rgba(0,255,194,0.5)]"></div>
+                <p className="text-[#00FFC2]/80 font-mono text-sm tracking-[0.2em] font-bold">
                     <AutoTranslatedText text="STRUCTURAL ELEVATION" /><br />
                     <AutoTranslatedText text="SCALE 1:100" />
                 </p>

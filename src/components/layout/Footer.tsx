@@ -17,18 +17,18 @@ export const Footer: React.FC = () => {
                     {/* Brand Meta */}
                     <div className="md:col-span-5 space-y-10">
                         <div className="space-y-4">
-                            <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="The Essence" /></span>
+                            <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="본질" /></span>
                             <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">
-                                <AutoTranslatedText text="Department" />
+                                <AutoTranslatedText text="백화점" />
                             </h2>
                         </div>
                         <p className="text-sm leading-relaxed max-w-sm font-light italic">
                             <AutoTranslatedText text={t('footer.description')} />
                         </p>
-                        <div className="flex gap-4">
+                        <div className="flex gap-8">
                             {['Instagram', 'Youtube', 'Pinterest'].map((social) => (
-                                <a key={social} href="#" className="text-[10px] font-bold tracking-widest uppercase hover:text-dancheong-white transition-colors border-b border-transparent hover:border-dancheong-red/20 pb-1">
-                                    {social}
+                                <a key={social} href="#" className="text-xs font-bold tracking-widest uppercase hover:text-dancheong-white transition-colors border-b border-transparent hover:border-dancheong-red/20 pb-1">
+                                    <AutoTranslatedText text={social} />
                                 </a>
                             ))}
                         </div>
@@ -36,16 +36,16 @@ export const Footer: React.FC = () => {
 
                     {/* Navigation Links */}
                     <div className="md:col-span-2 space-y-8">
-                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={t('footer.shop')} /></h4>
+                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase">{t('footer.shop')}</h4>
                         <ul className="space-y-4 text-xs font-light tracking-wide">
-                            <li><Link to="/tickets" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.tickets')} /></Link></li>
-                            <li><Link to="/art" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.art')} /></Link></li>
-                            <li><Link to="/travel" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.travel')} /></Link></li>
+                            <li><Link to="/floor/floor3/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.tickets')} /></Link></li>
+                            <li><Link to="/floor/floor4/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.art')} /></Link></li>
+                            <li><Link to="/floor/floor6/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.travel')} /></Link></li>
                         </ul>
                     </div>
 
                     <div className="md:col-span-2 space-y-8">
-                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={t('footer.support')} /></h4>
+                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase">{t('footer.support')}</h4>
                         <ul className="space-y-4 text-xs font-light tracking-wide">
                             <li><Link to="/notice" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.notice')} /></Link></li>
                             <li><Link to="/faq" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.faq')} /></Link></li>
@@ -53,25 +53,28 @@ export const Footer: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-3 space-y-8">
-                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-dancheong-white uppercase"><AutoTranslatedText text={t('footer.contact')} /></h4>
+                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-dancheong-white uppercase">{t('footer.contact')}</h4>
                         <div className="space-y-4">
                             <span className="text-2xl font-serif font-bold text-dancheong-white block">1544-0000</span>
                             <p className="text-xs font-light leading-relaxed">
                                 <AutoTranslatedText text={t('footer.weekdays')} />
                             </p>
-                            <button className="text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-vibrant-red/10 hover:bg-dancheong-vibrant-red/20 text-white px-8 py-4 rounded-full border border-dancheong-vibrant-red/30 transition-all shadow-[0_0_20_rgba(161,45,39,0.2)]">
-                                <AutoTranslatedText text="Send Inquiry" />
-                            </button>
+                            <a
+                                href="mailto:support@culturedpt.store"
+                                className="inline-block text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-vibrant-red/10 hover:bg-dancheong-vibrant-red/20 text-white px-8 py-4 rounded-full border border-dancheong-vibrant-red/30 transition-all shadow-[0_0_20_rgba(161,45,39,0.2)] text-center"
+                            >
+                                <AutoTranslatedText text="문의 보내기" />
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 {/* Bottom Bar */}
                 <div className="pt-12 border-t border-dancheong-border flex flex-col md:flex-row justify-between items-center text-[10px] font-bold tracking-widest uppercase">
-                    <p className="opacity-30"><AutoTranslatedText text={t('footer.copyright')} /></p>
+                    <p className="opacity-30">{t('footer.copyright')}</p>
                     <div className="flex space-x-8 mt-6 md:mt-0">
-                        <Link to="/terms" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.terms')} /></Link>
-                        <Link to="/privacy" className="text-white/40 hover:text-white transition-colors"><AutoTranslatedText text={t('footer.privacy')} /></Link>
+                        <Link to="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
+                        <Link to="/privacy" className="text-white/40 hover:text-white transition-colors">{t('footer.privacy')}</Link>
                     </div>
                 </div>
             </div>

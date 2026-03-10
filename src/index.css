@@ -4,9 +4,9 @@
 
 @layer base {
   body {
-    background-color: #2D3D36 !important;
+    background-color: #1A2420 !important;
     /* Solid Vibrant Red for Hero impact */
-    color: #F5F5DC;
+    color: #F8FAFF;
     font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     position: relative;
     -webkit-font-smoothing: antialiased;

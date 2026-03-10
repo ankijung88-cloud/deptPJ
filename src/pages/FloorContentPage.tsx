@@ -8,6 +8,7 @@ import { getProductsByCategory } from '../api/products';
 import { getFloorCategories } from '../api/categories';
 import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
+import { getJoseonThemeById } from '../utils/themeUtils';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
     'floor1': ['Trend', 'trend', 'global', 'window', 'exchange', '글로벌'],
@@ -71,17 +72,20 @@ const FloorContentPage: React.FC = () => {
         return () => { mounted = false; };
     }, [categoryId, filter]);
 
+    const floorNumber = floorData?.floor?.charAt(0) || '1';
+    const theme = getJoseonThemeById(id || '', floorNumber);
+
     if (!floorData) {
         return (
-            <div className="min-h-screen pt-32 text-center bg-charcoal text-white">
+            <div className="min-h-screen pt-32 text-center text-white" style={theme.bgStyle}>
                 <h2 className="text-2xl font-bold"><AutoTranslatedText text="존재하지 않는 층입니다." /></h2>
-                <Link to="/inspiration" className="text-dancheong-red mt-4 inline-block"><AutoTranslatedText text="홈으로 가기" /></Link>
+                <Link to="/inspiration" style={theme.highlightStyle} className="mt-4 inline-block"><AutoTranslatedText text="홈으로 가기" /></Link>
             </div>
         );
     }
 
     return (
-        <div className="pt-20 pb-20 min-h-screen bg-charcoal text-white font-sans">
+        <div className="pt-20 pb-20 min-h-screen text-white font-sans" style={theme.bgStyle}>
             {/* Editorial Header */}
             <header className="relative w-full py-24 flex items-center justify-center overflow-hidden mb-16 border-b border-white/10">
                 <div className="absolute inset-0 z-0 opacity-20">
@@ -90,7 +94,7 @@ const FloorContentPage: React.FC = () => {
                         alt=""
                         className="w-full h-full object-cover grayscale"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal to-transparent" />
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgColor}, transparent)` }} />
                 </div>
 
                 <div className="container mx-auto px-6 relative z-10 text-center max-w-4xl">
@@ -99,15 +103,17 @@ const FloorContentPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <span className="text-dancheong-red font-bold tracking-[0.3em] uppercase mb-4 block text-sm">
+                        <span className="font-bold tracking-[0.3em] uppercase mb-4 block text-sm px-4 py-2 rounded-full w-fit" style={{ backgroundColor: `${theme.color2}cc`, color: theme.accentColor, border: `1px solid ${theme.accentColor}` }}>
                             <AutoTranslatedText text={`${floorData.floor} Contents`} />
                         </span>
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 tracking-tight">
+                        <h1 className="text-5xl md:text-7xl font-serif font-bold mb-8 tracking-tight" style={theme.textPrimaryStyle}>
                             <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                         </h1>
-                        <p className="text-xl text-white/70 font-light leading-relaxed">
+                        <p className="text-xl font-light leading-relaxed" style={theme.textSecondaryStyle}>
                             <AutoTranslatedText text="문화를 읽고, 영감을 발견하는 공간. 이 층에서 제공하는 큐레이션 스토리와 특별한 기획을 확인해보세요." />
                         </p>
+                        {/* Gradient accent bar */}
+                        <div className="h-1 w-32 mt-8 rounded" style={{ background: `linear-gradient(to right, ${theme.accentColor}, ${theme.color4}, ${theme.color5})` }} />
                     </motion.div>
                 </div>
             </header>
@@ -116,7 +122,7 @@ const FloorContentPage: React.FC = () => {
                 {/* Loading State */}
                 {loading && (
                     <div className="flex justify-center items-center py-32">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-dancheong-red"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: theme.accentColor }}></div>
                     </div>
                 )}
 
@@ -155,28 +161,29 @@ const FloorContentPage: React.FC = () => {
                             </div>
 
                             {/* Content Side */}
-                            <div className="w-full md:w-1/2 flex flex-col justify-center">
-                                <div className="flex items-center text-dancheong-red text-sm mb-6 space-x-4 font-bold tracking-widest uppercase">
+                            <div className="w-full md:w-1/2 flex flex-col justify-center p-6 rounded-2xl" style={{ backgroundColor: theme.color1, border: `1px solid ${theme.color3}` }}>
+                                <div className="flex items-center text-sm mb-6 space-x-4 font-bold tracking-widest uppercase" style={{ color: theme.color4 }}>
                                     <span>{getLocalizedText(item.date, i18n.language)}</span>
                                     {item.location && (
                                         <>
-                                            <span className="w-1 h-1 bg-dancheong-red/50 rounded-full" />
+                                            <span className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.color4 }} />
                                             <span>{getLocalizedText(item.location, i18n.language)}</span>
                                         </>
                                     )}
                                 </div>
 
-                                <h3 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight group-hover:text-white/90 transition-colors">
+                                <h3 className="text-3xl md:text-5xl font-serif font-bold mb-6 leading-tight" style={theme.textPrimaryStyle}>
                                     <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                 </h3>
 
-                                <p className="text-white/60 text-lg md:text-xl font-light leading-relaxed mb-10 line-clamp-3">
+                                <p className="text-lg font-light leading-relaxed mb-10 line-clamp-3" style={theme.textSecondaryStyle}>
                                     <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                                 </p>
 
                                 <Link
                                     to={`/detail/${item.id}`}
-                                    className="inline-flex items-center gap-3 text-white font-medium text-lg pb-2 border-b-2 border-transparent hover:border-dancheong-red hover:text-dancheong-red transition-all w-fit"
+                                    className="inline-flex items-center gap-3 text-white font-medium text-lg pb-2 border-b-2 border-transparent transition-all w-fit hover:opacity-80"
+                                    style={{ borderBottomColor: theme.accentColor }}
                                 >
                                     <BookOpen size={20} />
                                     <AutoTranslatedText text="아티클 읽기" />
