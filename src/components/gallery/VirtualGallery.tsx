@@ -111,9 +111,10 @@ interface ExhibitProps {
     theme: any;
     index: number;
     lang: string;
+    onItemClick?: (item: any) => void;
 }
 
-const ExhibitCard = ({ item, side, zPos, theme, index, lang }: ExhibitProps) => {
+const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick }: ExhibitProps) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const navigate = useNavigate();
@@ -191,7 +192,11 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang }: ExhibitProps) => 
                     ref={meshRef}
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (!isStory) navigate(`/detail/${item.id}`);
+                        if (onItemClick) {
+                            onItemClick(item);
+                        } else if (!isStory) {
+                            navigate(`/detail/${item.id}`);
+                        }
                     }}
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
@@ -261,7 +266,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang }: ExhibitProps) => 
     );
 };
 
-const GalleryScene = ({ items, stories, theme, lang }: { items: FeaturedItem[], stories: any[], theme: any, lang: string }) => {
+const GalleryScene = ({ items, stories, theme, lang, onItemClick }: { items: FeaturedItem[], stories: any[], theme: any, lang: string, onItemClick?: (item: any) => void }) => {
     const scroll = useScroll();
     const { camera } = useThree();
     
@@ -325,6 +330,7 @@ const GalleryScene = ({ items, stories, theme, lang }: { items: FeaturedItem[], 
                     theme={theme}
                     index={i}
                     lang={lang}
+                    onItemClick={onItemClick}
                 />
             ))}
 
@@ -335,7 +341,7 @@ const GalleryScene = ({ items, stories, theme, lang }: { items: FeaturedItem[], 
     );
 };
 
-export const VirtualGallery = ({ items, stories, theme, showUI = true, lang = 'ko' }: { items: FeaturedItem[], stories: any[], theme: any, showUI?: boolean, lang?: string }) => {
+export const VirtualGallery = ({ items, stories, theme, showUI = true, lang = 'ko', onItemClick }: { items: FeaturedItem[], stories: any[], theme: any, showUI?: boolean, lang?: string, onItemClick?: (item: any) => void }) => {
     return (
         <div className="w-full h-full relative bg-[#0a0a0a] overflow-hidden">
             <GalleryErrorBoundary fallback={
@@ -357,7 +363,7 @@ export const VirtualGallery = ({ items, stories, theme, showUI = true, lang = 'k
                                 <meshBasicMaterial color="gray" wireframe />
                             </mesh>
                         }>
-                            <GalleryScene items={items} stories={stories} theme={theme} lang={lang} />
+                            <GalleryScene items={items} stories={stories} theme={theme} lang={lang} onItemClick={onItemClick} />
                         </Suspense>
                     </ScrollControls>
                 </Canvas>

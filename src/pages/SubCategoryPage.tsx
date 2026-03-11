@@ -352,8 +352,14 @@ const SubCategoryPage: React.FC = () => {
                 {/* Content Section - 3D Virtual Gallery Preview */}
                 {!loading && (
                     <div className="mt-8 border-t-2 border-b-2 overflow-hidden rounded-3xl h-[60vh] md:h-[80vh]" style={{ borderColor: `${theme.color3}44` }}>
-                        <div className="relative group cursor-pointer w-full h-full" onClick={() => setIsExplorationMode(true)}>
-                            <VirtualGallery items={items} stories={stories} theme={theme} lang={i18n.language} />
+                        <div className="relative group cursor-pointer w-full h-full">
+                            <VirtualGallery 
+                                items={items} 
+                                stories={stories} 
+                                theme={theme} 
+                                lang={i18n.language} 
+                                onItemClick={() => setIsExplorationMode(true)}
+                            />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                 <div className="px-6 py-3 border border-white/20 rounded-full backdrop-blur-md">
                                     <span className="text-xs font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text="클릭하여 탐험 시작" /></span>
