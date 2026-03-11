@@ -141,6 +141,20 @@ export const HeroSection: React.FC = () => {
                                     <AutoTranslatedText text={t('hero.story')} />
                                 </button>
                             </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1, duration: 1 }}
+                                className="mt-8 flex justify-center"
+                            >
+                                <button
+                                    onClick={() => navigate('/inspiration')}
+                                    className="text-sm text-white/70 hover:text-white transition-all duration-300 tracking-[0.3em] uppercase border-b border-white/40 hover:border-white hover:scale-110 pb-1"
+                                >
+                                    SKIP
+                                </button>
+                            </motion.div>
                         </motion.div>
                     </motion.div>
                 ) : (

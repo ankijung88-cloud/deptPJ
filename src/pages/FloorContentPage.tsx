@@ -85,7 +85,7 @@ const FloorContentPage: React.FC = () => {
     }
 
     return (
-        <div className="pt-20 pb-20 min-h-screen text-white font-sans" style={theme.bgStyle}>
+        <div className="pb-20 min-h-screen text-white font-sans" style={theme.bgStyle}>
             {/* Editorial Header */}
             <header className="relative w-full py-24 flex items-center justify-center overflow-hidden mb-16 border-b border-white/10">
                 <div className="absolute inset-0 z-0 opacity-20">

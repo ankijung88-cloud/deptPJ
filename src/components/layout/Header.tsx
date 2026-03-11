@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
+import { Breadcrumbs } from '../common/Breadcrumbs';
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 
 interface SubItem {
@@ -191,11 +192,66 @@ const Header: React.FC = () => {
                 borderBottomRightRadius: isScrolled ? '0' : '50% 16px'
             }}
         >
-            {/* Gyeongbokgung Eaves (Cheoma) Decoration Line */}
-            <div className={`absolute bottom-0 left-0 right-0 pointer-events-none flex flex-col justify-end transition-opacity duration-700 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
-                <div style={{ width: '100%', height: '1px', backgroundColor: `${theme.accentColor}66` }} />
-                <div style={{ width: '100%', height: '3px', backgroundColor: `${theme.highlightColor}e6` }} />
-                <div className="w-full h-[1px] bg-[#000000]/60" />
+            {/* Curved Technical Blueprint Lines (SVG Precision Implementation) */}
+            <div className={`absolute bottom-0 left-0 right-0 h-5 pointer-events-none transition-opacity duration-700 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
+                <svg 
+                    viewBox="0 0 1000 16" 
+                    preserveAspectRatio="none" 
+                    className="absolute bottom-0 left-0 right-0 w-full h-4"
+                    style={{ transform: 'translateY(0.5px)' }}
+                >
+                    {/* Measurement Ticks (SVG Dash Array) */}
+                    <path 
+                        d="M 0 0 A 500 16 0 0 0 1000 0" 
+                        fill="none" 
+                        stroke={theme.accentColor} 
+                        strokeWidth="4"
+                        strokeDasharray="1,24"
+                        className="opacity-40"
+                        vectorEffect="non-scaling-stroke"
+                    />
+
+                    {/* Secondary Ticks (Offset) */}
+                    <path 
+                        d="M 0 0 A 500 16 0 0 0 1000 0" 
+                        fill="none" 
+                        stroke={theme.highlightColor} 
+                        strokeWidth="2"
+                        strokeDasharray="1,12"
+                        className="opacity-20"
+                        vectorEffect="non-scaling-stroke"
+                    />
+
+                    {/* Main Technical Lines */}
+                    <path 
+                        d="M 0 0 A 500 16 0 0 0 1000 0" 
+                        fill="none" 
+                        stroke={theme.accentColor} 
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                        className="brightness-150"
+                        style={{ filter: `drop-shadow(0 0 8px ${theme.accentColor}cc)` }}
+                    />
+                    
+                    {/* Offset Inner Lines for Depth */}
+                    <path 
+                        d="M 0 -2 A 500 16 0 0 0 1000 -2" 
+                        fill="none" 
+                        stroke={theme.accentColor} 
+                        strokeWidth="0.5"
+                        vectorEffect="non-scaling-stroke"
+                        className="opacity-30"
+                    />
+                    
+                    <path 
+                        d="M 0 -4 A 500 16 0 0 0 1000 -4" 
+                        fill="none" 
+                        stroke={theme.accentColor} 
+                        strokeWidth="0.5"
+                        vectorEffect="non-scaling-stroke"
+                        className="opacity-10"
+                    />
+                </svg>
             </div>
 
             <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 ${isScrolled ? 'h-16' : 'h-24'}`}>
@@ -281,9 +337,15 @@ const Header: React.FC = () => {
 
                 {/* User Actions & Utilities */}
                 {!isAboutPage && (
-                    <div className="hidden lg:flex items-center space-x-6 font-sans">
-                        <button
-                            onClick={() => setIsGlobalMuted(!isGlobalMuted)}
+                    <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
+                        {/* Compact Breadcrumbs in Top Right */}
+                        <div className="opacity-80 hover:opacity-100 transition-opacity">
+                            <Breadcrumbs />
+                        </div>
+
+                        <div className="flex items-center space-x-6">
+                            <button
+                                onClick={() => setIsGlobalMuted(!isGlobalMuted)}
                             className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
                             onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
                             onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
@@ -329,7 +391,8 @@ const Header: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
+                            <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
+                        </div>
                     </div>
                 )}
 

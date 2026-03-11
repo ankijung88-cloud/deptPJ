@@ -37,7 +37,7 @@ const FAQPage: React.FC = () => {
     const [openId, setOpenId] = useState<number | null>(null);
 
     return (
-        <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-deep-bg text-white pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Volume2, VolumeX } from 'lucide-react';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { getContrastColor } from '../../utils/themeUtils';
+import { FLOORS } from '../../constants/floors';
 
 // --- Theme & Configuration ---
 const COLORS = {
@@ -21,92 +22,6 @@ const COLORS = {
     highlight: '#FF3B30'    // Glitch Red highlight for interactions
 };
 
-const FLOORS = [
-    {
-        level: 6,
-        title: 'LOCAL HERITAGE',
-        label: '6F',
-        color: '#FF3B30', // Red (South)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/festival.mp4',
-        subcategories: [
-            { id: 'heritage', label: '지역 문화 유산' },
-            { id: 'travel', label: '전략적 앵커' },
-            { id: 'f6_gourmet', label: '미식 아카이브' },
-            { id: 'f6_craft', label: '지역 공예관' },
-            { id: 'f6_tour', label: '헤리티지 투어' }
-        ]
-    },
-    {
-        level: 5,
-        title: 'FASHION ARCHIVE',
-        label: '5F',
-        color: '#FFD700', // Yellow (Center)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/modern_tradition.mp4',
-        subcategories: [
-            { id: 'archive', label: '패션 아카이브' },
-            { id: 'collection', label: '시즌 컬렉션' },
-            { id: 'f5_material', label: '소재 도서관' },
-            { id: 'f5_fitting', label: '피팅 스튜디오' },
-            { id: 'f5_textile', label: '텍스타일 룸' }
-        ]
-    },
-    {
-        level: 4,
-        title: 'CULTURE TALK',
-        label: '4F',
-        color: '#F8FAFF', // White (West)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/travel.mp4',
-        subcategories: [
-            { id: 'talk', label: '문화 담론' },
-            { id: 'interview', label: '아티스트 인터뷰' },
-            { id: 'f4_plus', label: '토크 플러스' },
-            { id: 'f4_book', label: '도서관 섹션' },
-            { id: 'f4_seminar', label: '세미나 룸' }
-        ]
-    },
-    {
-        level: 3,
-        title: 'PERFORMANCE & EXHIBITION',
-        label: '3F',
-        color: '#0070FF', // Blue (East)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/active.mp4',
-        subcategories: [
-            { id: 'performance', label: '공연 실황' },
-            { id: 'exhibit', label: '가상 전시' },
-            { id: 'f3_media', label: '미디어 아트 홀' },
-            { id: 'f3_lounge', label: '아티스트 라운지' },
-            { id: 'f3_audio', label: '사운드 아카이브' }
-        ]
-    },
-    {
-        level: 2,
-        title: 'COLLABORATION & POP-UP',
-        label: '2F',
-        color: '#00FFC2', // Cyan/Green (East/Neo-Dancheong Mint)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/trend.mp4',
-        subcategories: [
-            { id: 'sync', label: '시너지 공간' },
-            { id: 'pop', label: '다이내믹 팝업' },
-            { id: 'f2_lab', label: '브랜드 랩' },
-            { id: 'f2_art', label: '아트 콜라보' },
-            { id: 'f2_gallery', label: '한정판 갤러리' }
-        ]
-    },
-    {
-        level: 1,
-        title: 'K-CULTURE TRENDS',
-        label: '1F',
-        color: '#0A0D17', // Black (North/Void Navy)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/k-culture.mp4',
-        subcategories: [
-            { id: 'global', label: '글로벌 트렌드' },
-            { id: 'window', label: '디지털 쇼윈도' },
-            { id: 'f1_kpop', label: 'K-팝 스테이지' },
-            { id: 'f1_library', label: '트렌드 라이브러리' },
-            { id: 'f1_tech', label: '한류 테크존' }
-        ]
-    },
-];
 
 const METRICS = {
     floorHeight: 2.8,
@@ -175,11 +90,13 @@ const Columns = () => {
     );
 };
 
-const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSelectedAnything }: any) => {
+const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSelectedAnything, isMobile }: any) => {
+    const navigate = useNavigate();
     const active = isSelected || isHovered;
     const targetScale = active ? 1.02 : 1;
     const groupRef = useRef<THREE.Group>(null);
     const highlightRef = useRef<THREE.MeshStandardMaterial>(null);
+    const mouseDownPos = useRef<{ x: number, y: number } | null>(null);
 
     useFrame((_, delta) => {
         if (groupRef.current) {
@@ -191,13 +108,35 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
         }
     });
 
+    const handlePointerDown = (e: any) => {
+        e.stopPropagation();
+        mouseDownPos.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handlePointerUp = (e: any) => {
+        e.stopPropagation();
+        if (!mouseDownPos.current) return;
+
+        const distance = Math.sqrt(
+            Math.pow(e.clientX - mouseDownPos.current.x, 2) +
+            Math.pow(e.clientY - mouseDownPos.current.y, 2)
+        );
+
+        // Only trigger click if the movement was minimal (threshold of 5px)
+        if (distance < 5) {
+            onClick(floor.level === isSelected ? null : floor.level);
+        }
+        mouseDownPos.current = null;
+    };
+
     return (
         <group
             ref={groupRef}
             position={[0, yPos, 0]}
             onPointerOver={(e) => { e.stopPropagation(); onHover(floor.level); document.body.style.cursor = 'pointer'; }}
             onPointerOut={() => { onHover(null); document.body.style.cursor = 'auto'; }}
-            onClick={(e) => { e.stopPropagation(); onClick(floor.level === isSelected ? null : floor.level); }}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
         >
             {/* Base Slab */}
             <mesh position={[0, 0, 0]}>
@@ -231,51 +170,134 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
             {/* Right-aligned 3D Label matching sketch - hidden when modal is open */}
             {!isSelectedAnything && (
                 <Html
-                    position={[METRICS.width / 2 + 0.5, METRICS.floorHeight / 2, METRICS.depth / 2]}
+                    position={[METRICS.width / 2 + (isMobile ? 0.6 : 0.5), METRICS.floorHeight / 2, METRICS.depth / 2]}
                     center
                     style={{
                         transition: 'all 0.3s ease',
-                        transform: active ? 'scale(1.1)' : 'scale(1)',
-                        pointerEvents: 'none'
+                        transform: active ? (isMobile ? 'scale(1.05)' : 'scale(1.1)') : 'scale(1)',
+                        zIndex: active ? 100 : 1
                     }}
                 >
-                    <div style={{ display: 'flex', alignItems: 'center', pointerEvents: 'none' }}>
+                    <div 
+                        onPointerEnter={(e) => { e.stopPropagation(); onHover(floor.level); document.body.style.cursor = 'pointer'; }}
+                        onPointerLeave={() => { onHover(null); document.body.style.cursor = 'auto'; }}
+                        style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            pointerEvents: 'auto',
+                            position: 'relative',
+                            zIndex: active ? 100 : 50
+                        }}
+                    >
                         {/* Elegant Dotted Line for Architectural Detail */}
                         <div style={{
                             width: active ? '60px' : '40px',
-                            borderTop: `2px dotted ${active ? floor.color : COLORS.line}`,
+                            borderTop: `2px dotted ${active ? floor.color : 'rgba(0, 255, 194, 0.4)'}`,
                             opacity: active ? 0.9 : 0.4,
                             transition: 'all 0.4s ease'
                         }} />
 
-                        <div style={{
-                            fontFamily: 'serif',
-                            marginLeft: '12px',
-                            display: 'flex',
-                            alignItems: 'baseline',
-                            gap: '12px',
-                            whiteSpace: 'nowrap',
-                            // Aggressive neon halo for perfect readability
-                            textShadow: '0 0 12px rgba(0, 255, 194, 0.4), 0 0 8px rgba(0, 255, 194, 0.2)',
-                            transition: 'all 0.4s ease',
-                            transform: active ? 'scale(1.15) translateX(10px)' : 'scale(1)',
-                            color: active ? floor.color : '#ffffff'
-                        }}>
-                            <span style={{ fontSize: '42px', fontWeight: '900', lineHeight: 1 }}>
-                                {floor.label}
-                            </span>
+                        {/* Relative container to anchor the absolute flyout */}
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px' }}>
+                            {/* Primary Floor Label - Click to open Fragmented Layout Modal */}
+                            <div 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClick(floor.level);
+                                }}
+                                style={{
+                                    fontFamily: 'serif',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px',
+                                    whiteSpace: 'nowrap',
+                                    cursor: 'pointer',
+                                    textShadow: '0 0 12px rgba(0, 255, 194, 0.4), 0 0 8px rgba(0, 255, 194, 0.2)',
+                                    transition: 'all 0.4s ease',
+                                    transform: active ? 'scale(1.15) translateX(10px)' : 'scale(1)',
+                                    color: active ? floor.color : '#ffffff'
+                                }}
+                            >
+                                <span style={{ fontSize: isMobile ? '22px' : '42px', fontWeight: '900', lineHeight: 1 }}>
+                                    {floor.label}
+                                </span>
 
-                            <span style={{
-                                fontSize: '15px',
-                                fontWeight: '900',
-                                letterSpacing: '0.12em',
-                                opacity: active ? 1 : 0.7,
-                                borderLeft: `2.5px solid ${active ? floor.color : COLORS.line}`,
-                                paddingLeft: '12px',
-                                textTransform: 'uppercase'
-                            }}>
-                                <AutoTranslatedText text={floor.title} />
-                            </span>
+                                <span style={{
+                                    fontSize: isMobile ? '10px' : '15px',
+                                    fontWeight: '900',
+                                    letterSpacing: '0.12em',
+                                    opacity: active ? 1 : 0.7,
+                                    borderLeft: `2.5px solid ${active ? floor.color : 'rgba(0, 255, 194, 0.4)'}`,
+                                    paddingLeft: '12px',
+                                    textTransform: 'uppercase',
+                                    marginRight: isMobile ? '8px' : '30px'
+                                }}>
+                                    <AutoTranslatedText text={floor.title} />
+                                </span>
+                            </div>
+
+                            {/* Flyout Subcategories - Direct Page Navigation (Bypassing Modal) */}
+                            <AnimatePresence>
+                                {active && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10, scale: 0.98 }}
+                                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                                        exit={{ opacity: 0, x: -10, scale: 0.98 }}
+                                        style={{
+                                            position: 'absolute',
+                                            left: '100%',
+                                            top: isMobile ? '-2px' : '-8px',
+                                            paddingLeft: '55px', // Increased clearance from title
+                                            // Robust bridge with adjusted proximity to avoid overlap
+                                            marginLeft: '-20px', 
+                                            paddingTop: '8px',
+                                            paddingBottom: '100px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            pointerEvents: 'auto',
+                                            zIndex: 110,
+                                            backgroundColor: 'rgba(0,0,0,0.001)'
+                                        }}
+                                    >
+                                        {/* Visible Border indicator - Shifted right to avoid overlap with long titles */}
+                                        <div style={{
+                                            position: 'absolute',
+                                            left: '35px',
+                                            top: '12px',
+                                            bottom: '60px',
+                                            width: '1px',
+                                            backgroundColor: `${floor.color}40`
+                                        }} />
+
+                                        {floor.subcategories.map((sub: any) => (
+                                            <motion.div
+                                                key={sub.id}
+                                                whileHover={{ x: 8, color: floor.color, opacity: 1 }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/category/${sub.id}`);
+                                                }}
+                                                style={{
+                                                    fontSize: '13px',
+                                                    fontWeight: '700',
+                                                    letterSpacing: '0.15em',
+                                                    color: '#ffffff',
+                                                    cursor: 'pointer',
+                                                    whiteSpace: 'nowrap',
+                                                    opacity: 0.6,
+                                                    transition: 'all 0.3s ease',
+                                                    textTransform: 'uppercase',
+                                                    padding: '4px 0',
+                                                    paddingLeft: '10px'
+                                                }}
+                                            >
+                                                <AutoTranslatedText text={sub.label} />
+                                            </motion.div>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </Html>
@@ -286,12 +308,12 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
 // --- Scene Assembly ---
 
-const BlueprintBuilding = ({ selectedFloor, hoveredFloor, setHoveredFloor, setSelectedFloor }: any) => {
+const BlueprintBuilding = ({ selectedFloor, hoveredFloor, setHoveredFloor, setSelectedFloor, isMobile }: any) => {
     // Center the building vertically
     const totalHeight = FLOORS.length * METRICS.floorHeight;
 
     return (
-        <group position={[0, -(totalHeight / 2) + 2, 0]}>
+        <group position={[0, -(totalHeight / 2) + 2, 0]} scale={isMobile ? [0.7, 1, 0.7] : [1, 1, 1]}>
             {/* Foundation */}
             <mesh position={[0, -METRICS.slabThickness, 0]}>
                 <boxGeometry args={[METRICS.width + 1.5, METRICS.slabThickness, METRICS.depth + 1.5]} />
@@ -309,6 +331,7 @@ const BlueprintBuilding = ({ selectedFloor, hoveredFloor, setHoveredFloor, setSe
                     isSelectedAnything={selectedFloor !== null}
                     onHover={setHoveredFloor}
                     onClick={setSelectedFloor}
+                    isMobile={isMobile}
                 />
             ))}
 
@@ -433,7 +456,7 @@ const CityBackground3D = () => {
 };
 
 // --- Fragmented Blueprint Modal ---
-const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
     const navigate = useNavigate();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
@@ -464,8 +487,16 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
     const fragments = useMemo(() => {
         if (!activeFloorData?.subcategories) return [];
 
-        // Define 8 non-overlapping screen zones (Ergonomic L-shape: Top and Left areas to balance bottom-right main modal)
-        const zones = [
+        const zones = isMobile ? [
+            { t: [5, 12], l: [5, 25] },
+            { t: [5, 12], l: [65, 85] },
+            { t: [15, 22], l: [10, 35] },
+            { t: [15, 22], l: [60, 80] },
+            { t: [25, 32], l: [5, 25] },
+            { t: [25, 32], l: [65, 85] },
+            { t: [35, 42], l: [10, 40] },
+            { t: [72, 78], l: [2, 25] }
+        ] : [
             { t: [10, 22], l: [10, 25] }, // Top Left
             { t: [8, 20], l: [35, 50] }, // Top Mid-Left
             { t: [8, 20], l: [60, 75] }, // Top Mid-Right
@@ -485,16 +516,14 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                 id: i,
                 subId: sub.id,
                 text: sub.label,
-                width: 150,
-                height: 80,
-                // Keep the items focused slightly more within their zone boundary to prevent bleed
+                // Positions are still randomized by zone
                 top: zone.t[0] + Math.random() * (zone.t[1] - zone.t[0]),
                 left: zone.l[0] + Math.random() * (zone.l[1] - zone.l[0]),
                 delay: i * 0.08,
                 type: Math.floor(Math.random() * 4)
             };
         });
-    }, [activeFloorData]);
+    }, [activeFloorData, isMobile]);
 
     /* Decorative blocks removed to prevent visual confusion */
 
@@ -528,31 +557,31 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
 
             {/* Bottom-Right Anchor Title Fragment (More ergonomic placement) */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, x: 50 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
+                initial={{ opacity: 0, scale: 0.9, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute right-12 bottom-12 bg-[#1A2420]/80 backdrop-blur-xl border-2 shadow-2xl p-10 z-50 min-w-[500px] cursor-default"
+                className="absolute inset-x-4 bottom-8 md:right-12 md:bottom-12 md:left-auto bg-[#1A2420]/95 backdrop-blur-xl border-2 shadow-2xl p-5 md:p-10 z-50 md:min-w-[500px] cursor-default"
                 style={{ borderColor: MODAL_COLORS.line }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex items-center gap-6 mb-6 pb-6 border-b-2" style={{ borderColor: activeFloorData.color }}>
-                    <span className="text-8xl font-black font-serif" style={{ color: activeFloorData.color }}>
+                <div className="flex items-center gap-3 md:gap-6 mb-3 md:mb-6 pb-3 md:pb-6 border-b-2" style={{ borderColor: activeFloorData.color }}>
+                    <span className="text-4xl md:text-8xl font-black font-serif" style={{ color: activeFloorData.color }}>
                         {activeFloorData.label}
                     </span>
-                    <span className="text-4xl font-black text-white tracking-tighter leading-none break-words max-w-[250px]">
+                    <span className="text-lg md:text-4xl font-black text-white tracking-tighter leading-none break-words max-w-[150px] md:max-w-[250px]">
                         <AutoTranslatedText text={activeFloorData.title} />
                     </span>
                 </div>
-                <p className="text-white/80 font-sans text-sm font-medium leading-relaxed mb-8 tracking-wide">
+                <p className="text-white/80 font-sans text-[11px] md:text-sm font-medium leading-relaxed mb-6 md:mb-8 tracking-wide">
                     <AutoTranslatedText text={`선택된 ${activeFloorData.label}층의 스페이스 다이어그램입니다.`} /><br />
                     <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
                 </p>
                 <button
                     onClick={(e) => { e.stopPropagation(); onClose(); }}
-                    className="w-full py-4 font-bold tracking-widest text-lg transition-transform hover:bg-opacity-90 active:scale-95 flex justify-center items-center gap-4 shadow-md"
+                    className="w-full py-3 md:py-4 font-bold tracking-widest text-sm md:text-lg transition-transform hover:bg-opacity-90 active:scale-95 flex justify-center items-center gap-4 shadow-md"
                     style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
                 >
-                    <span className="font-serif font-black text-2xl leading-none relative -top-[2px]" style={{ color: buttonTextColor }}>→</span>
+                    <span className="font-serif font-black text-xl md:text-2xl leading-none relative -top-[1px] md:-top-[2px]" style={{ color: buttonTextColor }}>→</span>
                     <AutoTranslatedText text="ENTER ZONE" />
                 </button>
             </motion.div>
@@ -570,7 +599,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
             >
                 <div className="relative group cursor-pointer">
                     <div
-                        className="w-[300px] h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110"
+                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110"
                         style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
                     >
                         <video
@@ -722,12 +751,13 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                         initial={{ opacity: 0, scale: 0.3, x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300 }}
                         animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.3 + frag.delay, type: 'spring', bounce: 0.5 }}
-                        className="absolute shadow-xl flex items-center justify-center p-4 cursor-pointer hover:scale-105 hover:z-[70] transition-all duration-300 z-40 backdrop-blur-sm"
+                        className="absolute shadow-xl flex items-center justify-center p-3 md:p-5 cursor-pointer hover:scale-105 hover:z-[70] transition-all duration-300 z-40 backdrop-blur-sm"
                         style={{
                             top: `${frag.top}%`,
                             left: `${frag.left}%`,
-                            width: frag.width,
-                            height: frag.height,
+                            minWidth: isMobile ? '100px' : '160px',
+                            minHeight: isMobile ? '60px' : '80px',
+                            maxWidth: isMobile ? '160px' : '300px',
                             backgroundColor: bg,
                             border: border !== 'transparent' ? `2px solid ${border}` : 'none',
                             color: textColor,
@@ -737,9 +767,9 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                             navigate(`/category/${frag.subId}`);
                         }}
                     >
-                        <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-mono tracking-widest opacity-60 mb-2 uppercase border-b border-current pb-1 w-full text-center">{activeFloorData.label}.Z{frag.id + 1}</span>
-                            <span className="font-black text-lg text-center tracking-tighter leading-none break-keep">
+                        <div className="flex flex-col items-center justify-center w-full px-2 py-1">
+                            <span className="text-[8px] md:text-[10px] font-mono tracking-widest opacity-60 mb-1 md:mb-2 uppercase border-b border-current pb-1 w-full text-center">{activeFloorData.label}.Z{frag.id + 1}</span>
+                            <span className="font-black text-[11px] md:text-xl text-center tracking-tighter leading-[1.1] md:leading-tight break-words w-full">
                                 <AutoTranslatedText text={frag.text} />
                             </span>
                         </div>
@@ -753,19 +783,14 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
 export const VirtualStore3D: React.FC = () => {
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
-    const location = useLocation();
+    const [resetKey, setResetKey] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    // Listen for floor parameter in URL (for navigation from Header)
     React.useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const floorParam = params.get('floor');
-        if (floorParam) {
-            const level = parseInt(floorParam);
-            if (!isNaN(level) && level >= 1 && level <= 6) {
-                setSelectedFloor(level);
-            }
-        }
-    }, [location.search]);
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const activeFloorData = useMemo(() => {
         if (!selectedFloor) return null;
@@ -775,57 +800,57 @@ export const VirtualStore3D: React.FC = () => {
     return (
         <div
             className={`fixed inset-0 top-0 left-0 w-full h-full transition-all duration-300 ${selectedFloor ? 'z-[100]' : 'z-[40]'}`}
-            style={{ backgroundColor: COLORS.paper }}
+            style={{ backgroundColor: COLORS.paper, touchAction: 'none' }}
         >
 
             {/* Blueprint Header */}
-            <div className="absolute top-40 left-16 pointer-events-none z-10 opacity-80">
-                <h1 className="text-[#00FFC2] text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.4)]">
+            <div className="absolute top-24 md:top-40 left-8 md:left-16 pointer-events-none z-10 opacity-80">
+                <h1 className="text-[#00FFC2] text-3xl md:text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.4)]">
                     <AutoTranslatedText text="CULTURAL" /><br />
                     <AutoTranslatedText text="ARCHIVE" />
                 </h1>
-                <div className="h-[2px] w-24 bg-[#00FFC2] mb-2 shadow-[0_0_10px_rgba(0,255,194,0.5)]"></div>
-                <p className="text-[#00FFC2]/80 font-mono text-sm tracking-[0.2em] font-bold">
+                <div className="h-[2px] w-16 md:w-24 bg-[#00FFC2] mb-2 shadow-[0_0_10px_rgba(0,255,194,0.5)]"></div>
+                <p className="text-[#00FFC2]/80 font-mono text-[10px] md:text-sm tracking-[0.2em] font-bold">
                     <AutoTranslatedText text="STRUCTURAL ELEVATION" /><br />
                     <AutoTranslatedText text="SCALE 1:100" />
                 </p>
             </div>
 
             {/* Transparent Canvas overlays the background */}
-            <Canvas shadows={false} gl={{ antialias: true, alpha: false }}>
+            <Canvas shadows={false} gl={{ antialias: true, alpha: false }} style={{ touchAction: 'none' }}>
                 <color attach="background" args={[COLORS.paper]} />
                 <CityBackground3D />
 
-                {/* Flat lighting suitable for wireframe/blueprint style */}
                 <ambientLight intensity={2.5} />
                 <directionalLight position={[10, 20, 15]} intensity={1} color={'#ffffff'} />
 
-                {/* Perspective Camera: Wide angle, placed exactly at 4F height (Y = 2.0) to make 4F the horizontal reference block.
-                    Looking up shows ceilings of 5-6F, looking down shows floors of 1-3F. */}
                 <PerspectiveCamera
                     makeDefault
                     position={[-24, 2.0, 32]}
-                    fov={35}
+                    fov={isMobile ? 60 : 35}
                     near={0.1}
                     far={1000}
                     onUpdate={(c) => c.lookAt(0, 2.0, 0)}
                 />
 
-                <PresentationControls
-                    global
-                    config={{ mass: 2, tension: 500 }}
-                    snap={{ mass: 4, tension: 1500 }}
-                    rotation={[0, 0, 0]}
-                    polar={[0, 0]} // Locked vertically so the 4F horizon is permanently horizontally maintained
-                    azimuth={[-Math.PI, Math.PI]}
-                >
-                    <BlueprintBuilding
-                        selectedFloor={selectedFloor}
-                        hoveredFloor={hoveredFloor}
-                        setHoveredFloor={setHoveredFloor}
-                        setSelectedFloor={setSelectedFloor}
-                    />
-                </PresentationControls>
+                <group key={resetKey}>
+                    <PresentationControls
+                        global
+                        config={{ mass: 2, tension: 500 }}
+                        snap={false}
+                        rotation={[0, 0, 0]}
+                        polar={[0, 0]}
+                        azimuth={[-Infinity, Infinity]}
+                    >
+                        <BlueprintBuilding
+                            selectedFloor={selectedFloor}
+                            hoveredFloor={hoveredFloor}
+                            setHoveredFloor={setHoveredFloor}
+                            setSelectedFloor={setSelectedFloor}
+                            isMobile={isMobile}
+                        />
+                    </PresentationControls>
+                </group>
             </Canvas>
 
             <AnimatePresence>
@@ -833,12 +858,25 @@ export const VirtualStore3D: React.FC = () => {
                     <FragmentedModal
                         activeFloorData={activeFloorData}
                         onClose={() => setSelectedFloor(null)}
+                        isMobile={isMobile}
                     />
                 )}
             </AnimatePresence>
 
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#2c3e50] font-mono text-sm tracking-widest uppercase font-bold opacity-70">
-                <AutoTranslatedText text="[Drag to Rotate] • [Click Floor to Select]" />
+            <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-4 md:gap-6 select-none w-full px-6" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                <div className="text-white/40 font-mono text-[10px] md:text-sm tracking-[0.3em] uppercase font-black text-center whitespace-nowrap">
+                    <AutoTranslatedText text="[Drag to Rotate] • [Click Floor to Select]" />
+                </div>
+                
+                <button 
+                    onClick={() => setResetKey(prev => prev + 1)}
+                    className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300 backdrop-blur-md"
+                >
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2] group-hover:shadow-[0_0_8px_#00FFC2] transition-all" />
+                    <span className="text-[#00FFC2] font-bold text-[10px] md:text-sm tracking-widest uppercase">
+                        <AutoTranslatedText text="원위치" />
+                    </span>
+                </button>
             </div>
         </div>
     );

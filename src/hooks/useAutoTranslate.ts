@@ -53,14 +53,19 @@ function findTranslationByKoreanValue(koText: string, targetLang: string): strin
  * Custom hook to automatically translate text using Google Gemini AI.
  * It handles caching, language changes, and provides a fallback to local i18n resources.
  */
-export const useAutoTranslate = (text: string | null | undefined) => {
+export const useAutoTranslate = (text: string | null | undefined, targetLangOverride?: string) => {
     const { i18n: i18nInstance } = useTranslation();
     const [translatedText, setTranslatedText] = useState<string>(text || '');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    // Sync state immediately when input text or language switch occurs
+    useEffect(() => {
+        if (text) setTranslatedText(text);
+    }, [text, targetLangOverride]);
+
     // Get primary language code (e.g., 'en-US' -> 'en')
     const getTargetLang = () => {
-        const fullLang = i18nInstance.language || 'ko';
+        const fullLang = targetLangOverride || i18nInstance.language || 'ko';
         return fullLang.split('-')[0];
     };
 
@@ -100,14 +105,14 @@ export const useAutoTranslate = (text: string | null | undefined) => {
                 return;
             }
 
-            // If target is Korean and input already contains Korean, skip to save API calls
-            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
-                setTranslatedText(text);
+            // 0. Skip if text is already in target language (very basic check)
+            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text) && !/[ぁ-んァ-ヶ]/.test(text)) {
+                // Input is likely already English
                 return;
             }
 
-            // If target is English and input has no Korean (likely already English), skip
-            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
+            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
+                // Input is likely already Korean
                 setTranslatedText(text);
                 return;
             }
@@ -119,7 +124,7 @@ export const useAutoTranslate = (text: string | null | undefined) => {
                 return;
             }
 
-            // 1단계: i18n 리소스 역조회로 번역 시도 (가장 빠르고 정확함)
+            // 1단계: i18n 리소스 역조회로 번역 시도
             const localTranslated = findTranslationByKoreanValue(text, targetLang);
             if (localTranslated) {
                 translationCache.set(cacheKey, localTranslated);
@@ -138,44 +143,51 @@ export const useAutoTranslate = (text: string | null | undefined) => {
                     return;
                 }
 
-                console.log(`[AutoTranslate] Requesting Gemini for: "${text}" to "${targetLang}"`);
-
                 const ai = new GoogleGenAI({
                     apiKey,
                     apiVersion: 'v1'
                 });
 
-                const prompt = `Translate the following text to ${targetLangName}. 
+                const prompt = `Translate the following short product title to ${targetLangName}. 
                 Output ONLY the translated text without any quotes or explanations.
                 If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${text}`;
 
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.0-flash',
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                });
-
-                console.log('[AutoTranslate] Gemini Response:', response);
-                const translated = response.text?.trim();
+                // Try Gemini 2.0 Flash first, then 1.5 Flash as fallback
+                let translated = '';
+                try {
+                    const response: any = await ai.models.generateContent({
+                        model: 'gemini-2.0-flash',
+                        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    });
+                    
+                    // The SDK uses a getter for .text
+                    translated = response.text;
+                } catch (e) {
+                    console.warn('[AutoTranslate] Gemini 2.0 failed, trying 1.5:', e);
+                    const response: any = await ai.models.generateContent({
+                        model: 'gemini-1.5-flash',
+                        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    });
+                    translated = response.text;
+                }
 
                 if (translated) {
-                    console.log(`[AutoTranslate] Success: "${text.substring(0, 20)}..." -> "${translated.substring(0, 20)}..."`);
-                    translationCache.set(cacheKey, translated);
-                    setTranslatedText(translated);
+                    const finalResult = translated.trim().replace(/^["']|["']$/g, '');
+                    translationCache.set(cacheKey, finalResult);
+                    setTranslatedText(finalResult);
                 } else {
-                    console.warn(`[AutoTranslate] Empty response from AI for: "${text.substring(0, 20)}..."`);
                     throw new Error('Empty response from AI');
                 }
             } catch (error) {
                 console.error('[AutoTranslate] AI Translation failed:', error);
-                setTranslatedText(text);
             } finally {
                 setIsLoading(false);
             }
         };
 
         translate();
-    }, [text, i18nInstance.language]);
+    }, [text, i18nInstance.language, targetLangOverride]);
 
     return { translatedText, isLoading };
 };

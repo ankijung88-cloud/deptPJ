@@ -5,9 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { ArrowRight, BookOpen, Play, MapPin, Calendar, ArrowLeft } from 'lucide-react';
+import { BookOpen, Compass, X } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
-import { getJoseonThemeById, getFloorBySubId, getContrastColor } from '../utils/themeUtils';
+import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
+import VirtualGallery from '../components/gallery/VirtualGallery';
 
 interface StoryCard {
     id: string;
@@ -122,6 +123,7 @@ const SubCategoryPage: React.FC = () => {
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isExplorationMode, setIsExplorationMode] = useState(false);
 
     const targetSubId = subId || '';
 
@@ -174,9 +176,10 @@ const SubCategoryPage: React.FC = () => {
     console.log('[SubCategoryPage] subId:', targetSubId, '| parentFloor:', parentFloor?.id, '| floorNumber:', floorNumber);
 
     // While loading, show spinner (don't flash not-found)
+
     if (loading) {
         return (
-            <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-white" style={theme.bgStyle}>
+            <div className="min-h-screen flex flex-col items-center justify-center text-white" style={theme.bgStyle}>
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
@@ -192,7 +195,7 @@ const SubCategoryPage: React.FC = () => {
 
     if (!parentFloor || !subcategoryData) {
         return (
-            <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-white p-6" style={theme.bgStyle}>
+            <div className="min-h-screen flex flex-col items-center justify-center text-white p-6" style={theme.bgStyle}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -217,32 +220,15 @@ const SubCategoryPage: React.FC = () => {
 
     }
 
-    const featuredItem = items[0];
-    const otherItems = items.slice(1);
+    // items[0] is used for content logic if needed elsewhere
 
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
 
             {/* Back Navigation Bar */}
-            <div className="fixed top-28 left-0 w-full z-40 pointer-events-none">
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="container mx-auto px-6 md:px-12 flex justify-end pointer-events-auto"
-                >
-                    <Link
-                        to={`/inspiration?floor=${floorNumber}`}
-                        className="inline-flex items-center gap-3 px-5 py-2.5 backdrop-blur-2xl rounded-full text-sm font-medium transition-all group shadow-2xl"
-                        style={{ backgroundColor: `${theme.bgColor}cc`, border: `1px solid ${theme.accentColor}44`, color: theme.accentColor }}
-                    >
-                        <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
-                        <AutoTranslatedText text={`BACK TO 3D ${parentFloor.floor}`} />
-                    </Link>
-                </motion.div>
-            </div>
 
             {/* Editorial Header */}
-            <header className="relative w-full min-h-[70vh] flex items-center pt-32 pb-20 overflow-hidden">
+            <header className="relative w-full min-h-[70vh] flex items-center pt-8 pb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <img
                         src={parentFloor.bgImage}
@@ -253,33 +239,96 @@ const SubCategoryPage: React.FC = () => {
                 </div>
 
                 <div className="container mx-auto px-6 md:px-12 relative z-10">
-                    <div className="max-w-4xl">
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 lg:gap-20">
+                        {/* Title & Narrative Section */}
+                        <div className="flex-1 max-w-4xl">
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                            >
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="px-4 py-1.5 rounded-full border text-[10px] font-black tracking-[0.3em] uppercase backdrop-blur-md" 
+                                         style={{ 
+                                             backgroundColor: `${theme.color2}44`, 
+                                             borderColor: `${theme.color3}66`, 
+                                             color: theme.highlightColor 
+                                         }}>
+                                        <AutoTranslatedText text={`Archive ${parentFloor.floor}`} />
+                                    </div>
+                                    <div className="h-[1px] w-12 bg-white/20" />
+                                    <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 text-white">
+                                        <AutoTranslatedText text="Temporal Curation" />
+                                    </span>
+                                </div>
+
+                                <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9]" 
+                                    style={{ 
+                                        color: theme.highlightColor, 
+                                        textShadow: `0 0 40px ${theme.glowColor}44` 
+                                    }}>
+                                    <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language) || t('common.no_info')} />
+                                </h1>
+
+                                <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 
+                                   style={{ borderColor: `${theme.color3}44`, color: theme.color4 }}>
+                                    <AutoTranslatedText text={t('subcategory_desc')} />
+                                </p>
+                            </motion.div>
+                        </div>
+
+                        {/* Unified Curation Module (Action + Stats) */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="lg:w-[420px] shrink-0"
                         >
-                            <div className="flex items-center gap-4 mb-8">
-                                <span className="px-3 py-1 backdrop-blur-md rounded text-[10px] font-bold tracking-[0.2em] uppercase" style={{ backgroundColor: `${theme.color2}88`, border: `1px solid ${theme.color3}`, color: theme.color4 }}>
-                                    <AutoTranslatedText text={`Archive ${parentFloor.floor}`} />
-                                </span>
-                                <div className="h-[1px] w-12" style={{ backgroundColor: theme.color3 }} />
-                                <span className="text-xs font-medium tracking-widest uppercase" style={{ color: theme.textMuted }}>
-                                    <AutoTranslatedText text="Curation Journal" />
-                                </span>
-                            </div>
+                            <div className="rounded-[2.5rem] p-1.5 backdrop-blur-3xl border shadow-2xl overflow-hidden group"
+                                 style={{ 
+                                     backgroundColor: `${theme.color1}44`, 
+                                     borderColor: `${theme.color3}33`,
+                                     boxShadow: `0 20px 40px -10px ${theme.bgColor}cc`
+                                 }}>
+                                
+                                <div className="p-8 space-y-8">
+                                    <div className="flex justify-between items-start">
+                                        <div className="space-y-1">
+                                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/30 uppercase">Collection Data</div>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-6xl font-serif font-black" style={{ color: theme.highlightColor }}>
+                                                    {items.length + stories.length}
+                                                </span>
+                                                <span className="text-xs font-bold uppercase tracking-widest opacity-30 text-white">Records</span>
+                                            </div>
+                                        </div>
+                                        <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center">
+                                            <Compass size={20} className="text-white/20 animate-[spin_10s_linear_infinite]" />
+                                        </div>
+                                    </div>
 
-                            <div className="inline-block text-4xl md:text-6xl font-black tracking-widest uppercase mb-12" style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}` }}>
-                                <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language) || t('common.no_info')} />
-                            </div>
+                                    <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                            <div className="flex flex-col md:flex-row md:items-end gap-8 md:gap-16">
-                                <p className="text-xl md:text-2xl font-serif italic leading-relaxed max-w-2xl" style={theme.textSecondaryStyle}>
-                                    <AutoTranslatedText text={t('subcategory_desc')} />
-                                </p>
-                                <div className="shrink-0 pb-2 rounded-2xl px-6 py-4" style={{ backgroundColor: `${theme.color2}99`, border: `1px solid ${theme.color3}` }}>
-                                    <div className="text-xs tracking-widest uppercase mb-1" style={{ color: theme.textMuted }}><AutoTranslatedText text="Total Stories" /></div>
-                                    <div className="text-4xl font-serif font-bold" style={theme.accentStyle}>{items.length + stories.length}</div>
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setIsExplorationMode(true)}
+                                        className="w-full py-6 rounded-2xl font-black tracking-[0.3em] uppercase transition-all shadow-xl flex items-center justify-center gap-4 relative overflow-hidden group/btn"
+                                        style={{ backgroundColor: theme.accentColor, color: theme.bgColor }}
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover/btn:translate-x-0 transition-transform duration-500 ease-out" />
+                                        <Compass size={20} className="relative z-10" />
+                                        <span className="relative z-10 text-sm"><AutoTranslatedText text="공간 탐험하기" /></span>
+                                    </motion.button>
+                                </div>
+
+                                <div className="px-8 py-4 bg-white/5 flex justify-between items-center text-[9px] font-mono tracking-[0.4em] uppercase text-white/40">
+                                    <span>Status: Immersive Sync</span>
+                                    <div className="flex gap-1">
+                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse" />
+                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse delay-75" />
+                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse delay-150" />
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
@@ -300,195 +349,61 @@ const SubCategoryPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Content Sections */}
+                {/* Content Section - 3D Virtual Gallery Preview */}
                 {!loading && (
-                    <div className="space-y-32">
-                        {/* Featured Hero Article */}
-                        {featuredItem && (
-                            <motion.section
-                                initial={{ opacity: 0, y: 40 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1 }}
-                                className="relative grid md:grid-cols-12 gap-12 group cursor-pointer"
-                            >
-                                <div className="md:col-span-8 overflow-hidden rounded-3xl relative aspect-[16/10] bg-white/5">
-                                    <img
-                                        src={featuredItem.imageUrl}
-                                        alt={getLocalizedText(featuredItem.title, i18n.language)}
-                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
-
-                                    {featuredItem.videoUrl && (
-                                        <div className="absolute bottom-10 right-10 z-20">
-                                            <div className="flex items-center gap-3 px-6 py-3 text-white rounded-full text-sm font-bold shadow-2xl translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500" style={theme.bgAccentStyle}>
-                                                <Play size={16} fill="currentColor" />
-                                                <AutoTranslatedText text="WATCH STORY" />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="absolute top-10 left-10">
-                                        <div className="px-4 py-2 backdrop-blur-xl rounded-full text-[10px] font-black tracking-widest uppercase text-white" style={{ backgroundColor: `${theme.highlightColor}cc`, border: `1px solid ${theme.accentColor}55`, boxShadow: theme.glowStyle.boxShadow }}>
-                                            <AutoTranslatedText text="Feature Story" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="md:col-span-4 flex flex-col justify-center">
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-4 text-xs font-bold tracking-widest" style={theme.accentStyle}>
-                                            <span className="flex items-center gap-1.5"><Calendar size={14} /> {getLocalizedText(featuredItem.date, i18n.language)}</span>
-                                            <span className="w-1 h-1 bg-white/20 rounded-full" />
-                                            <span className="flex items-center gap-1.5"><MapPin size={14} /> {getLocalizedText(featuredItem.location, i18n.language)}</span>
-                                        </div>
-
-                                        <h3 className="text-4xl md:text-6xl font-serif font-bold leading-tight group-hover:opacity-80 transition-opacity" style={theme.textPrimaryStyle}>
-                                            <AutoTranslatedText text={getLocalizedText(featuredItem.title, i18n.language)} />
-                                        </h3>
-
-                                        <p className="text-xl font-light leading-relaxed" style={theme.textSecondaryStyle}>
-                                            <AutoTranslatedText text={getLocalizedText(featuredItem.description, i18n.language)} />
-                                        </p>
-
-                                        <Link
-                                            to={`/detail/${featuredItem.id}`}
-                                            className="inline-flex items-center gap-4 font-bold group/btn pt-4"
-                                            style={theme.textPrimaryStyle}
-                                        >
-                                            <span className="pb-1 group-hover/btn:opacity-80 transition-all" style={{ borderBottom: `1px solid ${theme.accentColor}` }}><AutoTranslatedText text="Read Full Article" /></span>
-                                            <ArrowRight size={20} className="group-hover/btn:translate-x-2 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </motion.section>
-                        )}
-
-                        {/* Secondary Grid */}
-                        {otherItems.length > 0 && (
-                            <div>
-                                {/* Section divider with color2 accent */}
-                                <div className="flex items-center gap-4 mb-12">
-                                    <div className="h-[2px] w-10 rounded" style={{ backgroundColor: theme.color4 }} />
-                                    <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: theme.color4 }}>더 많은 이야기</span>
-                                    <div className="h-[1px] flex-1" style={{ backgroundColor: `${theme.color3}` }} />
-                                </div>
-                                <div className="grid md:grid-cols-2 gap-16 md:gap-24">
-                                    {otherItems.map((item, idx) => (
-                                        <motion.article
-                                            key={item.id}
-                                            initial={{ opacity: 0, y: 40 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 0.8, delay: idx * 0.1 }}
-                                            className="group cursor-pointer flex flex-col h-full"
-                                        >
-                                            <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-8" style={{ backgroundColor: theme.color1 }}>
-                                                <img
-                                                    src={item.imageUrl}
-                                                    alt={getLocalizedText(item.title, i18n.language)}
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                />
-                                                {item.videoUrl && (
-                                                    <div className="absolute top-4 right-4 p-3 backdrop-blur-md rounded-full" style={{ backgroundColor: `${theme.color2}cc`, border: `1px solid ${theme.color3}` }}>
-                                                        <Play size={16} style={{ color: theme.accentColor }} />
-                                                    </div>
-                                                )}
-                                                {/* Number badge */}
-                                                <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: `${theme.color4}cc`, color: getContrastColor(theme.color4) }}>
-                                                    #{String(idx + 2).padStart(2, '0')}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col flex-grow p-5 rounded-xl" style={{ backgroundColor: `${theme.color1}88` }}>
-                                                <div className="flex items-center gap-3 text-[10px] font-bold tracking-widest mb-3 uppercase" style={{ color: theme.color4 }}>
-                                                    <span>{getLocalizedText(item.date, i18n.language)}</span>
-                                                    <span className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.color4 }} />
-                                                    <span>{getLocalizedText(item.location, i18n.language)}</span>
-                                                </div>
-
-                                                <h4 className="text-2xl md:text-3xl font-serif font-bold mb-3 leading-tight" style={theme.textPrimaryStyle}>
-                                                    <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                </h4>
-
-                                                <p className="text-base font-light leading-relaxed mb-6 line-clamp-3" style={theme.textSecondaryStyle}>
-                                                    <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
-                                                </p>
-
-                                                <div className="mt-auto flex items-center justify-between">
-                                                    <Link
-                                                        to={`/detail/${item.id}`}
-                                                        className="inline-flex items-center gap-2 text-sm font-bold transition-opacity hover:opacity-70"
-                                                        style={theme.accentStyle}
-                                                    >
-                                                        <AutoTranslatedText text="View Details" />
-                                                        <ArrowRight size={16} />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </motion.article>
-                                    ))}
+                    <div className="mt-8 border-t-2 border-b-2 overflow-hidden rounded-3xl h-[60vh] md:h-[80vh]" style={{ borderColor: `${theme.color3}44` }}>
+                        <div className="relative group cursor-pointer w-full h-full" onClick={() => setIsExplorationMode(true)}>
+                            <VirtualGallery items={items} stories={stories} theme={theme} lang={i18n.language} />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                <div className="px-6 py-3 border border-white/20 rounded-full backdrop-blur-md">
+                                    <span className="text-xs font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text="클릭하여 탐험 시작" /></span>
                                 </div>
                             </div>
-                        )}
-
-                        {/* Story Cards Section */}
-                        {stories.length > 0 && (
-                            <div className="mt-20 space-y-12">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-[1px] w-8 bg-white/40" />
-                                    <h3 className="text-white/40 text-[10px] font-bold tracking-[0.3em] uppercase"><AutoTranslatedText text="Editorial Stories" /></h3>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {stories.map((story, idx) => (
-                                        <motion.div
-                                            key={story.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: idx * 0.1 }}
-                                            className="group backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-500 shadow-xl"
-                                            style={theme.cardBgStyle}
-                                        >
-                                            <div className="aspect-[16/10] overflow-hidden" style={{ borderBottom: `1px solid ${theme.accentColor}33` }}>
-                                                <img
-                                                    src={story.image_url || 'https://images.unsplash.com/photo-1516057747705-0609711c1b31?q=80&w=2560&auto=format&fit=crop'}
-                                                    alt={story.title}
-                                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-                                                />
-                                            </div>
-                                            <div className="p-8 space-y-4">
-                                                <h4 className="text-xl font-serif font-bold text-white/90 leading-tight tracking-tight">
-                                                    <AutoTranslatedText text={story.title} />
-                                                </h4>
-                                                <p className="text-white/40 text-sm leading-relaxed font-light">
-                                                    <AutoTranslatedText text={story.content} />
-                                                </p>
-                                                <div className="pt-4 flex items-center justify-between">
-                                                    <span className="text-[10px] font-bold tracking-widest uppercase" style={theme.accentStyle}><AutoTranslatedText text="Editorial" /></span>
-                                                    <div className="w-8 h-[1px] group-hover:w-12 transition-all duration-500" style={{ backgroundColor: theme.accentColor }} />
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Empty State (Only if both items and stories are 0) */}
-                        {!loading && items.length === 0 && stories.length === 0 && (
-                            <div className="flex flex-col items-center justify-center py-32 space-y-6">
-                                <div className="w-12 h-[1px] bg-white/20" />
-                                <div className="text-white/30 font-serif italic text-xl">
-                                    <AutoTranslatedText text="Currently curators are collecting new stories for this heritage." />
-                                </div>
-                                <div className="w-12 h-[1px] bg-white/20" />
-                            </div>
-                        )}
+                        </div>
                     </div>
                 )}
             </main>
+
+            {/* Immersive Exploration Mode - Fullscreen Overlay */}
+            {isExplorationMode && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    className="fixed inset-0 z-[2000] bg-black"
+                >
+                    <div className="absolute top-8 left-10 z-[2010] flex items-center gap-6">
+                        <div className="px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md bg-black/40">
+                            <span className="text-[10px] font-bold tracking-[0.3em] text-white/80 uppercase">
+                                <AutoTranslatedText text={subcategoryData.label} />
+                            </span>
+                        </div>
+                        <h2 className="text-xl md:text-2xl font-serif italic text-white/30 hidden md:block">
+                            <AutoTranslatedText text="Immersive Gallery" />
+                        </h2>
+                    </div>
+
+                    <button
+                        onClick={() => setIsExplorationMode(false)}
+                        className="absolute top-8 right-10 z-[2010] p-3 md:p-4 bg-white/5 hover:bg-white/20 rounded-full text-white backdrop-blur-xl border border-white/10 transition-all active:scale-95 group"
+                    >
+                        <X size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+                    </button>
+
+                    <div className="w-full h-full">
+                        <VirtualGallery items={items} stories={stories} theme={theme} showUI={false} lang={i18n.language} />
+                    </div>
+                    
+                    {/* Navigation HUD */}
+                    <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-[2010] flex flex-col items-center">
+                        <div className="flex items-center gap-8 mb-4">
+                            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent to-white/40" />
+                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/40 uppercase">Scroll to Proceed</div>
+                            <div className="w-24 h-[1px] bg-gradient-to-l from-transparent to-white/40" />
+                        </div>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Pagination/Footer Indicator */}
             <footer className="px-6 md:px-12 py-16" style={{ backgroundColor: theme.color2, borderTop: `2px solid ${theme.color3}` }}>

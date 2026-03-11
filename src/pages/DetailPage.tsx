@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -52,17 +52,64 @@ export const DetailPage: React.FC = () => {
 
     if (!item) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-cyber-pine">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
-                    <Link to="/" style={theme.highlightStyle} className="hover:underline">{t('common.back_home')}</Link>
+            <article className="min-h-screen" style={theme.bgStyle}>
+                {/* Placeholder Hero */}
+                <div className="relative h-[60vh] w-full overflow-hidden flex items-center justify-center bg-black/40">
+                    <div className="absolute inset-x-0 top-0 bottom-16 z-20">
+                        <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
+                            <Link to="/inspiration" className="inline-flex items-center text-white/40 hover:text-white mb-6 transition-colors">
+                                <ArrowLeft size={20} className="mr-2" />
+                                <AutoTranslatedText text={t('common.back')} />
+                            </Link>
+
+                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                                <div className="inline-block border-b-2 mb-4 pb-1 opacity-30" style={{ borderBottomColor: theme.accentColor }}>
+                                    <span className="text-xl font-serif font-bold tracking-wider" style={theme.accentStyle}>
+                                        <AutoTranslatedText text="DEPT. ARCHIVE" />
+                                    </span>
+                                </div>
+                                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 opacity-50" style={theme.textPrimaryStyle}>
+                                    <AutoTranslatedText text="기록 수집 중입니다" />
+                                </h1>
+                                <div className="flex gap-4 items-center text-white/30 text-xs font-bold tracking-[0.3em] uppercase">
+                                    <CalendarIcon size={14} />
+                                    <span>Updating soon</span>
+                                    <span className="w-1 h-1 rounded-full bg-white/20" />
+                                    <span>Curation process 85%</span>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                    {/* Background Texture Placeholder */}
+                    <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[size:24px_24px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
                 </div>
-            </div>
+
+                {/* Placeholder Content */}
+                <div className="mx-auto px-6 py-24 relative max-w-4xl text-center">
+                    <div className="w-20 h-20 rounded-full border border-dashed border-white/20 flex items-center justify-center mx-auto mb-10" style={{ borderColor: `${theme.accentColor}44` }}>
+                        <Play size={32} className="opacity-10 translate-x-1" style={{ color: theme.accentColor }} />
+                    </div>
+                    <h2 className="text-3xl font-serif font-bold mb-6" style={theme.textPrimaryStyle}>
+                        <AutoTranslatedText text="이곳은 곧 새로운 이야기로 채워질 예정입니다." />
+                    </h2>
+                    <p className="text-white/40 text-lg font-light leading-relaxed max-w-2xl mx-auto mb-12">
+                        <AutoTranslatedText text="큐레이터들이 현재 해당 주제와 관련된 고유한 헤리티지와 현대적인 영감을 수집하고 있습니다. 곧 완성된 아카이브로 찾아뵙겠습니다." />
+                    </p>
+                    <Link
+                        to="/inspiration"
+                        className="px-8 py-3 rounded-full border border-white/10 hover:bg-white/5 transition-all text-sm font-bold tracking-widest uppercase opacity-60 hover:opacity-100"
+                        style={{ color: theme.accentColor }}
+                    >
+                        <AutoTranslatedText text="Go Back to Inspiration" />
+                    </Link>
+                </div>
+            </article>
         );
     }
 
     return (
-        <article className="pt-20 min-h-screen" style={theme.bgStyle}>
+        <article className="min-h-screen" style={theme.bgStyle}>
             {/* Header / Hero */}
             <div className="relative h-[60vh] w-full group">
                 <div
