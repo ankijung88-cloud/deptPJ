@@ -57,7 +57,7 @@ export const HeroSection: React.FC = () => {
     };
 
     const videoUrl = "https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/main_hero.mp4";
-    const arrivalImg = "/images/arrival_gateway.png";
+    const arrivalImg = "https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/images/arrival_gateway.png";
 
     return (
         <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#1A2420]" style={{ backgroundColor: '#1A2420' }}>
@@ -152,7 +152,7 @@ export const HeroSection: React.FC = () => {
                                     onClick={() => navigate('/inspiration')}
                                     className="text-sm text-white/70 hover:text-white transition-all duration-300 tracking-[0.3em] uppercase border-b border-white/40 hover:border-white hover:scale-110 pb-1"
                                 >
-                                    SKIP
+                                    <AutoTranslatedText text="SKIP" />
                                 </button>
                             </motion.div>
                         </motion.div>
@@ -172,8 +172,10 @@ export const HeroSection: React.FC = () => {
                                 alt="Virtual Gateway"
                                 className="w-full h-full object-cover opacity-80"
                                 onError={(e) => {
-                                    console.error("Arrival image failed to load:", arrivalImg);
+                                    console.warn("Arrival image failed to load, using fallback color:", arrivalImg);
                                     e.currentTarget.style.display = 'none';
+                                    const parent = e.currentTarget.parentElement;
+                                    if (parent) parent.style.backgroundColor = '#0A0D17';
                                 }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#1A2420] via-[#1A2420]/40 to-[#1A2420]/80" />

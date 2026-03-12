@@ -103,12 +103,17 @@ export const getProductsByCategory = async (category: string): Promise<FeaturedI
 };
 
 export const getProductById = async (id: string): Promise<FeaturedItem | null> => {
-    const { data, error } = await supabase.from('featured_items').select('*').eq('id', id).single();
-    if (error) {
-        console.error('Error fetching getProductById:', error);
+    try {
+        const { data, error } = await supabase.from('featured_items').select('*').eq('id', id).maybeSingle();
+        if (error) {
+            console.error('Error fetching getProductById:', error);
+            return null;
+        }
+        return data ? mapToFeaturedItem(data) : null;
+    } catch (e) {
+        console.error('Exception in getProductById:', e);
         return null;
     }
-    return data ? mapToFeaturedItem(data) : null;
 };
 
 export const searchProducts = async (query: string): Promise<FeaturedItem[]> => {

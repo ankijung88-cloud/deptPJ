@@ -108,6 +108,7 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
             // 0. Skip if text is already in target language (very basic check)
             if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text) && !/[ぁ-んァ-ヶ]/.test(text)) {
                 // Input is likely already English
+                setTranslatedText(text);
                 return;
             }
 

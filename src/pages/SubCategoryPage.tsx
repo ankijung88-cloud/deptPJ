@@ -397,7 +397,14 @@ const SubCategoryPage: React.FC = () => {
                     </button>
 
                     <div className="w-full h-full">
-                        <VirtualGallery items={items} stories={stories} theme={theme} showUI={false} lang={i18n.language} />
+                        <VirtualGallery 
+                            items={items} 
+                            stories={stories} 
+                            theme={theme} 
+                            showUI={false} 
+                            lang={i18n.language} 
+                            defaultActivated={true}
+                        />
                     </div>
                     
                     {/* Navigation HUD */}

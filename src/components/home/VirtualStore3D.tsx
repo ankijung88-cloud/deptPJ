@@ -246,7 +246,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                                         style={{
                                             position: 'absolute',
                                             left: '100%',
-                                            top: isMobile ? '-2px' : '-8px',
+                                            top: '-70px',
                                             paddingLeft: '55px', // Increased clearance from title
                                             // Robust bridge with adjusted proximity to avoid overlap
                                             marginLeft: '-20px', 
@@ -713,20 +713,25 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                                         <div className="w-8 h-8 rounded-full bg-dancheong-gold/20 animate-pulse" />
                                     </div>
                                     <p className="text-dancheong-gold/60 text-sm font-medium uppercase tracking-widest">
-                                        Preview Loading or Unavailable
+                                        <AutoTranslatedText text="Preview Loading or Unavailable" />
                                     </p>
                                 </div>
                             )}
 
-                            <div className="absolute bottom-10 right-10 flex items-center gap-4">
-                                <button
-                                    onClick={() => setIsMuted(!isMuted)}
-                                    className="p-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all"
-                                >
-                                    {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-                                </button>
-                            </div>
                         </motion.div>
+                        
+                        {/* Mute/Unmute UI moved outside video frame to bottom-right of the screen */}
+                        <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-[2100] flex items-center gap-4">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsMuted(!isMuted);
+                                }}
+                                className="p-4 md:p-5 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 text-white hover:bg-white/20 transition-all shadow-2xl active:scale-90"
+                            >
+                                {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
+                            </button>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -863,8 +868,8 @@ export const VirtualStore3D: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-4 md:gap-6 select-none w-full px-6" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                <div className="text-white/40 font-mono text-[10px] md:text-sm tracking-[0.3em] uppercase font-black text-center whitespace-nowrap">
+            <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
                     <AutoTranslatedText text="[Drag to Rotate] • [Click Floor to Select]" />
                 </div>
                 

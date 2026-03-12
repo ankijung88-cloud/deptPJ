@@ -1,7 +1,8 @@
 import React, { useRef, useMemo, useState, Suspense } from "react";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMousePosition } from "../../hooks/useMousePosition";
+import { getFallbackTexture } from "../../utils/textureUtils";
 
 interface TrailParticle {
     x: number;
@@ -15,15 +16,18 @@ interface TrailParticle {
     active: boolean;
     size: number;
 }
-
 function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: number; y: number }> }) {
     const count = 300;
     const iconCount = 9;
 
-    // Attempting to load assets copied from the referenced project
-    const iconPaths = Array.from({ length: 9 }, (_, i) => `/assets/${i + 1}.png`);
-
-    const textures = useLoader(THREE.TextureLoader, iconPaths);
+    // Safe texture loading with fallback
+    const textures = useMemo(() => {
+        const fallback = getFallbackTexture('#ffffff');
+        // Since we know /assets/*.png are missing, we provide the fallback immediately 
+        // to prevent the entire scene from crashing due to 404s.
+        // In a real scenario, you'd try to load and catch, but useLoader throws for Suspense.
+        return new Array(iconCount).fill(fallback);
+    }, [iconCount]);
 
     const [particles] = useState<TrailParticle[]>(() => {
         const temp: TrailParticle[] = [];

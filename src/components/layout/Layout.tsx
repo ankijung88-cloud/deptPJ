@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
 import { NavigationActionProvider } from '../../context/NavigationActionContext';
+import { GlobalMiniMap } from '../common/GlobalMiniMap';
 
 type MouseEffectType = '2d' | '3d' | 'none';
 
@@ -60,6 +61,8 @@ export const Layout: React.FC = () => {
                 {activeEffect === '3d' && <MouseTrail3D />}
                 {!hideHeader && <Header />}
                 {hideHeader && <LanguageSelector variant="floating" />}
+                
+                <GlobalMiniMap />
                 
                 <div className={`flex-grow flex flex-col relative ${!hideHeader ? 'pt-20' : ''}`}>
 
