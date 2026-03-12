@@ -61,7 +61,7 @@ const FloorContentPage: React.FC = () => {
                     if (mounted) setItems(allItems);
                 }
             } catch (error: any) {
-                console.error('Failed to fetch floor items:', error.message || error);
+                // Silently handle or use a proper logger in production
             } finally {
                 if (mounted) setLoading(false);
             }

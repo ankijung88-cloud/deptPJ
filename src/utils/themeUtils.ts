@@ -203,47 +203,19 @@ export const getJoseonThemeById = (id: string, _fallbackFloor?: string | number)
     return JOSEON_THEMES[index];
 };
 
+
 export const getJoseonTheme = (floor: string | number): JoseonTheme => {
     const f = parseInt(floor.toString(), 10);
     if (isNaN(f) || f < 1 || f > 6) return DEFAULT_THEME;
     return JOSEON_THEMES[(f - 1) % JOSEON_THEMES.length];
 };
-
-// Central Floor Navigation Data
-export const FLOOR_NAV_DATA = [
-    {
-        id: 'floor1', level: 1, floor: '1F',
-        subitems: ['global', 'window', 'f1_kpop', 'f1_library', 'f1_tech'],
-        productCategories: ['global', 'exchange', 'collab', 'trend', 'f1_kpop', 'f1_library', 'f1_tech']
-    },
-    {
-        id: 'floor2', level: 2, floor: '2F',
-        subitems: ['sync', 'pop', 'f2_lab', 'f2_art', 'f2_gallery'],
-        productCategories: ['collab', 'media', 'traditional', 'f2_lab', 'f2_art', 'f2_gallery']
-    },
-    {
-        id: 'floor3', level: 3, floor: '3F',
-        subitems: ['performance', 'exhibit', 'f3_media', 'f3_lounge', 'f3_audio'],
-        productCategories: ['media', 'class', 'heritage', 'f3_media', 'f3_lounge', 'f3_audio']
-    },
-    {
-        id: 'floor4', level: 4, floor: '4F',
-        subitems: ['talk', 'interview', 'f4_plus', 'f4_book', 'f4_seminar'],
-        productCategories: ['kstyle', 'class', 'f4_plus', 'f4_book', 'f4_seminar']
-    },
-    {
-        id: 'floor5', level: 5, floor: '5F',
-        subitems: ['archive', 'collection', 'f5_material', 'f5_fitting', 'f5_textile'],
-        productCategories: ['kstyle', 'f5_material', 'f5_fitting', 'f5_textile']
-    },
-    {
-        id: 'floor6', level: 6, floor: '6F',
-        subitems: ['heritage', 'travel', 'f6_gourmet', 'f6_craft', 'f6_tour'],
-        productCategories: ['heritage', 'local_heritage', 'travel_curation', 'f6_gourmet', 'f6_craft', 'f6_tour']
-    },
-];
-
-export const getFloorBySubId = (subId: string): number | null => {
-    const floor = FLOOR_NAV_DATA.find(f => f.subitems.includes(subId));
-    return floor ? floor.level : null;
+export const getFloorBySubId = (subId: string): string | undefined => {
+    if (!subId) return undefined;
+    if (subId.startsWith('f1_') || ['global', 'window', 'sync', 'pop'].includes(subId)) return '1';
+    if (subId.startsWith('f2_') || ['performance', 'exhibit'].includes(subId)) return '2';
+    if (subId.startsWith('f3_') || ['f3_media', 'f3_lounge', 'f3_audio'].includes(subId)) return '3';
+    if (subId.startsWith('f4_') || ['talk', 'interview'].includes(subId)) return '4';
+    if (subId.startsWith('f5_') || ['archive', 'collection'].includes(subId)) return '5';
+    if (subId.startsWith('f6_') || ['heritage', 'travel'].includes(subId)) return '6';
+    return undefined;
 };

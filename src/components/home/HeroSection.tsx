@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 import { HeroPortal3D } from './HeroPortal3D';
+import { ArrivalBackground3D } from './ArrivalBackground3D';
 
 type PortalPhase = 'hero' | 'warping' | 'arrived';
 
@@ -57,7 +58,6 @@ export const HeroSection: React.FC = () => {
     };
 
     const videoUrl = "https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/main_hero.mp4";
-    const arrivalImg = "https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/images/arrival_gateway.png";
 
     return (
         <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#1A2420]" style={{ backgroundColor: '#1A2420' }}>
@@ -166,21 +166,7 @@ export const HeroSection: React.FC = () => {
                         className="absolute inset-0 z-40 bg-[#1A2420] flex items-center justify-center"
                     >
                         {/* Arrival Space Background */}
-                        <div className="absolute inset-0 z-0 bg-[#0A0D17]">
-                            <img
-                                src={arrivalImg}
-                                alt="Virtual Gateway"
-                                className="w-full h-full object-cover opacity-80"
-                                onError={(e) => {
-                                    console.warn("Arrival image failed to load, using fallback color:", arrivalImg);
-                                    e.currentTarget.style.display = 'none';
-                                    const parent = e.currentTarget.parentElement;
-                                    if (parent) parent.style.backgroundColor = '#0A0D17';
-                                }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#1A2420] via-[#1A2420]/40 to-[#1A2420]/80" />
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)]" />
-                        </div>
+                        <ArrivalBackground3D />
 
                         {/* Arrival UI */}
                         <div className="relative z-10 text-center px-6">

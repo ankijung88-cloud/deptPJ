@@ -118,9 +118,16 @@ export const GlobalMiniMap: React.FC = () => {
                                                         {subItems.length > 0 && (
                                                             <div className="pl-4 space-y-1.5 opacity-60">
                                                                 {subItems.map((item) => (
-                                                                    <div key={item.id} className="text-[9px] text-white/40 font-medium leading-tight">
+                                                                    <button 
+                                                                        key={item.id} 
+                                                                        onClick={() => {
+                                                                            navigate(`/category/${sub.id}`);
+                                                                            setIsExpanded(false);
+                                                                        }}
+                                                                        className="w-full text-left text-[9px] text-white/40 font-medium leading-tight hover:text-white/80 transition-colors"
+                                                                    >
                                                                         <AutoTranslatedText text={typeof item.title === 'string' ? item.title : item.title?.ko || ''} />
-                                                                    </div>
+                                                                    </button>
                                                                 ))}
                                                             </div>
                                                         )}

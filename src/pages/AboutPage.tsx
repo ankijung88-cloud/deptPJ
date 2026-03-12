@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { Users, Target, Layers, Box, Activity, Globe, Code2, Cpu, Layout, Play, Cloud, Award, Palette, Heart, ShieldCheck, Calendar, TrendingUp, Home } from 'lucide-react';
 
@@ -45,7 +46,10 @@ const FadeInContent = ({ children, delay = 0, className = "" }: { children: Reac
 };
 
 const AboutPage: React.FC = () => {
+    const { t } = useTranslation();
     const containerRef = useRef<HTMLDivElement>(null);
+    const [videoError, setVideoError] = React.useState(false);
+    const [videoLoaded, setVideoLoaded] = React.useState(false);
     const { scrollYProgress } = useScroll({ container: containerRef });
     const yHero = useTransform(scrollYProgress, [0, 0.1], [0, 200]);
     const navigate = useNavigate();
@@ -76,17 +80,35 @@ const AboutPage: React.FC = () => {
             <button
                 onClick={() => navigate('/')}
                 className="fixed top-6 right-6 md:top-10 md:right-10 z-[100] p-4 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white/50 hover:text-white hover:bg-black/60 hover:border-white/30 transition-all shadow-lg group"
-                aria-label="첫페이지로 돌아가기"
+                aria-label={t('common.back_home')}
             >
                 <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
             </button>
 
             {/* 01. Hero / Title Section */}
             <Slide className="border-b border-white/5 !px-0 !py-0 overscroll-none" id="01">
-                <motion.div style={{ y: yHero }} className="absolute inset-0 z-0">
-                    <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40 mix-blend-screen scale-105">
+                <motion.div style={{ y: yHero }} className="absolute inset-0 z-0 bg-[#0A100D]">
+                    <video 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                        onLoadedData={() => setVideoLoaded(true)}
+                        onError={() => setVideoError(true)}
+                        className={`w-full h-full object-cover mix-blend-screen scale-105 transition-opacity duration-1000 ${videoLoaded ? 'opacity-40' : 'opacity-0'}`}
+                    >
                         <source src="https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/main_hero.mp4" type="video/mp4" />
                     </video>
+                    {/* Fallback pattern if video fails */}
+                    {(videoError || !videoLoaded) && (
+                        <div className="absolute inset-0 opacity-20">
+                            <div className="absolute inset-0" style={{ 
+                                backgroundImage: `radial-gradient(circle at 2px 2px, rgba(235,59,45,0.1) 1px, transparent 0)`,
+                                backgroundSize: '40px 40px'
+                            }} />
+                            <div className="absolute inset-0 bg-gradient-to-br from-dancheong-red/5 to-transparent animate-pulse" />
+                        </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#1A2420]/80 via-[#1A2420]/40 to-[#1A2420]"></div>
                 </motion.div>
                 <div className="relative z-10 text-center px-6 mt-16 flex-1 flex flex-col justify-center items-center">

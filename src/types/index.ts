@@ -77,12 +77,3 @@ export interface BrandSpotlight {
     videoUrl?: string;
     tags: LocalizedString[];
 }
-
-export interface LiveShort {
-    id: string;
-    title: LocalizedString;
-    videoUrl: string;
-    thumbnailUrl: string;
-    location: LocalizedString;
-    viewCount: number;
-}

@@ -22,12 +22,19 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
 
     // Safe texture loading with fallback
     const textures = useMemo(() => {
-        const fallback = getFallbackTexture('#ffffff');
-        // Since we know /assets/*.png are missing, we provide the fallback immediately 
-        // to prevent the entire scene from crashing due to 404s.
-        // In a real scenario, you'd try to load and catch, but useLoader throws for Suspense.
-        return new Array(iconCount).fill(fallback);
-    }, [iconCount]);
+        const colors = [
+            '#00FFC2', // Neon Mint
+            '#FF3B30', // Glitch Red
+            '#FFD700', // Gold
+            '#0070FF', // Blue
+            '#FFFFFF', // White
+            '#F8FAFF', // Off-white
+            '#C5A15A', // Dancheong Gold
+            '#E62E2E', // Dancheong Red
+            '#2C3E50'  // Deep Pine
+        ];
+        return colors.map(color => getFallbackTexture(color));
+    }, []);
 
     const [particles] = useState<TrailParticle[]>(() => {
         const temp: TrailParticle[] = [];

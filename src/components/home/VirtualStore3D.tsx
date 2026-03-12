@@ -461,6 +461,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [videoError, setVideoError] = useState(false);
+    const [videoLoaded, setVideoLoaded] = useState(false);
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -599,7 +600,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             >
                 <div className="relative group cursor-pointer">
                     <div
-                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110"
+                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110 bg-[#0A100D] relative"
                         style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
                     >
                         <video
@@ -607,10 +608,20 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                             loop
                             muted
                             playsInline
-                            className="w-full h-full object-cover rounded-full"
+                            onLoadedData={() => setVideoLoaded(true)}
+                            onError={() => setVideoError(true)}
+                            className={`w-full h-full object-cover rounded-full transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
                             style={{ clipPath: 'circle(50% at 50% 50%)' }}
                             src={activeFloorData.videoUrl}
                         />
+                        {/* Fallback pattern if video fails */}
+                        {(videoError || !videoLoaded) && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#1A2420] to-[#0A100D]">
+                                <div className="p-4 border border-white/10 rounded-full animate-pulse bg-white/5">
+                                    <Play size={24} className="text-white/20" />
+                                </div>
+                            </div>
+                        )}
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
                     </div>
 

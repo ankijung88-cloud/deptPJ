@@ -3,15 +3,18 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface NavigationActionContextType {
     action: React.ReactNode;
     setAction: (element: React.ReactNode) => void;
+    breadcrumbTitle: string | null;
+    setBreadcrumbTitle: (title: string | null) => void;
 }
 
 const NavigationActionContext = createContext<NavigationActionContextType | undefined>(undefined);
 
 export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [action, setAction] = useState<React.ReactNode>(null);
+    const [breadcrumbTitle, setBreadcrumbTitle] = useState<string | null>(null);
 
     return (
-        <NavigationActionContext.Provider value={{ action, setAction }}>
+        <NavigationActionContext.Provider value={{ action, setAction, breadcrumbTitle, setBreadcrumbTitle }}>
             {children}
         </NavigationActionContext.Provider>
     );
@@ -22,10 +25,7 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
  */
 export const useSetNavigationAction = (element: React.ReactNode) => {
     const context = useContext(NavigationActionContext);
-    if (!context) {
-        // Silently fail if outside provider (optional, depends on architecture)
-        return;
-    }
+    if (!context) return;
 
     useEffect(() => {
         context.setAction(element);
@@ -34,9 +34,25 @@ export const useSetNavigationAction = (element: React.ReactNode) => {
 };
 
 /**
- * Hook for the Breadcrumbs component to retrieve the current navigation action.
+ * Hook for pages to set a dynamic breadcrumb title (e.g., for detail pages).
  */
-export const useGetNavigationAction = () => {
+export const useSetBreadcrumbTitle = (title: string | null) => {
     const context = useContext(NavigationActionContext);
-    return context?.action || null;
+    if (!context) return;
+
+    useEffect(() => {
+        context.setBreadcrumbTitle(title);
+        return () => context.setBreadcrumbTitle(null);
+    }, [title, context.setBreadcrumbTitle]);
+};
+
+/**
+ * Hook for the Breadcrumbs component to retrieve the current state.
+ */
+export const useNavigationState = () => {
+    const context = useContext(NavigationActionContext);
+    return {
+        action: context?.action || null,
+        breadcrumbTitle: context?.breadcrumbTitle || null
+    };
 };

@@ -367,7 +367,7 @@ const Header: React.FC = () => {
                                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                                     className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70')}`}
                                     style={isSearchOpen ? theme.highlightStyle : {}}
-                                    title="검색"
+                                    title={t('nav.search')}
                                 >
                                     <Search size={18} />
                                 </button>
@@ -404,7 +404,7 @@ const Header: React.FC = () => {
                             className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
                             onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
                             onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
-                            title={isGlobalMuted ? '소리 켜기' : '소리 끄기'}
+                            title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                         </button>
@@ -493,7 +493,7 @@ const Header: React.FC = () => {
 
                         {/* Mobile Language Selector */}
                         <div className="py-2">
-                            <p className="text-xs text-dancheong-white/60 mb-3 uppercase font-bold tracking-widest font-serif" style={{ color: `${theme.accentColor}99` }}>Language</p>
+                            <p className="text-xs text-dancheong-white/60 mb-3 uppercase font-bold tracking-widest font-serif" style={{ color: `${theme.accentColor}99` }}>{t('nav.language')}</p>
                             <div className="grid grid-cols-3 gap-2">
                                 {i18n.language && supportedLanguages.map((lang) => (
                                     <button

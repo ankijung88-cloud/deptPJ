@@ -2,9 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log('Supabase: Initializing client with URL:', supabaseUrl ? supabaseUrl.substring(0, 15) + '...' : 'UNDEFINED');
-console.log('Supabase: Anon Key:', supabaseAnonKey ? 'DEFINED (Length: ' + supabaseAnonKey.length + ')' : 'UNDEFINED');
-
 if (!supabaseUrl || !supabaseAnonKey) {
     console.error('Supabase: CRITICAL ERROR - URL or Anon Key is missing! Check your .env file and restart Vite.');
 }
@@ -24,4 +21,3 @@ export const supabase = createClient<any>(
 
 export const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
 
-console.log('Supabase: Client created object exists:', !!supabase);

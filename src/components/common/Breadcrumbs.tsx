@@ -3,10 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { FLOORS } from '../../constants/floors';
 import { AutoTranslatedText } from './AutoTranslatedText';
-import { useGetNavigationAction } from '../../context/NavigationActionContext';
+import { useNavigationState } from '../../context/NavigationActionContext';
 
 export const Breadcrumbs: React.FC = () => {
-    const action = useGetNavigationAction();
+    const { action, breadcrumbTitle } = useNavigationState();
     const location = useLocation();
     const pathnames = location.pathname.split('/').filter((x) => x);
 
@@ -15,10 +15,10 @@ export const Breadcrumbs: React.FC = () => {
     }
 
     const getLabel = (segment: string, index: number, array: string[]) => {
-        if (segment === 'floor') return null; // Skip 'floor' segment for cleaner path
+        if (segment === 'floor') return null;
         if (segment === 'articles' && array[index-1]) return '아티클';
         if (segment === 'category') return null;
-        if (segment === 'detail') return '상세 정보';
+        if (segment === 'detail') return null;
 
         // Check if segment is a floor level
         const floorLevel = parseInt(segment);
@@ -33,6 +33,11 @@ export const Breadcrumbs: React.FC = () => {
                 const sub = floor.subcategories.find(s => s.id === segment);
                 if (sub) return sub.label;
             }
+        }
+
+        // Avoid showing raw UUIDs in breadcrumbs (common for detail/some-uuid)
+        if (array[index-1] === 'detail' || segment.length > 20) {
+            return breadcrumbTitle || '상세 기록';
         }
 
         return segment.toUpperCase();

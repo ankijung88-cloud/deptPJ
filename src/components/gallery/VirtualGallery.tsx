@@ -462,7 +462,8 @@ export const VirtualGallery = ({
     showUI = true, 
     lang = 'ko', 
     onItemClick,
-    defaultActivated = false
+    defaultActivated = false,
+    onClick
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -470,7 +471,8 @@ export const VirtualGallery = ({
     showUI?: boolean, 
     lang?: string, 
     onItemClick?: (item: any) => void,
-    defaultActivated?: boolean
+    defaultActivated?: boolean,
+    onClick?: () => void
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -483,11 +485,20 @@ export const VirtualGallery = ({
 
     return (
         <div 
-            className="w-full h-full relative bg-[#0a0a0a] overflow-hidden group"
+            className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${!isActivated ? 'hide-3d-scrollbar' : ''}`}
             onClick={() => {
-                if (!isActivated) setIsActivated(true);
+                // Only activate internal scroll if no external handler is provided (e.g. for standalone use).
+                // For teasers (with onClick prop), we don't activate the teaser's own scroll.
+                if (!onClick && !isActivated) setIsActivated(true);
+                
+                if (onClick) onClick();
             }}
         >
+            <style dangerouslySetInnerHTML={{ __html: `
+                .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+                .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow: hidden !important; }
+                .hide-3d-scrollbar div { overflow: hidden !important; }
+            `}} />
             <GalleryErrorBoundary fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center text-white/20 p-12 text-center">
                     <Compass size={48} className="mb-6 opacity-10" />
@@ -497,12 +508,15 @@ export const VirtualGallery = ({
                 <Canvas shadows={false} dpr={[1, 2]}>
                     <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
                     <ScrollControls 
-                        pages={isMobile 
-                            ? 200 // Large range for mobile infinite loop
-                            : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8)} 
+                        pages={!isActivated 
+                            ? 0 // No scrolling in teaser mode
+                            : (isMobile 
+                                ? 200 // Large range for mobile infinite loop
+                                : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8))} 
                         damping={0.3} 
                         distance={1}
                         enabled={isActivated}
+                        style={!isActivated ? { display: 'none', visibility: 'hidden', pointerEvents: 'none' } : {}}
                     >
                         <Suspense fallback={
                             <mesh>
@@ -529,8 +543,8 @@ export const VirtualGallery = ({
                         <div className="absolute inset-0 z-[30] flex items-center justify-center bg-black/20 backdrop-blur-[2px] cursor-pointer transition-all hover:bg-black/10">
                             <div className="px-8 py-4 border border-white/20 rounded-full backdrop-blur-xl bg-black/40 shadow-2xl flex flex-col items-center gap-2 group-hover:scale-105 transition-transform duration-500">
                                 <Compass size={24} className="text-white/60 animate-[spin_8s_linear_infinite]" />
-                                <span className="text-sm font-black tracking-[0.3em] text-white uppercase"><AutoTranslatedText text="클릭하여 탐험 시작" /></span>
-                                <span className="text-[10px] font-mono tracking-widest text-white/30 uppercase"><AutoTranslatedText text="Scroll disabled until click" /></span>
+                                <span className="text-sm font-black tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={onClick ? "클릭하여 가상공간 진입" : "클릭하여 탐험 시작"} /></span>
+                                <span className="text-[10px] font-mono tracking-widest text-white/30 uppercase"><AutoTranslatedText text={onClick ? "Click to open fullscreen" : "Scroll disabled until click"} /></span>
                             </div>
                         </div>
                     )}
@@ -541,7 +555,7 @@ export const VirtualGallery = ({
                             {isActivated ? (
                                 <AutoTranslatedText text="Scroll to explore the Temporal Corridor" />
                             ) : (
-                                <AutoTranslatedText text="Click to activate scrolling" />
+                                <AutoTranslatedText text={onClick ? "가상공간을 보려면 클릭하세요" : "스크롤을 활성화하려면 클릭하세요"} />
                             )}
                         </div>
                     </div>

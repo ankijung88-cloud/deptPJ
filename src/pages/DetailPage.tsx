@@ -8,6 +8,8 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
 import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
+import { FLOORS } from '../constants/floors';
+import { useSetBreadcrumbTitle } from '../context/NavigationActionContext';
 
 
 
@@ -18,6 +20,10 @@ export const DetailPage: React.FC = () => {
     const { t, i18n } = useTranslation();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
+    
+    // Set breadcrumb title
+    const displayName = item ? getLocalizedText(item.title, i18n.language) : null;
+    useSetBreadcrumbTitle(displayName);
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -136,10 +142,21 @@ export const DetailPage: React.FC = () => {
                                 <span className="text-xl font-serif font-bold tracking-wider" style={theme.accentStyle}>
                                     {(() => {
                                         const displayKey = (item as any).subcategory || item.category;
+                                        
+                                        // Try to find the label from our constants first (handles IDs/UUIDs)
+                                        for (const floor of FLOORS) {
+                                            const sub = floor.subcategories.find((s: any) => s.id === displayKey);
+                                            if (sub) return <AutoTranslatedText text={sub.label} />;
+                                        }
+
                                         const key = `nav.${displayKey.toLowerCase()}`;
                                         const translated = t(key);
                                         const fallbackText = displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
                                         const textToDisplay = translated === key ? fallbackText : translated;
+                                        
+                                        // If it's still a long ID-like string, just show a generic "Archive"
+                                        if (textToDisplay.length > 20) return <AutoTranslatedText text="Archive" />;
+                                        
                                         return <AutoTranslatedText text={textToDisplay} />;
                                     })()}
                                 </span>
