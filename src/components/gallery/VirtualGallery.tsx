@@ -117,6 +117,7 @@ interface ExhibitProps {
     index: number;
     lang: string;
     onItemClick?: (item: any) => void;
+    isMobile: boolean;
 }
 
 const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, number], hovered: boolean, color2: string }) => {
@@ -133,7 +134,7 @@ const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, numbe
     );
 };
 
-const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick }: ExhibitProps) => {
+const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobile }: ExhibitProps) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const navigate = useNavigate();
@@ -158,9 +159,9 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick }: Exhi
 
     // Dynamic constants for Conveyor Belt (Mobile Only)
     const totalExhibits = (useThree().get as any)().exhibitsCount || 10;
-    const radius = 3.5; // Ultra-tight spacing
+    const radius = isMobile ? 25.0 : 3.5; // Large radius for mobile to prevent overlap with many items
     const angleStep = (Math.PI * 2) / totalExhibits;
-    const verticalOffset = 0; // Exactly Vertical Center
+    const verticalOffset = -0.5; // Slightly lower for better thumb ergonomics
 
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -190,11 +191,11 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick }: Exhi
             const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
             const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
             
-            const mobilePlateau = 0.1; // Even snappier for tighter circle
+            const mobilePlateau = 0.05; // Much sharper focus
             if (distFromFront <= mobilePlateau) {
                 centerFactor = 1.0;
-            } else if (distFromFront <= 0.45) {
-                centerFactor = THREE.MathUtils.smoothstep(distFromFront, 0.45, mobilePlateau);
+            } else if (distFromFront <= 0.25) { // Narrower range
+                centerFactor = THREE.MathUtils.smoothstep(distFromFront, 0.25, mobilePlateau);
             }
         } else {
             // Linear Corridor (Desktop)
@@ -213,7 +214,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick }: Exhi
         // Normalization: Mobile uses the SAME logic as Web/Desktop
         // But keeps the requested 98% scale at the very center (centerFactor = 1.0)
         const targetWidth = isMobile 
-            ? THREE.MathUtils.lerp(viewport.width * 0.6, viewport.width, centerFactor)
+            ? THREE.MathUtils.lerp(viewport.width * 0.45, viewport.width * 0.8, centerFactor)
             : Math.min(viewport.width * 0.82, 4.2);
         const responsiveScale = targetWidth / baseWidth;
 
@@ -384,7 +385,7 @@ const GalleryScene = ({
                 const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
                 const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
 
-                if (distFromFront < 0.28) { // Ultra-tight magnetic pull range for 3.5 radius
+                if (distFromFront < 0.1) { // Very magnetic for narrow focus
                     if (focusState.current.index !== i) {
                         focusState.current = { index: i, startTime: state.clock.elapsedTime };
                     }
@@ -445,6 +446,7 @@ const GalleryScene = ({
                     index={i}
                     lang={lang}
                     onItemClick={onItemClick}
+                    isMobile={isMobile}
                 />
             ))}
 

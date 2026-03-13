@@ -1,23 +1,36 @@
-import { createClient } from '@supabase/supabase-js';
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// This file is a safe placeholder to prevent runtime crashes after Supabase removal.
+// All functionality has been migrated to the AWS Lightsail backend (fetch API).
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase: CRITICAL ERROR - URL or Anon Key is missing! Check your .env file and restart Vite.');
-}
+const noop = () => Promise.resolve({ data: [], error: null });
+const noopSingle = () => Promise.resolve({ data: null, error: null });
 
-export const supabase = createClient<any>(
-    supabaseUrl || '',
-    supabaseAnonKey || '',
-    {
-        auth: {
-            storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true
-        }
+export const supabase = {
+    from: () => ({
+        select: () => ({
+            eq: () => ({
+                order: noop,
+                single: noopSingle,
+                ...noop()
+            }),
+            order: noop,
+            single: noopSingle,
+            ...noop()
+        }),
+        insert: noop,
+        update: noop,
+        delete: noop,
+    }),
+    auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        signInWithPassword: noopSingle,
+        signOut: noop,
+    },
+    storage: {
+        from: () => ({
+            getPublicUrl: (path: string) => ({ data: { publicUrl: '' } })
+        })
     }
-);
+} as any;
 
-export const SUPABASE_MEDIA_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/dept-media`;
-
+export const SUPABASE_MEDIA_URL = '';

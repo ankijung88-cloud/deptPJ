@@ -70,7 +70,7 @@ const AboutPage: React.FC = () => {
 
     const techStacks = [
         { id: "06-1", title: "프론트엔드 프레임워크", desc: "React 18, TypeScript, Vite으로 구성된 고성능 SPA 환경." },
-        { id: "06-2", title: "백엔드 & DB", desc: "Supabase (PostgreSQL) 실시간 데이터 동기화 및 에지 펑션." },
+        { id: "06-2", title: "백엔드 & DB", desc: "AWS Lightsail (Node.js/Express) 및 MySQL 기반 고유 백엔드." },
         { id: "06-3", title: "3D & 그래픽", desc: "Three.js & Spline을 활용한 브라우저 네이티브 렌더링." },
     ];
 
@@ -97,7 +97,7 @@ const AboutPage: React.FC = () => {
                         onError={() => setVideoError(true)}
                         className={`w-full h-full object-cover mix-blend-screen scale-105 transition-opacity duration-1000 ${videoLoaded ? 'opacity-40' : 'opacity-0'}`}
                     >
-                        <source src="https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/main_hero.mp4" type="video/mp4" />
+                        <source src="http://43.200.230.44:3000/assets/videos/festival.mp4" type="video/mp4" />
                     </video>
                     {/* Fallback pattern if video fails */}
                     {(videoError || !videoLoaded) && (

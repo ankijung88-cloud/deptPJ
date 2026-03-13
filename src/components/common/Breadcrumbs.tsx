@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { FLOORS } from '../../constants/floors';
+import { useFloors } from '../../context/FloorContext';
+import { useTranslation } from 'react-i18next';
+import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { useNavigationState } from '../../context/NavigationActionContext';
 
@@ -9,6 +11,8 @@ export const Breadcrumbs: React.FC = () => {
     const { action, breadcrumbTitle } = useNavigationState();
     const location = useLocation();
     const pathnames = location.pathname.split('/').filter((x) => x);
+    const { floors } = useFloors();
+    const { i18n } = useTranslation();
 
     if (location.pathname === '/' || location.pathname === '/inspiration') {
         return null; // Don't show on main landing or 3D view which has its own header
@@ -21,17 +25,17 @@ export const Breadcrumbs: React.FC = () => {
         if (segment === 'detail') return null;
 
         // Check if segment is a floor level
-        const floorLevel = parseInt(segment);
-        if (!isNaN(floorLevel) && array[index-1] === 'floor') {
-            const floor = FLOORS.find(f => f.level === floorLevel);
-            return floor ? floor.label : segment;
+        const floorLevelString = segment;
+        const floorByLevel = floors.find(f => f.floor === floorLevelString);
+        if (floorByLevel && array[index-1] === 'floor') {
+            return floorByLevel.floor;
         }
 
         // Check if segment is a subcategory ID
         if (array[index-1] === 'category') {
-            for (const floor of FLOORS) {
-                const sub = floor.subcategories.find(s => s.id === segment);
-                if (sub) return sub.label;
+            for (const floor of floors) {
+                const sub = floor.subitems?.find(s => s.id === segment);
+                if (sub) return getLocalizedText(sub.label, i18n.language);
             }
         }
 

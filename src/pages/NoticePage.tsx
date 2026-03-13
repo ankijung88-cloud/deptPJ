@@ -1,42 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { Megaphone, Calendar, ChevronRight } from 'lucide-react';
+import { getNotices } from '../api/notices';
+import { Notice } from '../types';
 
-const NOTICES = [
+const NOTICES: Notice[] = [
     {
-        id: 1,
-        title: 'Culture Dept. Store 그랜드 오픈 안내',
-        date: '2026.03.10',
+        id: '1',
+        title: { ko: '문화상점 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
         category: '공지',
-        important: true
+        date: '2024-03-01',
+        content: { ko: '문화상점이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.' },
+        is_important: true
     },
     {
-        id: 2,
-        title: '4F 컬처 토크: 명인과의 대화 예약 시작',
-        date: '2026.03.08',
-        category: '이벤트',
-        important: false
+        id: '2',
+        title: { ko: '봄 시즌 한정 예술품 입고 안내', en: 'Spring Season Limited Art Collection' },
+        category: '전시',
+        date: '2024-03-10',
+        content: { ko: '따스한 봄을 맞아 엄선된 예술가들의 작품이 새롭게 입고되었습니다.' },
+        is_important: false
     },
     {
-        id: 3,
-        title: '시스템 점검으로 인한 서비스 일시 중단 안내',
-        date: '2026.03.05',
-        category: '점검',
-        important: false
-    },
-    {
-        id: 4,
-        title: '6F 로컬 헤리티지: 서촌 산책 투어 코스 업데이트',
-        date: '2026.03.01',
-        category: '새소식',
-        important: false
+        id: '3',
+        title: { ko: '지하 주차장 보수 공사 일정 안내', en: 'Parking Lot Maintenance Schedule' },
+        category: '공지',
+        date: '2024-03-15',
+        content: { ko: '3월 25일부터 27일까지 주차장 일부 구역의 보수 공사가 진행됩니다.' },
+        is_important: false
     }
 ];
 
 const NoticePage: React.FC = () => {
     const { t } = useTranslation();
+    const [notices, setNotices] = useState<Notice[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchNotices = async () => {
+            setLoading(true);
+            try {
+                const data = await getNotices();
+                if (data && data.length > 0) {
+                    setNotices(data);
+                } else {
+                    setNotices(NOTICES);
+                }
+            } catch (error) {
+                console.error('Failed to fetch notices, using fallback:', error);
+                setNotices(NOTICES);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchNotices();
+    }, []);
 
     return (
         <div className="min-h-screen bg-dancheong-deep-bg text-white pb-20">
@@ -72,7 +92,11 @@ const NoticePage: React.FC = () => {
 
                 {/* Notice List */}
                 <div className="max-w-4xl mx-auto space-y-4">
-                    {NOTICES.map((notice, index) => (
+                    {loading ? (
+                        <div className="text-center py-20 text-white/20">Loading notices...</div>
+                    ) : notices.length === 0 ? (
+                        <div className="text-center py-20 text-white/20">No notices found.</div>
+                    ) : notices.map((notice, index) => (
                         <motion.div
                             key={notice.id}
                             initial={{ opacity: 0, x: -20 }}
@@ -83,12 +107,12 @@ const NoticePage: React.FC = () => {
                             <div className="absolute inset-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-dancheong-red/30" />
                             <div className="relative p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${notice.important ? 'bg-dancheong-red text-white' : 'bg-white/10 text-white/60'
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${notice.is_important ? 'bg-dancheong-red text-white' : 'bg-white/10 text-white/60'
                                         }`}>
                                         <AutoTranslatedText text={notice.category} />
                                     </span>
                                     <h3 className="text-lg font-medium text-white group-hover:text-dancheong-red transition-colors flex-grow">
-                                        <AutoTranslatedText text={notice.title} />
+                                        <AutoTranslatedText text={typeof notice.title === 'string' ? notice.title : (notice.title.ko || notice.title.en || '')} />
                                     </h3>
                                 </div>
                                 <div className="flex items-center justify-between md:justify-end gap-6">

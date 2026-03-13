@@ -10,9 +10,12 @@ import {
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Volume2, VolumeX } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { getContrastColor } from '../../utils/themeUtils';
-import { FLOORS } from '../../constants/floors';
+import { getLocalizedText } from '../../utils/i18nUtils';
+import { useFloors } from '../../context/FloorContext';
+import { FloorCategory } from '../../types';
 
 // --- Theme & Configuration ---
 const COLORS = {
@@ -24,12 +27,12 @@ const COLORS = {
 
 
 const METRICS = {
-    floorHeight: 2.8,
-    width: 13,
-    depth: 13,
+    floorHeight: 2.6,
+    width: 10,
+    depth: 10,
     slabThickness: 0.3,
     columnThickness: 0.25,
-    coreSize: 3.5
+    coreSize: 2.8
 };
 
 // Custom material to prevent Z-fighting with Edges
@@ -90,7 +93,7 @@ const Columns = () => {
     );
 };
 
-const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSelectedAnything, isMobile }: any) => {
+const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSelectedAnything, isMobile, lang }: any) => {
     const navigate = useNavigate();
     const active = isSelected || isHovered;
     const targetScale = active ? 1.02 : 1;
@@ -103,7 +106,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
             groupRef.current.scale.lerp(new THREE.Vector3(targetScale, 1, targetScale), 8 * delta);
         }
         if (highlightRef.current) {
-            const targetOpacity = active ? 0.15 : 0;
+            const targetOpacity = active ? 0.35 : 0;
             highlightRef.current.opacity = THREE.MathUtils.lerp(highlightRef.current.opacity, targetOpacity, 8 * delta);
         }
     });
@@ -124,7 +127,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
         // Only trigger click if the movement was minimal (threshold of 5px)
         if (distance < 5) {
-            onClick(floor.level === isSelected ? null : floor.level);
+            onClick(parseInt(floor.floor) === isSelected ? null : parseInt(floor.floor));
         }
         mouseDownPos.current = null;
     };
@@ -133,7 +136,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
         <group
             ref={groupRef}
             position={[0, yPos, 0]}
-            onPointerOver={(e) => { e.stopPropagation(); onHover(floor.level); document.body.style.cursor = 'pointer'; }}
+            onPointerOver={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
             onPointerOut={() => { onHover(null); document.body.style.cursor = 'auto'; }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
@@ -179,7 +182,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                     }}
                 >
                     <div 
-                        onPointerEnter={(e) => { e.stopPropagation(); onHover(floor.level); document.body.style.cursor = 'pointer'; }}
+                        onPointerEnter={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
                         onPointerLeave={() => { onHover(null); document.body.style.cursor = 'auto'; }}
                         style={{ 
                             display: 'flex', 
@@ -192,8 +195,8 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                         {/* Elegant Dotted Line for Architectural Detail */}
                         <div style={{
                             width: active ? '60px' : '40px',
-                            borderTop: `2px dotted ${active ? floor.color : 'rgba(0, 255, 194, 0.4)'}`,
-                            opacity: active ? 0.9 : 0.4,
+                            borderTop: `2px dotted ${active ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
+                            opacity: active ? 1.0 : 0.3,
                             transition: 'all 0.4s ease'
                         }} />
 
@@ -203,7 +206,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                             <div 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onClick(floor.level);
+                                    onClick(parseInt(floor.floor));
                                 }}
                                 style={{
                                     fontFamily: 'serif',
@@ -212,27 +215,29 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                                     gap: '12px',
                                     whiteSpace: 'nowrap',
                                     cursor: 'pointer',
-                                    textShadow: '0 0 12px rgba(0, 255, 194, 0.4), 0 0 8px rgba(0, 255, 194, 0.2)',
+                                    textShadow: active 
+                                        ? `0 0 15px ${floor.color}CC, 0 0 8px rgba(0,0,0,0.6)` 
+                                        : '0 0 4px rgba(0,0,0,0.4)',
                                     transition: 'all 0.4s ease',
-                                    transform: active ? 'scale(1.15) translateX(10px)' : 'scale(1)',
+                                    transform: active ? 'scale(1.1) translateX(8px)' : 'scale(1)',
                                     color: active ? floor.color : '#ffffff'
                                 }}
                             >
                                 <span style={{ fontSize: isMobile ? '22px' : '42px', fontWeight: '900', lineHeight: 1 }}>
-                                    {floor.label}
+                                    {floor.floor}
                                 </span>
 
                                 <span style={{
                                     fontSize: isMobile ? '10px' : '15px',
                                     fontWeight: '900',
                                     letterSpacing: '0.12em',
-                                    opacity: active ? 1 : 0.7,
-                                    borderLeft: `2.5px solid ${active ? floor.color : 'rgba(0, 255, 194, 0.4)'}`,
+                                    opacity: active ? 1 : 0.6,
+                                    borderLeft: `3px solid ${active ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
                                     paddingLeft: '12px',
                                     textTransform: 'uppercase',
                                     marginRight: isMobile ? '8px' : '30px'
                                 }}>
-                                    <AutoTranslatedText text={floor.title} />
+                                    <AutoTranslatedText text={getLocalizedText(floor.title, lang)} />
                                 </span>
                             </div>
 
@@ -270,7 +275,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                                             backgroundColor: `${floor.color}40`
                                         }} />
 
-                                        {floor.subcategories.map((sub: any) => (
+                                        {floor.subitems?.map((sub: any) => (
                                             <motion.div
                                                 key={sub.id}
                                                 whileHover={{ x: 8, color: floor.color, opacity: 1 }}
@@ -292,7 +297,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                                                     paddingLeft: '10px'
                                                 }}
                                             >
-                                                <AutoTranslatedText text={sub.label} />
+                                                <AutoTranslatedText text={getLocalizedText(sub.label, lang)} />
                                             </motion.div>
                                         ))}
                                     </motion.div>
@@ -308,12 +313,12 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
 // --- Scene Assembly ---
 
-const BlueprintBuilding = ({ selectedFloor, hoveredFloor, setHoveredFloor, setSelectedFloor, isMobile }: any) => {
+const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, setHoveredFloor, setSelectedFloor, isMobile, lang }: any) => {
     // Center the building vertically
-    const totalHeight = FLOORS.length * METRICS.floorHeight;
+    const totalHeight = floors.length * METRICS.floorHeight;
 
     return (
-        <group position={[0, -(totalHeight / 2) + 2, 0]} scale={isMobile ? [0.7, 1, 0.7] : [1, 1, 1]}>
+        <group position={[0, -(totalHeight / 2) + (isMobile ? 0.7 : 3.2), 0]} scale={isMobile ? [0.7, 1, 0.7] : [0.8, 0.85, 0.8]}>
             {/* Foundation */}
             <mesh position={[0, -METRICS.slabThickness, 0]}>
                 <boxGeometry args={[METRICS.width + 1.5, METRICS.slabThickness, METRICS.depth + 1.5]} />
@@ -321,22 +326,23 @@ const BlueprintBuilding = ({ selectedFloor, hoveredFloor, setHoveredFloor, setSe
                 <Edges color={COLORS.line} />
             </mesh>
 
-            {FLOORS.slice().reverse().map((floor, index) => (
+            {floors.map((floor: FloorCategory, index: number) => (
                 <FloorUnit
-                    key={floor.level}
+                    key={floor.id}
                     floor={floor}
-                    yPos={index * METRICS.floorHeight}
-                    isSelected={selectedFloor === floor.level}
-                    isHovered={hoveredFloor === floor.level}
+                    yPos={(floors.length - 1 - index) * METRICS.floorHeight}
+                    isSelected={selectedFloor === parseInt(floor.floor)}
+                    isHovered={hoveredFloor === parseInt(floor.floor)}
                     isSelectedAnything={selectedFloor !== null}
                     onHover={setHoveredFloor}
                     onClick={setSelectedFloor}
                     isMobile={isMobile}
+                    lang={lang}
                 />
             ))}
 
             {/* Top Roof Cover */}
-            <mesh position={[0, FLOORS.length * METRICS.floorHeight, 0]}>
+            <mesh position={[0, floors.length * METRICS.floorHeight, 0]}>
                 <boxGeometry args={[METRICS.width + 0.5, METRICS.slabThickness, METRICS.depth + 0.5]} />
                 <SolidMaterial />
                 <Edges color={COLORS.line} />
@@ -458,6 +464,7 @@ const CityBackground3D = () => {
 // --- Fragmented Blueprint Modal ---
 const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
     const navigate = useNavigate();
+    const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const [videoError, setVideoError] = useState(false);
@@ -486,7 +493,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
     // Generate scattered positions for subcategories
     const fragments = useMemo(() => {
-        if (!activeFloorData?.subcategories) return [];
+        if (!activeFloorData?.subitems) return [];
 
         const zones = isMobile ? [
             { t: [5, 12], l: [5, 25] },
@@ -511,12 +518,12 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
         // Shuffle zones to distribute subcategories uniquely
         const shuffledZones = [...zones].sort(() => Math.random() - 0.5);
 
-        return activeFloorData.subcategories.slice(0, zones.length).map((sub: any, i: number) => {
+        return activeFloorData.subitems.slice(0, zones.length).map((sub: any, i: number) => {
             const zone = shuffledZones[i];
             return {
                 id: i,
                 subId: sub.id,
-                text: sub.label,
+                text: getLocalizedText(sub.label, i18n.language),
                 // Positions are still randomized by zone
                 top: zone.t[0] + Math.random() * (zone.t[1] - zone.t[0]),
                 left: zone.l[0] + Math.random() * (zone.l[1] - zone.l[0]),
@@ -567,14 +574,14 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             >
                 <div className="flex items-center gap-3 md:gap-6 mb-3 md:mb-6 pb-3 md:pb-6 border-b-2" style={{ borderColor: activeFloorData.color }}>
                     <span className="text-4xl md:text-8xl font-black font-serif" style={{ color: activeFloorData.color }}>
-                        {activeFloorData.label}
+                        {activeFloorData.floor}
                     </span>
                     <span className="text-lg md:text-4xl font-black text-white tracking-tighter leading-none break-words max-w-[150px] md:max-w-[250px]">
-                        <AutoTranslatedText text={activeFloorData.title} />
+                        <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
                     </span>
                 </div>
                 <p className="text-white/80 font-sans text-[11px] md:text-sm font-medium leading-relaxed mb-6 md:mb-8 tracking-wide">
-                    <AutoTranslatedText text={`선택된 ${activeFloorData.label}층의 스페이스 다이어그램입니다.`} /><br />
+                    <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
                     <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
                 </p>
                 <button
@@ -680,7 +687,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
                         <div className="absolute top-10 left-10 z-[110] pointer-events-none">
                             <span className="text-4xl font-serif font-black text-white/20 tracking-tighter uppercase">
-                                <AutoTranslatedText text={activeFloorData.title} />
+                                <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
                             </span>
                         </div>
 
@@ -784,7 +791,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                         }}
                     >
                         <div className="flex flex-col items-center justify-center w-full px-2 py-1">
-                            <span className="text-[8px] md:text-[10px] font-mono tracking-widest opacity-60 mb-1 md:mb-2 uppercase border-b border-current pb-1 w-full text-center">{activeFloorData.label}.Z{frag.id + 1}</span>
+                            <span className="text-[8px] md:text-[10px] font-mono tracking-widest opacity-60 mb-1 md:mb-2 uppercase border-b border-current pb-1 w-full text-center">{activeFloorData.floor}.Z{frag.id + 1}</span>
                             <span className="font-black text-[11px] md:text-xl text-center tracking-tighter leading-[1.1] md:leading-tight break-words w-full">
                                 <AutoTranslatedText text={frag.text} />
                             </span>
@@ -797,6 +804,8 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 };
 
 export const VirtualStore3D: React.FC = () => {
+    const { floors, loading } = useFloors();
+    const { i18n } = useTranslation();
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);
@@ -810,8 +819,8 @@ export const VirtualStore3D: React.FC = () => {
 
     const activeFloorData = useMemo(() => {
         if (!selectedFloor) return null;
-        return FLOORS.find(f => f.level === selectedFloor);
-    }, [selectedFloor]);
+        return floors.find(f => parseInt(f.floor) === selectedFloor);
+    }, [selectedFloor, floors]);
 
     return (
         <div
@@ -846,10 +855,10 @@ export const VirtualStore3D: React.FC = () => {
                     fov={isMobile ? 60 : 35}
                     near={0.1}
                     far={1000}
-                    onUpdate={(c) => c.lookAt(0, 2.0, 0)}
+                    onUpdate={(c) => c.lookAt(0, isMobile ? 0.1 : 2.6, 0)}
                 />
 
-                <group key={resetKey}>
+                <group key={resetKey} position={isMobile ? [-2.0, 0, 0] : [-8.0, 0, 0]}>
                     <PresentationControls
                         global
                         config={{ mass: 2, tension: 500 }}
@@ -858,13 +867,17 @@ export const VirtualStore3D: React.FC = () => {
                         polar={[0, 0]}
                         azimuth={[-Infinity, Infinity]}
                     >
-                        <BlueprintBuilding
-                            selectedFloor={selectedFloor}
-                            hoveredFloor={hoveredFloor}
-                            setHoveredFloor={setHoveredFloor}
-                            setSelectedFloor={setSelectedFloor}
-                            isMobile={isMobile}
-                        />
+                        {!loading && (
+                            <BlueprintBuilding
+                                floors={floors}
+                                selectedFloor={selectedFloor}
+                                hoveredFloor={hoveredFloor}
+                                setHoveredFloor={setHoveredFloor}
+                                setSelectedFloor={setSelectedFloor}
+                                isMobile={isMobile}
+                                lang={i18n.language}
+                            />
+                        )}
                     </PresentationControls>
                 </group>
             </Canvas>

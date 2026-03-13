@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { BookOpen, Compass, X, Activity } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
-import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
+import { BookOpen, Compass, X } from 'lucide-react';
+import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
+import { useFloors } from '../context/FloorContext';
+import { FALLBACK_PRODUCTS, FALLBACK_STORIES } from '../data/fallbackData';
 
 interface StoryCard {
     id: string;
@@ -54,117 +55,44 @@ const PointingFinger = ({ size = 24, className = "" }: { size?: number; classNam
 );
 
 // Mirrors the FLOORS data in VirtualStore3D.tsx (single source of truth for nav IDs)
-const FLOOR_NAV = [
-    {
-        id: 'floor1', level: 1, floor: '1F',
-        title: '글로벌 K-컬처 트렌드',
-        bgImage: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'global', label: '글로벌 트렌드' },
-            { id: 'window', label: '디지털 쇼윈도' },
-            { id: 'f1_kpop', label: 'K-팝 스테이지' },
-            { id: 'f1_library', label: '트렌드 라이브러리' },
-            { id: 'f1_tech', label: '한류 테크존' }
-        ],
-        productCategories: ['global', 'exchange', 'collab', 'trend', 'f1_kpop', 'f1_library', 'f1_tech']
-    },
-    {
-        id: 'floor2', level: 2, floor: '2F',
-        title: '콜라보레이션 & 팝업',
-        bgImage: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'sync', label: '시너지 공간' },
-            { id: 'pop', label: '다이내믹 팝업' },
-            { id: 'f2_lab', label: '브랜드 랩' },
-            { id: 'f2_art', label: '아트 콜라보' },
-            { id: 'f2_gallery', label: '한정판 갤러리' }
-        ],
-        productCategories: ['collab', 'media', 'traditional', 'f2_lab', 'f2_art', 'f2_gallery']
-    },
-    {
-        id: 'floor3', level: 3, floor: '3F',
-        title: '퍼포먼스 & 전시',
-        bgImage: 'https://images.unsplash.com/photo-1482160549445-562174d86407?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'performance', label: '공연 실황' },
-            { id: 'exhibit', label: '가상 전시' },
-            { id: 'f3_media', label: '미디어 아트 홀' },
-            { id: 'f3_lounge', label: '아티스트 라운지' },
-            { id: 'f3_audio', label: '사운드 아카이브' }
-        ],
-        productCategories: ['media', 'class', 'heritage', 'f3_media', 'f3_lounge', 'f3_audio']
-    },
-    {
-        id: 'floor4', level: 4, floor: '4F',
-        title: '컬처 토크',
-        bgImage: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'talk', label: '문화 담론' },
-            { id: 'interview', label: '아티스트 인터뷰' },
-            { id: 'f4_plus', label: '토크 플러스' },
-            { id: 'f4_book', label: '도서관 섹션' },
-            { id: 'f4_seminar', label: '세미나 룸' }
-        ],
-        productCategories: ['kstyle', 'class', 'f4_plus', 'f4_book', 'f4_seminar']
-    },
-    {
-        id: 'floor5', level: 5, floor: '5F',
-        title: '패션 아카이브',
-        bgImage: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'archive', label: '패션 아카이브' },
-            { id: 'collection', label: '시즌 컬렉션' },
-            { id: 'f5_material', label: '소재 도서관' },
-            { id: 'f5_fitting', label: '피팅 스튜디오' },
-            { id: 'f5_textile', label: '텍스타일 룸' }
-        ],
-        productCategories: ['kstyle', 'f5_material', 'f5_fitting', 'f5_textile']
-    },
-    {
-        id: 'floor6', level: 6, floor: '6F',
-        title: '로컬 헤리티지',
-        bgImage: 'https://images.unsplash.com/photo-1528666579003-887483758b29?q=80&w=2560&auto=format&fit=crop',
-        subitems: [
-            { id: 'heritage', label: '지역 문화 유산' },
-            { id: 'travel', label: '전략적 앵커' },
-            { id: 'f6_gourmet', label: '미식 아카이브' },
-            { id: 'f6_craft', label: '지역 공예관' },
-            { id: 'f6_tour', label: '헤리티지 투어' }
-        ],
-        productCategories: ['heritage', 'local_heritage', 'travel_curation', 'f6_gourmet', 'f6_craft', 'f6_tour']
-    },
-];
 
 const mapToFeaturedItem = (item: any): FeaturedItem => ({
     id: item.id,
-    title: item.title,
+    title: typeof item.title === 'string' ? { ko: item.title } : item.title,
     category: item.category,
     subcategory: item.subcategory,
-    description: item.description,
-    imageUrl: item.image_url,
-    date: item.event_date,
+    description: typeof item.description === 'string' ? { ko: item.description } : item.description,
+    imageUrl: item.image_url || item.imageUrl,
+    date: item.event_date || item.date,
     location: item.location,
     price: item.price,
-    closedDays: item.closed_days || [],
-    videoUrl: item.video_url,
+    closedDays: item.closed_days || item.closedDays || [],
+    videoUrl: item.video_url || item.videoUrl,
     user_id: item.user_id,
-    eventDates: item.event_dates || [],
+    eventDates: item.event_dates || item.eventDates || [],
 });
 
 const SubCategoryPage: React.FC = () => {
     const { subId } = useParams<{ subId: string }>();
     const { t, i18n } = useTranslation();
+    const { floors } = useFloors();
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [isExplorationMode, setIsExplorationMode] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const targetSubId = subId || '';
 
-    // Find parent floor from local FLOOR_NAV (always works, no Supabase dependency)
-    const parentFloor = FLOOR_NAV.find(f => f.subitems.some(s => s.id === targetSubId)) || null;
-    const subcategoryData = parentFloor?.subitems.find(s => s.id === targetSubId) || null;
+    // Find parent floor from dynamic floors
+    const parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
+    const subcategoryData = parentFloor?.subitems?.find(s => s.id === targetSubId) || null;
 
     useEffect(() => {
         let mounted = true;
@@ -173,30 +101,72 @@ const SubCategoryPage: React.FC = () => {
             setLoading(true);
             try {
                 const [itemsResponse, storiesResponse] = await Promise.all([
-                    supabase.from('featured_items').select('*').eq('subcategory', targetSubId),
-                    supabase.from('story_cards').select('*').eq('subcategory', targetSubId)
+                    fetch(`/api/products?subcategory=${targetSubId}`),
+                    fetch(`/api/categories/nav?subcategory=${targetSubId}`)
                 ]);
 
                 if (mounted) {
-                    if (itemsResponse.error) {
-                        setError(`items: ${itemsResponse.error.message} (${itemsResponse.status})`);
-                    } else if (itemsResponse.data) {
+                    let finalItems: FeaturedItem[] = [];
+                    let finalStories: StoryCard[] = [];
+
+                    if (itemsResponse.ok) {
+                        const itemsData = await itemsResponse.json();
                         const seen = new Set<string>();
-                        const uniqueItems = itemsResponse.data
+                        finalItems = itemsData
                             .map(mapToFeaturedItem)
-                            .filter(item => { if (seen.has(item.id)) return false; seen.add(item.id); return true; });
-                        setItems(uniqueItems);
+                            .filter((item: FeaturedItem) => { if (seen.has(item.id)) return false; seen.add(item.id); return true; })
+                            .filter((item: FeaturedItem) => {
+                                // Defensive filtering in case backend doesn't filter by subcategory
+                                if (targetSubId) {
+                                    return item.subcategory === targetSubId;
+                                }
+                                return true;
+                            });
                     }
 
-                    if (storiesResponse.error) {
-                        console.error('Stories error:', storiesResponse.error.message);
-                    } else if (storiesResponse.data) {
-                        setStories(storiesResponse.data as StoryCard[]);
+                    if (storiesResponse.ok) {
+                        const storiesData = await storiesResponse.json();
+                        finalStories = storiesData as StoryCard[];
                     }
+
+                    // Fallback logic if data is missing or empty
+                    if (finalItems.length === 0) {
+                        const fallbackItems = FALLBACK_PRODUCTS
+                            .filter(p => p.subcategory === targetSubId)
+                            .map(mapToFeaturedItem);
+                        
+                        // If specific subcategory has no items, show at least some from same floor or random
+                        if (fallbackItems.length === 0) {
+                            finalItems = FALLBACK_PRODUCTS
+                                .filter(p => p.category === parentFloor.id)
+                                .map(mapToFeaturedItem);
+                        } else {
+                            finalItems = fallbackItems;
+                        }
+                    }
+
+                    if (finalStories.length === 0) {
+                        finalStories = FALLBACK_STORIES
+                            .filter(s => s.subcategory === targetSubId);
+                    }
+
+                    setItems(finalItems);
+                    setStories(finalStories);
                 }
             } catch (err: any) {
                 console.error('Failed to fetch subcategory items:', err.message || err);
-                if (mounted) setError(err.message || 'Unknown network error');
+                if (mounted) {
+                    // Fail silently and use fallbacks
+                    const fallbackItems = FALLBACK_PRODUCTS
+                        .filter(p => p.subcategory === targetSubId)
+                        .map(mapToFeaturedItem);
+                    
+                    const finalItems = fallbackItems.length > 0 ? fallbackItems : FALLBACK_PRODUCTS.slice(0, 4).map(mapToFeaturedItem);
+                    const finalStories = FALLBACK_STORIES.filter(s => s.subcategory === targetSubId);
+
+                    setItems(finalItems);
+                    setStories(finalStories);
+                }
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -207,8 +177,7 @@ const SubCategoryPage: React.FC = () => {
         return () => { mounted = false; };
     }, [targetSubId, parentFloor]);
 
-    const floorNumber = getFloorBySubId(targetSubId) || '1';
-    const theme = getJoseonThemeById(targetSubId, floorNumber);
+    const theme = getJoseonThemeById(targetSubId, parentFloor?.floor);
 
 
     // While loading, show spinner (don't flash not-found)
@@ -227,37 +196,6 @@ const SubCategoryPage: React.FC = () => {
         );
     }
 
-    if (error && items.length === 0) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-white p-6" style={theme.bgStyle}>
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="max-w-md w-full text-center space-y-6"
-                >
-                    <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto border border-red-500/20">
-                        <Activity size={32} className="text-red-500 opacity-60" />
-                    </div>
-                    <h2 className="text-2xl font-serif font-bold tracking-tight"><AutoTranslatedText text="데이터를 불러올 수 없습니다" /></h2>
-                    <p className="text-white/50 font-light leading-relaxed">
-                        <AutoTranslatedText text="일시적인 서버 오류이거나 네트워크 연결에 문제가 있을 수 있습니다. (406 Error - Not Acceptable API state)" />
-                    </p>
-                    <p className="text-red-500/40 font-mono text-[10px] break-all">{error}</p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="inline-flex items-center gap-2 px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full font-medium transition-all active:scale-95 border border-white/10"
-                    >
-                        <AutoTranslatedText text="다시 시도" />
-                    </button>
-                    <div className="pt-4">
-                        <Link to="/" className="text-xs text-white/40 hover:text-white underline underline-offset-4">
-                            <AutoTranslatedText text="홈으로 돌아가기" />
-                        </Link>
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
 
 
 
@@ -297,11 +235,13 @@ const SubCategoryPage: React.FC = () => {
             {/* Editorial Header */}
             <header className="relative w-full min-h-[60vh] flex items-center pt-8 pb-10 overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <img
-                        src={parentFloor.bgImage}
-                        alt=""
-                        className="w-full h-full object-cover grayscale opacity-30 scale-110"
-                    />
+                    {parentFloor?.bgImage && (
+                        <img
+                            src={parentFloor.bgImage}
+                            alt=""
+                            className="w-full h-full object-cover grayscale opacity-30 scale-110"
+                        />
+                    )}
                     <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${theme.bgColor}cc 60%, ${theme.bgColor})` }} />
                 </div>
 
@@ -334,7 +274,7 @@ const SubCategoryPage: React.FC = () => {
                                         color: theme.highlightColor, 
                                         textShadow: `0 0 40px ${theme.glowColor}44` 
                                     }}>
-                                    <AutoTranslatedText text={getLocalizedText(subcategoryData.label, i18n.language) || t('common.no_info')} />
+                                    <AutoTranslatedText text={getLocalizedText(subcategoryData?.label, i18n.language) || t('common.no_info')} />
                                 </h1>
 
                                 <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 
@@ -363,29 +303,22 @@ const SubCategoryPage: React.FC = () => {
                                      boxShadow: `0 20px 40px -10px ${theme.bgColor}cc`
                                  }}>
                                 
-                                <div className="p-8 space-y-8">
+                                <div className="p-8 md:p-10 space-y-8">
                                     <div className="flex justify-between items-start">
-                                        <div className="space-y-1">
-                                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/30 uppercase"><AutoTranslatedText text="Collection Data" /></div>
+                                        <div className="space-y-3">
+                                            <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase border-b border-white/10 pb-2 w-fit">
+                                                <AutoTranslatedText text="Collection Data" />
+                                            </div>
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-6xl font-serif font-black" style={{ color: theme.highlightColor }}>
+                                                <span className="text-6xl font-serif font-black" style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}33` }}>
                                                     {items.length + stories.length}
                                                 </span>
                                                 <span className="text-xs font-bold uppercase tracking-widest opacity-30 text-white">Records</span>
                                             </div>
                                         </div>
-                                        <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center">
-                                            <Compass size={20} className="text-white/20 animate-[spin_10s_linear_infinite]" />
+                                        <div className="w-14 h-14 md:w-20 md:h-20 rounded-full border border-white/20 flex items-center justify-center bg-white/5 shadow-inner">
+                                            <Compass size={isMobile ? 24 : 32} className="text-white/40 animate-[spin_10s_linear_infinite]" />
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div className="px-8 py-4 bg-white/5 flex justify-between items-center text-[9px] font-mono tracking-[0.4em] uppercase text-white/40">
-                                    <span><AutoTranslatedText text="Status: Immersive Sync" /></span>
-                                    <div className="flex gap-1">
-                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse" />
-                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse delay-75" />
-                                        <div className="w-1 h-1 rounded-full bg-current animate-pulse delay-150" />
                                     </div>
                                 </div>
                             </div>
@@ -454,9 +387,9 @@ const SubCategoryPage: React.FC = () => {
                     className="fixed inset-0 z-[2000] bg-black"
                 >
                     <div className="absolute top-8 left-10 z-[2010] flex items-center gap-6">
-                        <div className="px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md bg-black/40">
+                         <div className="px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md bg-black/40">
                             <span className="text-[10px] font-bold tracking-[0.3em] text-white/80 uppercase">
-                                <AutoTranslatedText text={subcategoryData.label} />
+                                <AutoTranslatedText text={subcategoryData ? getLocalizedText(subcategoryData.label, i18n.language) : ''} />
                             </span>
                         </div>
                         <h2 className="text-xl md:text-2xl font-serif italic text-white/30 hidden md:block">
@@ -498,7 +431,7 @@ const SubCategoryPage: React.FC = () => {
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex items-center gap-6">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ border: `2px solid ${theme.accentColor}`, color: theme.accentColor }}>
-                            {subcategoryData.id.substring(0, 2).toUpperCase()}
+                            {subcategoryData?.id.substring(0, 2).toUpperCase() || 'FF'}
                         </div>
                         <div className="text-xs font-bold tracking-widest uppercase" style={{ color: theme.textMuted }}>
                             <AutoTranslatedText text="DEPT. Curation Policy V1.0 - Selection Based on Timeless Aesthetics" />

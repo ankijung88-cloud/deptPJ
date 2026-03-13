@@ -61,7 +61,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </button>
 
             {isMenuOpen && (
-                <div className={`absolute right-0 mt-4 bg-[#1A2420]/95 backdrop-blur-xl border-t-2 border-dancheong-red shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-3 z-[110] transition-all duration-300 origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[300px] top-full rounded-l-xl rounded-r-none border-r-0' : 'w-[420px] top-full rounded-b-xl'
+                <div className={`absolute right-0 mt-4 bg-[#1A2420]/95 backdrop-blur-3xl border-t-2 border-dancheong-red shadow-[0_20px_60px_rgba(0,0,0,0.8)] p-4 z-[10000] transition-all duration-300 origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[320px] top-full rounded-l-xl rounded-r-none border-r-0' : 'w-[450px] top-full rounded-b-xl'
                     }`}>
                     <div className={`grid ${isFloating ? 'grid-cols-2' : 'grid-cols-3'} gap-1`}>
                         {supportedLanguages.map((lang) => (

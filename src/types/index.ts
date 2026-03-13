@@ -23,6 +23,7 @@ export interface FeaturedItem {
     subcategory?: string;
     description: LocalizedString;
     imageUrl: string;
+    thumbnailUrl?: string;
     date: LocalizedString;
     location: LocalizedString;
     price: LocalizedString;
@@ -44,6 +45,8 @@ export interface FloorCategory {
     title: LocalizedString;
     description: LocalizedString;
     bgImage: string;
+    color?: string;
+    videoUrl?: string;
     content?: FloorContent[];
     subitems?: {
         id: string;
@@ -76,4 +79,21 @@ export interface BrandSpotlight {
     imageUrl: string;
     videoUrl?: string;
     tags: LocalizedString[];
+}
+
+export interface Notice {
+    id: number | string;
+    title: LocalizedString;
+    content: LocalizedString;
+    category: string;
+    date: string;
+    is_important: boolean;
+}
+
+export interface FAQ {
+    id: number | string;
+    question: LocalizedString;
+    answer: LocalizedString;
+    category?: string;
+    display_order?: number;
 }

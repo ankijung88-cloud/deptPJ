@@ -20,19 +20,21 @@ export const FloorNavigationSidebar: React.FC<FloorNavigationSidebarProps> = ({
     selectedFloor,
     onSelectFloor
 }) => {
+    const { floors } = useFloors();
+    const { i18n } = useTranslation();
     return (
         <div className="fixed left-12 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-10">
-            {SIDEBAR_FLOORS.map((floor) => {
-                const isActive = selectedFloor === floor.level;
+            {floors.slice().reverse().map((floor) => {
+                const isActive = selectedFloor === parseInt(floor.floor);
 
                 return (
                     <motion.div
-                        key={floor.level}
+                        key={floor.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: (6 - floor.level) * 0.1 }}
+                        transition={{ delay: (6 - parseInt(floor.floor)) * 0.1 }}
                         className="group flex items-center cursor-pointer"
-                        onClick={() => onSelectFloor(floor.level)}
+                        onClick={() => onSelectFloor(parseInt(floor.floor))}
                     >
                         {/* Floor Number with Glow */}
                         <div className="relative">
@@ -41,30 +43,30 @@ export const FloorNavigationSidebar: React.FC<FloorNavigationSidebarProps> = ({
                                     isActive 
                                         ? 'text-[#00FFC2] drop-shadow-[0_0_15px_rgba(0,255,194,0.8)]' 
                                         : 'text-white group-hover:text-[#00FFC2]/80 group-hover:drop-shadow-[0_0_10px_rgba(0,255,194,0.4)]'
-                                }`}
-                                style={{
-                                    textShadow: isActive ? '0 0 20px rgba(0, 255, 194, 0.6)' : 'none'
-                                }}
-                            >
-                                {floor.label}
-                            </span>
-                        </div>
-
-                        {/* Vertical Line Separator */}
-                        <div 
-                            className={`mx-4 h-8 w-[2px] transition-all duration-500 ${
-                                isActive ? 'bg-[#00FFC2]' : 'bg-white/20 group-hover:bg-white/40'
-                            }`}
-                        />
-
-                        {/* Floor Title */}
-                        <span 
-                            className={`text-sm md:text-base font-bold tracking-widest transition-all duration-500 uppercase ${
-                                isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'
-                            }`}
-                        >
-                            <AutoTranslatedText text={floor.title} />
-                        </span>
+                                  }`}
+                                  style={{
+                                      textShadow: isActive ? '0 0 20px rgba(0, 255, 194, 0.6)' : 'none'
+                                  }}
+                              >
+                                  {floor.floor}
+                              </span>
+                          </div>
+  
+                          {/* Vertical Line Separator */}
+                          <div 
+                              className={`mx-4 h-8 w-[2px] transition-all duration-500 ${
+                                  isActive ? 'bg-[#00FFC2]' : 'bg-white/20 group-hover:bg-white/40'
+                              }`}
+                          />
+  
+                          {/* Floor Title */}
+                          <span 
+                              className={`text-sm md:text-base font-bold tracking-widest transition-all duration-500 uppercase ${
+                                  isActive ? 'text-white' : 'text-white/40 group-hover:text-white/70'
+                              }`}
+                          >
+                              <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
+                          </span>
 
                         {/* Hover/Active Indicator dot */}
                         {isActive && (

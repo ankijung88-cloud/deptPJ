@@ -8,7 +8,7 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
 import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
-import { FLOORS } from '../constants/floors';
+import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbTitle } from '../context/NavigationActionContext';
 
 
@@ -18,6 +18,7 @@ import { useSetBreadcrumbTitle } from '../context/NavigationActionContext';
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { t, i18n } = useTranslation();
+    const { floors } = useFloors();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
     
@@ -143,10 +144,10 @@ export const DetailPage: React.FC = () => {
                                     {(() => {
                                         const displayKey = (item as any).subcategory || item.category;
                                         
-                                        // Try to find the label from our constants first (handles IDs/UUIDs)
-                                        for (const floor of FLOORS) {
-                                            const sub = floor.subcategories.find((s: any) => s.id === displayKey);
-                                            if (sub) return <AutoTranslatedText text={sub.label} />;
+                                        // Try to find the label from our dynamic floors first
+                                        for (const floor of floors) {
+                                            const sub = floor.subitems?.find((s: any) => s.id === displayKey);
+                                            if (sub) return <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />;
                                         }
 
                                         const key = `nav.${displayKey.toLowerCase()}`;

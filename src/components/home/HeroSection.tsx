@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, useTransform, useSpring, animate, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,6 @@ import { ArrivalBackground3D } from './ArrivalBackground3D';
 type PortalPhase = 'hero' | 'warping' | 'arrived';
 
 export const HeroSection: React.FC = () => {
-    const videoRef = useRef<HTMLVideoElement>(null);
     const [phase, setPhase] = useState<PortalPhase>('hero');
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -18,7 +17,6 @@ export const HeroSection: React.FC = () => {
     // Motion Values for timed animation
     const portalVelocity = useMotionValue(2);
     const portalOpacity = useMotionValue(0.4);
-    const videoOpacity = useMotionValue(0.8);
     const contentScale = useMotionValue(1);
     const contentBlur = useMotionValue(0);
     const contentBlurFilter = useTransform(contentBlur, (v) => `blur(${v}px)`);
@@ -42,7 +40,6 @@ export const HeroSection: React.FC = () => {
         animate(contentScale, 2.5, { duration: 3, ease: "easeIn" });
         animate(contentBlur, 12, { duration: 2.5 });
         animate(contentOpacity, 0, { duration: 1.5, delay: 0.5 });
-        animate(videoOpacity, 0, { duration: 2, delay: 0.5 });
 
         // 3. Trigger Flash
         setTimeout(() => {
@@ -57,7 +54,6 @@ export const HeroSection: React.FC = () => {
         }, 3000);
     };
 
-    const videoUrl = "https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/main_hero.mp4";
 
     return (
         <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#1A2420]" style={{ backgroundColor: '#1A2420' }}>
@@ -77,24 +73,6 @@ export const HeroSection: React.FC = () => {
                             <HeroPortal3D velocity={smoothVelocity} />
                         </motion.div>
 
-                        {/* Background Video */}
-                        <motion.div
-                            style={{ opacity: videoOpacity }}
-                            className="absolute inset-0 z-0"
-                        >
-                            <video
-                                ref={videoRef}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="w-full h-full object-cover"
-                            >
-                                <source src={videoUrl} type="video/mp4" />
-                            </video>
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#1A2420]/40 via-transparent to-[#1A2420]/80 z-10" />
-                            <div className="absolute inset-0 bg-black/20 z-10" />
-                        </motion.div>
 
                         {/* Main UI */}
                         <motion.div

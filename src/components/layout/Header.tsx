@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, Search, Volume2, VolumeX } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ChevronDown, Search, Volume2, VolumeX, Shield, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
@@ -23,6 +23,7 @@ interface NavItem {
 
 const Header: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const is3DStorePage = location.pathname === '/inspiration';
     const isAboutPage = location.pathname === '/about';
 
@@ -30,6 +31,23 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const checkAdmin = () => {
+            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
+        };
+        checkAdmin();
+        window.addEventListener('storage', checkAdmin);
+        return () => window.removeEventListener('storage', checkAdmin);
+    }, [location]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        setIsAdminLoggedIn(false);
+        navigate('/');
+    };
 
     // Dynamic Theme Detection
     const getThemeData = () => {
@@ -183,7 +201,7 @@ const Header: React.FC = () => {
 
     return (
         <header
-            className={`fixed top-0 inset-x-0 z-50 transition-all duration-700`}
+            className={`fixed top-0 inset-x-0 z-[9999] transition-all duration-700`}
             style={{
                 backgroundColor: isScrolled ? `${theme.bgColor}f2` : theme.bgColor,
                 backdropFilter: isScrolled ? 'blur(12px)' : 'none',
@@ -254,7 +272,7 @@ const Header: React.FC = () => {
                 </svg>
             </div>
 
-            <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 ${isScrolled ? 'h-16' : 'h-24'}`}>
+            <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-16' : 'h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
                     <img src="/department_circle_logo.png" alt="department logo" className="h-[56px] w-[56px] object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
                 </Link>
@@ -392,6 +410,33 @@ const Header: React.FC = () => {
                         </div>
 
                             <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
+
+                            {/* Admin Controls */}
+                            {isAdminLoggedIn && (
+                                <div className="flex items-center gap-2">
+                                    <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
+                                    <Link
+                                        to="/admin"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
+                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = '#00FFC225')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = '#00FFC210')}
+                                    >
+                                        <Shield size={13} />
+                                        Admin
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest text-red-400/80 hover:text-red-400 transition-all"
+                                        style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.12)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.05)')}
+                                    >
+                                        <LogOut size={13} />
+                                        로그아웃
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -488,6 +533,31 @@ const Header: React.FC = () => {
                                 )}
                             </div>
                         ))}
+
+                        <hr className="border-dancheong-gold/10 my-4" />
+
+                        {/* Mobile Admin Controls */}
+                        {isAdminLoggedIn && (
+                            <div className="flex flex-col gap-2 pb-2">
+                                <Link
+                                    to="/admin"
+                                    className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
+                                    style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Shield size={16} />
+                                    Admin 관리자 페이지
+                                </Link>
+                                <button
+                                    onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                                    className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm text-red-400"
+                                    style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
+                                >
+                                    <LogOut size={16} />
+                                    로그아웃
+                                </button>
+                            </div>
+                        )}
 
                         <hr className="border-dancheong-gold/10 my-4" />
 

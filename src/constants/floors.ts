@@ -4,7 +4,7 @@ export const FLOORS = [
         title: 'LOCAL HERITAGE',
         label: '6F',
         color: '#FF3B30', // Red (South)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/festival.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/festival.mp4',
         subcategories: [
             { id: 'heritage', label: '지역 문화 유산' },
             { id: 'travel', label: '전략적 앵커' },
@@ -18,7 +18,7 @@ export const FLOORS = [
         title: 'FASHION ARCHIVE',
         label: '5F',
         color: '#FFD700', // Yellow (Center)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/modern_tradition.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/modern_tradition.mp4',
         subcategories: [
             { id: 'archive', label: '패션 아카이브' },
             { id: 'collection', label: '시즌 컬렉션' },
@@ -32,7 +32,7 @@ export const FLOORS = [
         title: 'CULTURE TALK',
         label: '4F',
         color: '#F8FAFF', // White (West)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/travel.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/travel.mp4',
         subcategories: [
             { id: 'talk', label: '문화 담론' },
             { id: 'interview', label: '아티스트 인터뷰' },
@@ -46,7 +46,7 @@ export const FLOORS = [
         title: 'PERFORMANCE & EXHIBITION',
         label: '3F',
         color: '#0070FF', // Blue (East)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/active.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/active.mp4',
         subcategories: [
             { id: 'performance', label: '공연 실황' },
             { id: 'exhibit', label: '가상 전시' },
@@ -60,7 +60,7 @@ export const FLOORS = [
         title: 'COLLABORATION & POP-UP',
         label: '2F',
         color: '#00FFC2', // Cyan/Green (East/Neo-Dancheong Mint)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/trend.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/trend.mp4',
         subcategories: [
             { id: 'sync', label: '시너지 공간' },
             { id: 'pop', label: '다이내믹 팝업' },
@@ -74,7 +74,7 @@ export const FLOORS = [
         title: 'K-CULTURE TRENDS',
         label: '1F',
         color: '#0A0D17', // Black (North/Void Navy)
-        videoUrl: 'https://tjucpoqxzsolmmceguez.supabase.co/storage/v1/object/public/dept-media/video/k-culture.mp4',
+        videoUrl: 'http://43.200.230.44:3000/assets/videos/k-culture.mp4',
         subcategories: [
             { id: 'global', label: '글로벌 트렌드' },
             { id: 'window', label: '디지털 쇼윈도' },
