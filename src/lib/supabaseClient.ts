@@ -28,7 +28,7 @@ export const supabase = {
     },
     storage: {
         from: () => ({
-            getPublicUrl: (path: string) => ({ data: { publicUrl: '' } })
+            getPublicUrl: (_path: string) => ({ data: { publicUrl: '' } })
         })
     }
 } as any;

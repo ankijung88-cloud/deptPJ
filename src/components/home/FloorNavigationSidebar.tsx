@@ -1,20 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { useFloors } from '../../context/FloorContext';
+import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { FloorCategory } from '../../types';
 
 interface FloorNavigationSidebarProps {
     selectedFloor: number | null;
     onSelectFloor: (level: number) => void;
 }
 
-const SIDEBAR_FLOORS = [
-    { level: 6, label: '6F', title: '지역 유산' },
-    { level: 5, label: '5F', title: '패션 아카이브' },
-    { level: 4, label: '4F', title: '문화 토크' },
-    { level: 3, label: '3F', title: '공연 & 전시' },
-    { level: 2, label: '2F', title: '협업 & 팝업' },
-    { level: 1, label: '1F', title: 'K-컬처 트랜드' },
-];
+
 
 export const FloorNavigationSidebar: React.FC<FloorNavigationSidebarProps> = ({
     selectedFloor,
@@ -24,7 +21,7 @@ export const FloorNavigationSidebar: React.FC<FloorNavigationSidebarProps> = ({
     const { i18n } = useTranslation();
     return (
         <div className="fixed left-12 top-1/2 -translate-y-1/2 z-[60] flex flex-col gap-10">
-            {floors.slice().reverse().map((floor) => {
+            {floors.slice().reverse().map((floor: FloorCategory) => {
                 const isActive = selectedFloor === parseInt(floor.floor);
 
                 return (
