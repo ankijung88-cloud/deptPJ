@@ -17,24 +17,39 @@ export const AdminLoginPage: React.FC = () => {
         setError('');
 
         try {
+            console.log('Attempting login for:', username);
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
             });
 
-            const data = await response.json();
+            console.log('Login response status:', response.status);
+            
+            const contentType = response.headers.get('content-type');
+            let data;
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                console.error('Non-JSON response:', text);
+                throw new Error(`Server returned non-JSON response (${response.status})`);
+            }
 
             if (data.success) {
+                console.log('Login successful');
                 // Store token and user info
                 localStorage.setItem('admin_token', data.token);
                 localStorage.setItem('admin_user', JSON.stringify(data.user));
                 navigate('/admin');
             } else {
-                setError(data.message || 'Login failed');
+                console.warn('Login failed:', data.message);
+                setError(data.message || 'Login failed: Invalid credentials');
             }
-        } catch (err) {
-            setError('Something went wrong. Please try again.');
+        } catch (err: any) {
+            console.error('Login error detail:', err);
+            setError(`Error: ${err.message || 'Connection failed. Please check your network.'}`);
         } finally {
             setLoading(false);
         }
