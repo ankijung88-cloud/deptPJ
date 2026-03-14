@@ -96,7 +96,7 @@ const AboutPage: React.FC = () => {
                         onError={() => setVideoError(true)}
                         className={`w-full h-full object-cover mix-blend-screen scale-105 transition-opacity duration-1000 ${videoLoaded ? 'opacity-40' : 'opacity-0'}`}
                     >
-                        <source src="/video/festival.mp4" type="video/mp4" />
+                        <source src="/assets/videos/festival.mp4" type="video/mp4" />
                     </video>
                     {/* Fallback pattern if video fails */}
                     {(videoError || !videoLoaded) && (
