@@ -5,6 +5,14 @@
             "destination": "http://43.200.230.44:3000/api/$1"
         },
         {
+            "source": "/assets/(.*)",
+            "destination": "http://43.200.230.44:3000/assets/$1"
+        },
+        {
+            "source": "/uploads/(.*)",
+            "destination": "http://43.200.230.44:3000/uploads/$1"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

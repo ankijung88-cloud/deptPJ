@@ -47,6 +47,12 @@ const generateDateRange = (dateString: string): string[] => {
     return [];
 };
 
+const normalizeUrl = (url: string | null | undefined): string => {
+    if (!url) return '';
+    // Strip absolute backend URL if present
+    return url.replace(/^http:\/\/43\.200\.230\.44:3000/, '');
+};
+
 const mapToFeaturedItem = (item: any): FeaturedItem => {
     let parsedEventDates = item.event_dates || [];
     // Handle MySQL JSON if it comes as a string
@@ -65,13 +71,13 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         category: item.category,
         subcategory: item.subcategory,
         description: item.description,
-        imageUrl: item.image_url,
-        thumbnailUrl: item.thumbnail_url,
+        imageUrl: normalizeUrl(item.image_url),
+        thumbnailUrl: normalizeUrl(item.thumbnail_url),
         date: item.event_date,
         location: item.location,
         price: item.price,
         closedDays: (typeof item.closed_days === 'string' ? JSON.parse(item.closed_days) : item.closed_days) || [],
-        videoUrl: item.video_url || item.video_Url, // Support both cases just in case
+        videoUrl: normalizeUrl(item.video_url || item.video_Url), // Support both cases just in case
         user_id: item.user_id,
         eventDates: parsedEventDates.length > 0 ? parsedEventDates : (
             item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :

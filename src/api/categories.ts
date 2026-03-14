@@ -1,5 +1,10 @@
 import { FloorCategory, NavItem } from '../types';
 
+const normalizeUrl = (url: string | null | undefined): string => {
+    if (!url) return '';
+    return url.replace(/^http:\/\/43\.200\.230\.44:3000/, '');
+};
+
 export const getFloorCategories = async (): Promise<FloorCategory[]> => {
     try {
         const response = await fetch('/api/categories/floors');
@@ -13,9 +18,9 @@ export const getFloorCategories = async (): Promise<FloorCategory[]> => {
             floor: item.floor,
             title: item.title,
             description: item.description,
-            bgImage: item.bg_image,
+            bgImage: normalizeUrl(item.bg_image),
             color: item.color,
-            videoUrl: item.video_url,
+            videoUrl: normalizeUrl(item.video_url),
             content: (typeof item.content === 'string' ? JSON.parse(item.content) : item.content) || [],
             subitems: (typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []
         }));
