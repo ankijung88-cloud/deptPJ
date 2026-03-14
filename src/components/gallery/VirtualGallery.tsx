@@ -190,49 +190,61 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
         } else {
             // Linear Corridor (Desktop)
             const sweetSpot = zPos + 8;
-            const distToSweetSpot = Math.abs(state.camera.position.z - sweetSpot);
-            const desktopPlateau = 4;
+            const distFromCamera = state.camera.position.z - sweetSpot;
+            const absDist = Math.abs(distFromCamera);
+
+            // Slightly wider plateau (1.5 -> 2.5) for the "Large" focused view
+            const desktopPlateau = 2.5; 
+            const transitionRange = 12; 
             
-            if (distToSweetSpot <= desktopPlateau) { 
+            if (absDist <= desktopPlateau) { 
                 centerFactor = 1.0;
-            } else if (distToSweetSpot <= 10) { 
-                centerFactor = THREE.MathUtils.smoothstep(distToSweetSpot, 10, desktopPlateau);
+            } else if (absDist <= transitionRange) { 
+                centerFactor = THREE.MathUtils.smoothstep(absDist, transitionRange, desktopPlateau);
             }
-        }
 
-        const baseWidth = 4;
-        // Normalization: Mobile uses the SAME logic as Web/Desktop
-        // But keeps the requested 98% scale at the very center (centerFactor = 1.0)
-        const targetWidth = isMobile 
-            ? THREE.MathUtils.lerp(viewport.width * 0.45, viewport.width * 0.8, centerFactor)
-            : Math.min(viewport.width * 0.82, 4.2);
-        const responsiveScale = targetWidth / baseWidth;
+            // Movement Logic - Combined focusing and clearing
+            // Reverting to narrower displacement (0.75 -> 0.45) for a more compact corridor
+            const baseSideDisplacement = Math.min(viewport.width * 0.45, 6.0);
+            
+            // Reverting passingFactor multiplier (2.8 -> 2.2) for less aggressive clearing
+            const passingFactor = distFromCamera < -desktopPlateau 
+                ? THREE.MathUtils.mapLinear(Math.min(absDist, 10), desktopPlateau, 10, 1, 2.2)
+                : 1;
 
-        // X Displacement and Rotation - WEB Pattern for ALL devices
-        // Mobile now exactly follows the "Web style" of shifting aside
-        const sideDisplacement = Math.min(viewport.width * 0.35, 4.2);
-        const startX = side * sideDisplacement;
-        const targetX = THREE.MathUtils.lerp(startX, 0, centerFactor);
-        const targetRotationY = THREE.MathUtils.lerp(side * -Math.PI / 10, 0, centerFactor);
-        
-        const baseScale = isMobile ? 1.0 : 0.95;
-        const finalScale = responsiveScale * baseScale * (hovered ? 1.05 : 1);
-        
-        // Update Card Transforms (Scaling + Rotation)
-        if (groupRef.current) {
-            if (isMobile) {
-                groupRef.current.parent!.position.y = effectiveY;
-                groupRef.current.parent!.position.z = effectiveZ;
-                groupRef.current.parent!.rotation.x = effectiveRotationX;
-                groupRef.current.position.x = 0; // Center horizontally in conveyor
-                groupRef.current.position.y = 0;
-                groupRef.current.rotation.y = 0;
-            } else {
+            const startX = side * baseSideDisplacement * passingFactor;
+            const targetX = THREE.MathUtils.lerp(startX, 0, centerFactor);
+            
+            // Reverting rotation angle (PI/6 -> PI/10) to reduce visual distortion
+            const targetRotationY = THREE.MathUtils.lerp(side * -Math.PI / 10, 0, centerFactor);
+            
+            // Keep focused scaling: 0.85 (side) -> 1.25 (center focus)
+            const focusScale = THREE.MathUtils.lerp(0.85, 1.25, centerFactor);
+            const finalScale = focusScale * (hovered ? 1.05 : 1);
+            
+            if (groupRef.current) {
                 groupRef.current.position.x = targetX;
                 groupRef.current.rotation.y = targetRotationY;
                 groupRef.current.parent!.position.y = 0;
                 groupRef.current.parent!.rotation.x = 0;
+                groupRef.current.scale.setScalar(finalScale);
             }
+            return;
+        }
+
+        // Mobile Logic
+        const baseWidth = 4;
+        const targetWidth = THREE.MathUtils.lerp(viewport.width * 0.45, viewport.width * 0.8, centerFactor);
+        const responsiveScale = targetWidth / baseWidth;
+        const finalScale = responsiveScale * (hovered ? 1.05 : 1);
+        
+        if (groupRef.current) {
+            groupRef.current.parent!.position.y = effectiveY;
+            groupRef.current.parent!.position.z = effectiveZ;
+            groupRef.current.parent!.rotation.x = effectiveRotationX;
+            groupRef.current.position.x = 0; 
+            groupRef.current.position.y = 0;
+            groupRef.current.rotation.y = 0;
             groupRef.current.scale.setScalar(finalScale);
         }
     });
