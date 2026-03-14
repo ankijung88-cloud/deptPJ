@@ -25,8 +25,13 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Serve static files
-app.use('/assets/videos', express.static(path.join(__dirname, '../public/videos')));
-app.use('/assets/video', express.static(path.join(__dirname, '../public/videos')));
+const videoPath = path.join(__dirname, '../public/videos');
+const fallbackVideoPath = path.join(__dirname, '../public/video');
+
+app.use('/assets/videos', express.static(videoPath));
+app.use('/assets/videos', express.static(fallbackVideoPath));
+app.use('/assets/video', express.static(videoPath));
+app.use('/assets/video', express.static(fallbackVideoPath));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
