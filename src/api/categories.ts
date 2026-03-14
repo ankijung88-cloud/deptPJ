@@ -2,7 +2,7 @@ import { FloorCategory, NavItem } from '../types';
 
 const normalizeUrl = (url: string | null | undefined): string => {
     if (!url) return '';
-    return url.replace(/^http:\/\/43\.200\.230\.44:3000/, '');
+    return url.replace(/^http:\/\/43\.200\.230\.44:3000/, '').replace('/assets/videos/', '/video/');
 };
 
 export const getFloorCategories = async (): Promise<FloorCategory[]> => {

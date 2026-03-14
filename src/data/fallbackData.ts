@@ -7,7 +7,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
         bgImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/festival.mp4',
+        videoUrl: '/video/festival.mp4',
         color: '#2C3E50',
         content: [],
         subitems: [
@@ -24,7 +24,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: '패션 아카이브', en: 'FASHION ARCHIVE' },
         description: { ko: '도심 속에서 진정한 휴식과 건강을 찾는 공간입니다. 자연에서 온 소재들로 꾸며진 웰니스 존입니다.', en: 'A space for true relaxation and health in the city, themed with natural materials.' },
         bgImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/modern_tradition.mp4',
+        videoUrl: '/video/modern_tradition.mp4',
         color: '#1A5F7A',
         content: [],
         subitems: [
@@ -41,7 +41,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: '컬처 토크', en: 'CULTURE TALK' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
         bgImage: 'https://images.unsplash.com/photo-1543431690-3b6be2c3cb19?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/travel.mp4',
+        videoUrl: '/video/travel.mp4',
         color: '#944E63',
         content: [],
         subitems: [
@@ -58,7 +58,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: '라이프스타일 큐레이션', en: 'LIFESTYLE CURATION' },
         description: { ko: '예술과 사람이 만나는 곳. 다양한 워크숍과 전시를 통해 새로운 커뮤니티가 형성됩니다.', en: 'Where art meets people. New communities are formed through various workshops and exhibitions.' },
         bgImage: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/active.mp4',
+        videoUrl: '/video/active.mp4',
         color: '#435334',
         content: [],
         subitems: [
@@ -75,7 +75,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: '미디어 룸', en: 'MEDIA ROOM' },
         description: { ko: '가장 트렌디한 K-라이프스타일을 제안합니다. 현대적인 감각의 로컬 브랜드들을 소개합니다.', en: 'Suggesting the trendiest K-lifestyle and introducing modern local brands.' },
         bgImage: 'https://images.unsplash.com/photo-1596120364993-90dcc247f07e?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/trend.mp4',
+        videoUrl: '/video/trend.mp4',
         color: '#862B0D',
         content: [],
         subitems: [
@@ -92,7 +92,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         title: { ko: 'K-컬처 트렌드', en: 'K-CULTURE TRENDS' },
         description: { ko: '한국의 아름다운 전통과 현대 예술이 조화를 이루는 프리미엄 갤러리입니다.', en: 'A premium gallery where beautiful Korean tradition harmonizes with modern art.' },
         bgImage: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=2560&auto=format&fit=crop',
-        videoUrl: '/assets/videos/k-culture.mp4',
+        videoUrl: '/video/k-culture.mp4',
         color: '#4B3621',
         content: [],
         subitems: [

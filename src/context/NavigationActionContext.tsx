@@ -5,6 +5,8 @@ interface NavigationActionContextType {
     setAction: (element: React.ReactNode) => void;
     breadcrumbTitle: string | null;
     setBreadcrumbTitle: (title: string | null) => void;
+    isImmersive: boolean;
+    setIsImmersive: (value: boolean) => void;
 }
 
 const NavigationActionContext = createContext<NavigationActionContextType | undefined>(undefined);
@@ -12,9 +14,14 @@ const NavigationActionContext = createContext<NavigationActionContextType | unde
 export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [action, setAction] = useState<React.ReactNode>(null);
     const [breadcrumbTitle, setBreadcrumbTitle] = useState<string | null>(null);
+    const [isImmersive, setIsImmersive] = useState(false);
 
     return (
-        <NavigationActionContext.Provider value={{ action, setAction, breadcrumbTitle, setBreadcrumbTitle }}>
+        <NavigationActionContext.Provider value={{ 
+            action, setAction, 
+            breadcrumbTitle, setBreadcrumbTitle,
+            isImmersive, setIsImmersive 
+        }}>
             {children}
         </NavigationActionContext.Provider>
     );
@@ -47,12 +54,26 @@ export const useSetBreadcrumbTitle = (title: string | null) => {
 };
 
 /**
+ * Hook for pages to set immersive mode (hides header/footer).
+ */
+export const useImmersiveMode = (isImmersive: boolean) => {
+    const context = useContext(NavigationActionContext);
+    if (!context) return;
+
+    useEffect(() => {
+        context.setIsImmersive(isImmersive);
+        return () => context.setIsImmersive(false);
+    }, [isImmersive, context.setIsImmersive]);
+};
+
+/**
  * Hook for the Breadcrumbs component to retrieve the current state.
  */
 export const useNavigationState = () => {
     const context = useContext(NavigationActionContext);
     return {
         action: context?.action || null,
-        breadcrumbTitle: context?.breadcrumbTitle || null
+        breadcrumbTitle: context?.breadcrumbTitle || null,
+        isImmersive: context?.isImmersive || false
     };
 };

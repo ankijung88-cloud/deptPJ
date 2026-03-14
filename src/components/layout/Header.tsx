@@ -7,6 +7,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
 import { Breadcrumbs } from '../common/Breadcrumbs';
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
+import { useNavigationState } from '../../context/NavigationActionContext';
 
 interface SubItem {
     id: string;
@@ -24,6 +25,7 @@ interface NavItem {
 const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { isImmersive } = useNavigationState();
     const is3DStorePage = location.pathname === '/inspiration';
     const isAboutPage = location.pathname === '/about';
 
@@ -198,6 +200,8 @@ const Header: React.FC = () => {
             ]
         }
     ];
+
+    if (isImmersive) return null;
 
     return (
         <header

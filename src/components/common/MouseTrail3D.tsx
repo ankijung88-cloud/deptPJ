@@ -44,12 +44,12 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
                 y: 0,
                 z: 0,
                 age: 0,
-                maxAge: 1.5 + Math.random() * 2.5,
+                maxAge: 0.8 + Math.random() * 1.2,
                 speedX: (Math.random() - 0.5) * 0.02,
                 speedY: (Math.random() - 0.5) * 0.02,
                 textureIndex: Math.floor(Math.random() * iconCount),
                 active: false,
-                size: (0.5 + Math.random() * 1.5) * 0.25,
+                size: (0.4 + Math.random() * 1.0) * 0.2,
             });
         }
         return temp;
@@ -69,8 +69,8 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
             Math.pow(currentMouseY - lastMousePos.current.y, 2)
         );
 
-        if (dist > 0.002) {
-            for (let k = 0; k < 2; k++) {
+        if (dist > 0.015) {
+            for (let k = 0; k < 1; k++) {
                 const inactive = particles.find((p) => !p.active);
                 if (inactive) {
                     inactive.active = true;

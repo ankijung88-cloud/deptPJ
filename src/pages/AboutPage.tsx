@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { Users, Target, Layers, Box, Activity, Globe, Code2, Cpu, Layout, Play, Cloud, Award, Palette, Heart, ShieldCheck, Calendar, TrendingUp, Home } from 'lucide-react';
+import { Users, Target, Layers, Box, Activity, Globe, Code2, Cpu, Layout, Play, Server, Award, Palette, Heart, ShieldCheck, Calendar, TrendingUp, Home } from 'lucide-react';
 
 const Slide = ({ children, className = "", bgColor = "transparent", id, title, icon: Icon }: { children: React.ReactNode, className?: string, bgColor?: string, id?: string, title?: string, icon?: any }) => (
     <section className={`w-full min-h-[100dvh] flex flex-col items-center snap-start snap-always relative px-4 md:px-12 py-8 md:py-12 ${className}`} style={{ backgroundColor: bgColor }}>
@@ -64,14 +64,13 @@ const AboutPage: React.FC = () => {
         { name: "안기정", role: "사이트 제작 (Frontend & Architecture)" },
         { name: "정효린", role: "영상 제작 (Video Production)" },
         { name: "박시환", role: "영상 제작 (Video & Motion)" },
-        { name: "박보승", role: "3D 그래픽 효과 (WebGL & Assets)" },
-        { name: "김예리", role: "디자인 기획 (UI/UX Branding)" }
+        { name: "박보승", role: "3D 그래픽 효과 (WebGL & Assets)" }
     ];
 
     const techStacks = [
-        { id: "06-1", title: "프론트엔드 프레임워크", desc: "React 18, TypeScript, Vite으로 구성된 고성능 SPA 환경." },
-        { id: "06-2", title: "백엔드 & DB", desc: "AWS Lightsail (Node.js/Express) 및 MySQL 기반 고유 백엔드." },
-        { id: "06-3", title: "3D & 그래픽", desc: "Three.js & Spline을 활용한 브라우저 네이티브 렌더링." },
+        { id: "06-1", title: "프론트엔드 프레임워크", desc: "React 18 & Vite를 활용한 초고속 SPA 환경 및 TypeScript 기반의 안정적인 아키텍처." },
+        { id: "06-2", title: "하이브리드 백엔드", desc: "AWS Lightsail(Express)과 Vercel HTTPS 프록시를 결합하여 보안과 성능을 최적화한 서버망." },
+        { id: "06-3", title: "3D & 그래픽 엔진", desc: "Three.js & @react-three/fiber를 이용한 고해상도 WebGL 렌더링 및 인터랙션." },
     ];
 
     return (
@@ -97,7 +96,7 @@ const AboutPage: React.FC = () => {
                         onError={() => setVideoError(true)}
                         className={`w-full h-full object-cover mix-blend-screen scale-105 transition-opacity duration-1000 ${videoLoaded ? 'opacity-40' : 'opacity-0'}`}
                     >
-                        <source src="/assets/videos/festival.mp4" type="video/mp4" />
+                        <source src="/video/festival.mp4" type="video/mp4" />
                     </video>
                     {/* Fallback pattern if video fails */}
                     {(videoError || !videoLoaded) && (
@@ -136,7 +135,7 @@ const AboutPage: React.FC = () => {
             {/* 02. Team */}
             <Slide bgColor="#161e1b" id="02" title="참여 인원 및 역할 (Team Members)" icon={Users}>
                 <FadeInContent>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mt-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-4 max-w-5xl mx-auto">
                         {teamMembers.map((member, idx) => (
                             <div key={idx} className="group cursor-pointer">
                                 <div className="aspect-square bg-white/5 rounded-2xl mb-4 overflow-hidden border border-white/10 relative transition-transform duration-500 group-hover:-translate-y-2 group-hover:shadow-[0_15px_30px_rgba(212,175,55,0.15)] group-hover:border-dancheong-gold/50">
@@ -286,9 +285,9 @@ const AboutPage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-[#1A2420]/80 to-[#1A2420]/20 backdrop-blur-[2px]"></div>
                         <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-2 justify-between select-none scale-90 md:scale-100">
                             <div className="bg-black/80 backdrop-blur-xl p-3 rounded-xl border border-white/20 flex-1 flex flex-col items-center justify-center shadow-2xl">
-                                <Cloud size={28} className="mb-1 text-dancheong-red" strokeWidth={1} />
-                                <h4 className="font-bold text-sm mb-0.5"><AutoTranslatedText text="Supabase" /></h4>
-                                <p className="text-[9px] text-white/50 text-center leading-tight"><AutoTranslatedText text="실시간 DB & 스토리지" /><br /><AutoTranslatedText text="인증 / 에지 펑션" /></p>
+                                <Server size={28} className="mb-1 text-dancheong-red" strokeWidth={1} />
+                                <h4 className="font-bold text-sm mb-0.5"><AutoTranslatedText text="AWS Lightsail" /></h4>
+                                <p className="text-[9px] text-white/50 text-center leading-tight"><AutoTranslatedText text="Node.js & MySQL 기반" /><br /><AutoTranslatedText text="데이터 로직 및 스토리지" /></p>
                             </div>
                             <div className="hidden md:flex items-center text-white/30"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
                             <div className="bg-black/80 backdrop-blur-xl p-3 rounded-xl border border-white/20 flex-1 flex flex-col items-center justify-center shadow-2xl scale-105 z-10">
@@ -317,11 +316,11 @@ const AboutPage: React.FC = () => {
                         {/* AI Pipeline (2 cards) */}
                         <div className="p-4 bg-gradient-to-br from-blue-900/10 to-cyan-900/10 rounded-xl border border-blue-500/20 shadow-lg min-h-[100px] flex flex-col justify-center">
                             <h4 className="text-[11px] font-bold mb-1 text-blue-400"><AutoTranslatedText text="AI Translation" /></h4>
-                            <p className="text-[10px] text-white/60 font-light leading-snug"><AutoTranslatedText text="자체 구축한 i18n 파이프라인과 LLM을 결합하여 실시간 다국어 번역 적용." /></p>
+                            <p className="text-[10px] text-white/60 font-light leading-snug"><AutoTranslatedText text="Gemini 2.0 Flash와 커스텀 i18n 파이프라인을 결합하여 문맥을 이해하는 실시간 다국어 번역 환경 구축." /></p>
                         </div>
                         <div className="p-4 bg-gradient-to-br from-purple-900/10 to-pink-900/10 rounded-xl border border-purple-500/20 shadow-lg min-h-[100px] flex flex-col justify-center">
-                            <h4 className="text-[11px] font-bold mb-1 text-purple-400"><AutoTranslatedText text="Code Optimization" /></h4>
-                            <p className="text-[10px] text-white/60 font-light leading-snug"><AutoTranslatedText text="AI 에이전트 협업으로 복잡한 3D 렌더링 로직 고속 구축." /></p>
+                            <h4 className="text-[11px] font-bold mb-1 text-purple-400"><AutoTranslatedText text="Security & Optimization" /></h4>
+                            <p className="text-[10px] text-white/60 font-light leading-snug"><AutoTranslatedText text="AI 에이전트 협업을 통해 Mixed Content 보안 이슈를 해결하고 리소스 로딩 경로를 동적으로 정규화." /></p>
                         </div>
                     </div>
                 </FadeInContent>
@@ -396,11 +395,11 @@ const AboutPage: React.FC = () => {
                             <div className="space-y-4">
                                 {[
                                     { n: '6F', t: '로컬 헤리티지 (Local Heritage)', c: 'border-dancheong-gold' },
-                                    { n: '5F', t: '패션 아카이브 (Fashion)', c: 'border-white/20' },
+                                    { n: '5F', t: '패션 아카이브 (Fashion Archive)', c: 'border-white/20' },
                                     { n: '4F', t: '컬처 토크 (Culture Talk)', c: 'border-white/20' },
-                                    { n: '3F', t: '퍼포먼스 & 전시 (Performance)', c: 'border-white/20' },
-                                    { n: '2F', t: '콜라보레이션 & 팝업 (Popup)', c: 'border-white/20' },
-                                    { n: '1F', t: '글로벌 K-트렌드 (Global Trend)', c: 'border-dancheong-red' }
+                                    { n: '3F', t: '라이프스타일 큐레이션 (Lifestyle Curation)', c: 'border-white/20' },
+                                    { n: '2F', t: '미디어 룸 (Media Room)', c: 'border-white/20' },
+                                    { n: '1F', t: 'K-컬처 트렌드 (K-Culture Trends)', c: 'border-dancheong-red' }
                                 ].map((f, i) => (
                                     <div key={i} className={`flex items-center gap-4 px-6 py-4 bg-white/5 rounded-xl border border-white/5 border-l-4 ${f.c} hover:bg-white/10 transition-colors cursor-default`}>
                                         <span className="font-black text-xl w-8 text-white/40">{f.n}</span>

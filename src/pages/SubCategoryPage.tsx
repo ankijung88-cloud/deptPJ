@@ -9,7 +9,7 @@ import { BookOpen, Compass, X } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
-import { FALLBACK_PRODUCTS, FALLBACK_STORIES } from '../data/fallbackData';
+import { useImmersiveMode } from '../context/NavigationActionContext';
 
 interface StoryCard {
     id: string;
@@ -82,6 +82,10 @@ const SubCategoryPage: React.FC = () => {
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+    // Toggle immersive mode when in exploration mode
+    useImmersiveMode(isExplorationMode);
+
+
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
@@ -129,43 +133,14 @@ const SubCategoryPage: React.FC = () => {
                         finalStories = storiesData as StoryCard[];
                     }
 
-                    // Fallback logic if data is missing or empty
-                    if (finalItems.length === 0) {
-                        const fallbackItems = FALLBACK_PRODUCTS
-                            .filter(p => p.subcategory === targetSubId)
-                            .map(mapToFeaturedItem);
-                        
-                        // If specific subcategory has no items, show at least some from same floor or random
-                        if (fallbackItems.length === 0) {
-                            finalItems = FALLBACK_PRODUCTS
-                                .filter(p => p.category === parentFloor.id)
-                                .map(mapToFeaturedItem);
-                        } else {
-                            finalItems = fallbackItems;
-                        }
-                    }
-
-                    if (finalStories.length === 0) {
-                        finalStories = FALLBACK_STORIES
-                            .filter(s => s.subcategory === targetSubId);
-                    }
-
                     setItems(finalItems);
                     setStories(finalStories);
                 }
             } catch (err: any) {
                 console.error('Failed to fetch subcategory items:', err.message || err);
                 if (mounted) {
-                    // Fail silently and use fallbacks
-                    const fallbackItems = FALLBACK_PRODUCTS
-                        .filter(p => p.subcategory === targetSubId)
-                        .map(mapToFeaturedItem);
-                    
-                    const finalItems = fallbackItems.length > 0 ? fallbackItems : FALLBACK_PRODUCTS.slice(0, 4).map(mapToFeaturedItem);
-                    const finalStories = FALLBACK_STORIES.filter(s => s.subcategory === targetSubId);
-
-                    setItems(finalItems);
-                    setStories(finalStories);
+                    setItems([]);
+                    setStories([]);
                 }
             } finally {
                 if (mounted) setLoading(false);

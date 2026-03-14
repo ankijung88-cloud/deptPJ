@@ -30,16 +30,49 @@ import { FeaturedItem, Notice, FAQ } from '../types';
 // Helper for localized text
 const displayLocalized = (text: any) => {
     if (!text) return '';
-    if (typeof text === 'string') return text;
+    if (typeof text === 'string') {
+        // 만약 문자열이 JSON 형태라면 파싱 시도
+        if (text.trim().startsWith('{')) {
+            try {
+                const parsed = JSON.parse(text);
+                return parsed.ko || parsed.en || Object.values(parsed)[0] || '';
+            } catch (e) {
+                return text;
+            }
+        }
+        return text;
+    }
     return text.ko || text.en || Object.values(text)[0] || '';
 };
 
-const normalizeLocalizedString = (val: any) => {
+const normalizeLocalizedString = (val: any): { ko: string; en: string } => {
     if (!val) return { ko: '', en: '' };
-    if (typeof val === 'string') return { ko: val, en: '' };
+    
+    // If it's already an object, just ensure it has ko/en keys
+    if (typeof val === 'object' && val !== null) {
+        return {
+            ko: val.ko || '',
+            en: val.en || ''
+        };
+    }
+
+    // If it's a string, try to parse it as JSON
+    if (typeof val === 'string' && val.trim().startsWith('{')) {
+        try {
+            const parsed = JSON.parse(val);
+            // Recursively call for potentially nested JSON or return if it's the right shape
+            if (typeof parsed === 'object' && parsed !== null) {
+                return normalizeLocalizedString(parsed);
+            }
+        } catch (e) {
+            // If parsing fails, fall back to treating it as a normal string
+        }
+    }
+
+    // If it's just a regular string
     return {
-        ko: val.ko || '',
-        en: val.en || ''
+        ko: val || '',
+        en: ''
     };
 };
 
@@ -118,15 +151,25 @@ const normalizeFAQData = (faq: any) => {
 
 // Components for different sections
 const ProductManager = () => {
+    const { floors } = useFloors();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFloor, setSelectedFloor] = useState('');
+    const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 20;
 
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, selectedFloor, selectedSubcategory]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -146,13 +189,25 @@ const ProductManager = () => {
         }
     };
 
-    const filteredProducts = products.filter(p => 
-        displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = 
+            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesFloor = !selectedFloor || p.category === selectedFloor;
+        const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
+        
+        return matchesSearch && matchesFloor && matchesSub;
+    });
+
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+    const paginatedProducts = filteredProducts.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Product Management" /></h2>
                 <button 
@@ -163,15 +218,45 @@ const ProductManager = () => {
                 </button>
             </div>
 
-            <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                <input 
-                    type="text" 
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
-                />
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <input 
+                        type="text" 
+                        placeholder="Search products..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                    />
+                </div>
+                
+                <div className="flex gap-4">
+                    <select 
+                        value={selectedFloor}
+                        onChange={(e) => {
+                            setSelectedFloor(e.target.value);
+                            setSelectedSubcategory('');
+                        }}
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    >
+                        <option value="">모든 층</option>
+                        {floors.map(f => (
+                            <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
+                        ))}
+                    </select>
+
+                    <select 
+                        value={selectedSubcategory}
+                        onChange={(e) => setSelectedSubcategory(e.target.value)}
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                        disabled={!selectedFloor}
+                    >
+                        <option value="">모든 카테고리</option>
+                        {selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
+                            <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
@@ -180,13 +265,13 @@ const ProductManager = () => {
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Image" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {filteredProducts.map(product => (
+                        {paginatedProducts.map(product => (
                             <tr key={product.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4">
                                     <img src={product.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover bg-black/20" />
@@ -194,8 +279,30 @@ const ProductManager = () => {
                                 <td className="px-6 py-4 text-white font-medium">
                                     {displayLocalized(product.title)}
                                 </td>
-                                <td className="px-6 py-4 text-white/60">{product.category}</td>
-                                <td className="px-6 py-4 text-white/60">{product.subcategory}</td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === product.category)?.color || '#333' }}></div>
+                                        <span className="text-white font-bold">
+                                            {(() => {
+                                                const floor = floors.find(f => f.id === product.category);
+                                                return floor ? `${floor.floor}` : displayLocalized(product.category);
+                                            })()}
+                                        </span>
+                                        <span className="text-white/40 text-xs">
+                                            {(() => {
+                                                const floor = floors.find(f => f.id === product.category);
+                                                return floor ? displayLocalized(floor.title) : '';
+                                            })()}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-white/60">
+                                    {(() => {
+                                        const floor = floors.find(f => f.id === product.category);
+                                        const sub = floor?.subitems?.find(s => s.id === product.subcategory);
+                                        return sub ? displayLocalized(sub.label) : displayLocalized(product.subcategory);
+                                    })()}
+                                </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <button 
@@ -220,6 +327,46 @@ const ProductManager = () => {
                     <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading products..." /></div>
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-2xl px-6 py-4">
+                    <div className="text-white/40 text-sm">
+                        Showing <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-white font-medium">{filteredProducts.length}</span> results
+                    </div>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
+                        >
+                            Previous
+                        </button>
+                        <div className="flex flex-wrap gap-1 justify-center max-w-[300px] md:max-w-none">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border ${
+                                        currentPage === page 
+                                            ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' 
+                                            : 'bg-white/5 text-white border-white/5 hover:bg-white/10'
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+                        <button 
+                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Modal placeholder */}
             <AnimatePresence>
@@ -291,7 +438,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} 
@@ -548,7 +695,7 @@ const FloorManager = () => {
 
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Floor Content Management" /></h2>
                 <button 
@@ -639,7 +786,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
                 <div className="flex justify-between items-center mb-6">
@@ -721,6 +868,8 @@ const NOTICE_FALLBACK: Notice[] = [
 const NoticeManager = () => {
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNotice, setEditingNotice] = useState<any>(null);
 
@@ -738,6 +887,16 @@ const NoticeManager = () => {
         }
     };
 
+    const filteredNotices = notices.filter(n => {
+        const matchesSearch = 
+            displayLocalized(n.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            displayLocalized(n.content).toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || n.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    const categories = Array.from(new Set(notices.map(n => n.category)));
+
     const handleDelete = async (id: any) => {
         if (confirm('Delete this notice?')) {
             try {
@@ -748,7 +907,7 @@ const NoticeManager = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Notice Management" /></h2>
                 <button 
@@ -757,6 +916,30 @@ const NoticeManager = () => {
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add Notice" />
                 </button>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <input 
+                        type="text" 
+                        placeholder="Search notices..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                    />
+                </div>
+                
+                <select 
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                >
+                    <option value="">모든 범주</option>
+                    {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
@@ -770,7 +953,7 @@ const NoticeManager = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {notices.map(notice => (
+                        {filteredNotices.map(notice => (
                             <tr key={notice.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
                                     {notice.is_important && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
@@ -812,7 +995,7 @@ const NoticeFormModal = ({ notice, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">
@@ -874,6 +1057,8 @@ const FAQ_FALLBACK = [
 const FAQManager = () => {
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFaq, setEditingFaq] = useState<any>(null);
 
@@ -891,6 +1076,16 @@ const FAQManager = () => {
         }
     };
 
+    const filteredFaqs = faqs.filter(f => {
+        const matchesSearch = 
+            displayLocalized(f.question).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            displayLocalized(f.answer).toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || f.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    const categories = Array.from(new Set(faqs.map(f => f.category || 'General')));
+
     const handleDelete = async (id: any) => {
         if (confirm('Delete this FAQ?')) {
             try {
@@ -901,7 +1096,7 @@ const FAQManager = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="FAQ Management" /></h2>
                 <button 
@@ -910,6 +1105,30 @@ const FAQManager = () => {
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add FAQ" />
                 </button>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <input 
+                        type="text" 
+                        placeholder="Search FAQs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                    />
+                </div>
+                
+                <select 
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                >
+                    <option value="">모든 범주</option>
+                    {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
@@ -922,7 +1141,7 @@ const FAQManager = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {faqs.map(faq => (
+                        {filteredFaqs.map(faq => (
                             <tr key={faq.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 text-white font-medium">{displayLocalized(faq.question)}</td>
                                 <td className="px-6 py-4 text-white/40">{faq.category || 'General'}</td>
@@ -960,7 +1179,7 @@ const FAQFormModal = ({ faq, onClose, onSuccess }: any) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">

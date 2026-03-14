@@ -1,18 +1,35 @@
 import { LocalizedString } from '../types';
 
-export const getLocalizedText = (obj: LocalizedString | string, lang: string): string => {
-    if (typeof obj === 'string') return obj;
+export const getLocalizedText = (obj: LocalizedString | string | null | undefined, lang: string): string => {
     if (!obj) return '';
 
+    // If it's a string, check if it's stringified JSON
+    if (typeof obj === 'string') {
+        if (obj.trim().startsWith('{')) {
+            try {
+                const parsed = JSON.parse(obj);
+                // Recursively call to handle potentially nested JSON
+                return getLocalizedText(parsed, lang);
+            } catch (e) {
+                // If parsing fails, treat as a regular string
+                return obj;
+            }
+        }
+        return obj;
+    }
+
+    // Now we know it's a LocalizedString object
+    const target = obj as any;
+
     // Exact match
-    if (obj[lang]) return obj[lang];
+    if (target[lang]) return target[lang];
 
     // Partial match (e.g., 'ko-KR' -> 'ko')
     const shortLang = lang.split('-')[0];
-    if (obj[shortLang]) return obj[shortLang];
+    if (target[shortLang]) return target[shortLang];
 
     // Fallback to 'ko' or 'en' or first available
-    return obj['ko'] || obj['en'] || Object.values(obj)[0] || '';
+    return target['ko'] || target['en'] || Object.values(target)[0] as string || '';
 };
 
 export const supportedLanguages = [

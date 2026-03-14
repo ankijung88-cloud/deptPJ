@@ -105,21 +105,56 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
                 return;
             }
 
+            // --- JSON Parsing Safety Net ---
+            // If the text itself is stringified JSON, parse it first.
+            let cleanText = text;
+            if (cleanText.trim().startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(cleanText);
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        // Use getTargetLang() logic but inline for efficiency here
+                        const langCode = targetLangOverride || i18nInstance.language || 'ko';
+                        const short = langCode.split('-')[0];
+                        
+                        cleanText = parsed[short] || parsed['ko'] || parsed['en'] || Object.values(parsed)[0] || cleanText;
+                        
+                        // If it's still JSON, we could recurse, but usually one level is enough.
+                        // For absolute safety, if it's still a string and still looks like JSON:
+                        if (typeof cleanText === 'string' && cleanText.trim().startsWith('{')) {
+                            const secondPass = JSON.parse(cleanText);
+                             cleanText = secondPass[short] || secondPass['ko'] || secondPass['en'] || Object.values(secondPass)[0] || cleanText;
+                        }
+                    }
+                } catch (e) {
+                    // Fail silently and proceed with original text
+                }
+            }
+
+            // If parsing gave us a fresh string, update and see if we still need to translate
+            if (cleanText !== text) {
+                setTranslatedText(cleanText as string);
+                // If it's already in the right script or we don't have an API key, we might stop here.
+                // But for now, let's keep going with cleanText correctly.
+            }
+            
+            const processingText = (cleanText as string).trim();
+            if (!processingText) return;
+
             // 0. Skip if text is already in target language (very basic check)
-            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text) && !/[ぁ-んァ-ヶ]/.test(text)) {
+            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(processingText) && !/[ぁ-んァ-ヶ]/.test(processingText)) {
                 // Input is likely already English
-                setTranslatedText(text);
+                setTranslatedText(processingText);
                 return;
             }
 
-            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text)) {
+            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(processingText)) {
                 // Input is likely already Korean
-                setTranslatedText(text);
+                setTranslatedText(processingText);
                 return;
             }
 
             // Check translation cache
-            const cacheKey = `${text}_${targetLang}`;
+            const cacheKey = `${processingText}_${targetLang}`;
             if (translationCache.has(cacheKey)) {
                 setTranslatedText(translationCache.get(cacheKey)!);
                 return;

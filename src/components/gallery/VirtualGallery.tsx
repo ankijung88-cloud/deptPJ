@@ -12,6 +12,7 @@ import { FeaturedItem } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { Compass } from 'lucide-react';
+import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 // Removed getFallbackTexture as it is no longer used to simplify the loading logic.
 
@@ -143,18 +144,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const isStory = !item.imageUrl && !item.image_url; 
     const imageUrl = item.imageUrl || item.image_url;
     
-    const getDisplayName = (val: any) => {
-        if (!val) return "";
-        if (typeof val === 'string') return val;
-        
-        // Use the passed-in lang prop for consistency
-        const currentLang = lang?.split('-')[0] || 'ko';
-        if (val[currentLang]) return val[currentLang];
-        
-        return val.ko || val.en || Object.values(val)[0] || "";
-    };
-
-    const displayName = getDisplayName(item.title);
+    const displayName = getLocalizedText(item.title, lang);
     const { translatedText } = useAutoTranslate(displayName, lang);
 
     // Dynamic constants for Conveyor Belt (Mobile Only)
@@ -318,7 +308,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                         <meshBasicMaterial color="black" transparent opacity={0.6} />
                     </mesh>
                     <CanvasText 
-                        text={translatedText || displayName || <AutoTranslatedText text="Loading..." />} 
+                        text={translatedText || displayName || "Loading..."} 
                         color="white" 
                         width={4} 
                         height={0.8} 
