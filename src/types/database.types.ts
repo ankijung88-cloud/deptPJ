@@ -9,117 +9,64 @@ export type Json =
 export interface Database {
     public: {
         Tables: {
-            products: {
+            featured_items: {
                 Row: {
                     id: string
                     created_at: string
                     title: Json
-                    description: Json
                     category: string
+                    subcategory: string | null
+                    description: Json
                     image_url: string
-                    date: Json
-                    location: Json
-                    price: Json
-                    closed_days: Json
-                    video_url?: string
-                    user_id?: string
+                    thumbnail_url: string | null
+                    event_date: Json | null
+                    location: Json | null
+                    price: string | null
+                    closed_days: Json | null
+                    video_url: string | null
                 }
-                Insert: {
-                    id?: string
-                    created_at?: string
+            },
+            floor_categories: {
+                Row: {
+                    id: string
+                    floor: string
                     title: Json
                     description: Json
-                    category: string
-                    image_url: string
-                    date: Json
-                    location: Json
-                    price: Json
-                    closed_days?: Json
-                    video_url?: string
-                    user_id?: string
-                }
-                Update: {
-                    id?: string
-                    created_at?: string
-                    title?: Json
-                    description?: Json
-                    category?: string
-                    image_url?: string
-                    date?: Json
-                    location?: Json
-                    price?: Json
-                    closed_days?: Json
-                    user_id?: string
-                }
-            },
-            bookings: {
-                Row: {
-                    id: string
+                    bg_image: string
+                    content: Json | null
+                    subitems: Json | null
+                    color: string | null
+                    video_url: string | null
                     created_at: string
-                    product_id: string
-                    user_email: string | null
-                    payment_method: string
-                    status: string
-                    total_price: Json
-                    settlement_status?: string
-                    commission_amount?: number
-                    settled_amount?: number
-                    settled_at?: string
-                }
-                Insert: {
-                    id?: string
-                    created_at?: string
-                    product_id: string
-                    user_email?: string | null
-                    payment_method: string
-                    status?: string
-                    total_price: Json
-                    settlement_status?: string
-                    commission_amount?: number
-                    settled_amount?: number
-                    settled_at?: string
-                }
-                Update: {
-                    id?: string
-                    created_at?: string
-                    product_id?: string
-                    user_email?: string | null
-                    payment_method?: string
-                    status?: string
-                    total_price?: Json
-                    settlement_status?: string
-                    commission_amount?: number
-                    settled_amount?: number
-                    settled_at?: string
                 }
             },
-            profiles: {
+            nav_items: {
                 Row: {
                     id: string
-                    updated_at: string | null
-                    username: string | null
-                    full_name: string | null
-                    avatar_url: string | null
-                    email: string | null
-                    role: string | null
+                    href: string
+                    subitems: Json | null
+                    created_at: string
                 }
-                Insert: {
-                    id: string
-                    updated_at?: string | null
-                    username?: string | null
-                    full_name?: string | null
-                    avatar_url?: string | null
-                    email?: string | null
-                    role?: string | null
+            },
+            notices: {
+                Row: {
+                    id: number
+                    title: Json
+                    content: Json
+                    category: string
+                    date: string
+                    is_important: boolean
+                    created_at: string
                 }
-                Update: {
-                    id?: string
-                    updated_at?: string | null
-                    username?: string | null
-                    full_name?: string | null
-                    avatar_url?: string | null
-                    email?: string | null
-                    role?: string | null
+            },
+            faqs: {
+                Row: {
+                    id: number
+                    question: Json
+                    answer: Json
+                    category: string | null
+                    display_order: number
+                    created_at: string
                 }
             }
         }

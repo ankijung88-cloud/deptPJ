@@ -1,27 +1,36 @@
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+// This file is a safe placeholder to prevent runtime crashes after Supabase removal.
+// All functionality has been migrated to the AWS Lightsail backend (fetch API).
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const noop = () => Promise.resolve({ data: [], error: null });
+const noopSingle = () => Promise.resolve({ data: null, error: null });
 
-console.log('Supabase: Initializing client with URL:', supabaseUrl ? supabaseUrl.substring(0, 15) + '...' : 'UNDEFINED');
-console.log('Supabase: Anon Key:', supabaseAnonKey ? 'DEFINED (Length: ' + supabaseAnonKey.length + ')' : 'UNDEFINED');
-
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase: CRITICAL ERROR - URL or Anon Key is missing! Check your .env file and restart Vite.');
-}
-
-export const supabase = createClient<any>(
-    supabaseUrl || '',
-    supabaseAnonKey || '',
-    {
-        auth: {
-            storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true
-        }
+export const supabase = {
+    from: () => ({
+        select: () => ({
+            eq: () => ({
+                order: noop,
+                single: noopSingle,
+                ...noop()
+            }),
+            order: noop,
+            single: noopSingle,
+            ...noop()
+        }),
+        insert: noop,
+        update: noop,
+        delete: noop,
+    }),
+    auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        signInWithPassword: noopSingle,
+        signOut: noop,
+    },
+    storage: {
+        from: () => ({
+            getPublicUrl: (_path: string) => ({ data: { publicUrl: '' } })
+        })
     }
-);
+} as any;
 
-console.log('Supabase: Client created object exists:', !!supabase);
+export const SUPABASE_MEDIA_URL = '';

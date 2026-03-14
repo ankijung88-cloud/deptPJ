@@ -1,197 +1,196 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, useTransform, useSpring, animate, AnimatePresence, useMotionValue } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FloorGuideModal } from '../common/FloorGuideModal';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Keyboard } from 'swiper/modules';
+import { HeroPortal3D } from './HeroPortal3D';
+import { ArrivalBackground3D } from './ArrivalBackground3D';
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
-const slides = [
-    { id: 1, src: '/video/trend.mp4', poster: '', hasSound: false },
-    { id: 2, src: '/video/popup_store.mp4', poster: '', hasSound: true },
-    { id: 3, src: '/video/festival.mp4', poster: '', hasSound: false },
-    { id: 4, src: '/video/active.mp4', poster: '', hasSound: true },
-    { id: 5, src: '/video/travel.mp4', poster: '', hasSound: false }
-];
+type PortalPhase = 'hero' | 'warping' | 'arrived';
 
 export const HeroSection: React.FC = () => {
+    const [phase, setPhase] = useState<PortalPhase>('hero');
+    const navigate = useNavigate();
     const { t } = useTranslation();
-    const [isFloorGuideModalOpen, setIsFloorGuideModalOpen] = React.useState(false);
 
-    const handleVideoPlayback = (swiper: any) => {
-        if (!swiper || !swiper.el) return;
-        // 모든 비디오 엘리먼트를 찾아서 정지 및 음소거
-        const allVideos = swiper.el.querySelectorAll('video');
-        allVideos.forEach((v: HTMLVideoElement) => {
-            v.pause();
-            v.muted = true;
-        });
+    // Motion Values for timed animation
+    const portalVelocity = useMotionValue(2);
+    const portalOpacity = useMotionValue(0.4);
+    const contentScale = useMotionValue(1);
+    const contentBlur = useMotionValue(0);
+    const contentBlurFilter = useTransform(contentBlur, (v) => `blur(${v}px)`);
+    const contentOpacity = useMotionValue(1);
 
-        // 현재 활성화된 슬라이드 내의 비디오만 재생
-        // Swiper loop mode에서는 activeIndex가 복제본을 가리킬 수 있으므로 
-        // 쿼리 셀렉터를 통해 현재 화면에 보이는 active 슬라이드를 공략합니다.
-        const activeSlide = swiper.el.querySelector('.swiper-slide-active');
-        if (!activeSlide) return;
+    // Smooth Spring for Velocity
+    const smoothVelocity = useSpring(portalVelocity, { stiffness: 50, damping: 30 });
 
-        const activeVideo = activeSlide.querySelector('video') as HTMLVideoElement;
-        if (activeVideo) {
-            // 소리 유무 데이터 속성에 따라 음소거 토글
-            activeVideo.muted = activeVideo.dataset.hasSound !== 'true';
+    const [flashActive, setFlashActive] = useState(false);
 
-            // 재생 시도 (브라우저 자동재생 정책 대응)
-            const playPromise = activeVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.catch((error) => {
-                    console.log("Autoplay prevented, retrying muted:", error);
-                    activeVideo.muted = true;
-                    activeVideo.play().catch(e => console.error("Final play attempt failed:", e));
-                });
-            }
-        }
+    const handleExplore = async () => {
+        if (phase !== 'hero') return;
+
+        setPhase('warping');
+
+        // 1. Accelerate Portal & Visuals
+        animate(portalVelocity, 120, { duration: 2.8, ease: [0.4, 0, 0.2, 1] });
+        animate(portalOpacity, 1, { duration: 1 });
+
+        // 2. Dissolve Content
+        animate(contentScale, 2.5, { duration: 3, ease: "easeIn" });
+        animate(contentBlur, 12, { duration: 2.5 });
+        animate(contentOpacity, 0, { duration: 1.5, delay: 0.5 });
+
+        // 3. Trigger Flash
+        setTimeout(() => {
+            setFlashActive(true);
+        }, 2700);
+
+        // 4. Arrive
+        setTimeout(() => {
+            setPhase('arrived');
+            setFlashActive(false);
+            portalVelocity.set(0);
+        }, 3000);
     };
 
+
     return (
-        <section id="hero" className="relative h-screen w-full overflow-hidden bg-black snap-start">
-            <style>{`
-                .hero-pagination {
-                    position: absolute !important;
-                    bottom: 32px !important;
-                    left: 50% !important;
-                    transform: translateX(-50%) !important;
-                    width: auto !important;
-                    z-index: 50 !important;
-                    display: flex !important;
-                    justify-content: center !important;
-                    align-items: center !important;
-                }
-                .hero-pagination .swiper-pagination-bullet {
-                    width: 12px;
-                    height: 12px;
-                    background: rgba(255, 255, 255, 0.4);
-                    opacity: 1;
-                    transition: all 0.3s ease;
-                    border-radius: 50%;
-                    margin: 0 6px !important;
-                    cursor: pointer;
-                }
-                .hero-pagination .swiper-pagination-bullet-active {
-                    background: #ffffff;
-                    transform: scale(1.3);
-                    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-                }
-                /* Swiper Navigation Button States */
-                .hero-prev, .hero-next {
-                    cursor: pointer !important;
-                }
-                .hero-prev.swiper-button-disabled, .hero-next.swiper-button-disabled {
-                    opacity: 0.3;
-                    cursor: not-allowed !important;
-                    pointer-events: auto !important;
-                }
-            `}</style>
+        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#1A2420]" style={{ backgroundColor: '#1A2420' }}>
+            <AnimatePresence mode="wait">
+                {phase !== 'arrived' ? (
+                    <motion.div
+                        key="hero-content"
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 flex items-center justify-center"
+                    >
+                        {/* 3D Portal Layer */}
+                        <motion.div
+                            style={{ opacity: portalOpacity }}
+                            className="absolute inset-0 z-10 pointer-events-none"
+                        >
+                            <HeroPortal3D velocity={smoothVelocity} />
+                        </motion.div>
 
-            {/* Swiper Container */}
-            <div className="absolute inset-0 z-0">
-                <Swiper
-                    modules={[Navigation, Pagination, Keyboard]}
-                    effect="slide"
-                    slidesPerView={1}
-                    loop={true}
-                    speed={800}
-                    allowTouchMove={true}
-                    keyboard={{ enabled: true }}
-                    navigation={{
-                        prevEl: '.hero-prev',
-                        nextEl: '.hero-next',
-                    }}
-                    pagination={{
-                        el: '.hero-pagination',
-                        clickable: true,
-                        renderBullet: (index: number, className: string) => {
-                            return `<button class="${className}" aria-label="${index + 1}번 슬라이드로 이동"></button>`;
-                        }
-                    }}
-                    onSlideChangeTransitionEnd={handleVideoPlayback}
-                    onSwiper={(swiper) => {
-                        // 초기 로딩 시 첫 번째 비디오 재생 보장
-                        setTimeout(() => handleVideoPlayback(swiper), 300);
-                    }}
-                    className="w-full h-full"
-                >
-                    {slides.map((slide) => (
-                        <SwiperSlide key={slide.id} className="relative w-full h-full overflow-hidden">
-                            <video
-                                muted={!slide.hasSound}
-                                data-has-sound={slide.hasSound}
-                                playsInline
-                                preload="auto"
-                                loop
-                                className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover -translate-x-1/2 -translate-y-1/2 opacity-70"
+
+                        {/* Main UI */}
+                        <motion.div
+                            style={{
+                                opacity: contentOpacity,
+                                scale: contentScale,
+                                filter: contentBlurFilter
+                            }}
+                            className="relative z-20 container mx-auto px-6 text-center"
+                        >
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="inline-block mb-6 px-4 py-1 border border-[#00FFC2]/30 bg-[#00FFC2]/5 backdrop-blur-md rounded-full text-[#00FFC2] text-sm font-medium tracking-widest uppercase"
                             >
-                                <source src={slide.src} type="video/mp4" />
-                            </video>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-                <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
-            </div>
+                                <AutoTranslatedText text={t('hero.tagline')} />
+                            </motion.div>
 
-            {/* Content (Overlayed on top of Swiper) */}
-            <div className="relative z-20 container mx-auto px-6 h-full flex flex-col justify-center items-start pointer-events-none">
-                <div className="pointer-events-auto">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight"
+                            <motion.h1
+                                className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
+                            >
+                                <AutoTranslatedText text={t('hero.title_main')} /> <br className="hidden sm:block" />
+                                <span className="text-[#FFD700]/80"><AutoTranslatedText text={t('hero.title_sub')} /></span>
+                            </motion.h1>
+
+                            <motion.p
+                                className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/80 leading-relaxed font-medium break-keep px-4 sm:px-0"
+                            >
+                                <AutoTranslatedText text={t('hero.description')} />
+                            </motion.p>
+
+                            <motion.div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                                <button
+                                    onClick={handleExplore}
+                                    disabled={phase === 'warping'}
+                                    className="px-10 py-4 bg-[#FF3B30] text-white font-semibold rounded-sm hover:bg-[#e6352b] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,59,48,0.4)] tracking-wider uppercase disabled:opacity-50"
+                                >
+                                    {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
+                                </button>
+                                <button
+                                    onClick={() => navigate('/about')}
+                                    className="px-10 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-sm hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
+                                >
+                                    <AutoTranslatedText text={t('hero.story')} />
+                                </button>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1, duration: 1 }}
+                                className="mt-8 flex justify-center"
+                            >
+                                <button
+                                    onClick={() => navigate('/inspiration')}
+                                    className="text-sm text-white/70 hover:text-white transition-all duration-300 tracking-[0.3em] uppercase border-b border-white/40 hover:border-white hover:scale-110 pb-1"
+                                >
+                                    <AutoTranslatedText text="SKIP" />
+                                </button>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="arrived-content"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1.5 }}
+                        className="absolute inset-0 z-40 bg-[#1A2420] flex items-center justify-center"
                     >
-                        {t('hero.title')}
-                    </motion.h1>
+                        {/* Arrival Space Background */}
+                        <ArrivalBackground3D />
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl font-light"
-                    >
-                        {t('hero.subtitle')}
-                    </motion.p>
+                        {/* Arrival UI */}
+                        <div className="relative z-10 text-center px-6">
+                            <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5, duration: 1 }}
+                                className="text-5xl md:text-7xl font-serif text-white mb-6"
+                            >
+                                <AutoTranslatedText text={t('hero.arrived')} />
+                            </motion.h2>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.2, duration: 1 }}
+                                className="text-white/60 tracking-[0.4em] uppercase text-sm"
+                            >
+                                <AutoTranslatedText text={t('hero.welcome')} />
+                            </motion.p>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 2, duration: 1 }}
+                                className="mt-12"
+                            >
+                                <button
+                                    onClick={() => {
+                                        navigate('/inspiration');
+                                    }}
+                                    className="px-8 py-3 border border-[#FFD700]/30 text-[#FFD700] rounded-full hover:bg-[#FFD700]/10 transition-all duration-300 pointer-events-auto"
+                                >
+                                    <AutoTranslatedText text={t('hero.start')} />
+                                </button>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ duration: 0.5, delay: 0.6 }}
-                        onClick={() => setIsFloorGuideModalOpen(true)}
-                        className="bg-dancheong-red hover:bg-red-700 text-white px-8 py-4 rounded-full text-lg font-medium flex items-center space-x-2 transition-colors shadow-lg"
-                    >
-                        <span>{t('hero.cta')}</span>
-                        <ArrowRight size={20} />
-                    </motion.button>
-                </div>
-            </div>
-
-            {/* Custom Navigation Arrows */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-30 flex justify-between px-4 md:px-8 pointer-events-none">
-                <button className="hero-prev pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full bg-black/20 text-white/70 hover:bg-black/50 hover:text-white transition-all backdrop-blur-sm" aria-label="이전 영상">
-                    <ChevronLeft size={32} />
-                </button>
-                <button className="hero-next pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full bg-black/20 text-white/70 hover:bg-black/50 hover:text-white transition-all backdrop-blur-sm" aria-label="다음 영상">
-                    <ChevronRight size={32} />
-                </button>
-            </div>
-
-            {/* Custom Pagination Markers */}
-            <div className="hero-pagination"></div>
-
-            {/* Floor Guide Modal */}
-            <FloorGuideModal isOpen={isFloorGuideModalOpen} onClose={() => setIsFloorGuideModalOpen(false)} />
+            {/* Global Flash Overlay */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: flashActive ? 1 : 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[100] bg-white pointer-events-none mix-blend-screen"
+            />
         </section>
     );
 };

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import { getFloorCategories } from '../../api/categories';
 import { FloorCategory } from '../../types';
 import { useTranslation } from 'react-i18next';
@@ -45,10 +46,13 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
     // Reverse floors to show 6F first (top to bottom)
     const reversedFloors = [...floors].reverse();
 
-    return (
+    // Portal mounting point
+    const modalRoot = document.body;
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -89,30 +93,25 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                     transition={{ delay: index * 0.05 }}
                                     className="bg-[#2a2a2a] p-4 md:p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all flex flex-col gap-4"
                                 >
-                                    {/* Floor Main Link */}
-                                    <Link
-                                        to={`/floor/${floor.id}`}
-                                        onClick={onClose}
-                                        className="flex items-center gap-4 md:gap-6 group"
-                                    >
+                                    {/* Floor Header (No longer a link) */}
+                                    <div className="flex items-center gap-4 md:gap-6">
                                         {/* Floor Number */}
-                                        <div className="flex-shrink-0 w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-white/5 rounded-full group-hover:bg-dancheong-red/20 transition-colors">
-                                            <span className="text-xl font-bold text-dancheong-green group-hover:text-dancheong-red transition-colors">
+                                        <div className="flex-shrink-0 w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-white/5 rounded-full">
+                                            <span className="text-xl font-bold text-white/40">
                                                 {floor.floor}
                                             </span>
                                         </div>
 
                                         {/* Floor Details */}
                                         <div className="flex-grow">
-                                            <h3 className="text-lg font-bold text-white mb-1 group-hover:text-dancheong-red transition-colors flex items-center gap-2">
+                                            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
                                                 <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
-                                                <ChevronRight className="opacity-0 group-hover:opacity-100 transition-opacity text-dancheong-red" size={18} />
                                             </h3>
-                                            <p className="text-sm text-white/50 line-clamp-1 group-hover:text-white/70 transition-colors">
+                                            <p className="text-sm text-white/50 line-clamp-1">
                                                 <AutoTranslatedText text={getLocalizedText(floor.description, i18n.language)} />
                                             </p>
                                         </div>
-                                    </Link>
+                                    </div>
 
                                     {/* Subcategories */}
                                     {floor.subitems && floor.subitems.length > 0 && (
@@ -122,7 +121,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                                     key={sub.id}
                                                     to={`/category/${sub.id}`}
                                                     onClick={onClose}
-                                                    className="px-3 md:px-4 py-1.5 md:py-2 bg-black/40 hover:bg-dancheong-red text-white/70 hover:text-white text-xs md:text-sm rounded-lg border border-white/5 hover:border-transparent transition-all"
+                                                    className="px-3 md:px-4 py-1.5 md:py-2 bg-black/40 hover:bg-white/10 text-white/70 hover:text-white text-xs md:text-sm rounded-lg border border-white/5 hover:border-transparent transition-all"
                                                 >
                                                     <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                 </Link>
@@ -135,6 +134,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        modalRoot
     );
 };

@@ -1,7 +1,8 @@
 import React, { useRef, useMemo, useState, Suspense } from "react";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMousePosition } from "../../hooks/useMousePosition";
+import { getFallbackTexture } from "../../utils/textureUtils";
 
 interface TrailParticle {
     x: number;
@@ -15,15 +16,25 @@ interface TrailParticle {
     active: boolean;
     size: number;
 }
-
 function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: number; y: number }> }) {
     const count = 300;
     const iconCount = 9;
 
-    // Attempting to load assets copied from the referenced project
-    const iconPaths = Array.from({ length: 9 }, (_, i) => `/assets/${i + 1}.png`);
-
-    const textures = useLoader(THREE.TextureLoader, iconPaths);
+    // Safe texture loading with fallback
+    const textures = useMemo(() => {
+        const colors = [
+            '#00FFC2', // Neon Mint
+            '#FF3B30', // Glitch Red
+            '#FFD700', // Gold
+            '#0070FF', // Blue
+            '#FFFFFF', // White
+            '#F8FAFF', // Off-white
+            '#C5A15A', // Dancheong Gold
+            '#E62E2E', // Dancheong Red
+            '#2C3E50'  // Deep Pine
+        ];
+        return colors.map(color => getFallbackTexture(color));
+    }, []);
 
     const [particles] = useState<TrailParticle[]>(() => {
         const temp: TrailParticle[] = [];
@@ -33,12 +44,12 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
                 y: 0,
                 z: 0,
                 age: 0,
-                maxAge: 1.5 + Math.random() * 2.5,
+                maxAge: 0.8 + Math.random() * 1.2,
                 speedX: (Math.random() - 0.5) * 0.02,
                 speedY: (Math.random() - 0.5) * 0.02,
                 textureIndex: Math.floor(Math.random() * iconCount),
                 active: false,
-                size: (0.5 + Math.random() * 1.5) * 0.25,
+                size: (0.4 + Math.random() * 1.0) * 0.2,
             });
         }
         return temp;
@@ -58,8 +69,8 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
             Math.pow(currentMouseY - lastMousePos.current.y, 2)
         );
 
-        if (dist > 0.002) {
-            for (let k = 0; k < 2; k++) {
+        if (dist > 0.015) {
+            for (let k = 0; k < 1; k++) {
                 const inactive = particles.find((p) => !p.active);
                 if (inactive) {
                     inactive.active = true;

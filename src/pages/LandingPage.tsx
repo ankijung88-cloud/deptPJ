@@ -1,29 +1,19 @@
-import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
-import { FloorGuideSection } from '../components/home/FloorGuideSection';
-import { CalendarSection } from '../components/home/CalendarSection';
-import { ArtistSection } from '../components/home/ArtistSection';
-import { FeaturedSection } from '../components/home/FeaturedSection';
-import { BrandSpotlightSection } from '../components/home/BrandSpotlightSection';
-import { LiveShortsSection } from '../components/home/LiveShortsSection';
-import { AboutSection } from '../components/home/AboutSection';
-
-import { Footer } from '../components/layout/Footer';
 
 const LandingPage: React.FC = () => {
     return (
-        <div className="h-screen overflow-y-auto snap-y snap-mandatory no-scrollbar">
-            <HeroSection />
-            <CalendarSection />
-            <FloorGuideSection />
-            <ArtistSection />
-            <FeaturedSection />
-            <BrandSpotlightSection />
-            <LiveShortsSection />
-            <AboutSection />
-            <div className="snap-start">
-                <Footer />
+        <div
+            className="bg-dancheong-deep-bg selection:bg-dancheong-red/30"
+            style={{ backgroundColor: '#05070D' }}
+        >
+            {/* Ambient Background Glows - Heritage Tones */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-dancheong-green/5 blur-[120px] rounded-full opacity-20" />
             </div>
+
+            <main className="relative z-10">
+                <HeroSection />
+            </main>
         </div>
     );
 };
