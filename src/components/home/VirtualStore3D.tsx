@@ -660,7 +660,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-60"
                 onClick={(e) => {
                     e.stopPropagation();
                     setIsVideoExpanded(true);
