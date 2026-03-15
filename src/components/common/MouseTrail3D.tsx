@@ -17,7 +17,7 @@ interface TrailParticle {
     size: number;
 }
 function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: number; y: number }> }) {
-    const count = 300;
+    const count = 1000;
     const iconCount = 9;
 
     // Safe texture loading with fallback
@@ -57,6 +57,7 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
 
     const meshRefs = useRef<(THREE.InstancedMesh | null)[]>([]);
     const lastMousePos = useRef({ x: 0, y: 0 });
+    const particleIndex = useRef(0);
     const { viewport } = useThree();
     const dummy = useMemo(() => new THREE.Object3D(), []);
 
@@ -69,18 +70,17 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
             Math.pow(currentMouseY - lastMousePos.current.y, 2)
         );
 
-        if (dist > 0.015) {
-            for (let k = 0; k < 1; k++) {
-                const inactive = particles.find((p) => !p.active);
-                if (inactive) {
-                    inactive.active = true;
-                    // Position mapping logic from normalized space
-                    inactive.x = currentMouseX * (viewport.width / 2) + (Math.random() - 0.5) * 0.3;
-                    inactive.y = -currentMouseY * (viewport.height / 2) + (Math.random() - 0.5) * 0.3;
-                    inactive.z = 1 + Math.random();
-                    inactive.age = 0;
-                    inactive.textureIndex = Math.floor(Math.random() * iconCount);
-                }
+        if (dist > 0.01) {
+            const pToGen = Math.min(5, Math.floor(dist / 0.01));
+            for (let k = 0; k < pToGen; k++) {
+                const p = particles[particleIndex.current];
+                p.active = true;
+                p.x = currentMouseX * (viewport.width / 2) + (Math.random() - 0.5) * 0.4;
+                p.y = -currentMouseY * (viewport.height / 2) + (Math.random() - 0.5) * 0.4;
+                p.z = (Math.random() - 0.5) * 2;
+                p.age = 0;
+                p.textureIndex = Math.floor(Math.random() * iconCount);
+                particleIndex.current = (particleIndex.current + 1) % count;
             }
             lastMousePos.current = { x: currentMouseX, y: currentMouseY };
         }
@@ -144,7 +144,7 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
                         transparent
                         depthWrite={false}
                         alphaTest={0.01}
-                        blending={THREE.NormalBlending}
+                        blending={THREE.AdditiveBlending}
                     />
                 </instancedMesh>
             ))}
@@ -159,7 +159,7 @@ export const MouseTrail3D: React.FC = () => {
     const mousePos = useMousePosition();
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-40">
+        <div className="fixed inset-0 pointer-events-none z-[1000]">
             <Canvas style={{ pointerEvents: 'none' }} camera={{ position: [0, 0, 8], fov: 60 }} gl={{ alpha: true }}>
                 <ambientLight intensity={0.4} />
                 <Suspense fallback={null}>
