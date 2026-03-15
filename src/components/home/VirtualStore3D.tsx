@@ -858,7 +858,7 @@ export const VirtualStore3D: React.FC = () => {
                     onUpdate={(c) => c.lookAt(0, isMobile ? 0.1 : 2.6, 0)}
                 />
 
-                <group key={resetKey} position={[0, 0, 0]}>
+                <group key={resetKey} position={isMobile ? [-1.2, 0, 0] : [-4.0, 0, 0]}>
                     <PresentationControls
                         global
                         config={{ mass: 2, tension: 500 }}
