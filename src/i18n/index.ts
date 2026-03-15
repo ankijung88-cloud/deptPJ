@@ -75,6 +75,7 @@ const resources = {
                 "story": "브랜드 스토리",
                 "arrived": "가상의 공간에 도착했습니다",
                 "welcome": "Welcome to the Virtual Gateway",
+                "site_description": "당신의 시선이 머무는 모든 곳이 예술이 되는 공간. 전통의 가치와 현대의 감각이 공존하는 프리미엄 문화 큐레이션 플랫폼 department입니다.",
                 "start": "시작하기"
             },
             "subcategory": {

@@ -164,6 +164,14 @@ export const HeroSection: React.FC = () => {
                             >
                                 <AutoTranslatedText text={t('hero.welcome')} />
                             </motion.p>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.6, duration: 1 }}
+                                className="text-white/40 max-w-lg mx-auto mt-4 text-xs md:text-sm leading-relaxed break-keep"
+                            >
+                                <AutoTranslatedText text={t('hero.site_description')} />
+                            </motion.p>
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
