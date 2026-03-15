@@ -93,8 +93,7 @@ const Columns = () => {
     );
 };
 
-const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSelectedAnything, isMobile, lang }: any) => {
-    const navigate = useNavigate();
+const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal, isSelectedAnything, isMobile }: any) => {
     const active = isSelected || isHovered;
     const targetScale = active ? 1.02 : 1;
     const groupRef = useRef<THREE.Group>(null);
@@ -127,7 +126,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
         // Only trigger click if the movement was minimal (threshold of 5px)
         if (distance < 5) {
-            onClick(parseInt(floor.floor) === isSelected ? null : parseInt(floor.floor));
+            onToggleModal();
         }
         mouseDownPos.current = null;
     };
@@ -136,8 +135,8 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
         <group
             ref={groupRef}
             position={[0, yPos, 0]}
-            onPointerOver={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
-            onPointerOut={() => { onHover(null); document.body.style.cursor = 'auto'; }}
+            onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+            onPointerOut={() => { document.body.style.cursor = 'auto'; }}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
         >
@@ -170,154 +169,81 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                 />
             </mesh>
 
-            {/* Right-aligned 3D Label matching sketch - hidden when modal is open */}
+            {/* Right-aligned 3D Label - Main navigation anchor */}
             {!isSelectedAnything && (
                 <Html
-                    position={[METRICS.width / 2 + (isMobile ? 0.6 : 0.5), METRICS.floorHeight / 2, METRICS.depth / 2]}
+                    position={[METRICS.width / 2 + (isMobile ? 4.0 : 3.5), METRICS.floorHeight / 2, METRICS.depth / 2]}
                     center
-                    style={{
-                        transition: 'all 0.3s ease',
-                        transform: active ? (isMobile ? 'scale(1.05)' : 'scale(1.1)') : 'scale(1)',
-                        zIndex: active ? 100 : 1
-                    }}
+                    zIndexRange={[50, 100]}
                 >
                     <div 
                         onPointerEnter={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
-                        onPointerLeave={() => { onHover(null); document.body.style.cursor = 'auto'; }}
+                        onPointerLeave={() => { document.body.style.cursor = 'auto'; }}
+                        onPointerDown={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); }}
                         style={{ 
                             display: 'flex', 
                             alignItems: 'center', 
                             pointerEvents: 'auto',
-                            position: 'relative',
-                            zIndex: active ? 100 : 50
+                            transition: 'all 0.3s ease',
+                            transform: isHovered ? (isMobile ? 'scale(1.05)' : 'scale(1.1)') : 'scale(1)',
+                            zIndex: isHovered ? 100 : 50
                         }}
                     >
-                        {/* Elegant Dotted Line for Architectural Detail */}
+                        {/* Elegant Dotted Line */}
                         <div style={{
-                            width: active ? '60px' : '40px',
-                            borderTop: `2px dotted ${active ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
-                            opacity: active ? 1.0 : 0.3,
+                            width: isHovered ? '60px' : '40px',
+                            borderTop: `2px dotted ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
+                            opacity: isHovered ? 1.0 : 0.3,
                             transition: 'all 0.4s ease'
                         }} />
 
-                        {/* Relative container to anchor the absolute flyout */}
+                        {/* Relative container to anchor label */}
                         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px' }}>
-                            {/* Primary Floor Label - Click to open Fragmented Layout Modal */}
                             <div 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onClick(parseInt(floor.floor));
+                                    onToggleModal();
                                 }}
                                 style={{
-                                    fontFamily: 'serif',
+                                    width: isMobile ? '40px' : '64px',
+                                    height: isMobile ? '40px' : '64px',
+                                    borderRadius: '50%',
+                                    border: `1.5px solid ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.3)'}`,
+                                    backgroundColor: isHovered ? `${floor.color}22` : 'rgba(20, 28, 25, 0.6)',
+                                    backdropFilter: 'blur(10px)',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '12px',
-                                    whiteSpace: 'nowrap',
+                                    justifyContent: 'center',
                                     cursor: 'pointer',
-                                    textShadow: active 
-                                        ? `0 0 15px ${floor.color}CC, 0 0 8px rgba(0,0,0,0.6)` 
-                                        : '0 0 4px rgba(0,0,0,0.4)',
-                                    transition: 'all 0.4s ease',
-                                    transform: active ? 'scale(1.1) translateX(8px)' : 'scale(1)',
-                                    color: active ? floor.color : '#ffffff'
+                                    boxShadow: isHovered 
+                                        ? `0 0 20px ${floor.color}44, inset 0 0 10px ${floor.color}33` 
+                                        : '0 4px 15px rgba(0,0,0,0.3)',
+                                    transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
+                                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                                    position: 'relative'
                                 }}
                             >
-                                <span style={{ fontSize: isMobile ? '22px' : '42px', fontWeight: '900', lineHeight: 1 }}>
+                                <span style={{ 
+                                    fontSize: isMobile ? '16px' : '24px', 
+                                    fontWeight: '900', 
+                                    color: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
+                                    lineHeight: 1,
+                                    fontFamily: 'serif',
+                                    textShadow: isHovered ? `0 0 10px ${floor.color}` : 'none'
+                                }}>
                                     {floor.floor}
                                 </span>
-
-                                <span style={{
-                                    fontSize: isMobile ? '10px' : '15px',
-                                    fontWeight: '900',
-                                    letterSpacing: '0.12em',
-                                    opacity: active ? 1 : 0.6,
-                                    borderLeft: `3px solid ${active ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
-                                    paddingLeft: '12px',
-                                    textTransform: 'uppercase',
-                                    marginRight: isMobile ? '8px' : '30px'
-                                }}>
-                                    <AutoTranslatedText text={getLocalizedText(floor.title, lang)} />
-                                </span>
+                                
+                                {/* Inner Ring Detail */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '4px', left: '4px', right: '4px', bottom: '4px',
+                                    borderRadius: '50%',
+                                    border: `0.5px solid ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.1)'}`,
+                                    opacity: 0.5,
+                                    pointerEvents: 'none'
+                                }} />
                             </div>
-
-                            {/* Front-Facing Hover Modal - Now replacing the right-side flyout for a more architectural feel */}
-                            <AnimatePresence>
-                                {isHovered && !isSelectedAnything && (
-                                    <Html
-                                        position={[-(METRICS.width / 2 + (isMobile ? 0.6 : 0.5)), 0, 0.8]}
-                                        center
-                                        distanceFactor={15}
-                                        style={{ pointerEvents: 'none' }}
-                                    >
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                                            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-                                            style={{
-                                                width: isMobile ? '240px' : '380px',
-                                                backgroundColor: 'rgba(26, 36, 32, 0.85)',
-                                                backdropFilter: 'blur(16px)',
-                                                border: `2px solid ${floor.color}`,
-                                                padding: isMobile ? '16px' : '28px',
-                                                borderRadius: '2px',
-                                                boxShadow: `0 0 40px ${floor.color}33, inset 0 0 20px rgba(0,0,0,0.4)`,
-                                                pointerEvents: 'auto',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '12px',
-                                                transform: 'translateX(-50%)' // Adjust for being inside the right label's HTML context
-                                            }}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <div className="flex items-center gap-4 mb-2 pb-3 border-b border-white/10">
-                                                <span style={{ color: floor.color, fontSize: isMobile ? '28px' : '44px', fontWeight: '900', fontFamily: 'serif' }}>{floor.floor}</span>
-                                                <h4 style={{ color: '#fff', fontSize: isMobile ? '14px' : '20px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                                    <AutoTranslatedText text={getLocalizedText(floor.title, lang)} />
-                                                </h4>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2">
-                                                {floor.subitems?.map((sub: any, idx: number) => (
-                                                    <motion.div
-                                                        key={sub.id}
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.1 + idx * 0.05 }}
-                                                        whileHover={{ x: 6, color: floor.color }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigate(`/category/${sub.id}`);
-                                                        }}
-                                                        style={{
-                                                            fontSize: isMobile ? '11px' : '14px',
-                                                            fontWeight: '700',
-                                                            letterSpacing: '0.1em',
-                                                            color: 'rgba(255,255,255,0.7)',
-                                                            cursor: 'pointer',
-                                                            whiteSpace: 'nowrap',
-                                                            textTransform: 'uppercase',
-                                                            padding: '4px 0',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: '8px'
-                                                        }}
-                                                    >
-                                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: floor.color, opacity: 0.6 }} />
-                                                        <AutoTranslatedText text={getLocalizedText(sub.label, lang)} />
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-
-                                            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
-                                                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontWeight: 'bold', letterSpacing: '0.2em' }}>STRUCTURAL FRAGMENT . {floor.floor}</span>
-                                                <span style={{ fontSize: '12px', color: floor.color }}>→</span>
-                                            </div>
-                                        </motion.div>
-                                    </Html>
-                                )}
-                            </AnimatePresence>
                         </div>
                     </div>
                 </Html>
@@ -328,12 +254,21 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
 
 // --- Scene Assembly ---
 
-const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, setHoveredFloor, setSelectedFloor, isMobile, lang }: any) => {
+const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFloor, setHoveredFloor, setActiveModalFloor, setSelectedFloor, isMobile, lang }: any) => {
     // Center the building vertically
     const totalHeight = floors.length * METRICS.floorHeight;
 
     return (
-        <group position={[0, -(totalHeight / 2) + (isMobile ? 0.7 : 3.2), 0]} scale={isMobile ? [0.7, 1, 0.7] : [0.8, 0.85, 0.8]}>
+        <group 
+            position={[0, -(totalHeight / 2) + (isMobile ? 0.7 : 3.2), 0]} 
+            scale={isMobile ? [0.7, 1, 0.7] : [0.8, 0.85, 0.8]}
+            onClick={(e) => {
+                e.stopPropagation();
+                if (hoveredFloor) {
+                    setHoveredFloor(null);
+                }
+            }}
+        >
             {/* Foundation */}
             <mesh position={[0, -METRICS.slabThickness, 0]}>
                 <boxGeometry args={[METRICS.width + 1.5, METRICS.slabThickness, METRICS.depth + 1.5]} />
@@ -350,7 +285,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, setHoveredFloo
                     isHovered={hoveredFloor === parseInt(floor.floor)}
                     isSelectedAnything={selectedFloor !== null}
                     onHover={setHoveredFloor}
-                    onClick={setSelectedFloor}
+                    onToggleModal={() => setActiveModalFloor(activeModalFloor === parseInt(floor.floor) ? null : parseInt(floor.floor))}
                     isMobile={isMobile}
                     lang={lang}
                 />
@@ -362,6 +297,117 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, setHoveredFloo
                 <SolidMaterial />
                 <Edges color={COLORS.line} />
             </mesh>
+
+            {/* Central Fixed Hover Modal */}
+            <AnimatePresence>
+                {activeModalFloor && !selectedFloor && (() => {
+                    const activeFloorData = floors.find((f: any) => parseInt(f.floor) === activeModalFloor);
+                    if (!activeFloorData) return null;
+
+                    return (
+                        <Html
+                            position={[isMobile ? -4.5 : -1.5, (totalHeight / 2) - 1, METRICS.depth / 2 + 0.5]}
+                            center
+                            zIndexRange={[200, 300]}
+                            occlude={false}
+                            style={{ pointerEvents: 'none' }}
+                        >
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8, y: 15 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 120 }}
+                                style={{
+                                    width: isMobile ? '260px' : '400px',
+                                    backgroundColor: 'rgba(20, 28, 25, 0.95)',
+                                    backdropFilter: 'blur(20px)',
+                                    border: `2px solid ${activeFloorData.color}`,
+                                    padding: isMobile ? '20px' : '32px',
+                                    borderRadius: '2px',
+                                    boxShadow: `0 0 60px ${activeFloorData.color}55, inset 0 0 40px rgba(0,0,0,0.6)`,
+                                    pointerEvents: 'auto',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '16px',
+                                    color: '#fff'
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div 
+                                    className="flex items-center gap-4 mb-6 cursor-pointer hover:opacity-80 transition-opacity"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedFloor(activeModalFloor);
+                                    }}
+                                >
+                                    <div className="flex items-baseline gap-2">
+                                        <span style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: '900', color: activeFloorData.color, lineHeight: 1, fontFamily: 'serif' }}>
+                                            {activeFloorData.floor}
+                                        </span>
+                                        <span style={{ fontSize: isMobile ? '12px' : '18px', fontWeight: '900', color: activeFloorData.color }}>F</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span style={{ fontSize: '10px', color: activeFloorData.color, letterSpacing: '0.3em', fontWeight: '900', marginBottom: '2px' }}>FLOOR TITLE</span>
+                                        <h4 style={{ color: '#fff', fontSize: isMobile ? '16px' : '22px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.2 }}>
+                                            <AutoTranslatedText text={getLocalizedText(activeFloorData.title, lang)} />
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-3">
+                                    {activeFloorData.subitems?.map((sub: any, idx: number) => (
+                                        <motion.div
+                                            key={sub.id}
+                                            initial={{ opacity: 0, x: -15 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.15 + idx * 0.06 }}
+                                            whileHover={{ x: 8 }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                const navigate = (window as any)._deptNavigate;
+                                                if (navigate) navigate(`/category/${sub.id}`);
+                                            }}
+                                            style={{
+                                                fontSize: isMobile ? '12px' : '15px',
+                                                fontWeight: '700',
+                                                letterSpacing: '0.05em',
+                                                color: 'rgba(255,255,255,0.8)',
+                                                cursor: 'pointer',
+                                                whiteSpace: 'nowrap',
+                                                textTransform: 'uppercase',
+                                                padding: '6px 0',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '12px'
+                                            }}
+                                        >
+                                            <div style={{ width: '6px', height: '1.5px', backgroundColor: activeFloorData.color }} />
+                                            <AutoTranslatedText text={getLocalizedText(sub.label, lang)} />
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                <div 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveModalFloor(null);
+                                    }}
+                                    className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center opacity-60 hover:opacity-100 transition-opacity"
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <div className="flex flex-col gap-1">
+                                        <span style={{ fontSize: '7px', color: '#fff', fontWeight: '900', letterSpacing: '0.4em' }}>STRUCTURAL FRAGMENT</span>
+                                        <span style={{ fontSize: '8px', color: activeFloorData.color, fontWeight: 'bold' }}>CODE: DEPT_FR_0{activeFloorData.floor}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: activeFloorData.color, fontWeight: '900', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                                        <span style={{ fontSize: '18px', lineHeight: 1 }}>→</span>
+                                        <span style={{ letterSpacing: '0.1em' }}>CLOSE</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </Html>
+                    );
+                })()}
+            </AnimatePresence>
         </group>
     );
 };
@@ -823,8 +869,15 @@ export const VirtualStore3D: React.FC = () => {
     const { i18n } = useTranslation();
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
+    const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const navigate = useNavigate();
+
+    // Store navigate globally for the central modal (since it's in a functional component nested deeper)
+    React.useEffect(() => {
+        (window as any)._deptNavigate = navigate;
+    }, [navigate]);
 
     React.useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -873,7 +926,13 @@ export const VirtualStore3D: React.FC = () => {
                     onUpdate={(c) => c.lookAt(0, isMobile ? 0.1 : 2.6, 0)}
                 />
 
-                <group key={resetKey} position={isMobile ? [-1.2, 0, 0] : [-4.0, 0, 0]}>
+                <group 
+                    key={resetKey} 
+                    position={isMobile ? [-1.2, 0, 0] : [-4.0, 0, 0]}
+                    onClick={() => {
+                        if (hoveredFloor) setHoveredFloor(null);
+                    }}
+                >
                     <PresentationControls
                         global
                         config={{ mass: 2, tension: 500 }}
@@ -887,7 +946,9 @@ export const VirtualStore3D: React.FC = () => {
                                 floors={floors}
                                 selectedFloor={selectedFloor}
                                 hoveredFloor={hoveredFloor}
+                                activeModalFloor={activeModalFloor}
                                 setHoveredFloor={setHoveredFloor}
+                                setActiveModalFloor={setActiveModalFloor}
                                 setSelectedFloor={setSelectedFloor}
                                 isMobile={isMobile}
                                 lang={i18n.language}
