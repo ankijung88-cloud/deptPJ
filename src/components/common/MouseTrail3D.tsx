@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, Suspense } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMousePosition } from "../../hooks/useMousePosition";
@@ -45,11 +45,11 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
                 z: 0,
                 age: 0,
                 maxAge: 0.8 + Math.random() * 1.2,
-                speedX: (Math.random() - 0.5) * 0.02,
-                speedY: (Math.random() - 0.5) * 0.02,
+                speedX: (Math.random() - 0.5) * 0.005,
+                speedY: (Math.random() - 0.5) * 0.005,
                 textureIndex: Math.floor(Math.random() * iconCount),
                 active: false,
-                size: (0.4 + Math.random() * 1.0) * 0.2,
+                size: (0.4 + Math.random() * 0.8) * 0.15,
             });
         }
         return temp;
@@ -130,24 +130,29 @@ function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: nu
 
     return (
         <>
-            {textures.map((tex: THREE.Texture, idx: number) => (
-                <instancedMesh
-                    key={idx}
-                    ref={(el) => {
-                        meshRefs.current[idx] = el;
-                    }}
-                    args={[undefined, undefined, count]}
-                >
-                    <planeGeometry args={[1, 1]} />
-                    <meshBasicMaterial
-                        map={tex}
-                        transparent
-                        depthWrite={false}
-                        alphaTest={0.01}
-                        blending={THREE.AdditiveBlending}
-                    />
-                </instancedMesh>
-            ))}
+            {textures.map((tex: THREE.Texture, idx: number) => {
+                // Ensure texture updates for Vercel visibility
+                tex.needsUpdate = true;
+                return (
+                    <instancedMesh
+                        key={idx}
+                        ref={(el) => {
+                            meshRefs.current[idx] = el;
+                        }}
+                        args={[undefined, undefined, count]}
+                        frustumCulled={false}
+                    >
+                        <planeGeometry args={[1, 1]} />
+                        <meshBasicMaterial
+                            map={tex}
+                            transparent
+                            depthWrite={false}
+                            alphaTest={0.01}
+                            blending={THREE.AdditiveBlending}
+                        />
+                    </instancedMesh>
+                );
+            })}
         </>
     );
 }
@@ -159,12 +164,10 @@ export const MouseTrail3D: React.FC = () => {
     const mousePos = useMousePosition();
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-[1000]">
-            <Canvas style={{ pointerEvents: 'none' }} camera={{ position: [0, 0, 8], fov: 60 }} gl={{ alpha: true }}>
-                <ambientLight intensity={0.4} />
-                <Suspense fallback={null}>
-                    <TrailParticles mousePos={mousePos} />
-                </Suspense>
+        <div className="fixed inset-0 pointer-events-none z-[9999]" style={{ zIndex: 9999 }}>
+            <Canvas style={{ pointerEvents: 'none' }} camera={{ position: [0, 0, 8], fov: 60 }} gl={{ alpha: true, antialias: true }}>
+                <ambientLight intensity={0.6} />
+                <TrailParticles mousePos={mousePos} />
             </Canvas>
         </div>
     );
