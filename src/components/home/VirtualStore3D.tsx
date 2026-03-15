@@ -241,66 +241,81 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onClick, isSel
                                 </span>
                             </div>
 
-                            {/* Flyout Subcategories - Direct Page Navigation (Bypassing Modal) */}
+                            {/* Front-Facing Hover Modal - Now replacing the right-side flyout for a more architectural feel */}
                             <AnimatePresence>
-                                {active && (
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -10, scale: 0.98 }}
-                                        animate={{ opacity: 1, x: 0, scale: 1 }}
-                                        exit={{ opacity: 0, x: -10, scale: 0.98 }}
-                                        style={{
-                                            position: 'absolute',
-                                            left: '100%',
-                                            top: '-70px',
-                                            paddingLeft: '55px', // Increased clearance from title
-                                            // Robust bridge with adjusted proximity to avoid overlap
-                                            marginLeft: '-20px', 
-                                            paddingTop: '8px',
-                                            paddingBottom: '100px',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '8px',
-                                            pointerEvents: 'auto',
-                                            zIndex: 110,
-                                            backgroundColor: 'rgba(0,0,0,0.001)'
-                                        }}
+                                {isHovered && !isSelectedAnything && (
+                                    <Html
+                                        position={[-(METRICS.width / 2 + (isMobile ? 0.6 : 0.5)), 0, 0.8]}
+                                        center
+                                        distanceFactor={15}
+                                        style={{ pointerEvents: 'none' }}
                                     >
-                                        {/* Visible Border indicator - Shifted right to avoid overlap with long titles */}
-                                        <div style={{
-                                            position: 'absolute',
-                                            left: '35px',
-                                            top: '12px',
-                                            bottom: '60px',
-                                            width: '1px',
-                                            backgroundColor: `${floor.color}40`
-                                        }} />
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                                            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                                            style={{
+                                                width: isMobile ? '240px' : '380px',
+                                                backgroundColor: 'rgba(26, 36, 32, 0.85)',
+                                                backdropFilter: 'blur(16px)',
+                                                border: `2px solid ${floor.color}`,
+                                                padding: isMobile ? '16px' : '28px',
+                                                borderRadius: '2px',
+                                                boxShadow: `0 0 40px ${floor.color}33, inset 0 0 20px rgba(0,0,0,0.4)`,
+                                                pointerEvents: 'auto',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '12px',
+                                                transform: 'translateX(-50%)' // Adjust for being inside the right label's HTML context
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="flex items-center gap-4 mb-2 pb-3 border-b border-white/10">
+                                                <span style={{ color: floor.color, fontSize: isMobile ? '28px' : '44px', fontWeight: '900', fontFamily: 'serif' }}>{floor.floor}</span>
+                                                <h4 style={{ color: '#fff', fontSize: isMobile ? '14px' : '20px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                                    <AutoTranslatedText text={getLocalizedText(floor.title, lang)} />
+                                                </h4>
+                                            </div>
 
-                                        {floor.subitems?.map((sub: any) => (
-                                            <motion.div
-                                                key={sub.id}
-                                                whileHover={{ x: 8, color: floor.color, opacity: 1 }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/category/${sub.id}`);
-                                                }}
-                                                style={{
-                                                    fontSize: '13px',
-                                                    fontWeight: '700',
-                                                    letterSpacing: '0.15em',
-                                                    color: '#ffffff',
-                                                    cursor: 'pointer',
-                                                    whiteSpace: 'nowrap',
-                                                    opacity: 0.6,
-                                                    transition: 'all 0.3s ease',
-                                                    textTransform: 'uppercase',
-                                                    padding: '4px 0',
-                                                    paddingLeft: '10px'
-                                                }}
-                                            >
-                                                <AutoTranslatedText text={getLocalizedText(sub.label, lang)} />
-                                            </motion.div>
-                                        ))}
-                                    </motion.div>
+                                            <div className="flex flex-col gap-2">
+                                                {floor.subitems?.map((sub: any, idx: number) => (
+                                                    <motion.div
+                                                        key={sub.id}
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: 0.1 + idx * 0.05 }}
+                                                        whileHover={{ x: 6, color: floor.color }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/category/${sub.id}`);
+                                                        }}
+                                                        style={{
+                                                            fontSize: isMobile ? '11px' : '14px',
+                                                            fontWeight: '700',
+                                                            letterSpacing: '0.1em',
+                                                            color: 'rgba(255,255,255,0.7)',
+                                                            cursor: 'pointer',
+                                                            whiteSpace: 'nowrap',
+                                                            textTransform: 'uppercase',
+                                                            padding: '4px 0',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px'
+                                                        }}
+                                                    >
+                                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: floor.color, opacity: 0.6 }} />
+                                                        <AutoTranslatedText text={getLocalizedText(sub.label, lang)} />
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+
+                                            <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                                                <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontWeight: 'bold', letterSpacing: '0.2em' }}>STRUCTURAL FRAGMENT . {floor.floor}</span>
+                                                <span style={{ fontSize: '12px', color: floor.color }}>→</span>
+                                            </div>
+                                        </motion.div>
+                                    </Html>
                                 )}
                             </AnimatePresence>
                         </div>
