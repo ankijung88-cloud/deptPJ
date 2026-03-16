@@ -20,13 +20,30 @@ export const getNavItems = async (req, res) => {
 
 // Floor Category CRUD
 export const createFloorCategory = async (req, res) => {
-  const { id, floor, title, description, bg_image, content, subitems, color, video_url } = req.body;
+  const { 
+    id, floor, title, description, bg_image, bgImage, 
+    content, subitems, color, video_url, videoUrl 
+  } = req.body;
+
+  const final_bg_image = bg_image || bgImage;
+  const final_video_url = video_url || videoUrl;
+
   try {
     const query = `
       INSERT INTO floor_categories (id, floor, title, description, bg_image, content, subitems, color, video_url)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await pool.query(query, [id, floor, JSON.stringify(title), JSON.stringify(description), bg_image, JSON.stringify(content), JSON.stringify(subitems), color, video_url]);
+    await pool.query(query, [
+      id, 
+      floor, 
+      JSON.stringify(title), 
+      JSON.stringify(description), 
+      final_bg_image, 
+      JSON.stringify(content), 
+      JSON.stringify(subitems), 
+      color, 
+      final_video_url
+    ]);
     res.status(201).json({ id, message: 'Floor category created successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

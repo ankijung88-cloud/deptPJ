@@ -20,6 +20,11 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         try {
             const data = await getFloorCategories();
             console.log('FloorContext: API Data received:', data);
+            if (data && data.length > 0) {
+                console.log('FloorContext: Database has records for floors:', data.map(d => d.floor).join(', '));
+            } else {
+                console.warn('FloorContext: API returned empty floor list!');
+            }
             
             // Merge dynamic data with fallback data
             // Use 'floor' string (e.g. "6F") as the unique key to match
@@ -36,15 +41,18 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     console.log(`Matched floor ${fallback.floor}! ID: ${dynamic.id}`);
                 }
                 
-                return dynamic ? { ...fallback, ...dynamic } : fallback;
+                return dynamic ? { ...fallback, ...dynamic, isDynamic: true } : fallback;
             });
 
-            // Also include any extra floors from DB that aren't in fallbacks
+            // Add extra floors from DB that are not in fallback
             const extraFloors = (data || []).filter(d => 
                 !FALLBACK_FLOORS.some(f => f.floor === d.floor)
-            );
+            ).map(f => ({ ...f, isDynamic: true }));
 
-            const allFloors = [...mergedFloors, ...extraFloors].sort((a, b) => {
+            const allFloors = [...mergedFloors, ...extraFloors].map(f => ({
+                ...f,
+                lastUpdated: new Date().toISOString()
+            })).sort((a, b) => {
                 const levelA = parseInt(a.floor) || 0;
                 const levelB = parseInt(b.floor) || 0;
                 return levelB - levelA;

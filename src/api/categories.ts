@@ -18,11 +18,13 @@ const normalizeUrl = (url: string | null | undefined): string => {
 export const getFloorCategories = async (): Promise<FloorCategory[]> => {
     try {
         const response = await fetch('/api/categories/floors');
+        console.log(`API floors status: ${response.status}`);
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || `API Error: ${response.status}`);
         }
         const data = await response.json();
+        console.log(`API floors data length: ${data?.length || 0}`);
         return (data || []).map((item: any) => ({
             id: item.id,
             floor: item.floor,

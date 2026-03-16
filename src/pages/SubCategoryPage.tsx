@@ -470,9 +470,13 @@ const SubCategoryPage: React.FC = () => {
                             <p className="opacity-40 mb-1">Parent Floor BG URL</p>
                             <p className="break-all text-white">{parentFloor?.bgImage || 'NONE'}</p>
                         </div>
+                        <div>
+                            <p className="opacity-40 mb-1">Last Data Sync</p>
+                            <p className="text-white">{(parentFloor as any)?.lastUpdated || 'STRATEGIC_FALLBACK'}</p>
+                        </div>
                         <div className="pt-2 border-t border-white/10">
                             <p className="opacity-40 mb-1">Data Source</p>
-                            <p className="text-white font-bold">{parentFloor?.id?.toString().startsWith('floor-') ? 'FALLBACK (NOT SAVED)' : 'DATABASE (SAVED)'}</p>
+                            <p className="text-white font-bold">{(parentFloor as any)?.isDynamic ? 'DATABASE (SAVED)' : 'FALLBACK (NOT SAVED)'}</p>
                         </div>
                         <div className="pt-2 border-t border-white/10">
                             <p className="opacity-40 mb-1">Raw Parent Data (JSON)</p>
