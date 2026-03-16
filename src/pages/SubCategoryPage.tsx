@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -74,7 +74,6 @@ const mapToFeaturedItem = (item: any): FeaturedItem => ({
 
 const SubCategoryPage: React.FC = () => {
     const { subId } = useParams<{ subId: string }>();
-    const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const { floors } = useFloors();
     const [items, setItems] = useState<FeaturedItem[]>([]);
@@ -346,7 +345,7 @@ const SubCategoryPage: React.FC = () => {
                                 theme={theme} 
                                 lang={i18n.language} 
                                 onClick={() => setIsExplorationMode(true)}
-                                onItemClick={(item) => navigate(`/detail/${item.id}`)}
+                                onItemClick={() => setIsExplorationMode(true)}
                             />
                         </div>
                     </div>

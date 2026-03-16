@@ -9,7 +9,6 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { FeaturedItem } from '../../types';
-import { useNavigate } from 'react-router-dom';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { Compass } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
@@ -138,11 +137,7 @@ const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, numbe
 const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobile }: ExhibitProps) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
-    const navigate = useNavigate();
     const [hovered, setHovered] = React.useState(false);
-    
-    const isProduct = item.id?.includes('item-') || item.id?.startsWith('p') || item.price || item.location;
-    const isStory = !isProduct; 
     const imageUrl = item.imageUrl || item.image_url;
     
     const displayName = getLocalizedText(item.title, lang);
@@ -265,11 +260,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     ref={meshRef}
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (onItemClick) {
-                            onItemClick(item);
-                        } else if (!isStory) {
-                            navigate(`/detail/${item.id}`);
-                        }
+                        if (onItemClick) onItemClick(item);
                     }}
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
@@ -312,16 +303,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     ) : (
                         <mesh position={[0, 0, 0.01]}>
                             <planeGeometry args={[4, 3]} />
-                            <meshStandardMaterial color={theme.color2} transparent opacity={0.4} metalness={0.9} roughness={0.1} />
-                            {/* Decorative placeholder for items without images */}
-                            <group position={[0, 0, 0.1]}>
-                                <DreiText position={[0, 0.2, 0]} fontSize={0.2} color={theme.accentColor} font="/fonts/Pretendard-Bold.woff">
-                                    {displayName?.substring(0, 12) + (displayName?.length > 12 ? '...' : '')}
-                                </DreiText>
-                                <DreiText position={[0, -0.2, 0]} fontSize={0.1} color="white" fillOpacity={0.5}>
-                                    DEPT. ARCHIVE ITEM
-                                </DreiText>
-                            </group>
+                            <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
                         </mesh>
                     )}
                 </mesh>
