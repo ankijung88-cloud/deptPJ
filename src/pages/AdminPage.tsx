@@ -869,7 +869,9 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                 } catch (updateErr: any) {
                     console.warn('Update failed, checking if creation is needed:', updateErr.message);
                     // If 404, it means it was fallback data and doesn't exist in DB yet. Try creating.
-                    if (updateErr.message?.includes('404') || updateErr.message?.toLowerCase().includes('not found')) {
+                    if (updateErr.message?.includes('404') || 
+                        updateErr.message?.toLowerCase().includes('not found') ||
+                        updateErr.message?.includes('No category found')) {
                         console.log('Update target not found (404), attempting to create new record...');
                         await createFloorCategory(formData);
                         console.log('Creation successful');
