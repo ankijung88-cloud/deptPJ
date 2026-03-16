@@ -330,7 +330,7 @@ const AboutPage: React.FC = () => {
             <Slide bgColor="#161e1b" id="07" title="개발 장비 및 핵심 툴 (Dev Tools)" icon={Box}>
                 <FadeInContent>
                     <div className="flex flex-wrap gap-6 mt-6 w-full max-w-4xl mx-auto items-center justify-center">
-                        {['VSCode', 'Antigravity', 'Git / GitHub', 'Premiere Pro', 'Nano Banana', 'Flow', 'Grok', 'Spline 3D', 'Three.js', 'AWS Lightsail'].map((tool, idx) => (
+                        {['VSCode', 'Antigravity', 'Git / GitHub', 'Premiere Pro', 'Nano Banana', 'Flow', 'Grok', 'Spline 3D', 'Three.js', 'AWS Lightsail', 'MySQL'].map((tool, idx) => (
                             <motion.span
                                 key={tool}
                                 initial={{ opacity: 0, scale: 0.8 }}
