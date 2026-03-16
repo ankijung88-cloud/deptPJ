@@ -1171,8 +1171,17 @@ export const VirtualStore3D: React.FC = () => {
         >
 
             {/* Blueprint Header */}
-            <div className="absolute top-24 md:top-40 left-8 md:left-16 pointer-events-none z-10 opacity-80">
-                <h1 className="text-[#00FFC2] text-3xl md:text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.4)]">
+            <div className="absolute top-12 md:top-24 left-8 md:left-16 pointer-events-none z-10">
+                {/* Front-aligned Logo above title */}
+                <div className="-mb-2 opacity-80">
+                    <img 
+                        src="/dept_logo.svg" 
+                        alt="Logo" 
+                        className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]" 
+                    />
+                </div>
+
+                <h1 className="text-[#00FFC2] text-3xl md:text-5xl font-black uppercase font-serif tracking-tight leading-none mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.4)] opacity-80">
                     <AutoTranslatedText text="CULTURAL" /><br />
                     <AutoTranslatedText text="ARCHIVE" />
                 </h1>

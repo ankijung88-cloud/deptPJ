@@ -84,6 +84,18 @@ export const HeroSection: React.FC = () => {
                             className="relative z-20 container mx-auto px-6 text-center"
                         >
                             <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="mb-2 flex justify-center"
+                            >
+                                <img 
+                                    src="/dept_logo.svg" 
+                                    alt="DEPT Logo" 
+                                    className="h-32 w-auto drop-shadow-[0_0_25px_rgba(0,242,255,0.4)]"
+                                />
+                            </motion.div>
+                            <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="inline-block mb-6 px-4 py-1 border border-[#00FFC2]/30 bg-[#00FFC2]/5 backdrop-blur-md rounded-full text-[#00FFC2] text-sm font-medium tracking-widest uppercase"
@@ -148,6 +160,18 @@ export const HeroSection: React.FC = () => {
 
                         {/* Arrival UI */}
                         <div className="relative z-10 text-center px-6">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.3, duration: 1 }}
+                                className="mb-2 flex justify-center"
+                            >
+                                <img 
+                                    src="/dept_logo.svg" 
+                                    alt="DEPT Logo" 
+                                    className="h-44 w-auto drop-shadow-[0_0_40px_rgba(255,215,0,0.4)]"
+                                />
+                            </motion.div>
                             <motion.h2
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}

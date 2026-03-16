@@ -235,7 +235,7 @@ const SubCategoryPage: React.FC = () => {
                                              backgroundColor: `${theme.color2}44`, 
                                              borderColor: `${theme.color3}66`, 
                                              color: theme.highlightColor 
-                                         }}>
+                                          }}>
                                         <AutoTranslatedText text={`Archive ${parentFloor.floor}`} />
                                     </div>
                                     <div className="h-[1px] w-12 bg-white/20" />

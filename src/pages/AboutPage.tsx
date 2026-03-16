@@ -110,14 +110,40 @@ const AboutPage: React.FC = () => {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#1A2420]/80 via-[#1A2420]/40 to-[#1A2420]"></div>
                 </motion.div>
-                <div className="relative z-10 text-center px-6 mt-16 flex-1 flex flex-col justify-center items-center">
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}>
-                        <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-6 drop-shadow-lg"><AutoTranslatedText text="01. 프로젝트 발표" /></span>
-                        <h1 className="text-6xl md:text-[8rem] font-serif font-black mb-6 tracking-tighter leading-[1.1] drop-shadow-2xl">
-                            <span className="text-dancheong-red"><AutoTranslatedText text="백화점" /></span><br /><AutoTranslatedText text="OF K-CULTURE" />
+                <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 mt-24">
+                    <motion.div 
+                        initial={{ opacity: 0, x: -30 }} 
+                        whileInView={{ opacity: 1, x: 0 }} 
+                        transition={{ duration: 1 }}
+                        className="flex flex-col items-start text-left"
+                    >
+                        {/* Editorial Logo placement */}
+                        <div className="mb-8">
+                            <img src="/dept_logo.svg" alt="Logo" className="h-44 w-auto drop-shadow-[0_0_40px_rgba(0,242,255,0.4)]" />
+                        </div>
+
+                        <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-4 drop-shadow-lg"><AutoTranslatedText text="01. 프로젝트 발표" /></span>
+                        
+                        <h1 className="text-6xl md:text-[9rem] font-serif font-black mb-8 tracking-tighter leading-[0.85] drop-shadow-2xl">
+                             <span className="text-dancheong-red"><AutoTranslatedText text="백화점" /></span><br /><AutoTranslatedText text="OF K-CULTURE" />
                         </h1>
-                        <p className="text-2xl md:text-3xl font-light text-white/90 italic max-w-3xl mx-auto break-keep drop-shadow-md">
-                            <AutoTranslatedText text="전통과 현대가 만나는 3D 인터랙티브 가상 백화점" />
+                        
+                        <div className="w-full max-w-md">
+                            <div className="h-[1px] w-full mb-6 bg-white/20" />
+                            <div className="space-y-3 font-mono text-sm tracking-[0.2em] text-white/50">
+                                <div className="flex justify-between">
+                                    <AutoTranslatedText text="공간 기획안" />
+                                    <span>SPATIAL BLUEPRINT</span>
+                                </div>
+                                <div className="flex justify-between border-t border-white/5 pt-3">
+                                    <AutoTranslatedText text="프로젝트 버전" />
+                                    <span>V 2.0.4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p className="text-xl md:text-2xl font-light text-white/60 italic mt-12 max-w-2xl border-l-2 border-dancheong-red/30 pl-8">
+                            <AutoTranslatedText text="전통과 현대가 만나는 3D 인터랙티브 가상 백화점. 디지털 공간 위에 구현된 한국 문화의 본질을 탐험하세요." />
                         </p>
                     </motion.div>
                     <motion.div

@@ -11,6 +11,7 @@ const LandingPage: React.FC = () => {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-dancheong-green/5 blur-[120px] rounded-full opacity-20" />
             </div>
 
+
             <main className="relative z-10">
                 <HeroSection />
             </main>

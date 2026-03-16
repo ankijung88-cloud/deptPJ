@@ -278,7 +278,7 @@ const Header: React.FC = () => {
 
             <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-16' : 'h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
-                    <img src="/department_circle_logo.png" alt="department logo" className="h-[56px] w-[56px] object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                    <img src="/dept_logo.svg" alt="DEPT Logo" className="h-[84px] w-auto object-contain transition-all duration-300 group-hover:scale-105" />
                 </Link>
 
                 {/* Desktop Navigation */}

@@ -97,23 +97,39 @@ const FloorContentPage: React.FC = () => {
                     <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgColor}, transparent)` }} />
                 </div>
 
-                <div className="container mx-auto px-6 relative z-10 text-center max-w-4xl">
+                <div className="container mx-auto px-6 relative z-10 text-left max-w-7xl">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
+                        className="flex flex-col items-start"
                     >
-                        <span className="font-bold tracking-[0.3em] uppercase mb-4 block text-sm px-4 py-2 rounded-full w-fit" style={{ backgroundColor: `${theme.color2}cc`, color: theme.accentColor, border: `1px solid ${theme.accentColor}` }}>
-                            <AutoTranslatedText text={`${floorData.floor} Contents`} />
-                        </span>
-                        <h1 className="text-5xl md:text-7xl font-serif font-bold mb-8 tracking-tight" style={theme.textPrimaryStyle}>
+                        {/* Front-aligned Logo above title - Increased size & reduced gap */}
+                        <div className="mb-6">
+                            <img 
+                                src="/dept_logo.svg" 
+                                alt="Logo" 
+                                className="h-32 w-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
+                            />
+                        </div>
+
+                        <h1 className="text-6xl md:text-[7rem] font-serif font-black mb-4 tracking-tighter leading-[0.9] drop-shadow-2xl" style={theme.textPrimaryStyle}>
                             <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                         </h1>
-                        <p className="text-xl font-light leading-relaxed" style={theme.textSecondaryStyle}>
-                            <AutoTranslatedText text="문화를 읽고, 영감을 발견하는 공간. 이 층에서 제공하는 큐레이션 스토리와 특별한 기획을 확인해보세요." />
-                        </p>
-                        {/* Gradient accent bar */}
-                        <div className="h-1 w-32 mt-8 rounded" style={{ background: `linear-gradient(to right, ${theme.accentColor}, ${theme.color4}, ${theme.color5})` }} />
+
+                        <div className="w-full max-w-sm">
+                            <div className="h-[1px] w-full mb-6 opacity-30" style={{ backgroundColor: theme.accentColor }} />
+                            <div className="space-y-2 font-mono text-sm tracking-[0.2em] opacity-60" style={{ color: theme.accentColor }}>
+                                <div className="flex justify-between">
+                                    <AutoTranslatedText text="구조 입면도" />
+                                    <span>STRUCTURAL ELEVATION</span>
+                                </div>
+                                <div className="flex justify-between border-t border-white/5 pt-2">
+                                    <AutoTranslatedText text="스케일" />
+                                    <span>1 : 100</span>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
                 </div>
             </header>
