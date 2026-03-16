@@ -98,6 +98,19 @@ const SubCategoryPage: React.FC = () => {
 
     // Find parent floor from dynamic floors
     const parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
+    const [showDebug, setShowDebug] = useState(false);
+    const [, setClickCount] = useState(0);
+
+    const handleTitleClick = () => {
+        setClickCount(prev => {
+            if (prev + 1 >= 5) {
+                setShowDebug(true);
+                return 0;
+            }
+            return prev + 1;
+        });
+    };
+
     const subcategoryData = parentFloor?.subitems?.find(s => s.id === targetSubId) || null;
 
     console.log('SubCategoryPage Debug:', {
@@ -372,11 +385,12 @@ const SubCategoryPage: React.FC = () => {
                     className="fixed inset-0 z-[2000] bg-black"
                 >
                     <div className="absolute top-8 left-10 z-[2010] flex items-center gap-6">
-                         <div className="px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-md bg-black/40">
-                            <span className="text-[10px] font-bold tracking-[0.3em] text-white/80 uppercase">
-                                <AutoTranslatedText text={subcategoryData ? getLocalizedText(subcategoryData.label, i18n.language) : ''} />
-                            </span>
-                        </div>
+                         <h1 
+                            className="text-4xl md:text-7xl font-serif font-black mb-8 leading-[1.1] tracking-tight text-white cursor-pointer"
+                            onClick={handleTitleClick}
+                        >
+                            {subcategoryData ? getLocalizedText(subcategoryData.label, i18n.language) : ''}
+                        </h1>
                         <h2 className="text-xl md:text-2xl font-serif italic text-white/30 hidden md:block">
                             <AutoTranslatedText text="Immersive Gallery" />
                         </h2>
@@ -431,6 +445,37 @@ const SubCategoryPage: React.FC = () => {
                     </button>
                 </div>
             </footer>
+            {/* Debug Overlay */}
+            {showDebug && (
+                <div className="fixed bottom-0 right-0 m-6 p-6 bg-black/90 border border-[#00FFC2]/30 rounded-2xl z-[9999] text-[10px] font-mono text-[#00FFC2] max-w-sm shadow-2xl backdrop-blur-xl">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="font-bold opacity-50 uppercase tracking-widest">Diagnostic Panel</span>
+                        <button onClick={() => setShowDebug(false)} className="text-white/40 hover:text-white">✕</button>
+                    </div>
+                    <div className="space-y-4">
+                        <div>
+                            <p className="opacity-40 mb-1">Target ID</p>
+                            <p className="break-all">{targetSubId}</p>
+                        </div>
+                        <div>
+                            <p className="opacity-40 mb-1">Floor ID Mapping</p>
+                            <p>{parentFloor?.id}</p>
+                        </div>
+                        <div>
+                            <p className="opacity-40 mb-1">Subcategory BG URL</p>
+                            <p className="break-all text-white">{subcategoryData?.bgImage || 'NONE'}</p>
+                        </div>
+                        <div>
+                            <p className="opacity-40 mb-1">Parent Floor BG URL</p>
+                            <p className="break-all text-white">{parentFloor?.bgImage || 'NONE'}</p>
+                        </div>
+                        <div className="pt-2 border-t border-white/10">
+                            <p className="opacity-40 mb-1">Data Source</p>
+                            <p className="text-white font-bold">{parentFloor?.id?.toString().startsWith('floor-') ? 'FALLBACK (NOT SAVED)' : 'DATABASE (SAVED)'}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

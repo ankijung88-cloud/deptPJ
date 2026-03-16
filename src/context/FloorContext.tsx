@@ -19,16 +19,26 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setLoading(true);
         try {
             const data = await getFloorCategories();
-            if (data && data.length > 0) {
-                const sortedData = [...data].sort((a, b) => {
-                    const levelA = parseInt(a.floor) || 0;
-                    const levelB = parseInt(b.floor) || 0;
-                    return levelB - levelA;
-                });
-                setFloors(sortedData);
-            } else {
-                setFloors(FALLBACK_FLOORS);
-            }
+            
+            // Merge dynamic data with fallback data
+            // Use 'floor' string (e.g. "6F") as the unique key to match
+            const mergedFloors = FALLBACK_FLOORS.map(fallback => {
+                const dynamic = (data || []).find(d => d.floor === fallback.floor);
+                return dynamic ? { ...fallback, ...dynamic } : fallback;
+            });
+
+            // Also include any extra floors from DB that aren't in fallbacks
+            const extraFloors = (data || []).filter(d => 
+                !FALLBACK_FLOORS.some(f => f.floor === d.floor)
+            );
+
+            const allFloors = [...mergedFloors, ...extraFloors].sort((a, b) => {
+                const levelA = parseInt(a.floor) || 0;
+                const levelB = parseInt(b.floor) || 0;
+                return levelB - levelA;
+            });
+
+            setFloors(allFloors);
         } catch (error) {
             console.error('Failed to fetch floors, using fallback:', error);
             setFloors(FALLBACK_FLOORS);

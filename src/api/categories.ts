@@ -2,7 +2,16 @@ import { FloorCategory, NavItem } from '../types';
 
 const normalizeUrl = (url: string | null | undefined): string => {
     if (!url) return '';
-    // Preserve /assets/videos/ so it can be proxied on Vercel
+    try {
+        if (url.startsWith('http')) {
+            const parsed = new URL(url);
+            // If it's one of our managed paths, strip the domain
+            if (parsed.pathname.startsWith('/uploads') || parsed.pathname.startsWith('/assets')) {
+                return parsed.pathname;
+            }
+        }
+    } catch (e) {}
+    // Fallback for older formats or non-standard URLs
     return url.replace(/^http:\/\/43\.200\.230\.44:3000/, '');
 };
 
