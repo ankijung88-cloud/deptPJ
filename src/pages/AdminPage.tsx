@@ -716,6 +716,7 @@ const FloorManager = () => {
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Thumbnail" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Description" /></th>
@@ -725,6 +726,15 @@ const FloorManager = () => {
                     <tbody className="divide-y divide-white/5">
                         {floors.map(floor => (
                             <tr key={floor.id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4">
+                                    <div className="w-12 h-12 rounded-lg bg-black/40 border border-white/10 overflow-hidden flex items-center justify-center">
+                                        {floor.bgImage ? (
+                                            <img src={floor.bgImage} alt="" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-4 h-4 rounded-full border border-white/20" />
+                                        )}
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4 text-[#00FFC2] font-bold">{floor.floor}</td>
                                 <td className="px-6 py-4 text-white font-medium">{displayLocalized(floor.title)}</td>
                                 <td className="px-6 py-4 text-white/40 text-sm truncate max-w-xs">{displayLocalized(floor.description)}</td>
@@ -764,7 +774,7 @@ const FloorManager = () => {
 };
 
 const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
-    const [formData, setFormData] = useState<any>(floor || {
+    const [formData, setFormData] = useState<any>({
         id: '',
         floor: '',
         title: { ko: '', en: '' },
@@ -774,6 +784,22 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         color: '',
         video_url: ''
     });
+
+    useEffect(() => {
+        if (floor) {
+            setFormData({
+                id: floor.id || '',
+                floor: floor.floor || '',
+                title: floor.title || { ko: '', en: '' },
+                description: floor.description || { ko: '', en: '' },
+                bg_image: floor.bgImage || '',
+                subitems: floor.subitems || [],
+                color: floor.color || '',
+                video_url: floor.videoUrl || ''
+            });
+        }
+    }, [floor]);
+
     const [uploading, setUploading] = useState<string | null>(null);
 
     const isEdit = !!floor;

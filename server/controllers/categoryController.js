@@ -35,14 +35,37 @@ export const createFloorCategory = async (req, res) => {
 
 export const updateFloorCategory = async (req, res) => {
   const { id } = req.params;
-  const { floor, title, description, bg_image, content, subitems, color, video_url } = req.body;
+  const { 
+    floor, title, description, bg_image, bgImage, 
+    content, subitems, color, video_url, videoUrl 
+  } = req.body;
+
+  // Flexible mapping for camelCase or snake_case
+  const final_bg_image = bg_image || bgImage;
+  const final_video_url = video_url || videoUrl;
+
   try {
     const query = `
       UPDATE floor_categories 
       SET floor = ?, title = ?, description = ?, bg_image = ?, content = ?, subitems = ?, color = ?, video_url = ?
       WHERE id = ?
     `;
-    await pool.query(query, [floor, JSON.stringify(title), JSON.stringify(description), bg_image, JSON.stringify(content), JSON.stringify(subitems), color, video_url, id]);
+    const [result] = await pool.query(query, [
+      floor, 
+      JSON.stringify(title), 
+      JSON.stringify(description), 
+      final_bg_image, 
+      JSON.stringify(content), 
+      JSON.stringify(subitems), 
+      color, 
+      final_video_url, 
+      id
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No category found with this ID to update. If this is a new floor, please use Create instead of Update.' });
+    }
+
     res.json({ message: 'Floor category updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
