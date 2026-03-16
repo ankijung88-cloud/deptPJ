@@ -484,6 +484,12 @@ const SubCategoryPage: React.FC = () => {
                                 {JSON.stringify(parentFloor, null, 2)}
                             </pre>
                         </div>
+                        <div className="pt-2 border-t border-white/10">
+                            <p className="opacity-40 mb-1 font-bold text-[#00FFC2]">Full FloorContext State (First 2 DB items)</p>
+                            <pre className="text-[8px] text-white/40 overflow-auto max-h-40 bg-black/60 p-2 rounded">
+                                {JSON.stringify(floors.filter(f => (f as any).isDynamic).slice(0, 2), null, 2)}
+                            </pre>
+                        </div>
                     </div>
                 </div>
             )}

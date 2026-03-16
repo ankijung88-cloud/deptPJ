@@ -27,18 +27,19 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
             
             // Merge dynamic data with fallback data
-            // Use 'floor' string (e.g. "6F") as the unique key to match
+            // Use both 'id' and 'floor' as matching keys to be as robust as possible
             const mergedFloors = FALLBACK_FLOORS.map(fallback => {
                 const dynamic = (data || []).find(d => {
-                    const match = d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase();
-                    if (!match && d.floor) {
-                        // console.log(`No match for DB floor "${d.floor}" against fallback "${fallback.floor}"`);
-                    }
-                    return match;
+                    // Match by floor label (e.g., "6F" === "6f")
+                    const floorMatch = d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase();
+                    // OR match by ID (e.g., "floor-6" === "floor-6")
+                    const idMatch = d.id?.toString() === fallback.id?.toString();
+                    
+                    return floorMatch || idMatch;
                 });
                 
                 if (dynamic) {
-                    console.log(`Matched floor ${fallback.floor}! ID: ${dynamic.id}`);
+                    // console.log(`Matched floor ${fallback.floor}! ID: ${dynamic.id}`);
                 }
                 
                 return dynamic ? { ...fallback, ...dynamic, isDynamic: true } : fallback;
