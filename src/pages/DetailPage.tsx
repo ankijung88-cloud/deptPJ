@@ -64,7 +64,11 @@ export const DetailPage: React.FC = () => {
                 <div className="relative h-[60vh] w-full overflow-hidden flex items-center justify-center bg-black/40">
                     <div className="absolute inset-x-0 top-0 bottom-16 z-20">
                         <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
-                            <Link to="/inspiration" className="inline-flex items-center text-white/40 hover:text-white mb-6 transition-colors">
+                            <Link 
+                                to="/inspiration" 
+                                state={{ fromGallery: true }}
+                                className="inline-flex items-center text-white/40 hover:text-white mb-6 transition-colors"
+                            >
                                 <ArrowLeft size={20} className="mr-2" />
                                 <AutoTranslatedText text={t('common.back')} />
                             </Link>
@@ -129,7 +133,11 @@ export const DetailPage: React.FC = () => {
                 {/* Content Overlay */}
                 <div className="absolute inset-x-0 top-0 bottom-16 z-20 pointer-events-none">
                     <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
-                        <Link to="/" className="inline-flex items-center text-white/60 hover:text-white mb-6 transition-colors pointer-events-auto">
+                        <Link 
+                            to={`/category/${item.subcategory}`} 
+                            state={{ fromGallery: true }}
+                            className="inline-flex items-center text-white/60 hover:text-white mb-6 transition-colors pointer-events-auto"
+                        >
                             <ArrowLeft size={20} className="mr-2" />
                             <AutoTranslatedText text={t('common.back')} />
                         </Link>

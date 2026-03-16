@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -80,7 +80,8 @@ const SubCategoryPage: React.FC = () => {
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isExplorationMode, setIsExplorationMode] = useState(false);
+    const location = useLocation();
+    const [isExplorationMode, setIsExplorationMode] = useState(location.state?.fromGallery || false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     // Toggle immersive mode when in exploration mode
