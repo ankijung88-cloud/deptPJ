@@ -495,7 +495,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
     return (
         <group 
             position={[0, -(totalHeight * 0.5) + (isMobile ? 1.8 : 6.5), 0]} 
-            scale={isMobile ? [0.55, 0.75, 0.55] : [0.55, 0.55, 0.55]}
+            scale={isMobile ? [0.55, 0.75, 0.55] : [0.9, 0.55, 0.9]}
             onClick={(e) => {
                 e.stopPropagation();
                 if (hoveredFloor) {
