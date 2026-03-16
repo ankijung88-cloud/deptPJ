@@ -76,9 +76,15 @@ const normalizeLocalizedString = (val: any): { ko: string; en: string } => {
     };
 };
 
+const generateUniqueId = () => {
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const random = Math.random().toString(36).substring(2, 7).toLowerCase();
+    return `item-${date}-${random}`;
+};
+
 const normalizeProductData = (product: any) => {
     const defaultData = {
-        id: '',
+        id: generateUniqueId(),
         title: { ko: '', en: '' },
         category: '',
         subcategory: '',
