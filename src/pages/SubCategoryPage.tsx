@@ -267,7 +267,8 @@ const SubCategoryPage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9]" 
+                                <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9] cursor-pointer" 
+                                    onClick={handleTitleClick}
                                     style={{ 
                                         color: theme.highlightColor, 
                                         textShadow: `0 0 40px ${theme.glowColor}44` 
