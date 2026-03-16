@@ -3,6 +3,8 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { PerspectiveCamera, Stars, Float, Edges } from '@react-three/drei';
 import * as THREE from 'three';
 
+const BRIGHT_OBANGSAEK = ["#00F2FF", "#FFFFFF", "#FF3B30", "#4A4A4A", "#FFD700"];
+
 const FloatingElements = () => {
     const groupRef = useRef<THREE.Group>(null);
     
@@ -16,7 +18,8 @@ const FloatingElements = () => {
             ] as [number, number, number],
             rotation: [Math.random() * Math.PI, Math.random() * Math.PI, 0] as [number, number, number],
             scale: 0.5 + Math.random() * 1.5,
-            speed: 0.1 + Math.random() * 0.2
+            speed: 0.1 + Math.random() * 0.2,
+            color: BRIGHT_OBANGSAEK[Math.floor(Math.random() * BRIGHT_OBANGSAEK.length)]
         }));
     }, []);
 
@@ -45,7 +48,7 @@ const FloatingElements = () => {
                     <mesh position={el.position} rotation={el.rotation} scale={el.scale}>
                         <boxGeometry args={[1, 1, 1]} />
                         <meshStandardMaterial color="#1A2420" transparent opacity={0.6} />
-                        <Edges color="#00FFC2" threshold={15} />
+                        <Edges color={el.color} threshold={15} />
                     </mesh>
                 </Float>
             ))}
