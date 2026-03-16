@@ -885,10 +885,6 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="BG Image URL" /></label>
-                            <input type="text" value={formData.bg_image} onChange={e => setFormData({...formData, bg_image: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
-                        </div>
-                        <div>
                             <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
                             <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
                         </div>
