@@ -141,7 +141,8 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const navigate = useNavigate();
     const [hovered, setHovered] = React.useState(false);
     
-    const isStory = !item.imageUrl && !item.image_url; 
+    const isProduct = item.id?.includes('item-') || item.id?.startsWith('p') || item.price || item.location;
+    const isStory = !isProduct; 
     const imageUrl = item.imageUrl || item.image_url;
     
     const displayName = getLocalizedText(item.title, lang);
@@ -289,6 +290,9 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                             <mesh position={[0, 0, 0.01]}>
                                 <planeGeometry args={[4, 3]} />
                                 <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
+                                <DreiText position={[0, 0, 0.1]} fontSize={0.5} color={theme.accentColor} fillOpacity={0.2}>
+                                    ◈
+                                </DreiText>
                             </mesh>
                         }>
                             <Suspense fallback={
@@ -308,7 +312,16 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     ) : (
                         <mesh position={[0, 0, 0.01]}>
                             <planeGeometry args={[4, 3]} />
-                            <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
+                            <meshStandardMaterial color={theme.color2} transparent opacity={0.4} metalness={0.9} roughness={0.1} />
+                            {/* Decorative placeholder for items without images */}
+                            <group position={[0, 0, 0.1]}>
+                                <DreiText position={[0, 0.2, 0]} fontSize={0.2} color={theme.accentColor} font="/fonts/Pretendard-Bold.woff">
+                                    {displayName?.substring(0, 12) + (displayName?.length > 12 ? '...' : '')}
+                                </DreiText>
+                                <DreiText position={[0, -0.2, 0]} fontSize={0.1} color="white" fillOpacity={0.5}>
+                                    DEPT. ARCHIVE ITEM
+                                </DreiText>
+                            </group>
                         </mesh>
                     )}
                 </mesh>
