@@ -317,7 +317,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                             <meshStandardMaterial color={theme.color2} transparent opacity={0.4} metalness={0.9} roughness={0.1} />
                             {/* Decorative placeholder for items without images */}
                             <group position={[0, 0, 0.1]}>
-                                <DreiText position={[0, 0.2, 0]} fontSize={0.2} color={theme.accentColor} font="/fonts/Pretendard-Bold.woff">
+                                <DreiText position={[0, 0.2, 0]} fontSize={0.2} color={theme.accentColor}>
                                     {displayName?.substring(0, 12) + (displayName?.length > 12 ? '...' : '')}
                                 </DreiText>
                                 <DreiText position={[0, -0.2, 0]} fontSize={0.1} color="white" fillOpacity={0.5}>
