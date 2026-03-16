@@ -588,23 +588,43 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <div 
-                                    className="flex items-center gap-4 mb-6 cursor-pointer hover:opacity-80 transition-opacity"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedFloor(activeModalFloor);
-                                    }}
+                                    className="flex items-center gap-4 mb-6"
+                                    onClick={(e) => e.stopPropagation()}
                                 >
-                                    <div className="flex items-baseline gap-2">
-                                        <span style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: '900', color: activeFloorData.color, lineHeight: 1, fontFamily: 'serif' }}>
-                                            {activeFloorData.floor}
-                                        </span>
-                                        <span style={{ fontSize: isMobile ? '12px' : '18px', fontWeight: '900', color: activeFloorData.color }}>F</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span style={{ fontSize: '10px', color: activeFloorData.color, letterSpacing: '0.3em', fontWeight: '900', marginBottom: '2px' }}>FLOOR TITLE</span>
-                                        <h4 style={{ color: '#fff', fontSize: isMobile ? '16px' : '22px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.2 }}>
-                                            <AutoTranslatedText text={getLocalizedText(activeFloorData.title, lang)} />
-                                        </h4>
+                                    <div 
+                                        className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedFloor(activeModalFloor);
+                                        }}
+                                    >
+                                        <div className="flex items-baseline gap-2">
+                                            <span style={{ fontSize: isMobile ? '32px' : '48px', fontWeight: '900', color: activeFloorData.color, lineHeight: 1, fontFamily: 'serif' }}>
+                                                {activeFloorData.floor}
+                                            </span>
+                                            <span style={{ fontSize: isMobile ? '12px' : '18px', fontWeight: '900', color: activeFloorData.color }}>F</span>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span style={{ fontSize: '10px', color: activeFloorData.color, letterSpacing: '0.3em', fontWeight: '900', marginBottom: '2px' }}>FLOOR TITLE</span>
+                                            <h4 style={{ color: '#fff', fontSize: isMobile ? '16px' : '22px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.2 }}>
+                                                <AutoTranslatedText text={getLocalizedText(activeFloorData.title, lang)} />
+                                            </h4>
+                                            
+                                            {/* Watch Video Link - Repositioned below title */}
+                                            <motion.div
+                                                whileHover={{ scale: 1.02, opacity: 1 }}
+                                                className="flex items-center gap-2 transition-all whitespace-nowrap opacity-70 mt-1"
+                                                style={{ 
+                                                    color: activeFloorData.color,
+                                                    fontSize: isMobile ? '10px' : '12px',
+                                                    fontWeight: '700',
+                                                    letterSpacing: '0.02em',
+                                                }}
+                                            >
+                                                <Play size={isMobile ? 10 : 12} fill={activeFloorData.color} stroke="none" />
+                                                <span>영상보러가기</span>
+                                            </motion.div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-3">

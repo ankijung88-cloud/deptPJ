@@ -8,7 +8,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
         bgImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/festival.mp4',
-        color: '#2C3E50',
+        color: '#00A8FF', // 6F - Vibrant Blue (Heritage)
         content: [],
         subitems: [
             { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage' } },
@@ -25,7 +25,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '도심 속에서 진정한 휴식과 건강을 찾는 공간입니다. 자연에서 온 소재들로 꾸며진 웰니스 존입니다.', en: 'A space for true relaxation and health in the city, themed with natural materials.' },
         bgImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/modern_tradition.mp4',
-        color: '#1A5F7A',
+        color: '#00D2FF', // 5F - Bright Cyan (Fashion/White-adjacent)
         content: [],
         subitems: [
             { id: 'archive', label: { ko: '패션 아카이브', en: 'Fashion Archive' } },
@@ -42,7 +42,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
         bgImage: 'https://images.unsplash.com/photo-1543431690-3b6be2c3cb19?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/travel.mp4',
-        color: '#944E63',
+        color: '#FF4757', // 4F - Vibrant Red (Culture)
         content: [],
         subitems: [
             { id: 'talk', label: { ko: '문화 담론', en: 'Cultural Talk' } },
@@ -59,7 +59,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '예술과 사람이 만나는 곳. 다양한 워크숍과 전시를 통해 새로운 커뮤니티가 형성됩니다.', en: 'Where art meets people. New communities are formed through various workshops and exhibitions.' },
         bgImage: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/active.mp4',
-        color: '#435334',
+        color: '#2ECC71', // 3F - Emerald Green (Lifestyle)
         content: [],
         subitems: [
             { id: 'performance', label: { ko: '공연 실황', en: 'Live Performance' } },
@@ -76,7 +76,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '가장 트렌디한 K-라이프스타일을 제안합니다. 현대적인 감각의 로컬 브랜드들을 소개합니다.', en: 'Suggesting the trendiest K-lifestyle and introducing modern local brands.' },
         bgImage: 'https://images.unsplash.com/photo-1596120364993-90dcc247f07e?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/trend.mp4',
-        color: '#862B0D',
+        color: '#F39C12', // 2F - Vibrant Orange/Marigold (Media)
         content: [],
         subitems: [
             { id: 'sync', label: { ko: '시너지 공간', en: 'Synergy Space' } },
@@ -93,7 +93,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         description: { ko: '한국의 아름다운 전통과 현대 예술이 조화를 이루는 프리미엄 갤러리입니다.', en: 'A premium gallery where beautiful Korean tradition harmonizes with modern art.' },
         bgImage: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=2560&auto=format&fit=crop',
         videoUrl: '/assets/videos/k-culture.mp4',
-        color: '#4B3621',
+        color: '#FFD32A', // 1F - Sunny Yellow (Trends)
         content: [],
         subitems: [
             { id: 'global', label: { ko: '글로벌 트렌드', en: 'Global Trend' } },
