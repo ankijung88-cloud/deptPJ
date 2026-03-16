@@ -51,6 +51,7 @@ export interface FloorCategory {
     subitems?: {
         id: string;
         label: LocalizedString;
+        bgImage?: string;
     }[];
 }
 

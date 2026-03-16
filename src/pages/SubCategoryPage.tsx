@@ -212,9 +212,9 @@ const SubCategoryPage: React.FC = () => {
             {/* Editorial Header */}
             <header className="relative w-full min-h-[60vh] flex items-center pt-8 pb-10 overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    {parentFloor?.bgImage && (
+                    {(subcategoryData?.bgImage || parentFloor?.bgImage) && (
                         <img
-                            src={parentFloor.bgImage}
+                            src={subcategoryData?.bgImage || parentFloor?.bgImage || ''}
                             alt=""
                             className="w-full h-full object-cover grayscale opacity-30 scale-110"
                         />

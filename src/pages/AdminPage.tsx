@@ -774,8 +774,58 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         color: '',
         video_url: ''
     });
+    const [uploading, setUploading] = useState<string | null>(null);
 
     const isEdit = !!floor;
+
+    const handleSubitemFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(`subitem-${index}`);
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadData
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            if (data.url) {
+                const newSubitems = [...(formData.subitems || [])];
+                newSubitems[index] = { ...newSubitems[index], bgImage: data.url };
+                setFormData({ ...formData, subitems: newSubitems });
+            }
+        } catch (err) {
+            alert('Upload failed');
+        } finally {
+            setUploading(null);
+        }
+    };
+
+    const addSubitem = () => {
+        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' }, bgImage: '' }];
+        setFormData({ ...formData, subitems: newSubitems });
+    };
+
+    const updateSubitem = (index: number, field: string, value: any) => {
+        const newSubitems = [...(formData.subitems || [])];
+        if (field === 'label') {
+            newSubitems[index] = { ...newSubitems[index], label: { ...newSubitems[index].label, ko: value } };
+        } else {
+            newSubitems[index] = { ...newSubitems[index], [field]: value };
+        }
+        setFormData({ ...formData, subitems: newSubitems });
+    };
+
+    const removeSubitem = (index: number) => {
+        const newSubitems = formData.subitems.filter((_: any, i: number) => i !== index);
+        setFormData({ ...formData, subitems: newSubitems });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -794,68 +844,144 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
-                <div className="flex justify-between items-center mb-6">
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                className="relative w-full max-w-4xl bg-[#1A2420] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+                <div className="p-6 border-b border-white/10 flex justify-between items-center">
                     <h3 className="text-xl font-serif font-bold text-white">
                         <AutoTranslatedText text={isEdit ? 'Edit Floor Content' : 'Add Floor Content'} />
                     </h3>
-                    <button onClick={onClose} className="text-white/40 hover:text-white"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40 border-none bg-transparent cursor-pointer"><X size={20} /></button>
                 </div>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Floor Level (e.g. 6F)" /></label>
-                            <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="ID (Unique)" /></label>
-                            <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" disabled={isEdit} required />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
-                        <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Theme Color (HEX)" /></label>
-                            <div className="flex gap-2">
-                                <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
-                                <div className="w-14 h-14 rounded-xl border border-white/10" style={{ backgroundColor: formData.color || '#000' }} />
+                <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                    <div className="flex flex-col gap-8 flex-1 overflow-y-auto pr-2 custom-scrollbar p-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Floor Level (e.g. 6F)" /></label>
+                                <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="ID (Unique)" /></label>
+                                <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" disabled={isEdit} required />
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Video URL (m4v/mp4)" /></label>
-                            <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" placeholder="https://..." />
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
+                            <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Theme Color (HEX)" /></label>
+                                <div className="flex gap-2">
+                                    <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
+                                    <div className="w-14 h-14 rounded-xl border border-white/10" style={{ backgroundColor: formData.color || '#000' }} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Video URL (m4v/mp4)" /></label>
+                                <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" placeholder="https://..." />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="BG Image URL" /></label>
+                            <input type="text" value={formData.bg_image} onChange={e => setFormData({...formData, bg_image: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
+                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
+                        </div>
+                        
+                        {/* Sub-items Management */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center pr-2">
+                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block"><AutoTranslatedText text="Sub-items (Categories)" /></label>
+                                <button type="button" onClick={addSubitem} className="flex items-center gap-1 text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all border-none cursor-pointer">
+                                    <Plus size={14} /> <AutoTranslatedText text="Add Category" />
+                                </button>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {(formData.subitems || []).map((sub: any, idx: number) => (
+                                    <div key={idx} className="bg-black/40 border border-white/10 rounded-2xl p-6 space-y-4 relative group/sub">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => removeSubitem(idx)}
+                                            className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-400 opacity-0 group-hover/sub:opacity-100 transition-all border-none bg-transparent cursor-pointer"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                        
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">ID</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={sub.id} 
+                                                    onChange={e => updateSubitem(idx, 'id', e.target.value)}
+                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30"
+                                                    placeholder="heritage"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Label (KO)</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={typeof sub.label === 'string' ? sub.label : (sub.label?.ko || '')} 
+                                                    onChange={e => updateSubitem(idx, 'label', e.target.value)}
+                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30"
+                                                    placeholder="헤리티지"
+                                                />
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Background Image</label>
+                                            <div className="flex gap-4 items-center">
+                                                <div className="w-24 h-16 bg-black/40 rounded-lg overflow-hidden border border-white/5 flex items-center justify-center relative group/img">
+                                                    {sub.bgImage ? (
+                                                        <>
+                                                            <img src={sub.bgImage} className="w-full h-full object-cover" />
+                                                            <label className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                                                                <Upload size={14} className="text-white" />
+                                                                <input type="file" className="hidden" accept="image/*" onChange={e => handleSubitemFileUpload(e, idx)} />
+                                                            </label>
+                                                        </>
+                                                    ) : (
+                                                        <label className="w-full h-full flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors">
+                                                            {uploading === `subitem-${idx}` ? (
+                                                                <div className="w-5 h-5 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" />
+                                                            ) : (
+                                                                <Upload size={18} className="text-white/20" />
+                                                            )}
+                                                            <input type="file" className="hidden" accept="image/*" onChange={e => handleSubitemFileUpload(e, idx)} />
+                                                        </label>
+                                                    )}
+                                                </div>
+                                                <input 
+                                                    type="text" 
+                                                    value={sub.bgImage || ''} 
+                                                    onChange={e => updateSubitem(idx, 'bgImage', e.target.value)}
+                                                    className="flex-1 bg-black/20 border border-white/5 rounded-xl p-3 text-white text-xs focus:border-[#00FFC2]/30"
+                                                    placeholder="Background Image URL"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                
+                                {(formData.subitems || []).length === 0 && (
+                                    <div className="text-center py-10 bg-black/20 border border-dashed border-white/10 rounded-2xl">
+                                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest">No sub-items added</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="BG Image URL" /></label>
-                        <input type="text" value={formData.bg_image} onChange={e => setFormData({...formData, bg_image: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
-                    </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
-                        <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
-                    </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block">
-                            <AutoTranslatedText text='Sub-items (JSON List: [{"title": "...", "href": "..."}])' />
-                        </label>
-                        <textarea 
-                            rows={4} 
-                            value={Array.isArray(formData.subitems) ? JSON.stringify(formData.subitems, null, 2) : (formData.subitems || '[]')} 
-                            onChange={e => {
-                                try {
-                                    const parsed = JSON.parse(e.target.value);
-                                    if (Array.isArray(parsed)) setFormData({...formData, subitems: parsed});
-                                } catch(err) {}
-                            }} 
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono text-sm focus:border-[#00FFC2]/50 resize-none" 
-                        />
-                    </div>
-                    <div className="flex justify-end gap-4 pt-4 border-t border-white/5">
-                        <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
+                    <div className="p-6 border-t border-white/10 flex justify-end gap-4 bg-black/20">
+                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-white/40 hover:text-white transition-colors border-none bg-transparent cursor-pointer font-bold"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all border-none cursor-pointer">
                             <AutoTranslatedText text={isEdit ? 'Update Content' : 'Create Content'} />
                         </button>
                     </div>
