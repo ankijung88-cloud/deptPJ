@@ -100,6 +100,14 @@ const SubCategoryPage: React.FC = () => {
     const parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
     const subcategoryData = parentFloor?.subitems?.find(s => s.id === targetSubId) || null;
 
+    console.log('SubCategoryPage Debug:', {
+        targetSubId,
+        parentFloorFound: !!parentFloor,
+        parentFloorBg: parentFloor?.bgImage,
+        subcategoryFound: !!subcategoryData,
+        subcategoryBg: subcategoryData?.bgImage
+    });
+
     useEffect(() => {
         let mounted = true;
         const fetchData = async () => {
