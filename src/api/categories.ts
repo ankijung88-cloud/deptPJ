@@ -23,7 +23,10 @@ export const getFloorCategories = async (): Promise<FloorCategory[]> => {
             color: item.color,
             videoUrl: normalizeUrl(item.video_url),
             content: (typeof item.content === 'string' ? JSON.parse(item.content) : item.content) || [],
-            subitems: (typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []
+            subitems: ((typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []).map((sub: any) => ({
+                ...sub,
+                bgImage: sub.bgImage ? normalizeUrl(sub.bgImage) : undefined
+            }))
         }));
     } catch (error: any) {
         console.error('Error fetching floor_categories:', error);
@@ -42,7 +45,10 @@ export const getNavItems = async (): Promise<NavItem[]> => {
         return (data || []).map((item: any) => ({
             id: item.id,
             href: item.href,
-            subitems: (typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []
+            subitems: ((typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []).map((sub: any) => ({
+                ...sub,
+                bgImage: sub.bgImage ? normalizeUrl(sub.bgImage) : undefined
+            }))
         }));
     } catch (error: any) {
         console.error('Error fetching nav_items:', error);

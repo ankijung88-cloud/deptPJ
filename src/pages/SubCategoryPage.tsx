@@ -216,10 +216,10 @@ const SubCategoryPage: React.FC = () => {
                         <img
                             src={subcategoryData?.bgImage || parentFloor?.bgImage || ''}
                             alt=""
-                            className="w-full h-full object-cover grayscale opacity-30 scale-110"
+                            className="w-full h-full object-cover opacity-50 scale-110 transition-opacity duration-700"
                         />
                     )}
-                    <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${theme.bgColor}cc 60%, ${theme.bgColor})` }} />
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent 20%, ${theme.bgColor}aa 70%, ${theme.bgColor})` }} />
                 </div>
 
                 <div className="container mx-auto px-6 md:px-12 relative z-10">
