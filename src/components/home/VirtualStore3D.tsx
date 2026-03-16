@@ -27,12 +27,16 @@ const COLORS = {
 
 
 const METRICS = {
-    floorHeight: 2.6,
-    width: 10,
-    depth: 10,
-    slabThickness: 0.3,
-    columnThickness: 0.25,
-    coreSize: 2.8
+    floorHeight: 4.2,
+    width: 9,
+    depth: 9,
+    slabThickness: 0.2,
+    columnThickness: 0.15,  // Thinner columns for multiple bays
+    coreSize: 2.8,
+    roofOverhang: 1.4,
+    roofHeight: 0.55,       // Flatter roofs like the image
+    taperFactor: 0.08,
+    bays: 4                 // 4 columns per side (3 bays) as per image
 };
 
 // Custom material to prevent Z-fighting with Edges
@@ -48,53 +52,243 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
     />
 );
 
-// --- Detailed Structural Parts ---
+// --- Traditional Pagoda Parts ---
 
-const ElevatorCore = () => (
-    <mesh position={[0, METRICS.floorHeight / 2, 0]}>
-        <boxGeometry args={[METRICS.coreSize, METRICS.floorHeight, METRICS.coreSize]} />
-        <SolidMaterial color={COLORS.fill} />
-        <Edges color={COLORS.line} threshold={15} />
+const TraditionalRoof = ({ width, depth, color }: { width: number, depth: number, color?: string }) => {
+    const overhang = METRICS.roofOverhang;
+    const roofW = width + overhang * 2;
+    const roofD = depth + overhang * 2;
+    const h = METRICS.roofHeight;
 
-        {/* Fake Elevator Doors drawn on the front face */}
-        <mesh position={[0, -0.2, METRICS.coreSize / 2 + 0.01]}>
-            <planeGeometry args={[1.2, 2]} />
-            <meshBasicMaterial color="#1f2b26" polygonOffset polygonOffsetFactor={-1} />
-            <Edges color={COLORS.line} />
-            {/* Center split line for door */}
-            <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[0.02, 2]} />
-                <meshBasicMaterial color={COLORS.line} />
+    return (
+        <group position={[0, METRICS.floorHeight - 0.05, 0]}>
+            {/* 1. Main Roof Structure (Pyramid) - Darker and flatter */}
+            <mesh position={[0, h / 2, 0]} rotation={[0, Math.PI / 4, 0]}>
+                <coneGeometry args={[roofW * 0.707, h, 4]} />
+                <meshStandardMaterial color={"#1a1a1a"} transparent opacity={0.95} />
+                <Edges color={color || COLORS.line} threshold={20} />
             </mesh>
+            
+            {/* Tile lines (Ribs) - consistent with image */}
+            <group position={[0, h/2, 0]}>
+                {Array.from({ length: 16 }).map((_, i) => {
+                    const angle = (i / 16) * Math.PI * 2;
+                    if (i % 4 === 0) return null; // Skip corners
+                    const x = Math.cos(angle) * (roofW / 2.5);
+                    const z = Math.sin(angle) * (roofD / 2.5);
+                    return (
+                        <mesh key={i} position={[x, 0, z]} rotation={[0, -angle, Math.atan2(h, roofW/2)]}>
+                            <boxGeometry args={[0.01, h * 1.5, 0.01]} />
+                            <meshBasicMaterial color={COLORS.line} transparent opacity={0.1} />
+                        </mesh>
+                    );
+                })}
+            </group>
+
+            {/* 2. Thick Eaves (Meakkereun) */}
+            <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[roofW, 0.15, roofD]} />
+                <SolidMaterial color={COLORS.fill} />
+                <Edges color={color || COLORS.line} />
+            </mesh>
+
+            {/* 3. Corner Eaves-up */}
+            {[
+                [1, 1], [1, -1], [-1, -1], [-1, 1]
+            ].map(([x, z], i) => (
+                <group key={i} position={[x * roofW / 2, 0.05, z * roofD / 2]} rotation={[0, Math.atan2(-z, -x) + Math.PI/4, 0]}>
+                    <mesh position={[0.3, 0.1, 0.3]} rotation={[0, 0, 0.4]}>
+                        <boxGeometry args={[0.5, 0.05, 0.05]} />
+                        <meshBasicMaterial color={color || COLORS.line} />
+                    </mesh>
+                </group>
+            ))}
+        </group>
+    );
+};
+
+const GongPo = ({ x, z }: { x: number, z: number }) => (
+    <group position={[x, METRICS.floorHeight - 0.35, z]}>
+        {/* Layered brackets - smaller and more integrated */}
+        <mesh position={[0, 0.08, 0]}>
+            <boxGeometry args={[0.45, 0.06, 0.25]} />
+            <SolidMaterial color={COLORS.fill} />
+            <Edges color={COLORS.line} />
         </mesh>
-    </mesh>
+        <mesh position={[0, 0.16, 0]}>
+            <boxGeometry args={[0.6, 0.06, 0.3]} />
+            <SolidMaterial color={COLORS.fill} />
+            <Edges color={COLORS.line} />
+        </mesh>
+    </group>
 );
 
-const Columns = () => {
-    const positions = [
-        // Corners
-        [1, 1], [-1, 1], [1, -1], [-1, -1],
-        // Midpoints
-        [0, 1], [0, -1], [1, 0], [-1, 0]
-    ];
-    const offsetX = METRICS.width / 2 - METRICS.columnThickness / 2;
-    const offsetZ = METRICS.depth / 2 - METRICS.columnThickness / 2;
+const Railings = ({ width, depth }: { width: number, depth: number }) => {
+    const h = 0.5;
+    const postCount = 10;
+    return (
+        <group position={[0, 0.1, 0]}>
+            {/* Top Rail - thinner */}
+            <mesh position={[0, h, depth / 2]}>
+                <boxGeometry args={[width, 0.03, 0.03]} />
+                <meshBasicMaterial color={COLORS.line} />
+            </mesh>
+            <mesh position={[0, h, -depth / 2]}>
+                <boxGeometry args={[width, 0.03, 0.03]} />
+                <meshBasicMaterial color={COLORS.line} />
+            </mesh>
+            <mesh position={[width / 2, h, 0]}>
+                <boxGeometry args={[0.03, 0.03, depth]} />
+                <meshBasicMaterial color={COLORS.line} />
+            </mesh>
+            <mesh position={[-width / 2, h, 0]}>
+                <boxGeometry args={[0.03, 0.03, depth]} />
+                <meshBasicMaterial color={COLORS.line} />
+            </mesh>
+
+            {/* Balustrade pattern */}
+            {Array.from({ length: postCount }).map((_, i) => {
+                const step = (i / (postCount - 1)) - 0.5;
+                return (
+                    <group key={i}>
+                        <mesh position={[step * width * 0.98, h / 2, depth / 2]}>
+                            <boxGeometry args={[0.02, h, 0.02]} />
+                            <meshBasicMaterial color={COLORS.line} transparent opacity={0.2} />
+                        </mesh>
+                        <mesh position={[step * width * 0.98, h / 2, -depth / 2]}>
+                            <boxGeometry args={[0.02, h, 0.02]} />
+                            <meshBasicMaterial color={COLORS.line} transparent opacity={0.2} />
+                        </mesh>
+                        <mesh position={[width / 2, h / 2, step * depth * 0.98]}>
+                            <boxGeometry args={[0.02, h, 0.02]} />
+                            <meshBasicMaterial color={COLORS.line} transparent opacity={0.2} />
+                        </mesh>
+                        <mesh position={[-width / 2, h / 2, step * depth * 0.98]}>
+                            <boxGeometry args={[0.02, h, 0.02]} />
+                            <meshBasicMaterial color={COLORS.line} transparent opacity={0.2} />
+                        </mesh>
+                    </group>
+                );
+            })}
+        </group>
+    );
+};
+
+const Spire = () => (
+    <group position={[0, 0, 0]}>
+        {/* Central Vertical Rod - Lowered and shortened */}
+        <mesh position={[0, 1.4, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 2.8, 8]} />
+            <meshBasicMaterial color={COLORS.line} />
+        </mesh>
+        {/* Stacked Disks (Boryun) - FURTHER increased width for prominence */}
+        {[0.4, 0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8].map((y, i) => (
+            <mesh key={i} position={[0, y, 0]}>
+                <cylinderGeometry args={[1.4 - i * 0.1, 1.4 - i * 0.1, 0.06, 16]} />
+                <SolidMaterial />
+                <Edges color={COLORS.line} />
+            </mesh>
+        ))}
+    </group>
+);
+
+// --- Detailed Structural Parts ---
+
+const PagodaCore = ({ height, width, depth }: { height: number, width: number, depth: number }) => (
+    <group position={[0, height / 2, 0]}>
+        {/* Main Body */}
+        <mesh>
+            <boxGeometry args={[width * 0.8, height, depth * 0.8]} />
+            <SolidMaterial color={COLORS.fill} transparent opacity={0.5} />
+            <Edges color={COLORS.line} threshold={15} />
+        </mesh>
+        
+        {/* High-detail Latticed Frames (Increased prominence) */}
+        {[-width * 0.4, width * 0.4].map((z, i) => (
+            <group key={i} position={[0, 0, z]}>
+                {/* Horizontal frames */}
+                {[-0.3, 0, 0.3].map(y => (
+                    <mesh key={y} position={[0, y * height, 0]}>
+                        <boxGeometry args={[width * 0.8, 0.03, 0.03]} />
+                        <meshBasicMaterial color={COLORS.line} transparent opacity={0.6} />
+                    </mesh>
+                ))}
+                {/* Vertical frames (Bays) */}
+                {[-0.3, -0.1, 0.1, 0.3].map(x => (
+                    <mesh key={x} position={[x * width, 0, 0]}>
+                        <boxGeometry args={[0.03, height, 0.03]} />
+                        <meshBasicMaterial color={COLORS.line} transparent opacity={0.6} />
+                    </mesh>
+                ))}
+            </group>
+        ))}
+    </group>
+);
+
+const Columns = ({ width, depth, height }: { width: number, depth: number, height: number }) => {
+    const bays = METRICS.bays;
+    const positions: [number, number][] = [];
+    
+    for (let i = 0; i < bays; i++) {
+        for (let j = 0; j < bays; j++) {
+            if (i === 0 || i === bays - 1 || j === 0 || j === bays - 1) {
+                const x = ((i / (bays - 1)) - 0.5) * width;
+                const z = ((j / (bays - 1)) - 0.5) * depth;
+                positions.push([x, z]);
+            }
+        }
+    }
 
     return (
         <group>
             {positions.map(([x, z], i) => (
-                <mesh key={i} position={[x * offsetX, METRICS.floorHeight / 2, z * offsetZ]}>
-                    <boxGeometry args={[METRICS.columnThickness, METRICS.floorHeight, METRICS.columnThickness]} />
-                    <SolidMaterial />
-                    <Edges color={COLORS.line} />
-                </mesh>
+                <group key={i}>
+                    <mesh position={[x, height / 2, z]}>
+                        <boxGeometry args={[METRICS.columnThickness, height, METRICS.columnThickness]} />
+                        <SolidMaterial />
+                        <Edges color={COLORS.line} />
+                    </mesh>
+                    <GongPo x={x} z={z} />
+                </group>
+            ))}
+        </group>
+    );
+};
+
+// 1st Floor has more columns (5 per side = 4 bays) for structural scale
+const FirstFloorColumns = ({ width, depth, height }: { width: number, depth: number, height: number }) => {
+    const bays = 5;
+    const positions: [number, number][] = [];
+    for (let i = 0; i < bays; i++) {
+        for (let j = 0; j < bays; j++) {
+            if (i === 0 || i === bays - 1 || j === 0 || j === bays - 1) {
+                const x = ((i / (bays - 1)) - 0.5) * width;
+                const z = ((j / (bays - 1)) - 0.5) * depth;
+                positions.push([x, z]);
+            }
+        }
+    }
+    return (
+        <group>
+            {positions.map(([x, z], i) => (
+                <group key={i}>
+                    <mesh position={[x, height / 2, z]}>
+                        <boxGeometry args={[METRICS.columnThickness * 1.1, height, METRICS.columnThickness * 1.1]} />
+                        <SolidMaterial />
+                        <Edges color={COLORS.line} />
+                    </mesh>
+                    <GongPo x={x} z={z} />
+                </group>
             ))}
         </group>
     );
 };
 
 const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal, isSelectedAnything, isMobile }: any) => {
-    const active = isSelected || isHovered;
+    const [isMainButtonHovered, setIsMainButtonHovered] = React.useState(false);
+    const [isPlaceholderHovered, setIsPlaceholderHovered] = React.useState(false);
+
+    const active = isSelected || isHovered || isMainButtonHovered;
     const targetScale = active ? 1.02 : 1;
     const groupRef = useRef<THREE.Group>(null);
     const highlightRef = useRef<THREE.MeshStandardMaterial>(null);
@@ -131,6 +325,14 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
         mouseDownPos.current = null;
     };
 
+    const floorScale = 1 - (parseInt(floor.floor) - 1) * METRICS.taperFactor;
+    const isFirstFloor = floor.floor === "1";
+    
+    // Significantly more prominent first floor (Higher and Wider)
+    const currentHeight = isFirstFloor ? METRICS.floorHeight * 1.5 : METRICS.floorHeight;
+    const currentW = METRICS.width * floorScale * (isFirstFloor ? 1.4 : 1);
+    const currentD = METRICS.depth * floorScale * (isFirstFloor ? 1.4 : 1);
+
     return (
         <group
             ref={groupRef}
@@ -142,24 +344,23 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
         >
             {/* Base Slab */}
             <mesh position={[0, 0, 0]}>
-                <boxGeometry args={[METRICS.width + 0.5, METRICS.slabThickness, METRICS.depth + 0.5]} />
+                <boxGeometry args={[currentW + 0.5, METRICS.slabThickness, currentD + 0.5]} />
                 <SolidMaterial />
                 <Edges color={COLORS.line} />
             </mesh>
 
-            {/* Ceiling Slab (Top of the floor) */}
-            <mesh position={[0, METRICS.floorHeight, 0]}>
-                <boxGeometry args={[METRICS.width, METRICS.slabThickness, METRICS.depth]} />
-                <SolidMaterial />
-                <Edges color={COLORS.line} />
-            </mesh>
-
-            <Columns />
-            <ElevatorCore />
+            <Railings width={currentW + 0.5} depth={currentD + 0.5} />
+            {isFirstFloor ? (
+                <FirstFloorColumns width={currentW} depth={currentD} height={currentHeight} />
+            ) : (
+                <Columns width={currentW} depth={currentD} height={currentHeight} />
+            )}
+            <PagodaCore height={currentHeight} width={currentW} depth={currentD} />
+            <TraditionalRoof width={currentW} depth={currentD} color={active ? floor.color : COLORS.line} />
 
             {/* Active Highlight Volume */}
             <mesh position={[0, METRICS.floorHeight / 2, 0]} scale={0.99}>
-                <boxGeometry args={[METRICS.width, METRICS.floorHeight, METRICS.depth]} />
+                <boxGeometry args={[currentW, METRICS.floorHeight, currentD]} />
                 <meshStandardMaterial
                     ref={highlightRef}
                     color={floor.color}
@@ -172,34 +373,37 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
             {/* Right-aligned 3D Label - Main navigation anchor */}
             {!isSelectedAnything && (
                 <Html
-                    position={[METRICS.width / 2 + (isMobile ? 4.0 : 3.5), METRICS.floorHeight / 2, METRICS.depth / 2]}
+                    position={[
+                        METRICS.width / 2 + (isMobile ? 6.0 : 5.5), 
+                        METRICS.floorHeight / 2, 
+                        METRICS.depth / 2
+                    ]}
                     center
                     zIndexRange={[50, 100]}
                 >
                     <div 
-                        onPointerEnter={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
-                        onPointerLeave={() => { document.body.style.cursor = 'auto'; }}
-                        onPointerDown={(e) => { e.stopPropagation(); onHover(parseInt(floor.floor)); }}
                         style={{ 
                             display: 'flex', 
                             alignItems: 'center', 
                             pointerEvents: 'auto',
                             transition: 'all 0.3s ease',
-                            transform: isHovered ? (isMobile ? 'scale(1.05)' : 'scale(1.1)') : 'scale(1)',
-                            zIndex: isHovered ? 100 : 50
+                            zIndex: 50
                         }}
                     >
                         {/* Elegant Dotted Line */}
                         <div style={{
-                            width: isHovered ? '60px' : '40px',
-                            borderTop: `2px dotted ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
-                            opacity: isHovered ? 1.0 : 0.3,
+                            width: '60px',
+                            borderTop: `2px dotted ${(isHovered || isMainButtonHovered) ? floor.color : 'rgba(255, 255, 255, 0.2)'}`,
+                            opacity: (isHovered || isMainButtonHovered) ? 1.0 : 0.3,
                             transition: 'all 0.4s ease'
                         }} />
 
-                        {/* Relative container to anchor label */}
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px' }}>
+                        {/* Relative container to anchor label and placeholder */}
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px', gap: isMobile ? '8px' : '15px' }}>
+                            {/* Existing Button */}
                             <div 
+                                onPointerEnter={(e) => { e.stopPropagation(); setIsMainButtonHovered(true); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
+                                onPointerLeave={() => { setIsMainButtonHovered(false); onHover(null); document.body.style.cursor = 'auto'; }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onToggleModal();
@@ -208,28 +412,29 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     width: isMobile ? '40px' : '64px',
                                     height: isMobile ? '40px' : '64px',
                                     borderRadius: '50%',
-                                    border: `1.5px solid ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.3)'}`,
-                                    backgroundColor: isHovered ? `${floor.color}22` : 'rgba(20, 28, 25, 0.6)',
+                                    border: `1.5px solid ${(isHovered || isMainButtonHovered) ? floor.color : 'rgba(255, 255, 255, 0.3)'}`,
+                                    backgroundColor: (isHovered || isMainButtonHovered) ? `${floor.color}22` : 'rgba(20, 28, 25, 0.6)',
                                     backdropFilter: 'blur(10px)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     cursor: 'pointer',
-                                    boxShadow: isHovered 
+                                    boxShadow: (isHovered || isMainButtonHovered) 
                                         ? `0 0 20px ${floor.color}44, inset 0 0 10px ${floor.color}33` 
                                         : '0 4px 15px rgba(0,0,0,0.3)',
                                     transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
-                                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-                                    position: 'relative'
+                                    transform: (isHovered || isMainButtonHovered) ? 'scale(1.1)' : 'scale(1)',
+                                    position: 'relative',
+                                    zIndex: (isHovered || isMainButtonHovered) ? 10 : 1
                                 }}
                             >
                                 <span style={{ 
                                     fontSize: isMobile ? '16px' : '24px', 
                                     fontWeight: '900', 
-                                    color: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
+                                    color: (isHovered || isMainButtonHovered) ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
                                     lineHeight: 1,
                                     fontFamily: 'serif',
-                                    textShadow: isHovered ? `0 0 10px ${floor.color}` : 'none'
+                                    textShadow: (isHovered || isMainButtonHovered) ? `0 0 10px ${floor.color}` : 'none'
                                 }}>
                                     {floor.floor}
                                 </span>
@@ -239,10 +444,39 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     position: 'absolute',
                                     top: '4px', left: '4px', right: '4px', bottom: '4px',
                                     borderRadius: '50%',
-                                    border: `0.5px solid ${isHovered ? floor.color : 'rgba(255, 255, 255, 0.1)'}`,
+                                    border: `0.5px solid ${(isHovered || isMainButtonHovered) ? floor.color : 'rgba(255, 255, 255, 0.1)'}`,
                                     opacity: 0.5,
                                     pointerEvents: 'none'
                                 }} />
+                            </div>
+
+                            {/* Expansion Placeholder Button (Same Design) */}
+                            <div 
+                                onPointerEnter={(e) => { e.stopPropagation(); setIsPlaceholderHovered(true); document.body.style.cursor = 'pointer'; }}
+                                onPointerLeave={() => { setIsPlaceholderHovered(false); document.body.style.cursor = 'auto'; }}
+                                style={{
+                                    width: isMobile ? '36px' : '56px',
+                                    height: isMobile ? '36px' : '56px',
+                                    borderRadius: '50%',
+                                    border: isPlaceholderHovered ? `1.5px solid ${floor.color}` : '1.5px dashed rgba(255, 255, 255, 0.2)',
+                                    backgroundColor: isPlaceholderHovered ? `${floor.color}11` : 'rgba(255, 255, 255, 0.05)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.4s ease',
+                                    opacity: 1,
+                                    transform: isPlaceholderHovered ? 'scale(1.1)' : 'scale(1)',
+                                    boxShadow: isPlaceholderHovered ? `0 0 15px ${floor.color}33` : 'none',
+                                    zIndex: isPlaceholderHovered ? 10 : 1
+                                }}
+                            >
+                                <span style={{ 
+                                    fontSize: isMobile ? '14px' : '20px', 
+                                    fontWeight: '400', 
+                                    color: isPlaceholderHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.5)',
+                                    lineHeight: 1
+                                }}>+</span>
                             </div>
                         </div>
                     </div>
@@ -260,8 +494,8 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
 
     return (
         <group 
-            position={[0, -(totalHeight / 2) + (isMobile ? 0.7 : 3.2), 0]} 
-            scale={isMobile ? [0.7, 1, 0.7] : [0.8, 0.85, 0.8]}
+            position={[0, -(totalHeight * 0.5) + (isMobile ? 1.8 : 6.5), 0]} 
+            scale={isMobile ? [0.55, 0.75, 0.55] : [0.55, 0.55, 0.55]}
             onClick={(e) => {
                 e.stopPropagation();
                 if (hoveredFloor) {
@@ -269,12 +503,34 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                 }
             }}
         >
-            {/* Foundation */}
-            <mesh position={[0, -METRICS.slabThickness, 0]}>
-                <boxGeometry args={[METRICS.width + 1.5, METRICS.slabThickness, METRICS.depth + 1.5]} />
-                <SolidMaterial />
+            {/* Central 'Gimsim' Pillar through all floors */}
+            <mesh position={[0, (floors.length * METRICS.floorHeight) / 2, 0]}>
+                <cylinderGeometry args={[0.3, 0.3, floors.length * METRICS.floorHeight, 12]} />
+                <SolidMaterial color={COLORS.fill} />
                 <Edges color={COLORS.line} />
             </mesh>
+
+            {/* Foundation - Traditional Double Platform with Steps */}
+            <group position={[0, -METRICS.slabThickness * 2.5, 0]}>
+                {/* Lower Level */}
+                <mesh position={[0, 0, 0]}>
+                    <boxGeometry args={[METRICS.width + 4, METRICS.slabThickness * 2.5, METRICS.depth + 4]} />
+                    <SolidMaterial />
+                    <Edges color={COLORS.line} />
+                    <gridHelper args={[METRICS.width + 4, 8, COLORS.line, COLORS.line]} position={[0, METRICS.slabThickness * 1.25 + 0.01, 0]}>
+                        <lineBasicMaterial attach="material" transparent opacity={0.1} color={COLORS.line} />
+                    </gridHelper>
+                </mesh>
+                {/* Upper Level */}
+                <mesh position={[0, METRICS.slabThickness * 2.5, 0]}>
+                    <boxGeometry args={[METRICS.width + 2, METRICS.slabThickness * 2.5, METRICS.depth + 2]} />
+                    <SolidMaterial />
+                    <Edges color={COLORS.line} />
+                    <gridHelper args={[METRICS.width + 2, 6, COLORS.line, COLORS.line]} position={[0, METRICS.slabThickness * 1.25 + 0.01, 0]}>
+                        <lineBasicMaterial attach="material" transparent opacity={0.1} color={COLORS.line} />
+                    </gridHelper>
+                </mesh>
+            </group>
 
             {floors.map((floor: FloorCategory, index: number) => (
                 <FloorUnit
@@ -291,12 +547,10 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                 />
             ))}
 
-            {/* Top Roof Cover */}
-            <mesh position={[0, floors.length * METRICS.floorHeight, 0]}>
-                <boxGeometry args={[METRICS.width + 0.5, METRICS.slabThickness, METRICS.depth + 0.5]} />
-                <SolidMaterial />
-                <Edges color={COLORS.line} />
-            </mesh>
+            {/* Top Spire (Sangryun-bu) sitting closer to roof */}
+            <group position={[0, floors.length * METRICS.floorHeight + 0.1, 0]}>
+                <Spire />
+            </group>
 
             {/* Central Fixed Hover Modal */}
             <AnimatePresence>
@@ -923,7 +1177,7 @@ export const VirtualStore3D: React.FC = () => {
                     fov={isMobile ? 60 : 35}
                     near={0.1}
                     far={1000}
-                    onUpdate={(c) => c.lookAt(0, isMobile ? 0.1 : 2.6, 0)}
+                    onUpdate={(c) => c.lookAt(0, isMobile ? 0.0 : 1.2, 0)}
                 />
 
                 <group 
