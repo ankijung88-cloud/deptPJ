@@ -98,28 +98,8 @@ const SubCategoryPage: React.FC = () => {
 
     // Find parent floor from dynamic floors
     const parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
-    const [showDebug, setShowDebug] = useState(false);
-    const [, setClickCount] = useState(0);
-
-    const handleTitleClick = () => {
-        setClickCount(prev => {
-            if (prev + 1 >= 5) {
-                setShowDebug(true);
-                return 0;
-            }
-            return prev + 1;
-        });
-    };
-
     const subcategoryData = parentFloor?.subitems?.find(s => s.id === targetSubId) || null;
 
-    console.log('SubCategoryPage Debug:', {
-        targetSubId,
-        parentFloorFound: !!parentFloor,
-        parentFloorBg: parentFloor?.bgImage,
-        subcategoryFound: !!subcategoryData,
-        subcategoryBg: subcategoryData?.bgImage
-    });
 
     useEffect(() => {
         let mounted = true;
@@ -267,8 +247,7 @@ const SubCategoryPage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9] cursor-pointer" 
-                                    onClick={handleTitleClick}
+                                <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9]" 
                                     style={{ 
                                         color: theme.highlightColor, 
                                         textShadow: `0 0 40px ${theme.glowColor}44` 
@@ -387,8 +366,7 @@ const SubCategoryPage: React.FC = () => {
                 >
                     <div className="absolute top-8 left-10 z-[2010] flex items-center gap-6">
                          <h1 
-                            className="text-4xl md:text-7xl font-serif font-black mb-8 leading-[1.1] tracking-tight text-white cursor-pointer"
-                            onClick={handleTitleClick}
+                            className="text-4xl md:text-7xl font-serif font-black mb-8 leading-[1.1] tracking-tight text-white"
                         >
                             {subcategoryData ? getLocalizedText(subcategoryData.label, i18n.language) : ''}
                         </h1>
@@ -446,53 +424,6 @@ const SubCategoryPage: React.FC = () => {
                     </button>
                 </div>
             </footer>
-            {/* Debug Overlay */}
-            {showDebug && (
-                <div className="fixed bottom-0 right-0 m-6 p-6 bg-black/90 border border-[#00FFC2]/30 rounded-2xl z-[9999] text-[10px] font-mono text-[#00FFC2] max-w-sm shadow-2xl backdrop-blur-xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <span className="font-bold opacity-50 uppercase tracking-widest">Diagnostic Panel</span>
-                        <button onClick={() => setShowDebug(false)} className="text-white/40 hover:text-white">✕</button>
-                    </div>
-                    <div className="space-y-4">
-                        <div>
-                            <p className="opacity-40 mb-1">Target ID</p>
-                            <p className="break-all">{targetSubId}</p>
-                        </div>
-                        <div>
-                            <p className="opacity-40 mb-1">Floor ID Mapping</p>
-                            <p>{parentFloor?.id}</p>
-                        </div>
-                        <div>
-                            <p className="opacity-40 mb-1">Subcategory BG URL</p>
-                            <p className="break-all text-white">{subcategoryData?.bgImage || 'NONE'}</p>
-                        </div>
-                        <div>
-                            <p className="opacity-40 mb-1">Parent Floor BG URL</p>
-                            <p className="break-all text-white">{parentFloor?.bgImage || 'NONE'}</p>
-                        </div>
-                        <div>
-                            <p className="opacity-40 mb-1">Last Data Sync</p>
-                            <p className="text-white">{(parentFloor as any)?.lastUpdated || 'STRATEGIC_FALLBACK'}</p>
-                        </div>
-                        <div className="pt-2 border-t border-white/10">
-                            <p className="opacity-40 mb-1">Data Source</p>
-                            <p className="text-white font-bold">{(parentFloor as any)?.isDynamic ? 'DATABASE (SAVED)' : 'FALLBACK (NOT SAVED)'}</p>
-                        </div>
-                        <div className="pt-2 border-t border-white/10">
-                            <p className="opacity-40 mb-1">Raw Parent Data (JSON)</p>
-                            <pre className="text-[8px] text-white/60 overflow-auto max-h-40 bg-black/40 p-2 rounded">
-                                {JSON.stringify(parentFloor, null, 2)}
-                            </pre>
-                        </div>
-                        <div className="pt-2 border-t border-white/10">
-                            <p className="opacity-40 mb-1 font-bold text-[#00FFC2]">Full FloorContext State (First 2 DB items)</p>
-                            <pre className="text-[8px] text-white/40 overflow-auto max-h-40 bg-black/60 p-2 rounded">
-                                {JSON.stringify(floors.filter(f => (f as any).isDynamic).slice(0, 2), null, 2)}
-                            </pre>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
