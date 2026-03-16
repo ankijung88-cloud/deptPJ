@@ -330,7 +330,7 @@ const AboutPage: React.FC = () => {
             <Slide bgColor="#161e1b" id="07" title="개발 장비 및 핵심 툴 (Dev Tools)" icon={Box}>
                 <FadeInContent>
                     <div className="flex flex-wrap gap-6 mt-6 w-full max-w-4xl mx-auto items-center justify-center">
-                        {['VSCode', 'Antigravity', 'Git / GitHub', 'Premiere Pro', 'Nano Banana', 'Flow', 'Grok', 'Spline 3D', 'Three.js', 'Figma', 'Supabase Edge'].map((tool, idx) => (
+                        {['VSCode', 'Antigravity', 'Git / GitHub', 'Premiere Pro', 'Nano Banana', 'Flow', 'Grok', 'Spline 3D', 'Three.js', 'AWS Lightsail'].map((tool, idx) => (
                             <motion.span
                                 key={tool}
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -367,7 +367,7 @@ const AboutPage: React.FC = () => {
                             { step: 'Phase 1. Planning', desc: '요구사항 분석, 벤치마킹, 디자인 철학 확립' },
                             { step: 'Phase 2. Design', desc: 'UI/UX 기획, 컴포넌트 구조화, 반응형 목업 제작' },
                             { step: 'Phase 3. Assets & 3D', desc: '3D 오브젝트 제작 및 WebGL 포트팅, Video 렌더링 삽입' },
-                            { step: 'Phase 4. Development', desc: 'Supabase DB 통신 세팅, i18n 파이프라인 연결, 동적 라우팅' },
+                            { step: 'Phase 4. Development', desc: 'Lightsail DB 통신 세팅, i18n 파이프라인 연결, 동적 라우팅' },
                             { step: 'Phase 5. Polish', desc: '모션 애니메이션 (Framer) 섬세화 적용 및 QA/종합 배포' },
                         ].map((s, i) => (
                             <motion.div
@@ -560,7 +560,7 @@ const AboutPage: React.FC = () => {
                         <div className="p-10 bg-black/40 backdrop-blur-xl rounded-[2rem] border border-white/10 h-full mt-2 hover:bg-black/60 transition-colors">
                             <h4 className="font-bold text-2xl mb-6 text-white"><AutoTranslatedText text="확장형 SaaS 쇼룸 템플릿 확보" /></h4>
                             <p className="text-white/70 font-light text-lg leading-relaxed break-keep">
-                                <AutoTranslatedText text="프론트엔드 최적화(React+Framer)와 실시간 DB(Supabase)가 단단히 결합된 이 구조는 언제든 타 브랜드나 기업형 컨텐츠의 '가상 쇼룸 템플릿'으로 패키징 복제가 용이하여 비즈니스 에이전시의 강력한 수주 무기가 됩니다." />
+                                <AutoTranslatedText text="프론트엔드 최적화(React+Framer)와 실시간 DB(MySQL)가 단단히 결합된 이 구조는 언제든 타 브랜드나 기업형 컨텐츠의 '가상 쇼룸 템플릿'으로 패키징 복제가 용이하여 비즈니스 에이전시의 강력한 수주 무기가 됩니다." />
                             </p>
                         </div>
                     </FadeInContent>
