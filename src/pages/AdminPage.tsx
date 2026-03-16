@@ -822,12 +822,13 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
 
             const data = await response.json();
             if (data.url) {
+                console.log(`Subitem ${index} uploaded success:`, data.url);
                 const newSubitems = [...(formData.subitems || [])];
                 newSubitems[index] = { ...newSubitems[index], bgImage: data.url };
                 setFormData({ ...formData, subitems: newSubitems });
             }
-        } catch (err) {
-            alert('Upload failed');
+        } catch (err: any) {
+            alert(`Upload failed: ${err.message}`);
         } finally {
             setUploading(null);
         }
@@ -855,15 +856,37 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('--- Submitting Floor Data ---');
+        console.log('Target ID:', floor?.id);
+        console.log('Payload:', formData);
+        
         try {
             if (isEdit) {
-                await updateFloorCategory(floor.id, formData);
+                try {
+                    await updateFloorCategory(floor.id, formData);
+                    console.log('Update successful');
+                    alert('Successfully updated!');
+                } catch (updateErr: any) {
+                    console.warn('Update failed, checking if creation is needed:', updateErr.message);
+                    // If 404, it means it was fallback data and doesn't exist in DB yet. Try creating.
+                    if (updateErr.message?.includes('404') || updateErr.message?.toLowerCase().includes('not found')) {
+                        console.log('Update target not found (404), attempting to create new record...');
+                        await createFloorCategory(formData);
+                        console.log('Creation successful');
+                        alert('Successfully created new record for this floor!');
+                    } else {
+                        throw updateErr;
+                    }
+                }
             } else {
                 await createFloorCategory(formData);
+                console.log('Creation successful');
+                alert('Successfully created!');
             }
             onSuccess();
-        } catch (err) {
-            alert('Operation failed');
+        } catch (err: any) {
+            console.error('Submit Error Details:', err);
+            alert(`Operation failed: ${err.message || 'Unknown error'}`);
         }
     };
 

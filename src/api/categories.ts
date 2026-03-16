@@ -25,7 +25,7 @@ export const getFloorCategories = async (): Promise<FloorCategory[]> => {
             content: (typeof item.content === 'string' ? JSON.parse(item.content) : item.content) || [],
             subitems: ((typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []).map((sub: any) => ({
                 ...sub,
-                bgImage: sub.bgImage ? normalizeUrl(sub.bgImage) : undefined
+                bgImage: (sub.bgImage || sub.bg_image) ? normalizeUrl(sub.bgImage || sub.bg_image) : undefined
             }))
         }));
     } catch (error: any) {
@@ -47,7 +47,7 @@ export const getNavItems = async (): Promise<NavItem[]> => {
             href: item.href,
             subitems: ((typeof item.subitems === 'string' ? JSON.parse(item.subitems) : item.subitems) || []).map((sub: any) => ({
                 ...sub,
-                bgImage: sub.bgImage ? normalizeUrl(sub.bgImage) : undefined
+                bgImage: (sub.bgImage || sub.bg_image) ? normalizeUrl(sub.bgImage || sub.bg_image) : undefined
             }))
         }));
     } catch (error: any) {
@@ -62,7 +62,10 @@ export const createFloorCategory = async (data: any): Promise<void> => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Create failed');
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${response.status}`);
+    }
 };
 
 export const updateFloorCategory = async (id: string, data: any): Promise<void> => {
@@ -71,7 +74,10 @@ export const updateFloorCategory = async (id: string, data: any): Promise<void> 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Update failed');
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${response.status}`);
+    }
 };
 
 export const deleteFloorCategory = async (id: string): Promise<void> => {
@@ -87,7 +93,10 @@ export const createNavItem = async (data: any): Promise<void> => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Create failed');
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${response.status}`);
+    }
 };
 
 export const updateNavItem = async (id: string, data: any): Promise<void> => {
@@ -96,7 +105,10 @@ export const updateNavItem = async (id: string, data: any): Promise<void> => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Update failed');
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API Error: ${response.status}`);
+    }
 };
 
 export const deleteNavItem = async (id: string): Promise<void> => {
