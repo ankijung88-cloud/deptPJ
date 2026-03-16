@@ -474,6 +474,12 @@ const SubCategoryPage: React.FC = () => {
                             <p className="opacity-40 mb-1">Data Source</p>
                             <p className="text-white font-bold">{parentFloor?.id?.toString().startsWith('floor-') ? 'FALLBACK (NOT SAVED)' : 'DATABASE (SAVED)'}</p>
                         </div>
+                        <div className="pt-2 border-t border-white/10">
+                            <p className="opacity-40 mb-1">Raw Parent Data (JSON)</p>
+                            <pre className="text-[8px] text-white/60 overflow-auto max-h-40 bg-black/40 p-2 rounded">
+                                {JSON.stringify(parentFloor, null, 2)}
+                            </pre>
+                        </div>
                     </div>
                 </div>
             )}

@@ -19,11 +19,23 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setLoading(true);
         try {
             const data = await getFloorCategories();
+            console.log('FloorContext: API Data received:', data);
             
             // Merge dynamic data with fallback data
             // Use 'floor' string (e.g. "6F") as the unique key to match
             const mergedFloors = FALLBACK_FLOORS.map(fallback => {
-                const dynamic = (data || []).find(d => d.floor === fallback.floor);
+                const dynamic = (data || []).find(d => {
+                    const match = d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase();
+                    if (!match && d.floor) {
+                        // console.log(`No match for DB floor "${d.floor}" against fallback "${fallback.floor}"`);
+                    }
+                    return match;
+                });
+                
+                if (dynamic) {
+                    console.log(`Matched floor ${fallback.floor}! ID: ${dynamic.id}`);
+                }
+                
                 return dynamic ? { ...fallback, ...dynamic } : fallback;
             });
 
