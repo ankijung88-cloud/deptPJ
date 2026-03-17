@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Play } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, MapPin, Calendar, ShoppingCart, Ticket, Eye, ArrowRight, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -21,10 +21,54 @@ export const DetailPage: React.FC = () => {
     const { floors } = useFloors();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     
     // Set breadcrumb title
     const displayName = item ? getLocalizedText(item.title, i18n.language) : null;
     useSetBreadcrumbTitle(displayName);
+
+
+    // Theme Detection Logic
+    const pageTheme = useMemo(() => {
+        if (!item) return 'promo'; // Default if item is not loaded yet
+        if (item.pageType) return item.pageType;
+        
+        const titleKo = (typeof item.title === 'string' ? item.title : item.title.ko) || '';
+        
+        if (titleKo.includes('판매') || titleKo.includes('마켓') || titleKo.includes('Shop')) return 'sale';
+        if (titleKo.includes('전시') || titleKo.includes('갤러리') || titleKo.includes('Exhibit')) return 'exhibit';
+        if (titleKo.includes('예매') || titleKo.includes('티켓') || titleKo.includes('Booking')) return 'booking';
+        if (titleKo.includes('홍보') || titleKo.includes('안내') || titleKo.includes('Promo')) return 'promo';
+        
+        return 'promo'; // Default fallback
+    }, [item]);
+
+    const themeConfig = {
+        sale: {
+            icon: ShoppingCart,
+            label: '구매하기',
+            color: '#00FFC2',
+            action: () => alert('구매 페이지로 이동합니다.')
+        },
+        exhibit: {
+            icon: Eye,
+            label: '3D 전시 입장하기',
+            color: '#FF00E5',
+            action: () => navigate('/inspiration')
+        },
+        booking: {
+            icon: Ticket,
+            label: '티켓 예매하기',
+            color: '#00E0FF',
+            action: () => alert('예매 페이지로 이동합니다.')
+        },
+        promo: {
+            icon: ArrowRight,
+            label: '상세 보기',
+            color: '#FFFFFF',
+            action: () => navigate(-1)
+        }
+    }[pageTheme] || { icon: ArrowRight, label: '상세 보기', color: '#FFFFFF', action: () => {} };
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -83,10 +127,32 @@ export const DetailPage: React.FC = () => {
                                     <AutoTranslatedText text="기록 수집 중입니다" />
                                 </h1>
                                 <div className="flex gap-4 items-center text-white/30 text-xs font-bold tracking-[0.3em] uppercase">
-                                    <CalendarIcon size={14} />
+                                    <Calendar size={14} />
                                     <span>Updating soon</span>
                                     <span className="w-1 h-1 rounded-full bg-white/20" />
                                     <span>Curation process 85%</span>
+                                    {/* Action Button Area */}
+                                    <div className="pt-6">
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={themeConfig.action}
+                                            className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-black/40 transition-all border-none cursor-pointer"
+                                            style={{ 
+                                                backgroundColor: themeConfig.color,
+                                                color: '#000'
+                                            }}
+                                        >
+                                            <themeConfig.icon size={22} />
+                                            <span><AutoTranslatedText text={themeConfig.label} /></span>
+                                        </motion.button>
+                                        
+                                        {pageTheme === 'exhibit' && (
+                                            <p className="mt-3 text-[10px] text-white/30 text-center font-bold tracking-widest uppercase">
+                                                * 가상 현실에서의 몰입형 전시 경험을 제공합니다
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </motion.div>
                         </div>
@@ -174,7 +240,7 @@ export const DetailPage: React.FC = () => {
 
                             <div className="flex flex-wrap gap-6 text-white/80 text-sm">
                                 <div className="flex items-center">
-                                    <CalendarIcon size={16} className="mr-2" style={theme.accentStyle} />
+                                    <Calendar size={16} className="mr-2" style={theme.accentStyle} />
                                     <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
                                 </div>
                                 <div className="flex items-center">
@@ -195,11 +261,28 @@ export const DetailPage: React.FC = () => {
                 <div className="h-1 w-full rounded mb-8" style={{ background: `linear-gradient(to right, ${theme.accentColor}, ${theme.color4}, ${theme.color5})` }} />
                 <div className="space-y-8">
                     <section className="rounded-2xl p-8" style={{ backgroundColor: theme.color1, border: `1px solid ${theme.color3}` }}>
-                        <h3 className="text-2xl font-bold font-serif mb-6 border-l-4 pl-4" style={{ borderLeftColor: theme.accentColor, color: theme.textPrimary }}>{t('common.detail_intro')}</h3>
                         <p className="text-lg leading-relaxed whitespace-pre-line min-h-[500px]" style={{ color: theme.textSecondary }}>
                             <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                         </p>
                     </section>
+                    
+                    {/* Floating Action Button for the main section */}
+                    <div className="flex justify-center pt-8">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={themeConfig.action}
+                            className="px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl flex items-center gap-4 transition-all border-none cursor-pointer"
+                            style={{ 
+                                backgroundColor: themeConfig.color,
+                                color: '#000',
+                                boxShadow: `0 20px 40px ${themeConfig.color}33`
+                            }}
+                        >
+                            <themeConfig.icon size={24} />
+                            <span><AutoTranslatedText text={themeConfig.label} /></span>
+                        </motion.button>
+                    </div>
                 </div>
             </div>
         </article>

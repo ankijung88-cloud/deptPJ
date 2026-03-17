@@ -79,6 +79,7 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         closedDays: (typeof item.closed_days === 'string' ? JSON.parse(item.closed_days) : item.closed_days) || [],
         videoUrl: normalizeUrl(item.video_url || item.video_Url), // Support both cases just in case
         user_id: item.user_id,
+        pageType: item.page_type,
         eventDates: parsedEventDates.length > 0 ? parsedEventDates : (
             item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
                 item.id === 'global-artist-collab-2026' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 5).toString().padStart(2, '0')}`) :

@@ -29,6 +29,7 @@ export interface FeaturedItem {
     price: LocalizedString;
     closedDays?: string[];
     videoUrl?: string;
+    pageType?: 'sale' | 'exhibit' | 'booking' | 'promo';
     user_id?: string;
     eventDates?: string[]; // YYYY-MM-DD format
 }
