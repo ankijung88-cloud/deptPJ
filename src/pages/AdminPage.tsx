@@ -83,6 +83,11 @@ const generateUniqueId = () => {
     return `item-${date}-${random}`;
 };
 
+const DEFAULT_LONG_DESCRIPTION = {
+    ko: "현대 시대를 위해 재해석된 전통 한국 미학의 깊이를 탐험하세요.\n\n각 요소는 단순한 시청을 초월하는 몰입형 경험을 제공하도록 세심하게 큐레이팅되었습니다. 이 프레젠테이션의 건축물 안에 담긴 질감, 리듬, 그리고 침묵의 이야기에 참여하시기 바랍니다.",
+    en: "Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier.\n\nEach element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation."
+};
+
 const normalizeProductData = (product: any) => {
     const defaultData = {
         id: generateUniqueId(),
@@ -96,7 +101,7 @@ const normalizeProductData = (product: any) => {
         location: { ko: '', en: '' },
         price: '',
         video_url: '',
-        long_description: { ko: '', en: '' },
+        long_description: { ...DEFAULT_LONG_DESCRIPTION },
         closed_days: []
     };
     if (!product) return defaultData;
@@ -110,6 +115,12 @@ const normalizeProductData = (product: any) => {
     // closed_days: FeaturedItem에서는 'closedDays' 필드에 매핑됨
     const raw_closed_days = product.closed_days || product.closedDays || [];
 
+    const normalized_long_description = normalizeLocalizedString(product.long_description);
+    if (!normalized_long_description.ko && !normalized_long_description.en) {
+        normalized_long_description.ko = DEFAULT_LONG_DESCRIPTION.ko;
+        normalized_long_description.en = DEFAULT_LONG_DESCRIPTION.en;
+    }
+
     return {
         ...defaultData,
         ...product,
@@ -118,7 +129,7 @@ const normalizeProductData = (product: any) => {
         video_url,
         title: normalizeLocalizedString(product.title),
         description: normalizeLocalizedString(product.description),
-        long_description: normalizeLocalizedString(product.long_description),
+        long_description: normalized_long_description,
         event_date: normalizeLocalizedString(raw_event_date),
         location: normalizeLocalizedString(product.location),
         closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : []
