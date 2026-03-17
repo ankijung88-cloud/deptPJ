@@ -7,13 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
-import { useFloors } from '../context/FloorContext';
-import { getJoseonThemeById } from '../utils/themeUtils';
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { t, i18n } = useTranslation();
-    const { floors } = useFloors();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -97,8 +94,6 @@ export const DetailPage: React.FC = () => {
             </div>
         );
     }
-
-    const theme = getJoseonThemeById(item.category || '');
 
     return (
         <article className="min-h-screen bg-black text-white">
