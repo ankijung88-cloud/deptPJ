@@ -181,12 +181,20 @@ export const DetailPage: React.FC = () => {
 
                         <section className="prose prose-invert max-w-none">
                             <div className="text-lg leading-relaxed space-y-8 font-light" style={{ color: theme.textSecondary }}>
-                                <p>
-                                    <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier." />
-                                </p>
-                                <p>
-                                    <AutoTranslatedText text="Each element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation." />
-                                </p>
+                                {item.long_description ? (
+                                    <div className="whitespace-pre-wrap">
+                                        <AutoTranslatedText text={getLocalizedText(item.long_description, i18n.language)} />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p>
+                                            <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier." />
+                                        </p>
+                                        <p>
+                                            <AutoTranslatedText text="Each element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation." />
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </section>
                     </div>

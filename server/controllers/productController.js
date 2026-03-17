@@ -59,7 +59,7 @@ export const searchProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { id, title, category, subcategory, description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -69,8 +69,8 @@ export const createProduct = async (req, res) => {
 
     const query = `
       INSERT INTO featured_items 
-      (id, title, category, subcategory, description, image_url, thumbnail_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await pool.query(query, [
       id,
@@ -78,6 +78,7 @@ export const createProduct = async (req, res) => {
       category,
       subcategory,
       toJson(description),
+      toJson(long_description),
       image_url || '',
       thumbnail_url || '',
       toJson(event_date),
@@ -99,7 +100,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    const { title, category, subcategory, description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -113,7 +114,7 @@ export const updateProduct = async (req, res) => {
 
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, image_url = ?, thumbnail_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?
       WHERE id = ?
     `;
     const params = [
@@ -121,6 +122,7 @@ export const updateProduct = async (req, res) => {
       category,
       subcategory,
       toJson(description),
+      toJson(long_description),
       image_url || '',
       thumbnail_url || '',
       toJson(event_date),

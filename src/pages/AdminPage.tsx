@@ -96,6 +96,7 @@ const normalizeProductData = (product: any) => {
         location: { ko: '', en: '' },
         price: '',
         video_url: '',
+        long_description: { ko: '', en: '' },
         closed_days: []
     };
     if (!product) return defaultData;
@@ -117,6 +118,7 @@ const normalizeProductData = (product: any) => {
         video_url,
         title: normalizeLocalizedString(product.title),
         description: normalizeLocalizedString(product.description),
+        long_description: normalizeLocalizedString(product.long_description),
         event_date: normalizeLocalizedString(raw_event_date),
         location: normalizeLocalizedString(product.location),
         closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : []
@@ -544,6 +546,17 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             rows={4} required
                             value={formData.description.ko} onChange={(e) => setFormData({...formData, description: {...formData.description, ko: e.target.value}})}
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
+                        />
+                    </div>
+
+                    {/* 5-2. Detailed Description */}
+                    <div>
+                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
+                        <textarea 
+                            rows={8}
+                            value={formData.long_description.ko} onChange={(e) => setFormData({...formData, long_description: {...formData.long_description, ko: e.target.value}})}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
+                            placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
                         />
                     </div>
 

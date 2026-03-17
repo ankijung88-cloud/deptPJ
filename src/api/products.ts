@@ -78,6 +78,7 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         price: item.price,
         closedDays: (typeof item.closed_days === 'string' ? JSON.parse(item.closed_days) : item.closed_days) || [],
         videoUrl: normalizeUrl(item.video_url || item.video_Url), // Support both cases just in case
+        long_description: item.long_description,
         user_id: item.user_id,
         eventDates: parsedEventDates.length > 0 ? parsedEventDates : (
             item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
