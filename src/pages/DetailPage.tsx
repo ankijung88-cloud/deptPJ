@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const theme = getJoseonThemeById(id || '');
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -91,7 +92,7 @@ export const DetailPage: React.FC = () => {
             <div className="min-h-screen pt-24 flex items-center justify-center text-white" style={{ backgroundColor: theme.bgColor }}>
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
-                    <Link to="/" className="text-[#00FFC2] hover:underline">{t('common.back_home')}</Link>
+                    <Link to="/inspiration" className="text-[#00FFC2] hover:underline font-bold text-lg"><AutoTranslatedText text={t('common.back_home')} /></Link>
                 </div>
             </div>
         );
@@ -113,10 +114,13 @@ export const DetailPage: React.FC = () => {
 
                 <div className="absolute inset-0 z-20 flex flex-col justify-end pb-20">
                     <div className="container mx-auto px-6">
-                        <Link to="/" className="inline-flex items-center text-white/60 hover:text-[#00FFC2] mb-8 transition-colors">
-                            <ArrowLeft size={20} className="mr-2" />
-                            {t('common.back')}
-                        </Link>
+                        <button 
+                            onClick={() => navigate(-1)}
+                            className="inline-flex items-center text-white/60 hover:text-[#00FFC2] mb-8 transition-colors group"
+                        >
+                            <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                            <span className="font-bold tracking-widest uppercase text-sm">{t('common.back')}</span>
+                        </button>
 
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
