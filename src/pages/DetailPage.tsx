@@ -221,11 +221,11 @@ export const DetailPage: React.FC = () => {
                             {/* Additional Info */}
                             <div className="space-y-6 px-4">
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Curated Category</span>
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]"><AutoTranslatedText text="Curated Category" /></span>
                                     <p className="text-white/80 font-medium tracking-wide"><AutoTranslatedText text={item.category} /></p>
                                 </div>
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Platform ID</span>
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]"><AutoTranslatedText text="Platform ID" /></span>
                                     <p className="text-white/80 font-mono text-sm opacity-40">{item.id}</p>
                                 </div>
                             </div>
@@ -252,7 +252,7 @@ export const DetailPage: React.FC = () => {
                             className="relative bg-[#111] border border-white/10 w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
                         >
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-bold">Share</h3>
+                                <h3 className="text-xl font-bold"><AutoTranslatedText text="Share" /></h3>
                                 <button onClick={() => setShowShareModal(false)} className="text-white/40 hover:text-white"><X size={24}/></button>
                             </div>
                             
@@ -264,7 +264,7 @@ export const DetailPage: React.FC = () => {
                                     onClick={handleCopyLink}
                                     className={`w-full py-4 ${copySuccess ? 'bg-[#00FFC2]' : 'bg-white'} text-black rounded-2xl font-bold transition-all`}
                                 >
-                                    {copySuccess ? 'Copied!' : 'Copy Link'}
+                                    {copySuccess ? <AutoTranslatedText text="Copied!" /> : <AutoTranslatedText text="Copy Link" />}
                                 </button>
                             </div>
                         </motion.div>

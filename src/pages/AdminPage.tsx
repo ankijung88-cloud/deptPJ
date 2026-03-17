@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -165,6 +166,9 @@ const ProductManager = () => {
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
+    const { translatedText: searchPlaceholder } = useAutoTranslate("Search products...");
+    const { translatedText: allFloorsLabel } = useAutoTranslate("모든 층");
+    const { translatedText: allCategoriesLabel } = useAutoTranslate("모든 카테고리");
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
 
@@ -229,7 +233,7 @@ const ProductManager = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                     <input 
                         type="text" 
-                        placeholder="Search products..."
+                        placeholder={searchPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
@@ -245,7 +249,7 @@ const ProductManager = () => {
                         }}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                     >
-                        <option value="">모든 층</option>
+                        <option value="">{allFloorsLabel}</option>
                         {floors.map(f => (
                             <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
                         ))}
@@ -257,7 +261,7 @@ const ProductManager = () => {
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                         disabled={!selectedFloor}
                     >
-                        <option value="">모든 카테고리</option>
+                        <option value="">{allCategoriesLabel}</option>
                         {selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
                             <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
                         ))}
@@ -338,7 +342,7 @@ const ProductManager = () => {
             {totalPages > 1 && (
                 <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-2xl px-6 py-4">
                     <div className="text-white/40 text-sm">
-                        Showing <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-white font-medium">{filteredProducts.length}</span> results
+                        <AutoTranslatedText text="Showing" /> <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> <AutoTranslatedText text="to" /> <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> <AutoTranslatedText text="of" /> <span className="text-white font-medium">{filteredProducts.length}</span> <AutoTranslatedText text="results" />
                     </div>
                     <div className="flex gap-2">
                         <button 
@@ -346,7 +350,7 @@ const ProductManager = () => {
                             disabled={currentPage === 1}
                             className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
                         >
-                            Previous
+                            <AutoTranslatedText text="Previous" />
                         </button>
                         <div className="flex flex-wrap gap-1 justify-center max-w-[300px] md:max-w-none">
                             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -368,7 +372,7 @@ const ProductManager = () => {
                             disabled={currentPage === totalPages}
                             className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
                         >
-                            Next
+                            <AutoTranslatedText text="Next" />
                         </button>
                     </div>
                 </div>
@@ -1020,7 +1024,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                 
                                 {(formData.subitems || []).length === 0 && (
                                     <div className="text-center py-10 bg-black/20 border border-dashed border-white/10 rounded-2xl">
-                                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest">No sub-items added</p>
+                                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest"><AutoTranslatedText text="No sub-items added" /></p>
                                     </div>
                                 )}
                             </div>
@@ -1051,6 +1055,8 @@ const NoticeManager = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNotice, setEditingNotice] = useState<any>(null);
+    const { translatedText: searchNoticesPlaceholder } = useAutoTranslate("Search notices...");
+    const { translatedText: allCategoriesNoticeLabel } = useAutoTranslate("모든 범주");
 
     useEffect(() => { fetchNotices(); }, []);
 
@@ -1102,7 +1108,7 @@ const NoticeManager = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                     <input 
                         type="text" 
-                        placeholder="Search notices..."
+                        placeholder={searchNoticesPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
@@ -1114,7 +1120,7 @@ const NoticeManager = () => {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
-                    <option value="">모든 범주</option>
+                    <option value="">{allCategoriesNoticeLabel}</option>
                     {categories.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -1240,6 +1246,8 @@ const FAQManager = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFaq, setEditingFaq] = useState<any>(null);
+    const { translatedText: searchFaqsPlaceholder } = useAutoTranslate("Search FAQs...");
+    const { translatedText: allCategoriesFaqLabel } = useAutoTranslate("모든 범주");
 
     useEffect(() => { fetchFaqs(); }, []);
 
@@ -1291,7 +1299,7 @@ const FAQManager = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                     <input 
                         type="text" 
-                        placeholder="Search FAQs..."
+                        placeholder={searchFaqsPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
@@ -1303,7 +1311,7 @@ const FAQManager = () => {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
-                    <option value="">모든 범주</option>
+                    <option value="">{allCategoriesFaqLabel}</option>
                     {categories.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                     ))}

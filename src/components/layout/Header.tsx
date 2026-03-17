@@ -427,7 +427,7 @@ const Header: React.FC = () => {
                                         onMouseLeave={e => (e.currentTarget.style.background = '#00FFC210')}
                                     >
                                         <Shield size={13} />
-                                        Admin
+                                        <AutoTranslatedText text="Admin" />
                                     </Link>
                                     <button
                                         onClick={handleLogout}
@@ -437,7 +437,7 @@ const Header: React.FC = () => {
                                         onMouseLeave={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.05)')}
                                     >
                                         <LogOut size={13} />
-                                        로그아웃
+                                        <AutoTranslatedText text="로그아웃" />
                                     </button>
                                 </div>
                             )}
@@ -550,7 +550,7 @@ const Header: React.FC = () => {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     <Shield size={16} />
-                                    Admin 관리자 페이지
+                                    <AutoTranslatedText text="Admin 관리자 페이지" />
                                 </Link>
                                 <button
                                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
@@ -558,7 +558,7 @@ const Header: React.FC = () => {
                                     style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
                                 >
                                     <LogOut size={16} />
-                                    로그아웃
+                                    <AutoTranslatedText text="로그아웃" />
                                 </button>
                             </div>
                         )}
