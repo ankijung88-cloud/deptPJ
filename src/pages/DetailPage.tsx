@@ -1,23 +1,14 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, ShoppingCart, Ticket, Eye, ArrowRight, Play } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
-import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
 import { useFloors } from '../context/FloorContext';
-import { useSetBreadcrumbTitle } from '../context/NavigationActionContext';
-import ThemeSaleContainer from '../components/themes/ThemeSaleContainer';
-import ThemeExhibitContainer from '../components/themes/ThemeExhibitContainer';
-import ThemeBookingContainer from '../components/themes/ThemeBookingContainer';
-import ThemePromoContainer from '../components/themes/ThemePromoContainer';
-
-
-
-
+import { getJoseonThemeById } from '../utils/themeUtils';
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -25,57 +16,9 @@ export const DetailPage: React.FC = () => {
     const { floors } = useFloors();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-    
-    // For demonstration, assume admin mode is toggled via a query param or state
-    const isAdmin = true; // In real app, this would come from auth context
-    
-    // Set breadcrumb title
-    const displayName = item ? getLocalizedText(item.title, i18n.language) : null;
-    useSetBreadcrumbTitle(displayName);
-
-
-    // Theme Detection Logic
-    const pageTheme = useMemo(() => {
-        if (!item) return 'promo'; // Default if item is not loaded yet
-        if (item.pageType) return item.pageType;
-        
-        const titleKo = (typeof item.title === 'string' ? item.title : item.title.ko) || '';
-        
-        if (titleKo.includes('판매') || titleKo.includes('마켓') || titleKo.includes('Shop')) return 'sale';
-        if (titleKo.includes('전시') || titleKo.includes('갤러리') || titleKo.includes('Exhibit')) return 'exhibit';
-        if (titleKo.includes('예매') || titleKo.includes('티켓') || titleKo.includes('Booking')) return 'booking';
-        if (titleKo.includes('홍보') || titleKo.includes('안내') || titleKo.includes('Promo')) return 'promo';
-        
-        return 'promo'; // Default fallback
-    }, [item]);
-
-    const themeConfig = {
-        sale: {
-            icon: ShoppingCart,
-            label: '구매하기',
-            color: '#00FFC2',
-            action: () => alert('구매 페이지로 이동합니다.')
-        },
-        exhibit: {
-            icon: Eye,
-            label: '3D 전시 입장하기',
-            color: '#FF00E5',
-            action: () => navigate('/inspiration')
-        },
-        booking: {
-            icon: Ticket,
-            label: '티켓 예매하기',
-            color: '#00E0FF',
-            action: () => alert('예매 페이지로 이동합니다.')
-        },
-        promo: {
-            icon: ArrowRight,
-            label: '상세 보기',
-            color: '#FFFFFF',
-            action: () => navigate(-1)
-        }
-    }[pageTheme] || { icon: ArrowRight, label: '상세 보기', color: '#FFFFFF', action: () => {} };
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [copySuccess, setCopySuccess] = useState(false);
+    const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -95,182 +38,244 @@ export const DetailPage: React.FC = () => {
         fetchItem();
     }, [id]);
 
-    const floorNumber = item ? (getFloorBySubId(item.subcategory || '') || '1') : '1';
-    const theme = getJoseonThemeById(id || '', floorNumber);
+    const handleShare = () => {
+        setShowShareModal(true);
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+        }
+    };
+
+    const handleDownload = async () => {
+        if (!item) return;
+        const url = item.videoUrl || item.imageUrl;
+        if (!url) return;
+
+        try {
+            setDownloading(true);
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            const urlParts = url.split('/');
+            const filename = urlParts[urlParts.length - 1].split('?')[0] || `download-${item.id}`;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Download failed:', error);
+            window.open(url, '_blank');
+        } finally {
+            setDownloading(false);
+        }
+    };
 
     if (loading) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center" style={theme.bgStyle}>
-                <div className="text-center">
-                    <p className="animate-pulse text-lg font-bold" style={theme.accentStyle}>{t('common.loading')}</p>
-                </div>
+            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-black">
+                <Loader2 className="animate-spin text-[#00FFC2]" size={40} />
             </div>
         );
     }
 
     if (!item) {
         return (
-            <article className="min-h-screen" style={theme.bgStyle}>
-                {/* Placeholder Hero */}
-                <div className="relative h-[60vh] w-full overflow-hidden flex items-center justify-center bg-black/40">
-                    <div className="absolute inset-x-0 top-0 bottom-16 z-20">
-                        <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
-                            <Link 
-                                to="/inspiration" 
-                                state={{ fromGallery: true }}
-                                className="inline-flex items-center text-white/40 hover:text-white mb-6 transition-colors"
-                            >
-                                <ArrowLeft size={20} className="mr-2" />
-                                <AutoTranslatedText text={t('common.back')} />
-                            </Link>
-
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                                <div className="inline-block border-b-2 mb-4 pb-1 opacity-30" style={{ borderBottomColor: theme.accentColor }}>
-                                    <span className="text-xl font-serif font-bold tracking-wider" style={theme.accentStyle}>
-                                        <AutoTranslatedText text="DEPT. ARCHIVE" />
-                                    </span>
-                                </div>
-                                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 opacity-50" style={theme.textPrimaryStyle}>
-                                    <AutoTranslatedText text="기록 수집 중입니다" />
-                                </h1>
-                                <div className="flex gap-4 items-center text-white/30 text-xs font-bold tracking-[0.3em] uppercase">
-                                    <Calendar size={14} />
-                                    <span>Updating soon</span>
-                                    <span className="w-1 h-1 rounded-full bg-white/20" />
-                                    <span>Curation process 85%</span>
-                                    {/* Action Button Area */}
-                                    <div className="pt-6">
-                                        <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={themeConfig.action}
-                                            className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl font-bold text-lg shadow-xl shadow-black/40 transition-all border-none cursor-pointer"
-                                            style={{ 
-                                                backgroundColor: themeConfig.color,
-                                                color: '#000'
-                                            }}
-                                        >
-                                            <themeConfig.icon size={22} />
-                                            <span><AutoTranslatedText text={themeConfig.label} /></span>
-                                        </motion.button>
-                                        
-                                        {pageTheme === 'exhibit' && (
-                                            <p className="mt-3 text-[10px] text-white/30 text-center font-bold tracking-widest uppercase">
-                                                * 가상 현실에서의 몰입형 전시 경험을 제공합니다
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-                    {/* Background Texture Placeholder */}
-                    <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[size:24px_24px]" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
+            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-black">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
+                    <Link to="/" className="text-[#00FFC2] hover:underline">{t('common.back_home')}</Link>
                 </div>
-
-                {/* Placeholder Content */}
-                <div className="mx-auto px-6 py-24 relative max-w-4xl text-center">
-                    <div className="w-20 h-20 rounded-full border border-dashed border-white/20 flex items-center justify-center mx-auto mb-10" style={{ borderColor: `${theme.accentColor}44` }}>
-                        <Play size={32} className="opacity-10 translate-x-1" style={{ color: theme.accentColor }} />
-                    </div>
-                    <h2 className="text-3xl font-serif font-bold mb-6" style={theme.textPrimaryStyle}>
-                        <AutoTranslatedText text="이곳은 곧 새로운 이야기로 채워질 예정입니다." />
-                    </h2>
-                    <p className="text-white/40 text-lg font-light leading-relaxed max-w-2xl mx-auto mb-12">
-                        <AutoTranslatedText text="큐레이터들이 현재 해당 주제와 관련된 고유한 헤리티지와 현대적인 영감을 수집하고 있습니다. 곧 완성된 아카이브로 찾아뵙겠습니다." />
-                    </p>
-                    <Link
-                        to="/inspiration"
-                        className="px-8 py-3 rounded-full border border-white/10 hover:bg-white/5 transition-all text-sm font-bold tracking-widest uppercase opacity-60 hover:opacity-100"
-                        style={{ color: theme.accentColor }}
-                    >
-                        <AutoTranslatedText text="Go Back to Inspiration" />
-                    </Link>
-                </div>
-            </article>
+            </div>
         );
     }
 
+    const theme = getJoseonThemeById(item.category || '');
+
     return (
-        <article className="min-h-screen" style={theme.bgStyle}>
-            {/* Header / Hero */}
-            <div className="relative h-[60vh] w-full group">
-                <div
-                    className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+        <article className="min-h-screen bg-black text-white">
+            {/* Magazine Hero */}
+            <div className="relative h-[80vh] w-full group overflow-hidden">
+                <motion.div 
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.5 }}
+                    className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url(${item.imageUrl})` }}
                 >
-                    <div className="absolute inset-0 bg-black/40" />
-                </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                </motion.div>
 
-                {/* Content Overlay */}
-                <div className="absolute inset-x-0 top-0 bottom-16 z-20 pointer-events-none">
-                    <div className="lossless-layout mx-auto px-6 h-full flex flex-col justify-end">
-                        <Link 
-                            to={`/category/${item.subcategory}`} 
-                            state={{ fromGallery: true }}
-                            className="inline-flex items-center text-white/60 hover:text-white mb-6 transition-colors pointer-events-auto"
-                        >
+                <div className="absolute inset-0 z-20 flex flex-col justify-end pb-20">
+                    <div className="container mx-auto px-6">
+                        <Link to="/" className="inline-flex items-center text-white/60 hover:text-[#00FFC2] mb-8 transition-colors">
                             <ArrowLeft size={20} className="mr-2" />
-                            <AutoTranslatedText text={t('common.back')} />
+                            {t('common.back')}
                         </Link>
 
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="pointer-events-auto"
+                            transition={{ delay: 0.2 }}
+                            className="max-w-4xl"
                         >
-                            <div className="inline-block border-b-2 mb-4 pb-1" style={{ borderBottomColor: theme.accentColor }}>
-                                <span className="text-xl font-serif font-bold tracking-wider" style={theme.accentStyle}>
-                                    {(() => {
-                                        const displayKey = (item as any).subcategory || item.category;
-                                        
-                                        // Try to find the label from our dynamic floors first
-                                        for (const floor of floors) {
-                                            const sub = floor.subitems?.find((s: any) => s.id === displayKey);
-                                            if (sub) return <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />;
-                                        }
-
-                                        const key = `nav.${displayKey.toLowerCase()}`;
-                                        const translated = t(key);
-                                        const fallbackText = displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
-                                        const textToDisplay = translated === key ? fallbackText : translated;
-                                        
-                                        // If it's still a long ID-like string, just show a generic "Archive"
-                                        if (textToDisplay.length > 20) return <AutoTranslatedText text="Archive" />;
-                                        
-                                        return <AutoTranslatedText text={textToDisplay} />;
-                                    })()}
+                            <div className="flex items-center gap-4 mb-6">
+                                <span className="px-4 py-1.5 rounded-full bg-[#00FFC2] text-black text-xs font-bold uppercase tracking-widest">
+                                    {item.category}
                                 </span>
+                                {item.subcategory && (
+                                    <span className="text-white/40 text-xs font-mono tracking-widest uppercase">
+                                        / {item.subcategory}
+                                    </span>
+                                )}
+                            </div>
+                            
+                            <h1 className="text-5xl md:text-8xl font-serif font-black mb-8 leading-none tracking-tighter">
+                                <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                            </h1>
+
+                            <div className="flex flex-wrap gap-8 text-white/60 text-sm font-light">
+                                <div className="flex items-center gap-2">
+                                    <CalendarIcon size={16} className="text-[#00FFC2]" />
+                                    <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <MapPin size={16} className="text-[#00FFC2]" />
+                                    <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
+                                </div>
                             </div>
                         </motion.div>
                     </div>
                 </div>
-
-                <div className="absolute inset-0 z-0 pointer-events-none h-[40%] mt-auto" style={{ background: `linear-gradient(to top, ${theme.bgColor}cc, transparent)` }} />
+                
+                {/* Decorative scale lines */}
+                <div className="absolute left-0 right-0 bottom-0 h-1 space-x-1 flex px-6 pb-2 opacity-20">
+                    {Array.from({ length: 100 }).map((_, i) => (
+                        <div key={i} className={`h-full bg-white ${i % 10 === 0 ? 'w-0.5 alpha-80' : 'w-px alpha-40'}`} />
+                    ))}
+                </div>
             </div>
 
-            {/* Main Content Area - Delegated to Theme Containers */}
-            <main className="relative z-10">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={pageTheme}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        {item && (
-                            <>
-                                {pageTheme === 'sale' && <ThemeSaleContainer item={item} theme={theme} isAdmin={isAdmin} />}
-                                {pageTheme === 'exhibit' && <ThemeExhibitContainer item={item} theme={theme} isAdmin={isAdmin} />}
-                                {pageTheme === 'booking' && <ThemeBookingContainer item={item} theme={theme} isAdmin={isAdmin} />}
-                                {pageTheme === 'promo' && <ThemePromoContainer item={item} theme={theme} isAdmin={isAdmin} />}
-                            </>
-                        )}
-                    </motion.div>
-                </AnimatePresence>
-            </main>
+            {/* Content Body */}
+            <div className="container mx-auto px-6 py-24">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+                    {/* Description Column */}
+                    <div className="lg:col-span-8 space-y-16">
+                        <section className="relative">
+                            <div className="absolute -left-6 top-0 bottom-0 w-1 bg-[#00FFC2] opacity-30" />
+                            <p className="text-2xl md:text-3xl leading-relaxed text-white/80 font-serif italic">
+                                <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
+                            </p>
+                        </section>
+
+                        <div className="h-px w-full bg-white/5" />
+
+                        <section className="prose prose-invert max-w-none">
+                            <div className="text-lg leading-relaxed text-white/60 space-y-8 font-light">
+                                <p>
+                                    <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier." />
+                                </p>
+                                <p>
+                                    <AutoTranslatedText text="Each element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation." />
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* Meta Sidebar */}
+                    <div className="lg:col-span-4 lg:pl-10">
+                        <div className="sticky top-32 space-y-12">
+                            {/* Price / Action Card */}
+                            <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-8">
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">{t('common.price')}</span>
+                                    <div className="text-3xl font-serif font-bold text-[#00FFC2]">
+                                        <AutoTranslatedText text={getLocalizedText(item.price, i18n.language)} />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {item.videoUrl && (
+                                        <button 
+                                            onClick={handleDownload}
+                                            disabled={downloading}
+                                            className="w-full py-4 bg-[#00FFC2] text-black rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50"
+                                        >
+                                            {downloading ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
+                                            <AutoTranslatedText text="Resource Asset Download" />
+                                        </button>
+                                    )}
+                                    <button 
+                                        onClick={handleShare}
+                                        className="w-full py-4 bg-transparent border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                                    >
+                                        <Share2 size={20} />
+                                        <AutoTranslatedText text="Share Content" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Additional Info */}
+                            <div className="space-y-6 px-4">
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Curated Category</span>
+                                    <p className="text-white/80 font-medium tracking-wide"><AutoTranslatedText text={item.category} /></p>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">Platform ID</span>
+                                    <p className="text-white/80 font-mono text-sm opacity-40">{item.id}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Share Modal */}
+            <AnimatePresence>
+                {showShareModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            onClick={() => setShowShareModal(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative bg-[#111] border border-white/10 w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
+                        >
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-xl font-bold">Share</h3>
+                                <button onClick={() => setShowShareModal(false)} className="text-white/40 hover:text-white"><X size={24}/></button>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 overflow-hidden text-xs text-white/40 font-mono truncate">
+                                    {window.location.href}
+                                </div>
+                                <button 
+                                    onClick={handleCopyLink}
+                                    className={`w-full py-4 ${copySuccess ? 'bg-[#00FFC2]' : 'bg-white'} text-black rounded-2xl font-bold transition-all`}
+                                >
+                                    {copySuccess ? 'Copied!' : 'Copy Link'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </article>
     );
 };

@@ -95,8 +95,7 @@ const normalizeProductData = (product: any) => {
         location: { ko: '', en: '' },
         price: '',
         video_url: '',
-        closed_days: [],
-        page_type: ''
+        closed_days: []
     };
     if (!product) return defaultData;
 
@@ -119,8 +118,7 @@ const normalizeProductData = (product: any) => {
         description: normalizeLocalizedString(product.description),
         event_date: normalizeLocalizedString(raw_event_date),
         location: normalizeLocalizedString(product.location),
-        closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : [],
-        page_type: product.page_type || product.pageType || ''
+        closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : []
     };
 };
 
@@ -669,53 +667,6 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 value={formData.video_url || ''} onChange={(e) => setFormData({...formData, video_url: e.target.value})}
                                 className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
                                 placeholder="https://youtube.com/..."
-                            />
-                        </div>
-                    </div>
-
-                    {/* 13. Page Type (Theme) */}
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="13. 상세페이지 기능 유형" /></label>
-                        <select 
-                            value={formData.page_type || ''} 
-                            onChange={(e) => setFormData({...formData, page_type: e.target.value})}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
-                        >
-                            <option value="">자동 분석 (제목 기반)</option>
-                            <option value="sale">판매 (Sale)</option>
-                            <option value="exhibit">전시 (Exhibition)</option>
-                            <option value="booking">예매 (Booking)</option>
-                            <option value="promo">홍보 (Promotion)</option>
-                        </select>
-                        <p className="mt-2 text-[10px] text-white/20 italic pl-1">
-                            * 선택하지 않으면 제품 제목을 분석하여 자동으로 기능을 부여합니다.
-                        </p>
-                    </div>
-
-                    {/* 14. Parent ID & 15. Theme Data (Advanced) */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="14. 상위 항목 ID (Parent ID)" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.parent_id || ''} onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
-                                placeholder="예: global-exchange-week"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="15. 테마 데이터 (Theme JSON)" /></label>
-                            <textarea 
-                                rows={1}
-                                value={typeof formData.theme_data === 'string' ? formData.theme_data : JSON.stringify(formData.theme_data)} 
-                                onChange={(e) => {
-                                    try {
-                                        const parsed = JSON.parse(e.target.value);
-                                        setFormData({...formData, theme_data: parsed});
-                                    } catch(err) { /* silent fail */ }
-                                }}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono text-xs focus:border-[#00FFC2]/50"
-                                placeholder='{"customKey": "value"}'
                             />
                         </div>
                     </div>
