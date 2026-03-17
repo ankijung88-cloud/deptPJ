@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, ShoppingCart, Ticket, Eye, ArrowRight, Play } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
@@ -10,6 +10,10 @@ import { FeaturedItem } from '../types';
 import { getJoseonThemeById, getFloorBySubId } from '../utils/themeUtils';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbTitle } from '../context/NavigationActionContext';
+import ThemeSaleContainer from '../components/themes/ThemeSaleContainer';
+import ThemeExhibitContainer from '../components/themes/ThemeExhibitContainer';
+import ThemeBookingContainer from '../components/themes/ThemeBookingContainer';
+import ThemePromoContainer from '../components/themes/ThemePromoContainer';
 
 
 
@@ -22,6 +26,9 @@ export const DetailPage: React.FC = () => {
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    
+    // For demonstration, assume admin mode is toggled via a query param or state
+    const isAdmin = true; // In real app, this would come from auth context
     
     // Set breadcrumb title
     const displayName = item ? getLocalizedText(item.title, i18n.language) : null;
@@ -255,35 +262,32 @@ export const DetailPage: React.FC = () => {
                 <div className="absolute inset-0 z-0 pointer-events-none h-[40%] mt-auto" style={{ background: `linear-gradient(to top, ${theme.bgColor}cc, transparent)` }} />
             </div>
 
-            {/* Content Body */}
-            <div className="mx-auto px-6 py-12 relative max-w-4xl">
-                {/* Colored accent band at top */}
-                <div className="h-1 w-full rounded mb-8" style={{ background: `linear-gradient(to right, ${theme.accentColor}, ${theme.color4}, ${theme.color5})` }} />
-                <div className="space-y-8">
-                    <section className="rounded-2xl p-8" style={{ backgroundColor: theme.color1, border: `1px solid ${theme.color3}` }}>
-                        <p className="text-lg leading-relaxed whitespace-pre-line min-h-[500px]" style={{ color: theme.textSecondary }}>
-                            <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
-                        </p>
-                    </section>
-                    
-                    {/* Floating Action Button for the main section */}
-                    <div className="flex justify-center pt-8">
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={themeConfig.action}
-                            className="px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl flex items-center gap-4 transition-all border-none cursor-pointer"
-                            style={{ 
-                                backgroundColor: themeConfig.color,
-                                color: '#000',
-                                boxShadow: `0 20px 40px ${themeConfig.color}33`
-                            }}
-                        >
-                            <themeConfig.icon size={24} />
-                            <span><AutoTranslatedText text={themeConfig.label} /></span>
-                        </motion.button>
-                    </div>
-                </div>
+            {/* Functional Theme Container Area */}
+            <div className="mx-auto px-6 py-12 relative max-w-6xl">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={pageTheme}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {item && (
+                            <>
+                                {pageTheme === 'sale' && <ThemeSaleContainer parentId={item.id} isAdmin={isAdmin} />}
+                                {pageTheme === 'exhibit' && <ThemeExhibitContainer parentId={item.id} isAdmin={isAdmin} />}
+                                {pageTheme === 'booking' && <ThemeBookingContainer parentId={item.id} isAdmin={isAdmin} />}
+                                {pageTheme === 'promo' && (
+                                    <ThemePromoContainer 
+                                        parentId={item.id} 
+                                        isAdmin={isAdmin} 
+                                        themeData={item.themeData} 
+                                    />
+                                )}
+                            </>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </article>
     );

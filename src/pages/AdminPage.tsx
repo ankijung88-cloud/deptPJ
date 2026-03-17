@@ -692,6 +692,34 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         </p>
                     </div>
 
+                    {/* 14. Parent ID & 15. Theme Data (Advanced) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="14. 상위 항목 ID (Parent ID)" /></label>
+                            <input 
+                                type="text" 
+                                value={formData.parent_id || ''} onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                placeholder="예: global-exchange-week"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="15. 테마 데이터 (Theme JSON)" /></label>
+                            <textarea 
+                                rows={1}
+                                value={typeof formData.theme_data === 'string' ? formData.theme_data : JSON.stringify(formData.theme_data)} 
+                                onChange={(e) => {
+                                    try {
+                                        const parsed = JSON.parse(e.target.value);
+                                        setFormData({...formData, theme_data: parsed});
+                                    } catch(err) { /* silent fail */ }
+                                }}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono text-xs focus:border-[#00FFC2]/50"
+                                placeholder='{"customKey": "value"}'
+                            />
+                        </div>
+                    </div>
+
                     <div className="pt-4 flex justify-end gap-4 border-t border-white/5">
                         <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
                         <button type="submit" className="px-8 py-3 rounded-xl bg-[#00FFC2] text-[#0A0D17] font-bold hover:scale-105 transition-all">
