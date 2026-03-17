@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem } from '../types';
+import { getJoseonThemeById } from '../utils/themeUtils';
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const theme = getJoseonThemeById(id || '');
     const { t, i18n } = useTranslation();
     const [item, setItem] = useState<FeaturedItem | null>(null);
     const [loading, setLoading] = useState(true);
@@ -78,7 +80,7 @@ export const DetailPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-black">
+            <div className="min-h-screen pt-24 flex items-center justify-center text-white" style={{ backgroundColor: theme.bgColor }}>
                 <Loader2 className="animate-spin text-[#00FFC2]" size={40} />
             </div>
         );
@@ -86,7 +88,7 @@ export const DetailPage: React.FC = () => {
 
     if (!item) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white bg-black">
+            <div className="min-h-screen pt-24 flex items-center justify-center text-white" style={{ backgroundColor: theme.bgColor }}>
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
                     <Link to="/" className="text-[#00FFC2] hover:underline">{t('common.back_home')}</Link>
@@ -96,7 +98,7 @@ export const DetailPage: React.FC = () => {
     }
 
     return (
-        <article className="min-h-screen bg-black text-white">
+        <article className="min-h-screen text-white" style={{ backgroundColor: theme.bgColor }}>
             {/* Magazine Hero */}
             <div className="relative h-[80vh] w-full group overflow-hidden">
                 <motion.div 
@@ -106,7 +108,7 @@ export const DetailPage: React.FC = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url(${item.imageUrl})` }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    <div className="absolute inset-0 z-10" style={{ background: `linear-gradient(to top, ${theme.bgColor}, ${theme.bgColor}33, transparent)` }} />
                 </motion.div>
 
                 <div className="absolute inset-0 z-20 flex flex-col justify-end pb-20">
@@ -137,7 +139,7 @@ export const DetailPage: React.FC = () => {
                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                             </h1>
 
-                            <div className="flex flex-wrap gap-8 text-white/60 text-sm font-light">
+                            <div className="flex flex-wrap gap-8 text-sm font-light" style={{ color: theme.textSecondary }}>
                                 <div className="flex items-center gap-2">
                                     <CalendarIcon size={16} className="text-[#00FFC2]" />
                                     <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
@@ -166,7 +168,7 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-8 space-y-16">
                         <section className="relative">
                             <div className="absolute -left-6 top-0 bottom-0 w-1 bg-[#00FFC2] opacity-30" />
-                            <p className="text-2xl md:text-3xl leading-relaxed text-white/80 font-serif italic">
+                            <p className="text-2xl md:text-3xl leading-relaxed font-serif italic" style={{ color: theme.textSecondary }}>
                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                             </p>
                         </section>
@@ -174,7 +176,7 @@ export const DetailPage: React.FC = () => {
                         <div className="h-px w-full bg-white/5" />
 
                         <section className="prose prose-invert max-w-none">
-                            <div className="text-lg leading-relaxed text-white/60 space-y-8 font-light">
+                            <div className="text-lg leading-relaxed space-y-8 font-light" style={{ color: theme.textSecondary }}>
                                 <p>
                                     <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier." />
                                 </p>
@@ -221,12 +223,12 @@ export const DetailPage: React.FC = () => {
                             {/* Additional Info */}
                             <div className="space-y-6 px-4">
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]"><AutoTranslatedText text="Curated Category" /></span>
-                                    <p className="text-white/80 font-medium tracking-wide"><AutoTranslatedText text={item.category} /></p>
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Curated Category" /></span>
+                                    <p className="font-medium tracking-wide" style={{ color: theme.textSecondary }}><AutoTranslatedText text={item.category} /></p>
                                 </div>
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]"><AutoTranslatedText text="Platform ID" /></span>
-                                    <p className="text-white/80 font-mono text-sm opacity-40">{item.id}</p>
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Platform ID" /></span>
+                                    <p className="font-mono text-sm opacity-40" style={{ color: theme.textSecondary }}>{item.id}</p>
                                 </div>
                             </div>
                         </div>
@@ -249,7 +251,8 @@ export const DetailPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative bg-[#111] border border-white/10 w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
+                            className="relative border w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
+                            style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}
                         >
                             <div className="flex justify-between items-center">
                                 <h3 className="text-xl font-bold"><AutoTranslatedText text="Share" /></h3>
