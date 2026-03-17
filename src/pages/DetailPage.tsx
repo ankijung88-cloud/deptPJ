@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, ShoppingCart, Ticket, Eye, ArrowRight, Play } from 'lucide-react';
+import { ArrowLeft, Calendar, ShoppingCart, Ticket, Eye, ArrowRight, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -243,18 +243,6 @@ export const DetailPage: React.FC = () => {
                                     })()}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4" style={theme.textPrimaryStyle}><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h1>
-
-                            <div className="flex flex-wrap gap-6 text-white/80 text-sm">
-                                <div className="flex items-center">
-                                    <Calendar size={16} className="mr-2" style={theme.accentStyle} />
-                                    <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
-                                </div>
-                                <div className="flex items-center">
-                                    <MapPin size={16} className="mr-2" style={theme.accentStyle} />
-                                    <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
-                                </div>
-                            </div>
                         </motion.div>
                     </div>
                 </div>
@@ -262,33 +250,27 @@ export const DetailPage: React.FC = () => {
                 <div className="absolute inset-0 z-0 pointer-events-none h-[40%] mt-auto" style={{ background: `linear-gradient(to top, ${theme.bgColor}cc, transparent)` }} />
             </div>
 
-            {/* Functional Theme Container Area */}
-            <div className="mx-auto px-6 py-12 relative max-w-6xl">
+            {/* Main Content Area - Delegated to Theme Containers */}
+            <main className="relative z-10">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={pageTheme}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
                     >
                         {item && (
                             <>
-                                {pageTheme === 'sale' && <ThemeSaleContainer parentId={item.id} isAdmin={isAdmin} />}
-                                {pageTheme === 'exhibit' && <ThemeExhibitContainer parentId={item.id} isAdmin={isAdmin} />}
-                                {pageTheme === 'booking' && <ThemeBookingContainer parentId={item.id} isAdmin={isAdmin} />}
-                                {pageTheme === 'promo' && (
-                                    <ThemePromoContainer 
-                                        parentId={item.id} 
-                                        isAdmin={isAdmin} 
-                                        themeData={item.themeData} 
-                                    />
-                                )}
+                                {pageTheme === 'sale' && <ThemeSaleContainer item={item} theme={theme} isAdmin={isAdmin} />}
+                                {pageTheme === 'exhibit' && <ThemeExhibitContainer item={item} theme={theme} isAdmin={isAdmin} />}
+                                {pageTheme === 'booking' && <ThemeBookingContainer item={item} theme={theme} isAdmin={isAdmin} />}
+                                {pageTheme === 'promo' && <ThemePromoContainer item={item} theme={theme} isAdmin={isAdmin} />}
                             </>
                         )}
                     </motion.div>
                 </AnimatePresence>
-            </div>
+            </main>
         </article>
     );
 };
