@@ -119,7 +119,7 @@ const AboutPage: React.FC = () => {
                     >
                         {/* Editorial Logo placement */}
                         <div className="mb-8">
-                            <img src="/dept_logo.svg" alt="Logo" className="h-44 w-auto drop-shadow-[0_0_40px_rgba(0,242,255,0.4)]" />
+                            <img src="/K로고.png" alt="Logo" className="h-44 w-auto drop-shadow-[0_0_40px_rgba(0,242,255,0.4)]" />
                         </div>
 
                         <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-4 drop-shadow-lg"><AutoTranslatedText text="01. 프로젝트 발표" /></span>

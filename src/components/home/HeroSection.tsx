@@ -90,7 +90,7 @@ export const HeroSection: React.FC = () => {
                                 className="mb-2 flex justify-center"
                             >
                                 <img 
-                                    src="/dept_logo.svg" 
+                                    src="/K로고.png" 
                                     alt="DEPT Logo" 
                                     className="h-32 w-auto drop-shadow-[0_0_25px_rgba(0,242,255,0.4)]"
                                 />
@@ -167,7 +167,7 @@ export const HeroSection: React.FC = () => {
                                 className="mb-2 flex justify-center"
                             >
                                 <img 
-                                    src="/dept_logo.svg" 
+                                    src="/K로고.png" 
                                     alt="DEPT Logo" 
                                     className="h-44 w-auto drop-shadow-[0_0_40px_rgba(255,215,0,0.4)]"
                                 />

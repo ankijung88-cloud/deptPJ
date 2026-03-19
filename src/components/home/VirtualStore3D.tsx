@@ -1175,7 +1175,7 @@ export const VirtualStore3D: React.FC = () => {
                 {/* Front-aligned Logo above title */}
                 <div className="-mb-2 opacity-80">
                     <img 
-                        src="/dept_logo.svg" 
+                        src="/K로고.png" 
                         alt="Logo" 
                         className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]" 
                     />

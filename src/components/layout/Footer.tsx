@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
                     {/* Brand Meta */}
                     <div className="md:col-span-5 space-y-10">
                         <div className="flex items-center gap-6 mb-4">
-                            <img src="/dept_logo.svg" alt="department logo" className="h-20 w-auto opacity-80" />
+                            <img src="/K로고.png" alt="department logo" className="h-20 w-auto opacity-80" />
                             <div className="space-y-4">
                                 <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="본질" /></span>
                                 <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">
