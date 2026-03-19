@@ -23,6 +23,14 @@ async function initDB() {
       `);
       
       console.log('[DB] Migration successful: Added side_image_url and back_image_url.');
+    }
+
+    // Check if selected_templates exists
+    const [templateColumns] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'selected_templates'");
+    if (templateColumns.length === 0) {
+      console.log('[DB] Missing selected_templates column detected. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN selected_templates JSON DEFAULT NULL");
+      console.log('[DB] Migration successful: Added selected_templates.');
     } else {
       console.log('[DB] featured_items schema is up to date.');
     }
