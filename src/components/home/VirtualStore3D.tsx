@@ -174,23 +174,6 @@ const Railings = ({ width, depth }: { width: number, depth: number }) => {
     );
 };
 
-const Spire = () => (
-    <group position={[0, 0, 0]}>
-        {/* Central Vertical Rod - Lowered and shortened */}
-        <mesh position={[0, 1.4, 0]}>
-            <cylinderGeometry args={[0.04, 0.04, 2.8, 8]} />
-            <meshBasicMaterial color={COLORS.line} />
-        </mesh>
-        {/* Stacked Disks (Boryun) - FURTHER increased width for prominence */}
-        {[0.4, 0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8].map((y, i) => (
-            <mesh key={i} position={[0, y, 0]}>
-                <cylinderGeometry args={[1.4 - i * 0.1, 1.4 - i * 0.1, 0.06, 16]} />
-                <SolidMaterial />
-                <Edges color={COLORS.line} />
-            </mesh>
-        ))}
-    </group>
-);
 
 // --- Detailed Structural Parts ---
 
@@ -547,10 +530,6 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                 />
             ))}
 
-            {/* Top Spire (Sangryun-bu) sitting closer to roof */}
-            <group position={[0, floors.length * METRICS.floorHeight + 0.1, 0]}>
-                <Spire />
-            </group>
 
             {/* Central Fixed Hover Modal */}
             <AnimatePresence>
