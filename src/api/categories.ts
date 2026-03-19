@@ -68,7 +68,10 @@ export const getNavItems = async (): Promise<NavItem[]> => {
 export const createFloorCategory = async (data: any): Promise<void> => {
     const response = await fetch('/api/categories/floors', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -80,7 +83,10 @@ export const createFloorCategory = async (data: any): Promise<void> => {
 export const updateFloorCategory = async (id: string, data: any): Promise<void> => {
     const response = await fetch(`/api/categories/floors/${encodeURIComponent(id)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -92,6 +98,9 @@ export const updateFloorCategory = async (id: string, data: any): Promise<void> 
 export const deleteFloorCategory = async (id: string): Promise<void> => {
     const response = await fetch(`/api/categories/floors/${encodeURIComponent(id)}`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
     });
     if (!response.ok) throw new Error('Delete failed');
 };
@@ -99,7 +108,10 @@ export const deleteFloorCategory = async (id: string): Promise<void> => {
 export const createNavItem = async (data: any): Promise<void> => {
     const response = await fetch('/api/categories/nav', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -111,7 +123,10 @@ export const createNavItem = async (data: any): Promise<void> => {
 export const updateNavItem = async (id: string, data: any): Promise<void> => {
     const response = await fetch(`/api/categories/nav/${encodeURIComponent(id)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -123,6 +138,9 @@ export const updateNavItem = async (id: string, data: any): Promise<void> => {
 export const deleteNavItem = async (id: string): Promise<void> => {
     const response = await fetch(`/api/categories/nav/${encodeURIComponent(id)}`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
     });
     if (!response.ok) throw new Error('Delete failed');
 };

@@ -23,7 +23,10 @@ export const getNotices = async (): Promise<Notice[]> => {
 export const createNotice = async (data: any): Promise<void> => {
     const response = await fetch('/api/notices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Create failed');
@@ -32,7 +35,10 @@ export const createNotice = async (data: any): Promise<void> => {
 export const updateNotice = async (id: string | number, data: any): Promise<void> => {
     const response = await fetch(`/api/notices/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Update failed');
@@ -41,6 +47,9 @@ export const updateNotice = async (id: string | number, data: any): Promise<void
 export const deleteNotice = async (id: string | number): Promise<void> => {
     const response = await fetch(`/api/notices/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
     });
     if (!response.ok) throw new Error('Delete failed');
 };
