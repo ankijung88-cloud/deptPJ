@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
-import { useImmersiveMode } from '../context/NavigationActionContext';
+import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
+import { getProductById } from '../api/products';
+import { useFloors } from '../context/FloorContext';
 
 interface MuseumCardProps {
     item: FeaturedItem;
@@ -126,9 +128,13 @@ const VirtualMuseumPage: React.FC = () => {
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    const { id: paramId } = useParams();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     useImmersiveMode(!!selectedImage);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    
+    // Determine the effective parent ID (favor params, fallback to state)
+    const parentId = paramId || location.state?.parentId;
 
     useEffect(() => {
         const checkAdmin = () => {
@@ -152,13 +158,37 @@ const VirtualMuseumPage: React.FC = () => {
 
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const { floors } = useFloors();
+
+    // Set Breadcrumb Path
+    const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
+    const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
+    
+    useSetBreadcrumbPath(parentProduct ? [
+        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
+        { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
+        { id: 'museum', label: '가상 전시관', type: 'template' }
+    ] : []);
+
+    useEffect(() => {
+        const fetchParent = async () => {
+            if (parentId) {
+                const data = await getProductById(parentId);
+                setParentProduct(data);
+            }
+        };
+        fetchParent();
+    }, [parentId]);
 
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const parentId = location.state?.parentId;
-            const url = parentId 
-                ? `/api/products/category/museum?parentId=${parentId}`
+            const effectiveParentId = parentId; // Use the one we calculated in the component body
+            const url = effectiveParentId 
+                ? `/api/products/category/museum?parentId=${effectiveParentId}`
                 : '/api/products/category/museum';
             const response = await fetch(url);
             const data = await response.json();

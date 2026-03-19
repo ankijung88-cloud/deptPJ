@@ -2,19 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { FeaturedItem } from '../types';
-import { useImmersiveMode } from '../context/NavigationActionContext';
+import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
+import { getProductById } from '../api/products';
+import { useFloors } from '../context/FloorContext';
 
 const VirtualCinemaPage: React.FC = () => {
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    const { id: paramId } = useParams();
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     useImmersiveMode(isExplorationMode);
+    
+    // Determine the effective parent ID (favor params, fallback to state)
+    const parentId = paramId || location.state?.parentId;
 
 
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
@@ -41,13 +47,37 @@ const VirtualCinemaPage: React.FC = () => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const { floors } = useFloors();
+
+    // Set Breadcrumb Path
+    const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
+    const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
+    
+    useSetBreadcrumbPath(parentProduct ? [
+        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
+        { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
+        { id: 'cinema', label: '가상 시네마', type: 'template' }
+    ] : []);
+
+    useEffect(() => {
+        const fetchParent = async () => {
+            if (parentId) {
+                const data = await getProductById(parentId);
+                setParentProduct(data);
+            }
+        };
+        fetchParent();
+    }, [parentId]);
 
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const parentId = location.state?.parentId;
-            const url = parentId 
-                ? `/api/products/category/cinema?parentId=${parentId}`
+            const effectiveParentId = parentId; // Use calculated parentId
+            const url = effectiveParentId 
+                ? `/api/products/category/cinema?parentId=${effectiveParentId}`
                 : '/api/products/category/cinema';
             const response = await fetch(url);
             const data = await response.json();

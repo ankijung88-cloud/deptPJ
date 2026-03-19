@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
 import { FeaturedItem, SelectedTemplate } from '../types';
+import { useFloors } from '../context/FloorContext';
+import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getJoseonThemeById } from '../utils/themeUtils';
 
 export const DetailPage: React.FC = () => {
@@ -22,6 +24,18 @@ export const DetailPage: React.FC = () => {
     const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const { floors } = useFloors();
+
+    // Set Breadcrumb Path
+    const currentFloor = floors.find(f => f.floor.toLowerCase() === item?.category?.toLowerCase());
+    const currentCategory = currentFloor?.subitems?.find(s => s.id === item?.subcategory);
+    
+    useSetBreadcrumbPath(item ? [
+        { id: currentFloor?.floor || item.category, label: currentFloor?.floor || item.category, type: 'floor' },
+        { id: currentCategory?.id || item.subcategory, label: currentCategory?.label || item.subcategory, type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
+        { id: item.id, label: item.title, type: 'detail' }
+    ] : []);
 
     useEffect(() => {
         const checkAdmin = () => {
@@ -168,13 +182,19 @@ export const DetailPage: React.FC = () => {
             }
 
             if (success) {
-                const routes: Record<string, string> = {
-                    'cinema': '/virtual-cinema',
-                    'museum': '/virtual-museum',
-                    'store': '/virtual-store',
-                    'ticket': '/virtual-ticket'
-                };
-                navigate(routes[templateType], { state: { initialId: item.id, parentId: item.id } });
+                const routes: { [key: string]: string } = {
+        cinema: `/detail/${item.id}/cinema`,
+        museum: `/detail/${item.id}/museum`,
+        store: `/detail/${item.id}/store`,
+        ticket: `/detail/${item.id}/ticket`
+    };
+                navigate(routes[templateType], { 
+                    state: { 
+                        initialId: item.id, 
+                        parentId: item.id,
+                        parentTitle: getLocalizedText(item.title, i18n.language)
+                    } 
+                });
             } else {
                 alert('템플릿 적용에 실패했습니다.');
             }

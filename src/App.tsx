@@ -40,10 +40,10 @@ function App() {
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/admin" element={<AdminPage />} />
                         <Route path="/admin/login" element={<AdminLoginPage />} />
-                        <Route path="/virtual-museum" element={<VirtualMuseumPage />} />
-                        <Route path="/virtual-store" element={<VirtualStorePage />} />
-                        <Route path="/virtual-cinema" element={<VirtualCinemaPage />} />
-                        <Route path="/virtual-ticket" element={<VirtualTicketPage />} />
+                        <Route path="/detail/:id/museum" element={<VirtualMuseumPage />} />
+                        <Route path="/detail/:id/store" element={<VirtualStorePage />} />
+                        <Route path="/detail/:id/cinema" element={<VirtualCinemaPage />} />
+                        <Route path="/detail/:id/ticket" element={<VirtualTicketPage />} />
                     </Route>
 
                     {/* Presentation Pages (No Layout/Navbar) */}

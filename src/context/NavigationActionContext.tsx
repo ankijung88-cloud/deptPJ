@@ -7,6 +7,8 @@ interface NavigationActionContextType {
     setBreadcrumbTitle: (title: string | null) => void;
     isImmersive: boolean;
     setIsImmersive: (value: boolean) => void;
+    breadcrumbPath: any[];
+    setBreadcrumbPath: (path: any[]) => void;
 }
 
 const NavigationActionContext = createContext<NavigationActionContextType | undefined>(undefined);
@@ -15,12 +17,14 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
     const [action, setAction] = useState<React.ReactNode>(null);
     const [breadcrumbTitle, setBreadcrumbTitle] = useState<string | null>(null);
     const [isImmersive, setIsImmersive] = useState(false);
+    const [breadcrumbPath, setBreadcrumbPath] = useState<any[]>([]);
 
     return (
         <NavigationActionContext.Provider value={{ 
             action, setAction, 
             breadcrumbTitle, setBreadcrumbTitle,
-            isImmersive, setIsImmersive 
+            isImmersive, setIsImmersive,
+            breadcrumbPath, setBreadcrumbPath
         }}>
             {children}
         </NavigationActionContext.Provider>
@@ -67,6 +71,19 @@ export const useImmersiveMode = (isImmersive: boolean) => {
 };
 
 /**
+ * Hook for pages to set a canonical breadcrumb path.
+ */
+export const useSetBreadcrumbPath = (path: any[]) => {
+    const context = useContext(NavigationActionContext);
+    if (!context) return;
+
+    useEffect(() => {
+        context.setBreadcrumbPath(path);
+        return () => context.setBreadcrumbPath([]);
+    }, [JSON.stringify(path), context.setBreadcrumbPath]);
+};
+
+/**
  * Hook for the Breadcrumbs component to retrieve the current state.
  */
 export const useNavigationState = () => {
@@ -74,6 +91,7 @@ export const useNavigationState = () => {
     return {
         action: context?.action || null,
         breadcrumbTitle: context?.breadcrumbTitle || null,
-        isImmersive: context?.isImmersive || false
+        isImmersive: context?.isImmersive || false,
+        breadcrumbPath: context?.breadcrumbPath || []
     };
 };

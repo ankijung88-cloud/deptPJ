@@ -8,7 +8,7 @@ import { AutoTranslatedText } from './AutoTranslatedText';
 import { useNavigationState } from '../../context/NavigationActionContext';
 
 export const Breadcrumbs: React.FC = () => {
-    const { action, breadcrumbTitle } = useNavigationState();
+    const { action, breadcrumbTitle, breadcrumbPath } = useNavigationState();
     const location = useLocation();
     const pathnames = location.pathname.split('/').filter((x) => x);
     const { floors } = useFloors();
@@ -18,33 +18,52 @@ export const Breadcrumbs: React.FC = () => {
         return null; // Don't show on main landing or 3D view which has its own header
     }
 
-    const getLabel = (segment: string, index: number, array: string[]) => {
-        if (segment === 'floor') return '층별';
-        if (segment === 'articles' && array[index-1]) return '아티클';
-        if (segment === 'category') return '카테고리';
-        if (segment === 'detail') return '상세';
+    const getLabel = (segment: string, array: string[], index: number) => {
+        // Hardcoded translations for known structural segments
+        const translations: { [key: string]: string } = {
+            'floor': '층별안내',
+            'category': '카테고리',
+            'detail': '상세',
+            'admin': '관리자',
+            'login': '로그인',
+            'museum': '가상 전시관',
+            'store': '가상 스토어',
+            'cinema': '가상 시네마',
+            'ticket': '가상 티켓',
+            'virtual-museum': '가상 전시관',
+            'virtual-store': '가상 스토어',
+            'virtual-cinema': '가상 시네마',
+            'virtual-ticket': '가상 티켓'
+        };
 
-        // Check if segment is a floor level
-        const floorLevelString = segment;
-        const floorByLevel = floors.find(f => f.floor === floorLevelString);
-        if (floorByLevel) {
-            return floorByLevel.floor;
+        if (translations[segment]) {
+            return translations[segment];
+        }
+
+        // Check if segment is a floor ID (e.g., '6f', '7f')
+        const floor = floors.find(f => f.floor.toLowerCase() === segment.toLowerCase());
+        if (floor) {
+            return floor.floor.toUpperCase();
         }
 
         // Check if segment is a subcategory ID
         if (array[index-1] === 'category') {
-            for (const floor of floors) {
-                const sub = floor.subitems?.find(s => s.id === segment);
+            for (const f of floors) {
+                const sub = f.subitems?.find(s => s.id === segment);
                 if (sub) return getLocalizedText(sub.label, i18n.language);
             }
         }
 
         // Avoid showing raw UUIDs in breadcrumbs (common for detail/some-uuid)
         if (array[index-1] === 'detail' || segment.length > 20) {
+            // First check if parent title was passed in navigation state
+            if (location.state?.parentTitle && (array[index-1] === 'detail')) {
+                return location.state.parentTitle;
+            }
             return breadcrumbTitle || '상세 기록';
         }
 
-        return segment.toUpperCase();
+        return segment;
     };
 
     return (
@@ -66,28 +85,53 @@ export const Breadcrumbs: React.FC = () => {
                     <AutoTranslatedText text="층별안내" />
                 </Link>
 
-                {pathnames.map((name, index) => {
-                    const label = getLabel(name, index, pathnames);
-                    if (!label) return null;
+                {/* URL-based segments (Fallback if breadcrumbPath is empty) */}
+                {breadcrumbPath.length > 0 ? (
+                    breadcrumbPath.map((item, index) => {
+                        const isLast = index === breadcrumbPath.length - 1;
+                        const label = typeof item.label === 'object' 
+                            ? getLocalizedText(item.label, i18n.language) 
+                            : item.label;
 
-                    const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
-                    const isLast = index === pathnames.length - 1;
+                        return (
+                            <React.Fragment key={index}>
+                                <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
+                                {isLast ? (
+                                    <span className="text-[#00FFC2] font-black brightness-110 drop-shadow-[0_0_8px_rgba(0,255,194,0.4)] whitespace-nowrap">
+                                        <AutoTranslatedText text={label} />
+                                    </span>
+                                ) : (
+                                    <span className="text-white/80 whitespace-nowrap">
+                                        <AutoTranslatedText text={label} />
+                                    </span>
+                                )}
+                            </React.Fragment>
+                        );
+                    })
+                ) : (
+                    pathnames.map((name, index) => {
+                        const label = getLabel(name, pathnames, index);
+                        if (!label) return null;
 
-                    return (
-                        <React.Fragment key={routeTo}>
-                            <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
-                            {isLast ? (
-                                <span className="text-[#00FFC2] font-black brightness-110 drop-shadow-[0_0_8px_rgba(0,255,194,0.4)] whitespace-nowrap">
-                                    <AutoTranslatedText text={label} />
-                                </span>
-                            ) : (
-                                <Link to={routeTo} className="hover:text-[#00FFC2]/90 transition-colors whitespace-nowrap">
-                                    <AutoTranslatedText text={label} />
-                                </Link>
-                            )}
-                        </React.Fragment>
-                    );
-                })}
+                        const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
+                        const isLast = index === pathnames.length - 1;
+
+                        return (
+                            <React.Fragment key={routeTo}>
+                                <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
+                                {isLast ? (
+                                    <span className="text-[#00FFC2] font-black brightness-110 drop-shadow-[0_0_8px_rgba(0,255,194,0.4)] whitespace-nowrap">
+                                        <AutoTranslatedText text={label} />
+                                    </span>
+                                ) : (
+                                    <Link to={routeTo} className="hover:text-[#00FFC2]/90 transition-colors whitespace-nowrap">
+                                        <AutoTranslatedText text={label} />
+                                    </Link>
+                                )}
+                            </React.Fragment>
+                        );
+                    })
+                )}
             </div>
 
             {/* Action Slot */}

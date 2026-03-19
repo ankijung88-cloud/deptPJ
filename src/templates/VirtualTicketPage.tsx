@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, CreditCard, Info, Plus, Image as ImageIcon, Type, UploadCloud, Check } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
+import { getProductById } from '../api/products';
+import { useFloors } from '../context/FloorContext';
+import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 
 // --- Sub-components for Broadway Billboard ---
 
@@ -233,12 +236,40 @@ const VirtualTicketPage: React.FC = () => {
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    const { id: paramId } = useParams();
+    
+    // Determine the effective parent ID (favor params, fallback to state)
+    const parentId = paramId || location.state?.parentId;
     const [selectedTicket, setSelectedTicket] = useState<FeaturedItem | null>(null);
     const [showReservationModal, setShowReservationModal] = useState(false);
     const [isReserving, setIsReserving] = useState(false);
     const [reservationComplete, setReservationComplete] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const { floors } = useFloors();
+
+    // Set Breadcrumb Path
+    const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
+    const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
+    
+    useSetBreadcrumbPath(parentProduct ? [
+        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
+        { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
+        { id: 'ticket', label: '가상 티켓', type: 'template' }
+    ] : []);
+
+    useEffect(() => {
+        const fetchParent = async () => {
+            if (parentId) {
+                const data = await getProductById(parentId);
+                setParentProduct(data);
+            }
+        };
+        fetchParent();
+    }, [parentId]);
 
     useEffect(() => {
         const checkAdmin = () => {
@@ -264,9 +295,9 @@ const VirtualTicketPage: React.FC = () => {
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const parentId = location.state?.parentId;
-            const url = parentId 
-                ? `/api/products/category/ticket?parentId=${parentId}`
+            const effectiveParentId = parentId; // Use calculated parentId
+            const url = effectiveParentId 
+                ? `/api/products/category/ticket?parentId=${effectiveParentId}`
                 : '/api/products/category/ticket';
             const response = await fetch(url);
             const data = await response.json();
