@@ -56,7 +56,18 @@ export const DetailPage: React.FC = () => {
                 const templates = typeof item.selected_templates === 'string' 
                     ? JSON.parse(item.selected_templates) 
                     : item.selected_templates;
-                setSelectedTemplates(templates || []);
+                
+                // Ensure unique template IDs
+                const uniqueTemplates = (templates || []).reduce((acc: SelectedTemplate[], current: SelectedTemplate) => {
+                    const x = acc.find(item => item.id === current.id);
+                    if (!x) {
+                        return acc.concat([current]);
+                    } else {
+                        return acc;
+                    }
+                }, []);
+                
+                setSelectedTemplates(uniqueTemplates);
             } catch (e) {
                 console.error('Failed to parse selected_templates:', e);
                 setSelectedTemplates([]);
@@ -135,24 +146,28 @@ export const DetailPage: React.FC = () => {
         
         try {
             setApplyingTemplate(templateType);
-            // IMPORTANT: Only update selected_templates, DO NOT change the category of the parent item itself!
-            // Add the new template to the selectedTemplates list before saving
-            const newTemplates = [...selectedTemplates, { id: templateType, status: 'visible' }];
+            // ONLY add to DB if it's not already in the selected list
+            const isAlreadySelected = selectedTemplates.some(t => t.id === templateType);
+            let success = true;
+            
+            if (!isAlreadySelected) {
+                const newTemplates = [...selectedTemplates, { id: templateType, status: 'visible' }];
+                const backendData = prepareDataForBackend(item, { 
+                    selected_templates: newTemplates 
+                });
 
-            const backendData = prepareDataForBackend(item, { 
-                selected_templates: newTemplates 
-            });
+                const response = await fetch(`/api/products/${item.id}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    },
+                    body: JSON.stringify(backendData)
+                });
+                success = response.ok;
+            }
 
-            const response = await fetch(`/api/products/${item.id}`, {
-                method: 'PUT',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                },
-                body: JSON.stringify(backendData)
-            });
-
-            if (response.ok) {
+            if (success) {
                 const routes: Record<string, string> = {
                     'cinema': '/virtual-cinema',
                     'museum': '/virtual-museum',
@@ -358,7 +373,10 @@ export const DetailPage: React.FC = () => {
                                         </button>
                                     )}
                                     {selectedTemplates
-                                        .filter(t => t.status === 'visible')
+                                        .filter((tpl, index, self) => 
+                                            tpl.status === 'visible' && 
+                                            self.findIndex(t => t.id === tpl.id) === index
+                                        )
                                         .map((tpl) => {
                                             const tplInfo = [
                                                 { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
@@ -378,6 +396,8 @@ export const DetailPage: React.FC = () => {
                                                 >
                                                     {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
                                                     <AutoTranslatedText text={tplInfo.label} />
+                                                    {/* DEBUG MARKER - To verify update */}
+                                                    <span className="sr-only">v2</span>
                                                 </button>
                                             );
                                         })}
