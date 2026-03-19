@@ -65,20 +65,27 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         parsedEventDates = generateDateRange(dateStr);
     }
 
+    const parseJsonIfNeeded = (val: any) => {
+        if (typeof val === 'string' && (val.startsWith('{') || val.startsWith('['))) {
+            try { return JSON.parse(val); } catch (e) { return val; }
+        }
+        return val;
+    };
+
     return {
         id: item.id,
-        title: item.title,
+        title: parseJsonIfNeeded(item.title),
         category: item.category,
         subcategory: item.subcategory,
-        description: item.description,
+        description: parseJsonIfNeeded(item.description),
         imageUrl: normalizeUrl(item.image_url),
         thumbnailUrl: normalizeUrl(item.thumbnail_url),
-        date: item.event_date,
-        location: item.location,
+        date: parseJsonIfNeeded(item.event_date),
+        location: parseJsonIfNeeded(item.location),
         price: item.price,
         closedDays: (typeof item.closed_days === 'string' ? JSON.parse(item.closed_days) : item.closed_days) || [],
-        videoUrl: normalizeUrl(item.video_url || item.video_Url), // Support both cases just in case
-        long_description: item.long_description,
+        videoUrl: normalizeUrl(item.video_url || item.video_Url), 
+        long_description: parseJsonIfNeeded(item.long_description),
         user_id: item.user_id,
         eventDates: parsedEventDates.length > 0 ? parsedEventDates : (
             item.id === 'global-exchange-week' ? Array.from({ length: 15 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :

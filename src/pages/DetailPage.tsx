@@ -135,9 +135,12 @@ export const DetailPage: React.FC = () => {
         
         try {
             setApplyingTemplate(templateType);
+            // IMPORTANT: Only update selected_templates, DO NOT change the category of the parent item itself!
+            // Add the new template to the selectedTemplates list before saving
+            const newTemplates = [...selectedTemplates, { id: templateType, status: 'visible' }];
+
             const backendData = prepareDataForBackend(item, { 
-                category: templateType,
-                selected_templates: selectedTemplates 
+                selected_templates: newTemplates 
             });
 
             const response = await fetch(`/api/products/${item.id}`, {

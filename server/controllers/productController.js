@@ -27,7 +27,7 @@ export const getProductsByCategory = async (req, res) => {
     let params = [`%${category}%`, `%${category}%`];
 
     if (parentId && parentId !== 'undefined' && parentId !== 'null') {
-      query += ' AND (parent_id = ? OR id = ?)';
+      query += ' AND (parent_id = ? AND id != ?)';
       params.push(parentId, parentId);
     }
 
@@ -69,7 +69,25 @@ export const searchProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates } = req.body;
+    const id = req.body.id;
+    const title = req.body.title;
+    const category = req.body.category;
+    const subcategory = req.body.subcategory;
+    const description = req.body.description;
+    const long_description = req.body.long_description;
+    const image_url = req.body.image_url || req.body.imageUrl;
+    const thumbnail_url = req.body.thumbnail_url || req.body.thumbnailUrl;
+    const side_image_url = req.body.side_image_url || req.body.sideImageUrl;
+    const back_image_url = req.body.back_image_url || req.body.backImageUrl;
+    const event_date = req.body.event_date || req.body.date;
+    const location = req.body.location;
+    const price = req.body.price;
+    const closed_days = req.body.closed_days || req.body.closedDays;
+    const video_url = req.body.video_url || req.body.videoUrl;
+    const page_type = req.body.page_type;
+    const parent_id = req.body.parent_id || req.body.parentId;
+    const theme_data = req.body.theme_data;
+    const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -77,12 +95,8 @@ export const createProduct = async (req, res) => {
       return JSON.stringify(val);
     };
 
-    const query = `
-      INSERT INTO featured_items 
-      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    await pool.query(query, [
+    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const params = [
       id,
       toJson(title),
       category,
@@ -96,13 +110,14 @@ export const createProduct = async (req, res) => {
       toJson(event_date),
       toJson(location),
       price || '',
-      toJson(closed_days) || '[]',
+      toJson(closed_days),
       video_url || '',
-      page_type || null,
+      page_type || 'standard',
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates)
-    ]);
+    ];
+    await pool.query(query, params);
     res.status(201).json({ id, message: 'Product created successfully' });
   } catch (error) {
     console.error('[createProduct] Error:', error.message);
@@ -111,9 +126,26 @@ export const createProduct = async (req, res) => {
 };
 
 export const updateProduct = async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
   try {
-    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates } = req.body;
+    const title = req.body.title;
+    const category = req.body.category;
+    const subcategory = req.body.subcategory;
+    const description = req.body.description;
+    const long_description = req.body.long_description;
+    const image_url = req.body.image_url || req.body.imageUrl;
+    const thumbnail_url = req.body.thumbnail_url || req.body.thumbnailUrl;
+    const side_image_url = req.body.side_image_url || req.body.sideImageUrl;
+    const back_image_url = req.body.back_image_url || req.body.backImageUrl;
+    const event_date = req.body.event_date || req.body.date;
+    const location = req.body.location;
+    const price = req.body.price;
+    const closed_days = req.body.closed_days || req.body.closedDays;
+    const video_url = req.body.video_url || req.body.videoUrl;
+    const page_type = req.body.page_type;
+    const parent_id = req.body.parent_id || req.body.parentId;
+    const theme_data = req.body.theme_data;
+    const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -126,6 +158,7 @@ export const updateProduct = async (req, res) => {
       SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?
       WHERE id = ?
     `;
+
     const params = [
       toJson(title),
       category,
@@ -139,9 +172,9 @@ export const updateProduct = async (req, res) => {
       toJson(event_date),
       toJson(location),
       price || '',
-      toJson(closed_days) || '[]',
+      toJson(closed_days),
       video_url || '',
-      page_type || null,
+      page_type || 'standard',
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),

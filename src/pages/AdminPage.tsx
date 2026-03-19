@@ -217,7 +217,10 @@ const ProductManager = () => {
             displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.category.toLowerCase().includes(searchTerm.toLowerCase());
         
-        const matchesFloor = !selectedFloor || p.category === selectedFloor;
+        const matchesFloor = !selectedFloor || 
+            (selectedFloor === 'uncategorized' 
+                ? !floors.some(f => f.id === p.category) 
+                : p.category === selectedFloor);
         const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
         
         return matchesSearch && matchesFloor && matchesSub;
@@ -266,6 +269,7 @@ const ProductManager = () => {
                         {floors.map(f => (
                             <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
                         ))}
+                        <option value="uncategorized">기타/미분류 (Other/Uncategorized)</option>
                     </select>
 
                     <select 
