@@ -19,15 +19,15 @@ export const Breadcrumbs: React.FC = () => {
     }
 
     const getLabel = (segment: string, index: number, array: string[]) => {
-        if (segment === 'floor') return null;
+        if (segment === 'floor') return '층별';
         if (segment === 'articles' && array[index-1]) return '아티클';
-        if (segment === 'category') return null;
-        if (segment === 'detail') return null;
+        if (segment === 'category') return '카테고리';
+        if (segment === 'detail') return '상세';
 
         // Check if segment is a floor level
         const floorLevelString = segment;
         const floorByLevel = floors.find(f => f.floor === floorLevelString);
-        if (floorByLevel && array[index-1] === 'floor') {
+        if (floorByLevel) {
             return floorByLevel.floor;
         }
 
