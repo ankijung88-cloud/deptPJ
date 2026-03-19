@@ -16,8 +16,11 @@ const BroadwayTicketCard: React.FC<{
     ticket: FeaturedItem, 
     theme: any, 
     lang: string, 
+    isAdmin?: boolean,
+    onEdit?: () => void,
+    onDelete?: () => void,
     onClick: () => void 
-}> = ({ ticket, theme, lang, onClick }) => {
+}> = ({ ticket, theme, lang, isAdmin, onEdit, onDelete, onClick }) => {
     const getLoc = (val: any, l: string): string => {
         if (!val) return '';
         if (typeof val === 'string') return val;
@@ -83,6 +86,24 @@ const BroadwayTicketCard: React.FC<{
                 <div className="absolute bottom-20 -left-3 w-6 h-6 rounded-full bg-[#000] border border-white/10" />
                 <div className="absolute bottom-20 -right-3 w-6 h-6 rounded-full bg-[#000] border border-white/10" />
             </div>
+
+            {/* Admin Controls */}
+            {isAdmin && (
+                <div className="absolute top-8 right-6 z-30 flex gap-2">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
+                        className="w-8 h-8 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500 hover:text-black transition-all"
+                    >
+                        <Type size={14} />
+                    </button>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+                        className="w-8 h-8 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                    >
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
             
             {/* Reserve Button overlay */}
             <div className="h-2 bg-yellow-500/20 group-hover:bg-yellow-500 transition-colors" />
@@ -291,6 +312,8 @@ const VirtualTicketPage: React.FC = () => {
     const [newEventDate, setNewEventDate] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editingItemId, setEditingItemId] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const fetchItems = async () => {
@@ -347,6 +370,39 @@ const VirtualTicketPage: React.FC = () => {
         }
     };
 
+    const handleEditInitiate = (item: FeaturedItem) => {
+        setEditingItemId(item.id);
+        const titleKo = typeof item.title === 'string' ? item.title : item.title?.ko || '';
+        setNewTitle(titleKo);
+        const dateKo = typeof item.date === 'string' ? item.date : item.date?.ko || '';
+        setNewEventDate(dateKo);
+        setNewImageUrl(item.imageUrl);
+        setPreviewUrl(null);
+        setIsEditMode(true);
+        setShowAddModal(true);
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        try {
+            const adminToken = localStorage.getItem('admin_token');
+            const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+            if (response.ok) {
+                alert('삭제되었습니다.');
+                fetchItems();
+            } else {
+                const err = await response.json();
+                alert(`삭제 실패: ${err.message || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error('Delete failed:', error);
+            alert('연결 오류가 발생했습니다.');
+        }
+    };
+
     const handleAddItem = async () => {
         if (!newTitle) {
             alert('행사 명칭을 입력해주세요.');
@@ -379,8 +435,8 @@ const VirtualTicketPage: React.FC = () => {
             return;
         }
 
-        const newItem = {
-            id: `ticket-${Date.now()}`,
+        const itemData = {
+            id: isEditMode ? editingItemId : `ticket-${Date.now()}`,
             title: { ko: newTitle, en: newTitle },
             category: 'ticket',
             subcategory: 'general',
@@ -394,31 +450,33 @@ const VirtualTicketPage: React.FC = () => {
 
         try {
             const adminToken = localStorage.getItem('admin_token');
-            const res = await fetch('/api/products', {
-                method: 'POST',
+            const res = await fetch(isEditMode ? `/api/products/${encodeURIComponent(editingItemId!)}` : '/api/products', {
+                method: isEditMode ? 'PUT' : 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${adminToken}`
                 },
-                body: JSON.stringify(newItem)
+                body: JSON.stringify(itemData)
             });
             if (res.ok) {
-                alert('등록성공');
+                alert(isEditMode ? '수정 성공' : '등록 성공');
                 await fetchItems();
+                setIsEditMode(false);
+                setEditingItemId(null);
                 setNewTitle('');
                 setNewEventDate('');
                 setNewImageUrl('');
-            setPreviewUrl(null);
-            setShowAddModal(false);
-        } else {
-            const errorData = await res.json();
-            alert(`등록 실패: ${errorData.message || '알 수 없는 오류'}`);
+                setPreviewUrl(null);
+                setShowAddModal(false);
+            } else {
+                const errorData = await res.json();
+                alert(`요청 실패: ${errorData.message || '알 수 없는 오류'}`);
+            }
+        } catch (error) {
+            console.error('Operation failed:', error);
+            alert('서버 연결에 실패했습니다.');
         }
-    } catch (error) {
-        console.error('Save failed:', error);
-        alert('서버 연결에 실패했습니다.');
-    }
-};
+    };
 
 const handleReservation = () => {
     setIsReserving(true);
@@ -529,6 +587,9 @@ return (
                                 ticket={ticket} 
                                 theme={theme}
                                 lang={i18n.language}
+                                isAdmin={isAdminLoggedIn}
+                                onEdit={() => handleEditInitiate(ticket)}
+                                onDelete={() => handleDelete(ticket.id)}
                                 onClick={() => {
                                     setSelectedTicket(ticket);
                                     setQuantity(1);
@@ -542,7 +603,15 @@ return (
                 {isAdminLoggedIn && (
                     <div className="mt-12 flex justify-center">
                         <button 
-                            onClick={() => setShowAddModal(true)}
+                            onClick={() => {
+                                setIsEditMode(false);
+                                setEditingItemId(null);
+                                setNewTitle('');
+                                setNewEventDate('');
+                                setNewImageUrl('');
+                                setPreviewUrl(null);
+                                setShowAddModal(true);
+                            }}
                             className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
                         >
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
@@ -592,9 +661,9 @@ return (
                                 <div className="flex justify-between items-center mb-10">
                                     <div>
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-1">
-                                            <AutoTranslatedText text="신규 행사 등록" />
+                                            <AutoTranslatedText text={isEditMode ? "행사 정보 수정" : "신규 행사 등록"} />
                                         </h3>
-                                        <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">Add New Event</p>
+                                        <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">{isEditMode ? "Edit Event Info" : "Add New Event"}</p>
                                     </div>
                                     <button 
                                         onClick={() => setShowAddModal(false)}
@@ -679,7 +748,7 @@ return (
                                         className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                                         style={{ backgroundColor: theme.accentColor }}
                                     >
-                                        <AutoTranslatedText text="등록하기 (Register Event)" />
+                                        <AutoTranslatedText text={isEditMode ? "수정하기 (Update Event)" : "등록하기 (Register Event)"} />
                                     </button>
                                 </div>
                             </div>
