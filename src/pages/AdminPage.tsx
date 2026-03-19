@@ -446,7 +446,6 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('[handleSubmit] formData:', JSON.stringify(formData, null, 2));
         try {
             if (isEdit) {
                 await updateProduct(product.id, formData);

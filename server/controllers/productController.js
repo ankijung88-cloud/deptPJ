@@ -20,14 +20,24 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
+  const { parentId } = req.query;
+  console.log(`[getProductsByCategory] Fetching category: ${category}, parentId: ${parentId}`);
   try {
-    const query = `
-      SELECT * FROM featured_items 
-      WHERE category LIKE ? OR subcategory LIKE ?
-    `;
-    const [rows] = await pool.query(query, [`%${category}%`, `%${category}%`]);
+    let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
+    let params = [`%${category}%`, `%${category}%`];
+
+    if (parentId && parentId !== 'undefined' && parentId !== 'null') {
+      query += ' AND (parent_id = ? OR id = ?)';
+      params.push(parentId, parentId);
+    }
+
+    console.log(`[getProductsByCategory] Final Query: ${query} with params: ${JSON.stringify(params)}`);
+
+    const [rows] = await pool.query(query, params);
+    console.log(`[getProductsByCategory] Returned ${rows.length} rows`);
     res.json(rows);
   } catch (error) {
+    console.error('[getProductsByCategory] Error:', error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -59,7 +69,7 @@ export const searchProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -69,8 +79,8 @@ export const createProduct = async (req, res) => {
 
     const query = `
       INSERT INTO featured_items 
-      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await pool.query(query, [
       id,
@@ -81,6 +91,8 @@ export const createProduct = async (req, res) => {
       toJson(long_description),
       image_url || '',
       thumbnail_url || '',
+      side_image_url || '',
+      back_image_url || '',
       toJson(event_date),
       toJson(location),
       price || '',
@@ -100,7 +112,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -108,13 +120,9 @@ export const updateProduct = async (req, res) => {
       return JSON.stringify(val);
     };
 
-    // 디버그 로그
-    console.log('[updateProduct] id:', id);
-    console.log('[updateProduct] body keys:', Object.keys(req.body));
-
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?
       WHERE id = ?
     `;
     const params = [
@@ -125,6 +133,8 @@ export const updateProduct = async (req, res) => {
       toJson(long_description),
       image_url || '',
       thumbnail_url || '',
+      side_image_url || '',
+      back_image_url || '',
       toJson(event_date),
       toJson(location),
       price || '',
@@ -136,7 +146,6 @@ export const updateProduct = async (req, res) => {
       id
     ];
     const [result] = await pool.query(query, params);
-    console.log('[updateProduct] affectedRows:', result.affectedRows);
     res.json({ message: 'Product updated successfully' });
   } catch (error) {
     console.error('[updateProduct] Error:', error.message);

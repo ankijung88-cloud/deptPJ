@@ -24,6 +24,8 @@ export interface FeaturedItem {
     description: LocalizedString;
     imageUrl: string;
     thumbnailUrl?: string;
+    sideImageUrl?: string;
+    backImageUrl?: string;
     date: LocalizedString;
     location: LocalizedString;
     price: LocalizedString;
@@ -31,7 +33,15 @@ export interface FeaturedItem {
     videoUrl?: string;
     long_description?: LocalizedString;
     user_id?: string;
-    eventDates?: string[]; // YYYY-MM-DD format
+    image_url?: string;
+    thumbnail_url?: string;
+    video_url?: string;
+    event_date?: LocalizedString;
+    side_image_url?: string;
+    back_image_url?: string;
+    parent_id?: string;
+    event_dates?: string[];
+    eventDates?: string[];
 }
 
 export interface FloorContent {

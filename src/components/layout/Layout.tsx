@@ -8,7 +8,7 @@ import { MousePointer2, Ban } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
-import { NavigationActionProvider } from '../../context/NavigationActionContext';
+import { NavigationActionProvider, useNavigationState } from '../../context/NavigationActionContext';
 import { GlobalMiniMap } from '../common/GlobalMiniMap';
 
 type MouseEffectType = '2d' | '3d' | 'none';
@@ -17,9 +17,10 @@ export const Layout: React.FC = () => {
     const { i18n } = useTranslation();
     const isRTL = ['ar', 'fa', 'he'].includes(i18n.language);
     const location = useLocation();
+    const { isImmersive } = useNavigationState();
     const isLandingPage = location.pathname === '/';
     const isInspirationPage = location.pathname === '/inspiration';
-    const hideHeader = isLandingPage || isInspirationPage;
+    const hideHeader = isLandingPage || isInspirationPage || isImmersive;
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
     const [activeEffect, setActiveEffect] = useState<MouseEffectType>('none');
@@ -62,7 +63,7 @@ export const Layout: React.FC = () => {
                 {!hideHeader && <Header />}
                 {hideHeader && <LanguageSelector variant="floating" />}
                 
-                <GlobalMiniMap />
+                {!isImmersive && <GlobalMiniMap />}
                 
                 <div className={`flex-grow flex flex-col relative ${!hideHeader ? 'pt-20' : ''}`}>
 
@@ -70,7 +71,7 @@ export const Layout: React.FC = () => {
                         <Outlet />
                     </main>
                 </div>
-                {!isLandingPage && <Footer />}
+                {!isLandingPage && !isImmersive && <Footer />}
 
                 {/* Mouse Effect Toggle Button */}
                 <button

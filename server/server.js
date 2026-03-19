@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
@@ -10,6 +11,8 @@ import authRoutes from './routes/authRoutes.js';
 import noticeRoutes from './routes/noticeRoutes.js';
 import faqRoutes from './routes/faqRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import { serveFileFromDB } from './controllers/uploadController.js';
+import './config/init_db.js'; // Database auto-heal
 
 dotenv.config();
 
@@ -32,7 +35,9 @@ app.use('/assets/videos', express.static(videoPath));
 app.use('/assets/videos', express.static(fallbackVideoPath));
 app.use('/assets/video', express.static(videoPath));
 app.use('/assets/video', express.static(fallbackVideoPath));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve uploads from DB
+app.get('/uploads/:filename', serveFileFromDB);
 
 // Routes
 app.use('/api/products', productRoutes);
@@ -41,6 +46,20 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/faqs', faqRoutes);
 app.use('/api/upload', uploadRoutes);
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  const errorInfo = `[${new Date().toISOString()}] ${err.stack || err}\n`;
+  try {
+    fs.appendFileSync(path.join(__dirname, 'error_log.txt'), errorInfo);
+  } catch (logErr) {
+    console.error('Failed to write to error log:', logErr);
+  }
+  console.error('[Global Error Handler]:', err);
+  res.status(500).json({ 
+    message: err.message || 'Internal Server Error'
+  });
+});
 
 // Health Check
 app.get('/health', (req, res) => {

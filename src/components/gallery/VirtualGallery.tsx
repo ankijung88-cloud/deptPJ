@@ -14,9 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { Compass } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
-// Removed getFallbackTexture as it is no longer used to simplify the loading logic.
 
-// Local error boundary for individual cards to prevent one broken image from crashing the whole canvas
+// Local error boundary for individual cards
 class CardErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }, { hasError: boolean }> {
     constructor(props: any) {
         super(props);
@@ -24,7 +23,6 @@ class CardErrorBoundary extends Component<{ children: ReactNode, fallback: React
     }
     static getDerivedStateFromError() { return { hasError: true }; }
     componentDidCatch(error: any, _errorInfo: any) {
-        // Silently catch texture load errors to prevent console spam
         console.warn("Handled Card Error:", error.message || error);
     }
     render() {
@@ -92,7 +90,6 @@ const CanvasText = ({ text, color = "white", width = 4, height = 1 }: { text: st
             lines.forEach((line, i) => { ctx.fillText(line.trim(), c.width / 2, startY + i * lineHeight); });
         }
 
-        // Signal texture update
         if (textureRef.current) {
             textureRef.current.needsUpdate = true;
         }
@@ -119,11 +116,43 @@ interface ExhibitProps {
     lang: string;
     onItemClick?: (item: any) => void;
     isMobile: boolean;
+    isMuseum?: boolean;
 }
 
-const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, number], hovered: boolean, color2: string }) => {
-    // We trust the database URL directly and let DreiImage handle the internal loading/error.
-    // Removing any overlapping material children to ensure DreiImage's texture is clearly visible.
+const VideoScreen = ({ url, scale, theme, hovered }: { url: string, scale: [number, number], theme: any, hovered: boolean }) => {
+    const video = useMemo(() => {
+        const v = document.createElement('video');
+        v.src = url;
+        v.crossOrigin = "Anonymous";
+        v.loop = true;
+        v.muted = true; // Auto-play requires mute in many browsers
+        v.play().catch(err => console.error("Video play failed:", err));
+        return v;
+    }, [url]);
+
+    const videoTexture = useMemo(() => new THREE.VideoTexture(video), [video]);
+
+    return (
+        <group>
+            {/* Screen Frame */}
+            <mesh position={[0, 0, -0.1]}>
+                <boxGeometry args={[scale[0] + 0.4, scale[1] + 0.4, 0.2]} />
+                <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
+            </mesh>
+            
+            {/* The actual screen */}
+            <mesh position={[0, 0, 0.05]}>
+                <planeGeometry args={scale} />
+                <meshBasicMaterial map={videoTexture} toneMapped={false} />
+            </mesh>
+
+            {/* Screen Glow */}
+            <pointLight position={[0, 0, 2]} intensity={hovered ? 4 : 2} color={theme.accentColor} distance={10} />
+        </group>
+    );
+};
+
+const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, number], hovered: boolean }) => {
     return (
         <DreiImage 
             url={url} 
@@ -141,7 +170,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const navigate = useNavigate();
     const [hovered, setHovered] = React.useState(false);
     
-    // Robust detection: check for product ID patterns or metadata like price/location
     const isProduct = item.id?.includes('item-') || item.id?.startsWith('p') || item.price || item.location;
     const isStory = !isProduct; 
     const imageUrl = item.imageUrl || item.image_url;
@@ -149,11 +177,11 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const displayName = getLocalizedText(item.title, lang);
     const { translatedText } = useAutoTranslate(displayName, lang);
 
-    // Dynamic constants for Conveyor Belt (Mobile Only)
-    const totalExhibits = (useThree().get as any)().exhibitsCount || 10;
-    const radius = isMobile ? 25.0 : 3.5; // Large radius for mobile to prevent overlap with many items
-    const angleStep = (Math.PI * 2) / totalExhibits;
-    const verticalOffset = -0.5; // Slightly lower for better thumb ergonomics
+    const state = useThree();
+    const exhibitsCount = (state as any).exhibitsCount || 10;
+    const radius = isMobile ? 25.0 : 3.5;
+    const angleStep = (Math.PI * 2) / exhibitsCount;
+    const verticalOffset = -0.5;
 
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -161,41 +189,41 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
         const { size, viewport } = state;
         const isMobile = size.width < 768;
 
-        let effectiveZ = zPos;
-        let effectiveY = 0;
-        let effectiveRotationX = 0;
         let centerFactor = 0;
 
         if (isMobile) {
             const scroll = (state as any).scrollOffset || 0;
-            // Map scroll to global rotation angle
-            const globalAngle = scroll * Math.PI * 2 * 3; // 3 full rotations over the scroll length
+            const globalAngle = scroll * Math.PI * 2 * 3;
             const cardAngle = globalAngle + (index * angleStep);
             
-            // Circular positioning (Vertical loop) with verticalOffset
-            effectiveY = Math.sin(cardAngle) * radius + verticalOffset;
-            effectiveZ = Math.cos(cardAngle) * radius - radius; // Front is at z=0
-            
-            // Face the camera: Rotation around X-axis
-            effectiveRotationX = -cardAngle;
+            const effectiveY = Math.sin(cardAngle) * radius + verticalOffset;
+            const effectiveZ = Math.cos(cardAngle) * radius - radius;
+            const effectiveRotationX = -cardAngle;
 
-            // centerFactor: 1.0 when card is at the very front
             const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
             const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
             
-            const mobilePlateau = 0.05; // Much sharper focus
+            const mobilePlateau = 0.05;
             if (distFromFront <= mobilePlateau) {
                 centerFactor = 1.0;
-            } else if (distFromFront <= 0.25) { // Narrower range
+            } else if (distFromFront <= 0.25) {
                 centerFactor = THREE.MathUtils.smoothstep(distFromFront, 0.25, mobilePlateau);
             }
+
+            if (groupRef.current) {
+                groupRef.current.parent!.position.y = effectiveY;
+                groupRef.current.parent!.position.z = effectiveZ;
+                groupRef.current.parent!.rotation.x = effectiveRotationX;
+                groupRef.current.position.x = 0; 
+                groupRef.current.position.y = 0;
+                groupRef.current.rotation.y = 0;
+                groupRef.current.scale.setScalar(THREE.MathUtils.lerp(viewport.width * 0.45 / 4, viewport.width * 0.8 / 4, centerFactor) * (hovered ? 1.05 : 1));
+            }
         } else {
-            // Linear Corridor (Desktop)
             const sweetSpot = zPos + 8;
             const distFromCamera = state.camera.position.z - sweetSpot;
             const absDist = Math.abs(distFromCamera);
 
-            // Slightly wider plateau (1.5 -> 2.5) for the "Large" focused view
             const desktopPlateau = 2.5; 
             const transitionRange = 12; 
             
@@ -205,22 +233,14 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                 centerFactor = THREE.MathUtils.smoothstep(absDist, transitionRange, desktopPlateau);
             }
 
-            // Movement Logic - Combined focusing and clearing
-            // Reverting to narrower displacement (0.75 -> 0.45) for a more compact corridor
             const baseSideDisplacement = Math.min(viewport.width * 0.45, 6.0);
-            
-            // Reverting passingFactor multiplier (2.8 -> 2.2) for less aggressive clearing
             const passingFactor = distFromCamera < -desktopPlateau 
                 ? THREE.MathUtils.mapLinear(Math.min(absDist, 10), desktopPlateau, 10, 1, 2.2)
                 : 1;
 
             const startX = side * baseSideDisplacement * passingFactor;
             const targetX = THREE.MathUtils.lerp(startX, 0, centerFactor);
-            
-            // Reverting rotation angle (PI/6 -> PI/10) to reduce visual distortion
             const targetRotationY = THREE.MathUtils.lerp(side * -Math.PI / 10, 0, centerFactor);
-            
-            // Keep focused scaling: 0.85 (side) -> 1.25 (center focus)
             const focusScale = THREE.MathUtils.lerp(0.85, 1.25, centerFactor);
             const finalScale = focusScale * (hovered ? 1.05 : 1);
             
@@ -231,42 +251,22 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                 groupRef.current.parent!.rotation.x = 0;
                 groupRef.current.scale.setScalar(finalScale);
             }
-            return;
-        }
-
-        // Mobile Logic
-        const baseWidth = 4;
-        const targetWidth = THREE.MathUtils.lerp(viewport.width * 0.45, viewport.width * 0.8, centerFactor);
-        const responsiveScale = targetWidth / baseWidth;
-        const finalScale = responsiveScale * (hovered ? 1.05 : 1);
-        
-        if (groupRef.current) {
-            groupRef.current.parent!.position.y = effectiveY;
-            groupRef.current.parent!.position.z = effectiveZ;
-            groupRef.current.parent!.rotation.x = effectiveRotationX;
-            groupRef.current.position.x = 0; 
-            groupRef.current.position.y = 0;
-            groupRef.current.rotation.y = 0;
-            groupRef.current.scale.setScalar(finalScale);
         }
     });
 
     return (
         <group position={[0, 0, zPos]}>
-            {/* Debug Index Label - Subtle marker at the top */}
             <Suspense fallback={null}>
                 <DreiText position={[0, 1.8, 0]} fontSize={0.1} color={theme.accentColor} fillOpacity={0.6}>
                     #{index + 1}
                 </DreiText>
             </Suspense>
 
-            {/* The Animated Card Mesh - Grouped for scaling/rotation isolation */}
             <group ref={groupRef}>
                 <mesh 
                     ref={meshRef}
                     onClick={(e) => {
                         e.stopPropagation();
-                        // Priority: onItemClick prop -> Navigation for Products -> No-op for Stories
                         if (onItemClick) {
                             onItemClick(item);
                         } else if (!isStory) {
@@ -307,7 +307,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                                     url={imageUrl} 
                                     scale={[4, 3]} 
                                     hovered={hovered}
-                                    color2={theme.color2}
                                 />
                             </Suspense>
                         </CardErrorBoundary>
@@ -315,7 +314,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                         <mesh position={[0, 0, 0.01]}>
                             <planeGeometry args={[4, 3]} />
                             <meshStandardMaterial color={theme.color2} transparent opacity={0.4} metalness={0.9} roughness={0.1} />
-                            {/* Decorative placeholder for items without images */}
                             <group position={[0, 0, 0.1]}>
                                 <DreiText position={[0, 0.2, 0]} fontSize={0.2} color={theme.accentColor}>
                                     {displayName?.substring(0, 12) + (displayName?.length > 12 ? '...' : '')}
@@ -328,7 +326,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     )}
                 </mesh>
 
-                {/* Integrated Title Overlay - Inside the card for perfect context */}
                 <group position={[0, -1.1, 0.06]}>
                     <mesh>
                         <planeGeometry args={[4, 0.8]} />
@@ -352,14 +349,18 @@ const GalleryScene = ({
     theme, 
     lang, 
     onItemClick,
-    isMobile 
+    isMobile,
+    isMuseum = false,
+    cinemaItem = null
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
-    theme: any, 
+    theme: any,
     lang: string, 
     onItemClick?: (item: any) => void,
-    isMobile: boolean
+    isMobile: boolean,
+    isMuseum?: boolean,
+    cinemaItem?: FeaturedItem | null
 }) => {
     const scroll = useScroll();
     const { camera } = useThree();
@@ -373,7 +374,33 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
-    // Pass total count to state for access in children
+    const museumWalls = useMemo(() => {
+        if (!isMuseum) return null;
+        const spacing = 20;
+        const length = (exhibits.length * spacing) + 100;
+        
+        return (
+            <group>
+                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, -length / 2 + 50]}>
+                    <planeGeometry args={[100, length]} />
+                    <meshStandardMaterial color="#2a1a0a" metalness={0.1} roughness={0.8} />
+                </mesh>
+                <mesh position={[-15, 0, -length / 2 + 50]} rotation={[0, Math.PI / 2, 0]}>
+                    <planeGeometry args={[length, 20]} />
+                    <meshStandardMaterial color="#f5f5f5" metalness={0.05} roughness={0.9} />
+                </mesh>
+                <mesh position={[15, 0, -length / 2 + 50]} rotation={[0, -Math.PI / 2, 0]}>
+                    <planeGeometry args={[length, 20]} />
+                    <meshStandardMaterial color="#f5f5f5" metalness={0.05} roughness={0.9} />
+                </mesh>
+                <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 15, -length / 2 + 50]}>
+                    <planeGeometry args={[100, length]} />
+                    <meshStandardMaterial color="#333333" metalness={0.1} roughness={0.5} />
+                </mesh>
+            </group>
+        );
+    }, [isMuseum, exhibits.length]);
+
     const { set } = useThree();
     useEffect(() => {
         set({ exhibitsCount: exhibits.length } as any);
@@ -381,18 +408,14 @@ const GalleryScene = ({
 
     const focusState = useRef({ index: -1, startTime: 0 });
 
-    useFrame((state, _delta) => {
+    useFrame((state) => {
         const spacing = 20;
         const totalZ = exhibits.length * spacing;
-        
-        // Pass scroll offset to children via custom state
         (state as any).scrollOffset = scroll.offset;
 
         if (isMobile) {
-            // Mobile: Sticky Camera, Conveyor rotates
-            camera.position.set(0, 0, 5); // Static camera position for circular view
+            camera.position.set(0, 0, 5);
             camera.lookAt(0, 0, 0);
-
             let pullBias = 0;
             const angleStep = (Math.PI * 2) / exhibits.length;
             const globalAngle = (scroll.offset || 0) * Math.PI * 2 * 3;
@@ -401,8 +424,7 @@ const GalleryScene = ({
                 const cardAngle = globalAngle + (i * angleStep);
                 const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
                 const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
-
-                if (distFromFront < 0.1) { // Very magnetic for narrow focus
+                if (distFromFront < 0.1) {
                     if (focusState.current.index !== i) {
                         focusState.current = { index: i, startTime: state.clock.elapsedTime };
                     }
@@ -412,15 +434,10 @@ const GalleryScene = ({
                     }
                 }
             });
-            
-            // Note: In R3F ScrollControls, we can't easily 'pull' the offset itself without complexity
-            // but we can simulate the pause by having cards stay still.
             (state as any).scrollOffset = scroll.offset + pullBias * 0.01;
         } else {
-            // Desktop: Linear Corridor
             const scrollZ = scroll.offset * -(totalZ + 10);
             let pullBias = 0;
-            
             exhibits.forEach((ex) => {
                 const sweetSpot = ex.zPos + 8;
                 const dist = Math.abs(scrollZ - sweetSpot);
@@ -429,7 +446,6 @@ const GalleryScene = ({
                     pullBias += (sweetSpot - scrollZ) * desktopStrength * 0.85;
                 }
             });
-
             const targetCameraZ = scrollZ + pullBias;
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCameraZ, 0.1);
             camera.lookAt(0, 0, camera.position.z - 20);
@@ -438,22 +454,39 @@ const GalleryScene = ({
 
     return (
         <group>
-            <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, -5, -500]} />
-            <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, 5, -500]} />
-            
-            {/* Neon Path Lines - Floor Strips */}
-            <mesh position={[-5.1, -4.95, -100]}>
-                <boxGeometry args={[0.2, 0.01, 2000]} />
-                <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
-            </mesh>
-            <mesh position={[5.1, -4.95, -100]}>
-                <boxGeometry args={[0.2, 0.01, 2000]} />
-                <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
-            </mesh>
+            {isMuseum ? (
+                <>
+                    {museumWalls}
+                    <fog attach="fog" args={["#000", 1, 80]} />
+                </>
+            ) : (
+                <>
+                    <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, -5, -500]} />
+                    <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, 5, -500]} />
+                    <mesh position={[-5.1, -4.95, -100]}>
+                        <boxGeometry args={[0.2, 0.01, 2000]} />
+                        <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
+                    </mesh>
+                    <mesh position={[5.1, -4.95, -100]}>
+                        <boxGeometry args={[0.2, 0.01, 2000]} />
+                        <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
+                    </mesh>
+                    <fog attach="fog" args={[theme.bgColor, 10, 60]} />
+                </>
+            )}
 
-            <fog attach="fog" args={[theme.bgColor, 10, 60]} />
+            {cinemaItem && (
+                <group position={[0, 0, camera.position.z - 15]}>
+                    <VideoScreen 
+                        url={cinemaItem.videoUrl || (cinemaItem as any).video_url || cinemaItem.imageUrl || (cinemaItem as any).image_url} 
+                        scale={isMobile ? [6, 3.4] : [14, 8]} 
+                        hovered={false} 
+                        theme={theme} 
+                    />
+                </group>
+            )}
 
-            {exhibits.map((ex: any, i: number) => (
+            {!cinemaItem && exhibits.map((ex: any, i: number) => (
                 <ExhibitCard 
                     key={`${i}-${lang}`} 
                     item={ex} 
@@ -469,7 +502,7 @@ const GalleryScene = ({
 
             <ambientLight intensity={1.5} />
             <pointLight position={[0, 10, -5]} intensity={2} color={theme.accentColor} />
-            <pointLight position={[0, -10, -5]} intensity={1} color={theme.color3.substring(0, 7)} />
+            <pointLight position={[0, -10, -5]} intensity={1} color={theme.color1} />
         </group>
     );
 };
@@ -482,7 +515,9 @@ export const VirtualGallery = ({
     lang = 'ko', 
     onItemClick,
     defaultActivated = false,
-    onClick
+    onClick,
+    isMuseum = false,
+    cinemaItem = null
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -491,7 +526,9 @@ export const VirtualGallery = ({
     lang?: string, 
     onItemClick?: (item: any) => void,
     defaultActivated?: boolean,
-    onClick?: () => void
+    onClick?: () => void,
+    isMuseum?: boolean,
+    cinemaItem?: FeaturedItem | null
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -506,17 +543,13 @@ export const VirtualGallery = ({
         <div 
             className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${!isActivated ? 'hide-3d-scrollbar' : ''}`}
             onClick={() => {
-                // Only activate internal scroll if no external handler is provided (e.g. for standalone use).
-                // For teasers (with onClick prop), we don't activate the teaser's own scroll.
                 if (!onClick && !isActivated) setIsActivated(true);
-                
                 if (onClick) onClick();
             }}
         >
             <style dangerouslySetInnerHTML={{ __html: `
                 .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
                 .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow: hidden !important; }
-                .hide-3d-scrollbar div { overflow: hidden !important; }
             `}} />
             <GalleryErrorBoundary fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center text-white/20 p-12 text-center">
@@ -528,21 +561,16 @@ export const VirtualGallery = ({
                     <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
                     <ScrollControls 
                         pages={!isActivated 
-                            ? 0 // No scrolling in teaser mode
+                            ? 0 
                             : (isMobile 
-                                ? 200 // Large range for mobile infinite loop
+                                ? 200 
                                 : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8))} 
                         damping={0.3} 
                         distance={1}
                         enabled={isActivated}
                         style={!isActivated ? { display: 'none', visibility: 'hidden', pointerEvents: 'none' } : {}}
                     >
-                        <Suspense fallback={
-                            <mesh>
-                                <boxGeometry args={[1, 1, 1]} />
-                                <meshBasicMaterial color="gray" wireframe />
-                            </mesh>
-                        }>
+                        <Suspense fallback={null}>
                                 <GalleryScene 
                                     items={items} 
                                     stories={stories} 
@@ -550,6 +578,8 @@ export const VirtualGallery = ({
                                     lang={lang} 
                                     onItemClick={onItemClick} 
                                     isMobile={isMobile}
+                                    isMuseum={isMuseum}
+                                    cinemaItem={cinemaItem}
                                 />
                         </Suspense>
                     </ScrollControls>

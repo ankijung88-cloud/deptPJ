@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2 } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -19,6 +19,18 @@ export const DetailPage: React.FC = () => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloading, setDownloading] = useState(false);
+    const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
+    const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const checkAdmin = () => {
+            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
+        };
+        checkAdmin();
+        window.addEventListener('storage', checkAdmin);
+        return () => window.removeEventListener('storage', checkAdmin);
+    }, []);
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -77,6 +89,49 @@ export const DetailPage: React.FC = () => {
         } finally {
             setDownloading(false);
         }
+    };
+
+    const handleApplyTemplate = async (templateType: string) => {
+        if (!item) return;
+        
+        try {
+            setApplyingTemplate(templateType);
+            const updatedItem = {
+                ...item,
+                category: templateType
+            };
+
+            const response = await fetch(`/api/products/${item.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedItem)
+            });
+
+            if (response.ok) {
+                const routes: Record<string, string> = {
+                    'cinema': '/virtual-cinema',
+                    'museum': '/virtual-museum',
+                    'store': '/virtual-store',
+                    'ticket': '/virtual-ticket'
+                };
+                navigate(routes[templateType], { state: { initialId: item.id, parentId: item.id } });
+            } else {
+                alert('템플릿 적용에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Failed to apply template:', error);
+            alert('오류가 발생했습니다.');
+        } finally {
+            setApplyingTemplate(null);
+        }
+    };
+
+    const toggleTemplateSelection = (templateType: string) => {
+        setSelectedTemplates(prev => 
+            prev.includes(templateType) 
+                ? prev.filter(t => t !== templateType)
+                : [...prev, templateType]
+        );
     };
 
     if (loading) {
@@ -222,6 +277,28 @@ export const DetailPage: React.FC = () => {
                                             <AutoTranslatedText text="Resource Asset Download" />
                                         </button>
                                     )}
+                                    {isAdminLoggedIn && selectedTemplates.map((tplId) => {
+                                        const tplInfo = [
+                                            { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
+                                            { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
+                                            { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
+                                            { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' }
+                                        ].find(t => t.id === tplId);
+                                        
+                                        if (!tplInfo) return null;
+
+                                        return (
+                                            <button 
+                                                key={tplId}
+                                                onClick={() => handleApplyTemplate(tplId)}
+                                                disabled={applyingTemplate !== null}
+                                                className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all disabled:opacity-50 group"
+                                            >
+                                                {applyingTemplate === tplId ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
+                                                <AutoTranslatedText text={tplInfo.label} />
+                                            </button>
+                                        );
+                                    })}
                                     <button 
                                         onClick={handleShare}
                                         className="w-full py-4 bg-transparent border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
@@ -231,6 +308,52 @@ export const DetailPage: React.FC = () => {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Template Usage Card */}
+                            {isAdminLoggedIn && (
+                                <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6">
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-bold text-[#00FFC2] uppercase tracking-[0.2em]"><AutoTranslatedText text="템플릿 선택 사용" /></span>
+                                        <p className="text-xs text-white/40"><AutoTranslatedText text="원하는 테마의 템플릿을 선택하여 제품을 체험해보세요." /></p>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {[
+                                            { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
+                                            { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
+                                            { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
+                                            { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' }
+                                        ].map((tpl) => {
+                                            const isSelected = selectedTemplates.includes(tpl.id);
+                                            return (
+                                                <button
+                                                    key={tpl.id}
+                                                    onClick={() => toggleTemplateSelection(tpl.id)}
+                                                    className={`flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
+                                                        isSelected 
+                                                            ? 'bg-white/10 border-[#00FFC2] shadow-[0_0_20px_rgba(0,255,194,0.1)]' 
+                                                            : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
+                                                    }`}
+                                                >
+                                                    <div className="absolute top-3 right-3">
+                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                                                            isSelected ? 'bg-[#00FFC2] border-[#00FFC2]' : 'border-white/20'
+                                                        }`}>
+                                                            {isSelected && <Check size={10} className="text-black" strokeWidth={4} />}
+                                                        </div>
+                                                    </div>
+                                                    <tpl.icon size={24} style={{ color: tpl.color }} className={`${isSelected ? 'scale-110' : 'group-hover:scale-110'} transition-transform`} />
+                                                    <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
+                                                        isSelected ? 'text-white' : 'text-white/40'
+                                                    }`}>
+                                                        {tpl.label}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Additional Info */}
                             <div className="space-y-6 px-4">
