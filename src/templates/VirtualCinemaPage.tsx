@@ -361,10 +361,10 @@ const VirtualCinemaPage: React.FC = () => {
                             {cinemaItems.map((item) => (
                                 <motion.div
                                     key={item.id}
-                                    whileHover={{ y: -10, scale: 1.02 }}
+                                    whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => setSelectedCinemaItem(item)}
-                                    className={`relative shrink-0 w-64 h-40 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-500 ${selectedCinemaItem?.id === item.id ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]' : 'border-white/10 grayscale-[0.6] hover:grayscale-0'}`}
+                                    className={`relative shrink-0 w-64 h-40 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-500 group ${selectedCinemaItem?.id === item.id ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]' : 'border-white/10 grayscale-[0.6] hover:grayscale-0'}`}
                                 >
                                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
