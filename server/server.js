@@ -11,7 +11,6 @@ import authRoutes from './routes/authRoutes.js';
 import noticeRoutes from './routes/noticeRoutes.js';
 import faqRoutes from './routes/faqRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-import { serveFileFromDB } from './controllers/uploadController.js';
 import './config/init_db.js'; // Database auto-heal
 
 dotenv.config();
@@ -37,7 +36,7 @@ app.use('/assets/video', express.static(videoPath));
 app.use('/assets/video', express.static(fallbackVideoPath));
 
 // Serve uploads from DB
-app.get('/uploads/:filename', serveFileFromDB);
+app.use('/uploads', uploadRoutes);
 
 // Routes
 app.use('/api/products', productRoutes);
@@ -64,6 +63,52 @@ app.use((err, req, res, next) => {
 // Health Check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Dept Backend is running - V2' });
+});
+
+// DEBUG: Check DB content
+import pool from './config/db.js';
+app.get('/api/debug/db-files', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT id, filename, mimetype, LENGTH(data) as size FROM media_storage LIMIT 100');
+    res.json({ count: rows.length, files: rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ADMIN: Emergency Migration Trigger
+app.get('/api/admin/migrate-now', async (req, res) => {
+  const uploadDir = path.join(__dirname, 'uploads');
+  const results = { total: 0, success: 0, errors: [] };
+  
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      return res.status(404).json({ error: 'Upload directory not found', path: uploadDir });
+    }
+
+    const files = fs.readdirSync(uploadDir).filter(f => f !== '.gitkeep');
+    results.total = files.length;
+
+    for (const filename of files) {
+      try {
+        const filePath = path.join(uploadDir, filename);
+        const data = fs.readFileSync(filePath);
+        const ext = path.extname(filename).toLowerCase();
+        const mimetype = ext === '.png' ? 'image/png' : (ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : (ext === '.webm' ? 'video/webm' : 'application/octet-stream'));
+
+        await pool.query(
+          'INSERT INTO media_storage (filename, mimetype, data) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mimetype=VALUES(mimetype), data=VALUES(data)',
+          [filename, mimetype, data]
+        );
+        results.success++;
+      } catch (err) {
+        results.errors.push({ file: filename, error: err.message });
+      }
+    }
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.listen(PORT, '0.0.0.0', () => {

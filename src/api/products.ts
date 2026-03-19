@@ -157,6 +157,9 @@ export const getProductsByUser = async (userId: string): Promise<FeaturedItem[]>
 export const deleteProduct = async (id: string): Promise<void> => {
     const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        }
     });
     if (!response.ok) {
         const err = await response.json();
@@ -167,7 +170,10 @@ export const deleteProduct = async (id: string): Promise<void> => {
 export const createProduct = async (productData: any): Promise<{ id: string }> => {
     const response = await fetch('/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(productData),
     });
     if (!response.ok) {
@@ -180,7 +186,10 @@ export const createProduct = async (productData: any): Promise<{ id: string }> =
 export const updateProduct = async (id: string, productData: any): Promise<void> => {
     const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
         body: JSON.stringify(productData),
     });
     if (!response.ok) {

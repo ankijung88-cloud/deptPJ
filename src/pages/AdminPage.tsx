@@ -423,6 +423,9 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
         try {
             const response = await fetch('/api/upload', {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                },
                 body: uploadData
             });
             
@@ -842,6 +845,9 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         try {
             const response = await fetch('/api/upload', {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                },
                 body: uploadData
             });
 

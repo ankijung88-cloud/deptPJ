@@ -63,6 +63,7 @@ export const handleUpload = async (req, res) => {
  */
 export const serveFileFromDB = async (req, res) => {
   const { filename } = req.params;
+  console.log(`[serveFileFromDB] Request for: ${filename}`);
   try {
     const [rows] = await pool.query(
       'SELECT mimetype, data FROM media_storage WHERE filename = ?',
