@@ -107,16 +107,38 @@ export const DetailPage: React.FC = () => {
         }
     };
 
+    const prepareDataForBackend = (baseItem: FeaturedItem, overrides: Partial<any> = {}) => {
+        return {
+            title: baseItem.title,
+            category: overrides.category || baseItem.category,
+            subcategory: baseItem.subcategory,
+            description: baseItem.description,
+            long_description: baseItem.long_description,
+            image_url: baseItem.imageUrl,
+            thumbnail_url: baseItem.thumbnailUrl,
+            side_image_url: baseItem.sideImageUrl,
+            back_image_url: baseItem.backImageUrl,
+            event_date: baseItem.date,
+            location: baseItem.location,
+            price: baseItem.price,
+            closed_days: JSON.stringify(baseItem.closedDays),
+            video_url: baseItem.videoUrl,
+            page_type: (baseItem as any).page_type,
+            parent_id: (baseItem as any).parent_id,
+            theme_data: (baseItem as any).theme_data,
+            selected_templates: JSON.stringify(overrides.selected_templates || baseItem.selected_templates)
+        };
+    };
+
     const handleApplyTemplate = async (templateType: string) => {
         if (!item) return;
         
         try {
             setApplyingTemplate(templateType);
-            const updatedItem = {
-                ...item,
+            const backendData = prepareDataForBackend(item, { 
                 category: templateType,
-                selected_templates: selectedTemplates
-            };
+                selected_templates: selectedTemplates 
+            });
 
             const response = await fetch(`/api/products/${item.id}`, {
                 method: 'PUT',
@@ -124,7 +146,7 @@ export const DetailPage: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
                 },
-                body: JSON.stringify(updatedItem)
+                body: JSON.stringify(backendData)
             });
 
             if (response.ok) {
@@ -149,13 +171,14 @@ export const DetailPage: React.FC = () => {
     const saveTemplatesToDb = async (templates: SelectedTemplate[]) => {
         if (!item) return;
         try {
+            const backendData = prepareDataForBackend(item, { selected_templates: templates });
             await fetch(`/api/products/${item.id}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
                 },
-                body: JSON.stringify({ ...item, selected_templates: templates })
+                body: JSON.stringify(backendData)
             });
         } catch (error) {
             console.error('Failed to save templates:', error);
