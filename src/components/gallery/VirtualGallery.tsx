@@ -155,31 +155,49 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
 
             {/* Play/Pause Overlay in 3D (Text or Icons as planes) */}
             {!playing && (
-                <mesh position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
-                    <circleGeometry args={[0.8, 32]} />
-                    <meshBasicMaterial color="white" transparent opacity={0.8} />
-                    <mesh position={[0.1, 0, 0.01]} rotation={[0, 0, -Math.PI / 2]}>
-                        <circleGeometry args={[0.3, 3]} />
-                        <meshBasicMaterial color="black" />
+                <group position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
+                    {/* Subtle Semi-transparent Dark Circle */}
+                    <mesh>
+                        <circleGeometry args={[0.8, 32]} />
+                        <meshBasicMaterial color="#050505" transparent opacity={0.6} />
                     </mesh>
-                </mesh>
+                    {/* Thin Border */}
+                    <mesh>
+                        <ringGeometry args={[0.79, 0.81, 64]} />
+                        <meshBasicMaterial color="white" transparent opacity={0.15} />
+                    </mesh>
+                    {/* Play Triangle - Right facing */}
+                    <mesh position={[0.05, 0, 0.01]} rotation={[0, 0, -Math.PI / 2]}>
+                        <circleGeometry args={[0.35, 3]} />
+                        <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+                    </mesh>
+                </group>
             )}
 
             {playing && hovered && (
-                <mesh position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(false); }}>
-                    <circleGeometry args={[0.6, 32]} />
-                    <meshBasicMaterial color="white" transparent opacity={0.4} />
+                <group position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(false); }}>
+                    {/* Subtle Semi-transparent Dark Circle */}
+                    <mesh>
+                        <circleGeometry args={[0.8, 32]} />
+                        <meshBasicMaterial color="#050505" transparent opacity={0.4} />
+                    </mesh>
+                    {/* Thin Border */}
+                    <mesh>
+                        <ringGeometry args={[0.79, 0.81, 64]} />
+                        <meshBasicMaterial color="white" transparent opacity={0.1} />
+                    </mesh>
+                    {/* Pause Bars */}
                     <group position={[-0.15, 0, 0.01]}>
                         <mesh position={[0, 0, 0]}>
-                            <planeGeometry args={[0.1, 0.4]} />
-                            <meshBasicMaterial color="black" />
+                            <planeGeometry args={[0.12, 0.45]} />
+                            <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
                         </mesh>
                         <mesh position={[0.3, 0, 0]}>
-                            <planeGeometry args={[0.1, 0.4]} />
-                            <meshBasicMaterial color="black" />
+                            <planeGeometry args={[0.12, 0.45]} />
+                            <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
                         </mesh>
                     </group>
-                </mesh>
+                </group>
             )}
 
             {/* Screen Glow */}
