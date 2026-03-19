@@ -21,6 +21,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  console.log(`Creating uploads directory: ${uploadsDir}`);
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 // Middleware
 app.use(cors());
 app.use(morgan('dev'));
@@ -35,7 +42,8 @@ app.use('/assets/videos', express.static(fallbackVideoPath));
 app.use('/assets/video', express.static(videoPath));
 app.use('/assets/video', express.static(fallbackVideoPath));
 
-// Serve uploads from DB
+// Serve uploads (SSD first, then DB fallback)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', uploadRoutes);
 
 // Routes

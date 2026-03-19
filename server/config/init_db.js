@@ -42,11 +42,18 @@ async function initDB() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         filename VARCHAR(255) UNIQUE NOT NULL,
         mimetype VARCHAR(100) NOT NULL,
-        data LONGBLOB NOT NULL,
+        data LONGBLOB NULL, -- Changed from NOT NULL to support SSD-only files
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB;
     `);
     console.log('[DB] media_storage table is ready.');
+
+    // Ensure data column allows NULL
+    const [mediaColumns] = await pool.query("SHOW COLUMNS FROM media_storage LIKE 'data'");
+    if (mediaColumns.length > 0 && mediaColumns[0].Null === 'NO') {
+      console.log('[DB] Updating media_storage.data to allow NULL...');
+      await pool.query("ALTER TABLE media_storage MODIFY COLUMN data LONGBLOB NULL");
+    }
 
   } catch (error) {
     if (error.code === 'ER_DUP_COLUMN') {

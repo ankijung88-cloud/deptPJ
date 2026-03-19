@@ -1,19 +1,29 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import pool from '../config/db.js';
 
-// Multer in-memory storage for DB-based uploads
-const storage = multer.memoryStorage();
+// Multer disk storage for SSD-based uploads
+const diskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
+    cb(null, uniqueFilename);
+  }
+});
 
 const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit (adjusted from 1GB for memory safety)
+  storage: diskStorage,
+  limits: { fileSize: 1024 * 1024 * 1024 }, // 1GB limit (SSD-based streaming)
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|webp|mp4|webm|ogg|mov/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) return cb(null, true);
-    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov)'));
+    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov) up to 1GB'));
   }
 });
 
@@ -31,60 +41,61 @@ export const uploadSingle = (req, res, next) => {
 };
 
 /**
- * Handle File Upload (Save to DB)
+ * Handle File Upload (Save metadata to DB, file is already on SSD)
  */
 export const handleUpload = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-    const originalName = req.file.originalname;
-    const extension = path.extname(originalName);
-    const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${extension}`;
+    const uniqueFilename = req.file.filename;
     const mimetype = req.file.mimetype;
-    const buffer = req.file.buffer;
 
-    // Save to media_storage table
+    // Save metadata to media_storage table (data column is NULL for new SSD files)
     await pool.query(
       'INSERT INTO media_storage (filename, mimetype, data) VALUES (?, ?, ?)',
-      [uniqueFilename, mimetype, buffer]
+      [uniqueFilename, mimetype, null] // No buffer stored in DB
     );
 
     const fileUrl = `/uploads/${uniqueFilename}`;
-    console.log('[Upload] Saved to DB:', fileUrl);
+    console.log('[Upload] Saved to SSD & Metadata to DB:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
     console.error('[handleUpload] Error:', error);
-    res.status(500).json({ message: 'Internal server error during database file processing' });
+    res.status(500).json({ message: 'Internal server error during SSD file processing' });
   }
 };
 
 /**
- * Serve File from DB by filename
+ * Serve File (Legacy DB support + Path check)
+ * NOTE: This is maintained for backward compatibility. 
+ * Future requests will be handled by express.static in server.js.
  */
 export const serveFileFromDB = async (req, res) => {
   const { filename } = req.params;
   console.log(`[serveFileFromDB] Request for: ${filename}`);
   try {
+    // Check disk first
+    const filePath = path.join(process.cwd(), 'uploads', filename);
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
+
+    // Fallback to DB (for non-migrated items)
     const [rows] = await pool.query(
       'SELECT mimetype, data FROM media_storage WHERE filename = ?',
       [filename]
     );
 
-    if (rows.length === 0) {
+    if (rows.length === 0 || !rows[0].data) {
       return res.status(404).send('File not found');
     }
 
     const { mimetype, data } = rows[0];
-    
-    // Set headers
     res.set('Content-Type', mimetype);
-    res.set('Cache-Control', 'public, max-age=31536000'); // 1 year cache
-    
-    // Send binary data
+    res.set('Cache-Control', 'public, max-age=31536000');
     res.send(data);
   } catch (error) {
     console.error('[serveFileFromDB] Error:', error);
     res.status(500).send('Internal server error');
   }
 };
-
