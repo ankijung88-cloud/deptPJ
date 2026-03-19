@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { getProductById } from '../api/products';
-import { FeaturedItem } from '../types';
+import { FeaturedItem, SelectedTemplate } from '../types';
 import { getJoseonThemeById } from '../utils/themeUtils';
 
 export const DetailPage: React.FC = () => {
@@ -20,7 +20,7 @@ export const DetailPage: React.FC = () => {
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloading, setDownloading] = useState(false);
     const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
-    const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+    const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
     useEffect(() => {
@@ -49,6 +49,22 @@ export const DetailPage: React.FC = () => {
         window.scrollTo(0, 0);
         fetchItem();
     }, [id]);
+
+    useEffect(() => {
+        if (item?.selected_templates) {
+            try {
+                const templates = typeof item.selected_templates === 'string' 
+                    ? JSON.parse(item.selected_templates) 
+                    : item.selected_templates;
+                setSelectedTemplates(templates || []);
+            } catch (e) {
+                console.error('Failed to parse selected_templates:', e);
+                setSelectedTemplates([]);
+            }
+        } else {
+            setSelectedTemplates([]);
+        }
+    }, [item]);
 
     const handleShare = () => {
         setShowShareModal(true);
@@ -129,12 +145,46 @@ export const DetailPage: React.FC = () => {
         }
     };
 
+    const saveTemplatesToDb = async (templates: SelectedTemplate[]) => {
+        if (!item) return;
+        try {
+            await fetch(`/api/products/${item.id}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                },
+                body: JSON.stringify({ ...item, selected_templates: templates })
+            });
+        } catch (error) {
+            console.error('Failed to save templates:', error);
+        }
+    };
+
     const toggleTemplateSelection = (templateType: string) => {
-        setSelectedTemplates(prev => 
-            prev.includes(templateType) 
-                ? prev.filter(t => t !== templateType)
-                : [...prev, templateType]
+        const isSelected = selectedTemplates.some(t => t.id === templateType);
+        const newTemplates: SelectedTemplate[] = isSelected 
+            ? selectedTemplates.filter(t => t.id !== templateType)
+            : [...selectedTemplates, { id: templateType, status: 'visible' }];
+        
+        setSelectedTemplates(newTemplates);
+        saveTemplatesToDb(newTemplates);
+    };
+
+    const toggleTemplateStatus = (templateId: string) => {
+        const newTemplates: SelectedTemplate[] = selectedTemplates.map(t => 
+            t.id === templateId 
+                ? { ...t, status: t.status === 'visible' ? 'hidden' : 'visible' }
+                : t
         );
+        setSelectedTemplates(newTemplates);
+        saveTemplatesToDb(newTemplates);
+    };
+
+    const deleteTemplateByAdmin = (templateId: string) => {
+        const newTemplates = selectedTemplates.filter(t => t.id !== templateId);
+        setSelectedTemplates(newTemplates);
+        saveTemplatesToDb(newTemplates);
     };
 
     if (loading) {
@@ -280,28 +330,30 @@ export const DetailPage: React.FC = () => {
                                             <AutoTranslatedText text="Resource Asset Download" />
                                         </button>
                                     )}
-                                    {isAdminLoggedIn && selectedTemplates.map((tplId) => {
-                                        const tplInfo = [
-                                            { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
-                                            { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
-                                            { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
-                                            { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' }
-                                        ].find(t => t.id === tplId);
-                                        
-                                        if (!tplInfo) return null;
+                                    {selectedTemplates
+                                        .filter(t => t.status === 'visible')
+                                        .map((tpl) => {
+                                            const tplInfo = [
+                                                { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
+                                                { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
+                                                { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
+                                                { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' }
+                                            ].find(t => t.id === tpl.id);
+                                            
+                                            if (!tplInfo) return null;
 
-                                        return (
-                                            <button 
-                                                key={tplId}
-                                                onClick={() => handleApplyTemplate(tplId)}
-                                                disabled={applyingTemplate !== null}
-                                                className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all disabled:opacity-50 group"
-                                            >
-                                                {applyingTemplate === tplId ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
-                                                <AutoTranslatedText text={tplInfo.label} />
-                                            </button>
-                                        );
-                                    })}
+                                            return (
+                                                <button 
+                                                    key={tpl.id}
+                                                    onClick={() => handleApplyTemplate(tpl.id)}
+                                                    disabled={applyingTemplate !== null}
+                                                    className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all disabled:opacity-50 group"
+                                                >
+                                                    {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
+                                                    <AutoTranslatedText text={tplInfo.label} />
+                                                </button>
+                                            );
+                                        })}
                                     <button 
                                         onClick={handleShare}
                                         className="w-full py-4 bg-transparent border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
@@ -327,31 +379,55 @@ export const DetailPage: React.FC = () => {
                                             { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
                                             { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' }
                                         ].map((tpl) => {
-                                            const isSelected = selectedTemplates.includes(tpl.id);
+                                            const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
+                                            const isSelected = !!selectedTpl;
+                                            const isHidden = selectedTpl?.status === 'hidden';
+
                                             return (
-                                                <button
-                                                    key={tpl.id}
-                                                    onClick={() => toggleTemplateSelection(tpl.id)}
-                                                    className={`flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
-                                                        isSelected 
-                                                            ? 'bg-white/10 border-[#00FFC2] shadow-[0_0_20px_rgba(0,255,194,0.1)]' 
-                                                            : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
-                                                    }`}
-                                                >
-                                                    <div className="absolute top-3 right-3">
-                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                                                            isSelected ? 'bg-[#00FFC2] border-[#00FFC2]' : 'border-white/20'
-                                                        }`}>
-                                                            {isSelected && <Check size={10} className="text-black" strokeWidth={4} />}
+                                                <div key={tpl.id} className="space-y-2">
+                                                    <button
+                                                        onClick={() => toggleTemplateSelection(tpl.id)}
+                                                        className={`w-full flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
+                                                            isSelected 
+                                                                ? 'bg-white/10 border-[#00FFC2] shadow-[0_0_20px_rgba(0,255,194,0.1)]' 
+                                                                : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
+                                                        }`}
+                                                    >
+                                                        <div className="absolute top-3 right-3">
+                                                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                                                                isSelected ? 'bg-[#00FFC2] border-[#00FFC2]' : 'border-white/20'
+                                                            }`}>
+                                                                {isSelected && <Check size={10} className="text-black" strokeWidth={4} />}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <tpl.icon size={24} style={{ color: tpl.color }} className={`${isSelected ? 'scale-110' : 'group-hover:scale-110'} transition-transform`} />
-                                                    <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
-                                                        isSelected ? 'text-white' : 'text-white/40'
-                                                    }`}>
-                                                        {tpl.label}
-                                                    </span>
-                                                </button>
+                                                        <tpl.icon size={24} style={{ color: tpl.color }} className={`${isSelected ? 'scale-110' : 'group-hover:scale-110'} transition-transform`} />
+                                                        <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
+                                                            isSelected ? 'text-white' : 'text-white/40'
+                                                        }`}>
+                                                            {tpl.label}
+                                                        </span>
+                                                        {isHidden && (
+                                                            <span className="absolute top-2 left-2 bg-red-500 text-[8px] px-1 rounded uppercase font-bold">Hidden</span>
+                                                        )}
+                                                    </button>
+                                                    
+                                                    {isSelected && (
+                                                        <div className="flex gap-1">
+                                                            <button 
+                                                                onClick={(e) => { e.stopPropagation(); toggleTemplateStatus(tpl.id); }}
+                                                                className="flex-1 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold uppercase tracking-wider"
+                                                            >
+                                                                {isHidden ? <AutoTranslatedText text="Unhide" /> : <AutoTranslatedText text="Hide" />}
+                                                            </button>
+                                                            <button 
+                                                                onClick={(e) => { e.stopPropagation(); deleteTemplateByAdmin(tpl.id); }}
+                                                                className="px-2 py-1 bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg text-[9px] font-bold uppercase"
+                                                            >
+                                                                <AutoTranslatedText text="Del" />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             );
                                         })}
                                     </div>

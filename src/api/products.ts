@@ -86,7 +86,8 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
                     item.id === 'k-culture-brand-collab' ? Array.from({ length: 16 }, (_, i) => `2026-03-${(i + 10).toString().padStart(2, '0')}`) :
                         item.id === 'hanbok-symphony' ? Array.from({ length: 31 }, (_, i) => `2026-03-${(i + 1).toString().padStart(2, '0')}`) :
                             []
-        )
+        ),
+        selected_templates: (typeof item.selected_templates === 'string' ? JSON.parse(item.selected_templates) : item.selected_templates) || []
     };
 };
 

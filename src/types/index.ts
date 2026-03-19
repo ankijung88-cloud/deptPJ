@@ -16,6 +16,11 @@ export interface NavItem {
     }[];
 }
 
+export interface SelectedTemplate {
+    id: string; // cinema, museum, store, ticket
+    status: 'visible' | 'hidden';
+}
+
 export interface FeaturedItem {
     id: string;
     title: LocalizedString;
@@ -42,6 +47,7 @@ export interface FeaturedItem {
     parent_id?: string;
     event_dates?: string[];
     eventDates?: string[];
+    selected_templates?: SelectedTemplate[] | string; // Can be string (JSON) from DB or array in frontend
 }
 
 export interface FloorContent {

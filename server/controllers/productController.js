@@ -69,7 +69,7 @@ export const searchProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -79,8 +79,8 @@ export const createProduct = async (req, res) => {
 
     const query = `
       INSERT INTO featured_items 
-      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, \`location\`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await pool.query(query, [
       id,
@@ -100,7 +100,8 @@ export const createProduct = async (req, res) => {
       video_url || '',
       page_type || null,
       parent_id || null,
-      toJson(theme_data)
+      toJson(theme_data),
+      toJson(selected_templates)
     ]);
     res.status(201).json({ id, message: 'Product created successfully' });
   } catch (error) {
@@ -112,7 +113,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data } = req.body;
+    const { title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, location, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates } = req.body;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -122,7 +123,7 @@ export const updateProduct = async (req, res) => {
 
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?
       WHERE id = ?
     `;
     const params = [
@@ -143,6 +144,7 @@ export const updateProduct = async (req, res) => {
       page_type || null,
       parent_id || null,
       toJson(theme_data),
+      toJson(selected_templates),
       id
     ];
     const [result] = await pool.query(query, params);
