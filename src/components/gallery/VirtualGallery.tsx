@@ -119,16 +119,23 @@ interface ExhibitProps {
     isMuseum?: boolean;
 }
 
-const VideoScreen = ({ url, scale, theme, hovered }: { url: string, scale: [number, number], theme: any, hovered: boolean }) => {
+const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
     const video = useMemo(() => {
         const v = document.createElement('video');
         v.src = url;
         v.crossOrigin = "Anonymous";
         v.loop = true;
-        v.muted = true; // Auto-play requires mute in many browsers
-        v.play().catch(err => console.error("Video play failed:", err));
+        v.muted = false; // User clicks Play, so we can unmute
         return v;
     }, [url]);
+
+    useEffect(() => {
+        if (playing) {
+            video.play().catch(err => console.error("Video play failed:", err));
+        } else {
+            video.pause();
+        }
+    }, [playing, video]);
 
     const videoTexture = useMemo(() => new THREE.VideoTexture(video), [video]);
 
@@ -141,13 +148,42 @@ const VideoScreen = ({ url, scale, theme, hovered }: { url: string, scale: [numb
             </mesh>
             
             {/* The actual screen */}
-            <mesh position={[0, 0, 0.05]}>
+            <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
                 <planeGeometry args={scale} />
                 <meshBasicMaterial map={videoTexture} toneMapped={false} />
             </mesh>
 
+            {/* Play/Pause Overlay in 3D (Text or Icons as planes) */}
+            {!playing && (
+                <mesh position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
+                    <circleGeometry args={[0.8, 32]} />
+                    <meshBasicMaterial color="white" transparent opacity={0.8} />
+                    <mesh position={[0.1, 0, 0.01]} rotation={[0, 0, -Math.PI / 2]}>
+                        <circleGeometry args={[0.3, 3]} />
+                        <meshBasicMaterial color="black" />
+                    </mesh>
+                </mesh>
+            )}
+
+            {playing && hovered && (
+                <mesh position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(false); }}>
+                    <circleGeometry args={[0.6, 32]} />
+                    <meshBasicMaterial color="white" transparent opacity={0.4} />
+                    <group position={[-0.15, 0, 0.01]}>
+                        <mesh position={[0, 0, 0]}>
+                            <planeGeometry args={[0.1, 0.4]} />
+                            <meshBasicMaterial color="black" />
+                        </mesh>
+                        <mesh position={[0.3, 0, 0]}>
+                            <planeGeometry args={[0.1, 0.4]} />
+                            <meshBasicMaterial color="black" />
+                        </mesh>
+                    </group>
+                </mesh>
+            )}
+
             {/* Screen Glow */}
-            <pointLight position={[0, 0, 2]} intensity={hovered ? 4 : 2} color={theme.accentColor} distance={10} />
+            <pointLight position={[0, 0, 2]} intensity={(hovered || !playing) ? 4 : 2} color={theme.accentColor} distance={10} />
         </group>
     );
 };
@@ -351,7 +387,9 @@ const GalleryScene = ({
     onItemClick,
     isMobile,
     isMuseum = false,
-    cinemaItem = null
+    cinemaItem = null,
+    playing,
+    setPlaying
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -360,7 +398,9 @@ const GalleryScene = ({
     onItemClick?: (item: any) => void,
     isMobile: boolean,
     isMuseum?: boolean,
-    cinemaItem?: FeaturedItem | null
+    cinemaItem?: FeaturedItem | null,
+    playing?: boolean,
+    setPlaying?: (p: boolean) => void
 }) => {
     const scroll = useScroll();
     const { camera } = useThree();
@@ -482,6 +522,8 @@ const GalleryScene = ({
                         scale={isMobile ? [6, 3.4] : [14, 8]} 
                         hovered={false} 
                         theme={theme} 
+                        playing={!!playing}
+                        setPlaying={(p) => setPlaying?.(p)}
                     />
                 </group>
             )}
@@ -517,7 +559,9 @@ export const VirtualGallery = ({
     defaultActivated = false,
     onClick,
     isMuseum = false,
-    cinemaItem = null
+    cinemaItem = null,
+    playing,
+    setPlaying
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -528,7 +572,9 @@ export const VirtualGallery = ({
     defaultActivated?: boolean,
     onClick?: () => void,
     isMuseum?: boolean,
-    cinemaItem?: FeaturedItem | null
+    cinemaItem?: FeaturedItem | null,
+    playing?: boolean,
+    setPlaying?: (p: boolean) => void
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -580,6 +626,8 @@ export const VirtualGallery = ({
                                     isMobile={isMobile}
                                     isMuseum={isMuseum}
                                     cinemaItem={cinemaItem}
+                                    playing={playing}
+                                    setPlaying={setPlaying}
                                 />
                         </Suspense>
                     </ScrollControls>

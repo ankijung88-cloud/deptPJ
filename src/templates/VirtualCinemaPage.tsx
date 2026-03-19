@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
+import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
@@ -35,10 +35,13 @@ const VirtualCinemaPage: React.FC = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState('');
-    const [newImageUrl, setNewImageUrl] = useState('');
+    const [newThumbnailUrl, setNewThumbnailUrl] = useState('');
+    const [newVideoUrl, setNewVideoUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const { floors } = useFloors();
 
@@ -113,11 +116,12 @@ const VirtualCinemaPage: React.FC = () => {
 
     const handleEditInitiate = (item: FeaturedItem) => {
         setIsEditMode(true);
-        setEditingId(item.id);
-        setNewTitle(typeof item.title === 'string' ? item.title : item.title.ko);
-        const urlToPreview = item.videoUrl || (item as any).video_url || item.imageUrl || item.image_url;
-        setPreviewUrl(urlToPreview as string);
-        setNewImageUrl(item.imageUrl || item.image_url || '');
+        setEditingId(item.id || (item as any)._id);
+        const titleKo = typeof item.title === 'string' ? item.title : item.title?.ko || '';
+        setNewTitle(titleKo);
+        setNewThumbnailUrl(item.imageUrl || (item as any).image_url || '');
+        setNewVideoUrl(item.videoUrl || (item as any).video_url || '');
+        setPreviewUrl(null);
         setShowAddModal(true);
     };
 
@@ -141,12 +145,14 @@ const VirtualCinemaPage: React.FC = () => {
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setPreviewUrl(reader.result as string);
+                if (type === 'image') setPreviewUrl(reader.result as string);
+                // Video doesn't need data-url preview necessarily for the modal if we trust the upload, 
+                // but we can show it if needed.
             };
             reader.readAsDataURL(file);
         }
@@ -158,61 +164,67 @@ const VirtualCinemaPage: React.FC = () => {
             return;
         }
 
-        let finalImageUrl = newImageUrl;
-        let finalVideoUrl = '';
+        let finalImageUrl = newThumbnailUrl;
+        let finalVideoUrl = newVideoUrl;
         
-        const file = fileInputRef.current?.files?.[0];
-        if (file) {
+        const adminToken = localStorage.getItem('admin_token');
+
+        // Handle Image Upload
+        const imageFile = fileInputRef.current?.files?.[0];
+        if (imageFile) {
             try {
                 const formData = new FormData();
-                formData.append('file', file);
-                const adminToken = localStorage.getItem('admin_token');
+                formData.append('file', imageFile);
                 const uploadRes = await fetch('/api/upload', { 
-                    method: 'POST', 
-                    body: formData,
+                    method: 'POST', body: formData,
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
-                if (!uploadRes.ok) throw new Error('Upload failed');
-                const uploadData = await uploadRes.json();
-                
-                const isVideo = file.type.startsWith('video/');
-                if (isVideo) {
-                    finalVideoUrl = uploadData.url;
-                    // For videos, we might want a placeholder or the same URL as image fallback if the server supports it
-                    if (!finalImageUrl) finalImageUrl = uploadData.url; 
-                } else {
-                    finalImageUrl = uploadData.url;
+                if (uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    finalImageUrl = data.url;
                 }
-            } catch (error) {
-                console.error('Upload failed:', error);
-                alert('파일 업로드에 실패했습니다.');
-                return;
-            }
+            } catch (err) { console.error('Image upload failed:', err); }
+        }
+
+        // Handle Video Upload
+        const videoFile = videoInputRef.current?.files?.[0];
+        if (videoFile) {
+            try {
+                const formData = new FormData();
+                formData.append('file', videoFile);
+                const uploadRes = await fetch('/api/upload', { 
+                    method: 'POST', body: formData,
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                if (uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    finalVideoUrl = data.url;
+                }
+            } catch (err) { console.error('Video upload failed:', err); }
         }
 
         if (!finalImageUrl) {
-            alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
+            alert('썸네일 이미지가 필요합니다.');
             return;
         }
 
-        const newItem = {
+        const itemData = {
             id: isEditMode ? editingId : `cinema-${Date.now()}`,
             title: { ko: newTitle, en: newTitle },
             category: 'cinema',
             subcategory: 'general',
             description: { ko: '', en: '' },
             image_url: finalImageUrl,
-            video_url: finalVideoUrl || (finalImageUrl?.includes('.mp4') || finalImageUrl?.includes('.webm') ? finalImageUrl : ''),
+            video_url: finalVideoUrl,
             event_date: { ko: 'Now Playing', en: 'Now Playing' },
             location: { ko: 'Theatre 01', en: 'Theatre 01' },
             price: '4K HD',
-            parent_id: location.state?.parentId || null
+            parent_id: parentId || null
         };
 
         try {
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
             const method = isEditMode ? 'PUT' : 'POST';
-            const adminToken = localStorage.getItem('admin_token');
 
             const res = await fetch(endpoint, {
                 method,
@@ -220,20 +232,18 @@ const VirtualCinemaPage: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${adminToken}`
                 },
-                body: JSON.stringify(newItem)
+                body: JSON.stringify(itemData)
             });
             if (res.ok) {
                 alert(isEditMode ? '수정 성공' : '등록 성공');
                 await fetchItems();
                 setNewTitle('');
-                setNewImageUrl('');
+                setNewThumbnailUrl('');
+                setNewVideoUrl('');
                 setPreviewUrl(null);
                 setShowAddModal(false);
                 setIsEditMode(false);
                 setEditingId(null);
-            } else {
-                const errorData = await res.json();
-                alert(`처리 실패: ${errorData.message || '알 수 없는 오류'}`);
             }
         } catch (error) {
             console.error('Save failed:', error);
@@ -331,6 +341,8 @@ const VirtualCinemaPage: React.FC = () => {
                             lang={i18n.language}
                             onClick={() => setIsExplorationMode(true)}
                             cinemaItem={selectedCinemaItem}
+                            playing={isVideoPlaying}
+                            setPlaying={setIsVideoPlaying}
                         />
                     )}
 
@@ -366,6 +378,23 @@ const VirtualCinemaPage: React.FC = () => {
                                     {selectedCinemaItem?.id === item.id && (
                                         <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_#fff]" />
                                     )}
+
+                                    {isAdminLoggedIn && (
+                                        <div className="absolute top-3 left-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
+                                                className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500/80 transition-all backdrop-blur-md"
+                                            >
+                                                <Edit3 size={14} />
+                                            </button>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                                                className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500/80 transition-all backdrop-blur-md"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    )}
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -376,7 +405,15 @@ const VirtualCinemaPage: React.FC = () => {
                 {isAdminLoggedIn && (
                     <div className="mt-12 flex flex-col items-center gap-8">
                         <button 
-                            onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                            onClick={() => { 
+                                setIsEditMode(false); 
+                                setEditingId(null);
+                                setNewTitle('');
+                                setNewThumbnailUrl('');
+                                setNewVideoUrl('');
+                                setPreviewUrl(null);
+                                setShowAddModal(true); 
+                            }}
                             className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
                         >
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
@@ -386,39 +423,9 @@ const VirtualCinemaPage: React.FC = () => {
                                 <AutoTranslatedText text="영상 추가 (Add Video)" />
                             </span>
                         </button>
-
-                        {!isLoading && cinemaItems.length > 0 && (
-                            <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {cinemaItems.map(item => (
-                                    <div key={item.id} className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between group">
-                                        <div className="flex items-center gap-3 overflow-hidden">
-                                            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
-                                                <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
-                                            </div>
-                                            <span className="text-[10px] font-bold text-white/60 truncate uppercase tracking-tight">
-                                                {typeof item.title === 'string' ? item.title : (item.title as any).ko}
-                                            </span>
-                                        </div>
-                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button 
-                                                onClick={() => handleEditInitiate(item)}
-                                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all"
-                                            >
-                                                <Edit3 size={14} />
-                                            </button>
-                                            <button 
-                                                onClick={() => handleDelete(item.id)}
-                                                className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-500 transition-all"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 )}
+
 
                 {/* Secondary Features / Technical Specs */}
                 <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -468,6 +475,8 @@ const VirtualCinemaPage: React.FC = () => {
                                 defaultActivated={true}
                                 lang={i18n.language}
                                 cinemaItem={selectedCinemaItem}
+                                playing={isVideoPlaying}
+                                setPlaying={setIsVideoPlaying}
                             />
                         </div>
 
@@ -528,51 +537,70 @@ const VirtualCinemaPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                            <AutoTranslatedText text="영상 썸네일 (Thumbnail)" />
-                                        </label>
-                                        
-                                        <div className="space-y-4">
-                                            <div className="relative">
-                                                <ImageIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
+                                                <AutoTranslatedText text="영상 썸네일 (Thumbnail)" />
+                                            </label>
+                                            <div className="space-y-4">
                                                 <input 
                                                     type="text"
-                                                    value={newImageUrl}
+                                                    value={newThumbnailUrl}
                                                     onChange={(e) => {
-                                                        setNewImageUrl(e.target.value);
+                                                        setNewThumbnailUrl(e.target.value);
                                                         if (previewUrl) setPreviewUrl(null);
                                                     }}
-                                                    placeholder="Thumbnail URL..."
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                    placeholder="Thumbnail Image URL..."
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
                                                 />
-                                            </div>
-
-                                            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*,video/*" className="hidden" />
-                                            {!previewUrl ? (
-                                                <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
-                                                    <UploadCloud size={32} className="text-white/20 group-hover:text-white/40 mb-3 transition-colors" />
-                                                    <span className="text-xs font-bold text-white/40 group-hover:text-white/60"><AutoTranslatedText text="파일 업로드" /></span>
-                                                </button>
-                                            ) : (
-                                                <div className="relative rounded-2xl overflow-hidden border border-white/20 group">
-                                                    {previewUrl.startsWith('data:video') || previewUrl.endsWith('.mp4') || previewUrl.endsWith('.webm') ? (
-                                                        <video src={previewUrl} className="w-full h-40 object-cover" muted loop autoPlay />
-                                                    ) : (
-                                                        <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
-                                                    )}
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                                                        <button onClick={() => { setPreviewUrl(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="px-4 py-2 rounded-lg bg-red-500/80 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-500">Remove</button>
+                                                <input type="file" ref={fileInputRef} onChange={(e) => handleFileChange(e, 'image')} accept="image/*" className="hidden" />
+                                                {!previewUrl && !newThumbnailUrl ? (
+                                                    <button onClick={() => fileInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
+                                                        <ImageIcon size={24} className="text-white/20 group-hover:text-white/40 mb-2" />
+                                                        <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 uppercase"><AutoTranslatedText text="썸네일 업로드" /></span>
+                                                    </button>
+                                                ) : (
+                                                    <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32">
+                                                        <img src={previewUrl || newThumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                        <button onClick={() => { setPreviewUrl(null); setNewThumbnailUrl(''); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12}/></button>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
+                                                <AutoTranslatedText text="영상 파일 (Video Content)" />
+                                            </label>
+                                            <div className="space-y-4">
+                                                <input 
+                                                    type="text"
+                                                    value={newVideoUrl}
+                                                    onChange={(e) => setNewVideoUrl(e.target.value)}
+                                                    placeholder="Video Content URL (mp4, webm)..."
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
+                                                />
+                                                <input type="file" ref={videoInputRef} onChange={(e) => handleFileChange(e, 'video')} accept="video/*" className="hidden" />
+                                                {!newVideoUrl ? (
+                                                    <button onClick={() => videoInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
+                                                        <Play size={24} className="text-white/20 group-hover:text-white/40 mb-2" />
+                                                        <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 uppercase"><AutoTranslatedText text="영상 파일 업로드" /></span>
+                                                    </button>
+                                                ) : (
+                                                    <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32 flex items-center justify-center bg-black/40">
+                                                        <Film size={32} className="text-white/20" />
+                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-white/40 truncate w-full px-4 text-center">Video Selected</span>
+                                                        <button onClick={() => { setNewVideoUrl(''); if (videoInputRef.current) videoInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12}/></button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
                                     <button 
                                         onClick={handleAddItem}
-                                        disabled={!newTitle || (!newImageUrl && !previewUrl)}
-                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                                        disabled={!newTitle || (!newThumbnailUrl && !previewUrl)}
+                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4"
                                         style={{ backgroundColor: theme.accentColor }}
                                     >
                                         <AutoTranslatedText text={isEditMode ? "수정하기 (Update Video)" : "등록하기 (Register Video)"} />
