@@ -114,7 +114,8 @@ export const DetailPage: React.FC = () => {
             setApplyingTemplate(templateType);
             const updatedItem = {
                 ...item,
-                category: templateType
+                category: templateType,
+                selected_templates: selectedTemplates
             };
 
             const response = await fetch(`/api/products/${item.id}`, {
