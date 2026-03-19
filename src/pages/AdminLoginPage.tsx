@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User, ArrowRight } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAdmin } from '../hooks/useAdmin';
 
 export const AdminLoginPage: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -10,6 +11,7 @@ export const AdminLoginPage: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAdmin();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,9 +41,8 @@ export const AdminLoginPage: React.FC = () => {
 
             if (data.success) {
                 console.log('Login successful');
-                // Store token and user info
-                localStorage.setItem('admin_token', data.token);
-                localStorage.setItem('admin_user', JSON.stringify(data.user));
+                // Use hook's login for consistency
+                login(data.token, data.user);
                 navigate('/admin');
             } else {
                 console.warn('Login failed:', data.message);

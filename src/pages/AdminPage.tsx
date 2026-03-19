@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAdmin } from '../hooks/useAdmin';
 import { 
     LayoutDashboard, 
     Package, 
@@ -1449,11 +1450,11 @@ const FAQFormModal = ({ faq, onClose, onSuccess }: any) => {
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
     const navigate = useNavigate();
+    const { isAdmin } = useAdmin();
 
     useEffect(() => {
-        const token = localStorage.getItem('admin_token');
-        if (!token) navigate('/admin/login');
-    }, [navigate]);
+        if (!isAdmin) navigate('/admin/login');
+    }, [isAdmin, navigate]);
 
 
     const tabs = [

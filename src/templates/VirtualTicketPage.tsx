@@ -288,6 +288,7 @@ const VirtualTicketPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
     const [newTitle, setNewTitle] = useState('');
+    const [newEventDate, setNewEventDate] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -385,7 +386,7 @@ const VirtualTicketPage: React.FC = () => {
             subcategory: 'general',
             description: { ko: '', en: '' },
             image_url: finalImageUrl,
-            event_date: { ko: 'Reservation Open', en: 'Reservation Open' },
+            event_date: { ko: newEventDate || 'Reservation Open', en: newEventDate || 'Reservation Open' },
             location: { ko: 'Main Hall', en: 'Main Hall' },
             price: '₩0',
             parent_id: location.state?.parentId || null
@@ -405,7 +406,8 @@ const VirtualTicketPage: React.FC = () => {
                 alert('등록성공');
                 await fetchItems();
                 setNewTitle('');
-            setNewImageUrl('');
+                setNewEventDate('');
+                setNewImageUrl('');
             setPreviewUrl(null);
             setShowAddModal(false);
         } else {
@@ -614,6 +616,21 @@ return (
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 placeholder="Enter event title..."
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
+                                            <AutoTranslatedText text="행사 일정 (Schedule)" />
+                                        </label>
+                                        <div className="relative">
+                                            <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                                            <input 
+                                                type="text"
+                                                value={newEventDate}
+                                                onChange={(e) => setNewEventDate(e.target.value)}
+                                                placeholder="e.g. 2026.04.15 ~ 2026.04.30"
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                             />
                                         </div>

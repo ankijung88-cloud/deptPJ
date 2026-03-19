@@ -10,6 +10,7 @@ import { FeaturedItem, SelectedTemplate } from '../types';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getJoseonThemeById } from '../utils/themeUtils';
+import { useAdmin } from '../hooks/useAdmin';
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -23,7 +24,7 @@ export const DetailPage: React.FC = () => {
     const [downloading, setDownloading] = useState(false);
     const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const { isAdmin: isAdminLoggedIn } = useAdmin();
     const { floors } = useFloors();
 
     // Set Breadcrumb Path
@@ -37,14 +38,6 @@ export const DetailPage: React.FC = () => {
         { id: item.id, label: item.title, type: 'detail' }
     ] : []);
 
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, []);
 
     useEffect(() => {
         const fetchItem = async () => {

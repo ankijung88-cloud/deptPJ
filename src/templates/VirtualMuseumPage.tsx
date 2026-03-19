@@ -10,6 +10,7 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getProductById } from '../api/products';
 import { useFloors } from '../context/FloorContext';
+import { useAdmin } from '../hooks/useAdmin';
 
 interface MuseumCardProps {
     item: FeaturedItem;
@@ -131,19 +132,10 @@ const VirtualMuseumPage: React.FC = () => {
     const { id: paramId } = useParams();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     useImmersiveMode(!!selectedImage);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const { isAdmin: isAdminLoggedIn } = useAdmin();
     
     // Determine the effective parent ID (favor params, fallback to state)
     const parentId = paramId || location.state?.parentId;
-
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, []);
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [showAddModal, setShowAddModal] = useState(false);

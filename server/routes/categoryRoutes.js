@@ -9,17 +9,18 @@ import {
   updateNavItem,
   deleteNavItem
 } from '../controllers/categoryController.js';
+import { authenticateAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get('/floors', getFloorCategories);
-router.post('/floors', createFloorCategory);
-router.put('/floors/:id', updateFloorCategory);
-router.delete('/floors/:id', deleteFloorCategory);
+router.post('/floors', authenticateAdmin, createFloorCategory);
+router.put('/floors/:id', authenticateAdmin, updateFloorCategory);
+router.delete('/floors/:id', authenticateAdmin, deleteFloorCategory);
 
 router.get('/nav', getNavItems);
-router.post('/nav', createNavItem);
-router.put('/nav/:id', updateNavItem);
-router.delete('/nav/:id', deleteNavItem);
+router.post('/nav', authenticateAdmin, createNavItem);
+router.put('/nav/:id', authenticateAdmin, updateNavItem);
+router.delete('/nav/:id', authenticateAdmin, deleteNavItem);
 
 export default router;

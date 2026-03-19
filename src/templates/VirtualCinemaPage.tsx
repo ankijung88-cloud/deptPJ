@@ -10,6 +10,7 @@ import { FeaturedItem } from '../types';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getProductById } from '../api/products';
 import { useFloors } from '../context/FloorContext';
+import { useAdmin } from '../hooks/useAdmin';
 
 const VirtualCinemaPage: React.FC = () => {
     const { i18n } = useTranslation();
@@ -26,16 +27,7 @@ const VirtualCinemaPage: React.FC = () => {
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
     const theme = JOSEON_THEMES[10]; 
 
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, []);
+    const { isAdmin: isAdminLoggedIn } = useAdmin();
 
     const [cinemaItems, setCinemaItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);

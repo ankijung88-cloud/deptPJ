@@ -8,6 +8,7 @@ import { LanguageSelector } from '../common/LanguageSelector';
 import { Breadcrumbs } from '../common/Breadcrumbs';
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 import { useNavigationState } from '../../context/NavigationActionContext';
+import { useAdmin } from '../../hooks/useAdmin';
 
 interface SubItem {
     id: string;
@@ -33,21 +34,10 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isGlobalMuted, setIsGlobalMuted] = useState(true);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, [location]);
+    const { isAdmin: isAdminLoggedIn, logout } = useAdmin();
 
     const handleLogout = () => {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        setIsAdminLoggedIn(false);
+        logout();
         navigate('/');
     };
 

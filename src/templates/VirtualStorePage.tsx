@@ -14,6 +14,7 @@ import { FeaturedItem } from '../types';
 import { getProductById } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
+import { useAdmin } from '../hooks/useAdmin';
 
 // --- Sub-components for 3D Viewer ---
 
@@ -142,7 +143,7 @@ const VirtualStorePage: React.FC = () => {
     const [purchaseComplete, setPurchaseComplete] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    const { isAdmin: isAdminLoggedIn } = useAdmin();
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const { floors } = useFloors();
 
@@ -168,14 +169,6 @@ const VirtualStorePage: React.FC = () => {
         fetchParent();
     }, [parentId]);
 
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, []);
 
     const getLoc = (val: any, lang: string): string => {
         if (!val) return '';
