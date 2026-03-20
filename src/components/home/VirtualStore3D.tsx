@@ -12,7 +12,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown } from 'lucide-react';
+import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { getContrastColor } from '../../utils/themeUtils';
@@ -922,7 +922,7 @@ const CityBackground3D = () => {
 };
 
 // --- Fragmented Blueprint Modal ---
-const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -955,6 +955,87 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
     /* Decorative blocks removed to prevent visual confusion */
 
     const [cameraZPos, setCameraZPos] = useState(60);
+
+    // Mobile 2D Modal Layout (Image 1 style)
+    if (isMobile) {
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+                onClick={onClose}
+            >
+                <motion.div 
+                    className="relative w-full max-w-sm bg-[#1A2420] border-2 border-[#00FFC2] p-8 flex flex-col gap-8 shadow-[0_0_50px_rgba(0,255,194,0.2)]"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {/* Header: Floor Info */}
+                    <div className="flex flex-col gap-1">
+                        <div className="flex items-baseline gap-4">
+                            <span className="text-[64px] font-black text-[#00FFC2] leading-none tracking-tighter">
+                                {activeFloorData.floor}
+                            </span>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-mono font-bold text-[#00FFC2] tracking-[0.3em] uppercase opacity-70">Floor Title</span>
+                                <h2 className="text-2xl font-black text-white uppercase leading-tight">
+                                    <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
+                                </h2>
+                            </div>
+                        </div>
+                        
+                        {/* Video Link */}
+                        <button 
+                            onClick={() => setIsVideoExpanded(true)}
+                            className="flex items-center gap-2 text-[#00FFC2] hover:text-[#00FFC2]/80 transition-colors mt-2"
+                        >
+                            <Play size={14} fill="currentColor" />
+                            <span className="text-[10px] font-bold tracking-widest uppercase"><AutoTranslatedText text="영상보러가기" /></span>
+                        </button>
+                    </div>
+
+                    {/* Subcategories List */}
+                    <div className="flex flex-col gap-6 py-4">
+                        {activeFloorData.subitems?.map((sub: any, idx: number) => (
+                            <button 
+                                key={idx}
+                                onClick={() => {
+                                    onClose();
+                                    navigate(`/category/${sub.id}`);
+                                }}
+                                className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
+                            >
+                                <span className="w-4 h-[2px] bg-[#00FFC2] block transition-transform group-hover:scale-x-150 origin-left" />
+                                <span className="text-lg font-black tracking-wider group-hover:translate-x-1 transition-transform">
+                                    <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Footer: Metadata & Close */}
+                    <div className="mt-4 pt-8 border-t border-white/10 flex items-center justify-between">
+                        <div className="flex flex-col gap-1 opacity-50">
+                            <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase">Structural Fragment</span>
+                            <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
+                        </div>
+                        
+                        <button 
+                            onClick={onClose}
+                            className="flex items-center gap-3 text-[#00FFC2] group"
+                        >
+                            <div className="flex items-center justify-center translate-y-[1px]">
+                                <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                                    <ArrowRight size={18} />
+                                </motion.div>
+                            </div>
+                            <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:tracking-[0.4em] transition-all">Close</span>
+                        </button>
+                    </div>
+                </motion.div>
+            </motion.div>
+        );
+    }
 
     return (
              <motion.div
@@ -1327,6 +1408,7 @@ export const VirtualStore3D: React.FC = () => {
                     <FragmentedModal
                         activeFloorData={activeFloorData}
                         onClose={() => setSelectedFloor(null)}
+                        isMobile={isMobile}
                     />
                 )}
             </AnimatePresence>
