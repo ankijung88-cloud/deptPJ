@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { useNavigationState } from '../../context/NavigationActionContext';
+import { getFloorBySubId } from '../../utils/themeUtils';
 
 export const Breadcrumbs: React.FC = () => {
     const { action, breadcrumbTitle, breadcrumbPath } = useNavigationState();
@@ -93,6 +94,17 @@ export const Breadcrumbs: React.FC = () => {
                             ? getLocalizedText(item.label, i18n.language) 
                             : item.label;
 
+                        let routeTo = '';
+                        if (item.type === 'floor') {
+                            const floorNum = item.id?.replace('floor-', '') || '';
+                            routeTo = floorNum ? `/inspiration?floor=${floorNum}` : '/inspiration';
+                        } else if (item.type === 'category') {
+                            const floorNum = getFloorBySubId(item.id);
+                            routeTo = floorNum ? `/inspiration?floor=${floorNum}` : `/category/${item.id}`;
+                        } else if (item.type === 'detail' && !isLast) {
+                            routeTo = `/detail/${item.id}`;
+                        }
+
                         return (
                             <React.Fragment key={index}>
                                 <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
@@ -101,9 +113,15 @@ export const Breadcrumbs: React.FC = () => {
                                         <AutoTranslatedText text={label} />
                                     </span>
                                 ) : (
-                                    <span className="text-white/80 whitespace-nowrap">
-                                        <AutoTranslatedText text={label} />
-                                    </span>
+                                    routeTo ? (
+                                        <Link to={routeTo} className="hover:text-[#00FFC2]/90 transition-colors whitespace-nowrap">
+                                            <AutoTranslatedText text={label} />
+                                        </Link>
+                                    ) : (
+                                        <span className="text-white/80 whitespace-nowrap">
+                                            <AutoTranslatedText text={label} />
+                                        </span>
+                                    )
                                 )}
                             </React.Fragment>
                         );
@@ -113,8 +131,16 @@ export const Breadcrumbs: React.FC = () => {
                         const label = getLabel(name, pathnames, index);
                         if (!label) return null;
 
-                        const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
+                        let routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
                         const isLast = index === pathnames.length - 1;
+
+                        // Special handling for 'category' segment in breadcrumbs
+                        if (name === 'category' && pathnames[index + 1]) {
+                            const floorNum = getFloorBySubId(pathnames[index + 1]);
+                            if (floorNum) {
+                                routeTo = `/inspiration?floor=${floorNum}`;
+                            }
+                        }
 
                         return (
                             <React.Fragment key={routeTo}>
