@@ -94,7 +94,7 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { c
                                   color: 'white',
                                   transform: hovered ? 'scale(1.1)' : 'scale(1)'
                               }}>
-                            <AutoTranslatedText text={getLocalizedText(category.name, i18nLanguage)} />
+                            <AutoTranslatedText text={getLocalizedText(category.label, i18nLanguage)} />
                         </span>
                         <div className="mt-2 w-16 h-[2.5px] transition-all duration-300" style={{ backgroundColor: color, boxShadow: hovered ? `0 0 20px ${color}` : `0 0 10px ${color}`, width: hovered ? '100px' : '48px' }}></div>
                     </div>
@@ -119,15 +119,16 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     const fragmentPositions = useMemo(() => {
         if (!categories) return [];
         const positions: [number, number, number][] = [];
-        const radius = 60;
-        const startAngle = -Math.PI * 0.8;
-        const totalAngle = Math.PI * 1.6;
+        const radius = 32; // Reduced radius to bring shards into FOV
+        const startAngle = -Math.PI * 0.7;
+        const totalAngle = Math.PI * 1.4;
         
         categories.forEach((_, i) => {
             const angle = startAngle + (totalAngle / (categories.length - 1 || 1)) * i;
-            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 15 : -10));
-            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 10 : -15)) - 10;
-            const y = 5 + Math.sin(i * 1.5) * 8; // Float height variation
+            // More compact distribution
+            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 8 : -6));
+            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 5 : -8)) - 15;
+            const y = 8 + Math.sin(i * 1.5) * 6; // Adjusted height for visibility
             positions.push([x, y, z]);
         });
         return positions;
@@ -186,7 +187,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                         position={fragmentPositions[idx]} 
                         color={activeFloorData.color} 
                         i18nLanguage={i18nLanguage} 
-                        onClick={() => onCategoryClick(cat._id)}
+                        onClick={() => onCategoryClick(cat.id)}
                     />
                 ))}
             </group>
@@ -979,7 +980,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                         onClose={onClose} 
                         buttonTextColor={buttonTextColor} 
                         i18nLanguage={i18n.language} 
-                        categories={activeFloorData.categories}
+                        categories={activeFloorData.subitems}
                         onCategoryClick={(catId) => {
                             onClose();
                             navigate(`/category/${catId}`);
