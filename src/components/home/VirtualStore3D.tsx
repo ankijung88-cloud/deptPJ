@@ -83,30 +83,39 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                     <meshBasicMaterial color={COLORS.paper} transparent opacity={0.4} />
                 </mesh>
 
-                {/* Perspective-aligned Floor Info lying on the ground */}
-                <group position={[-25, 0.5, 30]} rotation={[-Math.PI / 2, 0, 0]}>
+                {/* Perspective-aligned Floor Info lying on the ground - CENTERED */}
+                <group position={[0, 0.5, 20]} rotation={[-Math.PI / 2, 0, 0]}>
                     <Html transform distanceFactor={35} position={[0, 0, 0]} pointerEvents="auto">
-                        <div className="flex flex-col gap-6 select-none cursor-default" style={{ width: '900px' }}>
-                            <div className="flex items-center gap-8 mb-4 border-b-2 pb-6" style={{ borderColor: activeFloorData.color }}>
-                                <span className="text-9xl font-black font-serif italic" style={{ color: activeFloorData.color, textShadow: `0 0 20px ${activeFloorData.color}40` }}>
+                        <div className="flex flex-col items-center gap-6 select-none cursor-default" style={{ width: '1000px' }}>
+                            <div className="flex flex-col items-center gap-4 mb-4 border-b-2 pb-8 w-full" style={{ borderColor: activeFloorData.color }}>
+                                <span className="text-9xl font-black font-serif italic mb-2" style={{ color: activeFloorData.color, textShadow: `0 0 30px ${activeFloorData.color}80` }}>
                                     {activeFloorData.floor}
                                 </span>
-                                <span className="text-6xl font-black text-white tracking-tighter leading-none break-words max-w-[500px]">
+                                <span className="text-7xl font-black text-white tracking-widest leading-none text-center">
                                     <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18nLanguage)} />
                                 </span>
                             </div>
-                            <p className="text-white/80 font-sans text-2xl font-medium leading-relaxed mb-10 tracking-widest uppercase">
+                            <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-12 tracking-[0.2em] uppercase text-center max-w-[800px]">
                                 <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
                                 <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
                             </p>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onClose(); }}
-                                className="w-[400px] py-6 font-bold tracking-[0.3em] text-2xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/20"
+                                className="w-[500px] py-8 font-bold tracking-[0.4em] text-3xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/20"
                                 style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
                             >
-                                <span className="font-serif font-black text-3xl leading-none" style={{ color: buttonTextColor }}>→</span>
+                                <span className="font-serif font-black text-4xl leading-none" style={{ color: buttonTextColor }}>→</span>
                                 <AutoTranslatedText text="ENTER ZONE" />
                             </button>
+                        </div>
+                    </Html>
+                </group>
+
+                {/* Background Instruction Message - Floating subtly in the sky/far background */}
+                <group position={[0, 40, -80]}>
+                    <Html transform distanceFactor={40} position={[0, 0, 0]}>
+                        <div className="text-white/40 font-sans text-3xl font-light tracking-[0.5em] uppercase whitespace-nowrap select-none pointer-events-none">
+                            <AutoTranslatedText text="배경을 클릭하면 층별 안내페이지로 이동" />
                         </div>
                     </Html>
                 </group>
@@ -935,7 +944,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer bg-[#1A2420]/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer bg-[#0A100D]"
             onClick={onClose}
         >
             {/* 3D Background Space */}
