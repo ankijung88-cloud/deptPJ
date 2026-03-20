@@ -71,7 +71,7 @@ export const GlobalMiniMap: React.FC = () => {
                         initial={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
                         animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
-                        className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 mb-2 shadow-2xl min-w-[360px] max-w-[450px] max-h-[75vh] flex flex-col"
+                        className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
                     >
                         <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4 shrink-0">
                             <Layers size={18} className="text-white/40" />
@@ -97,8 +97,8 @@ export const GlobalMiniMap: React.FC = () => {
                                             className={`w-full flex items-center justify-between group/floor transition-all ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <span className="text-sm font-mono font-bold w-8">{floor.floor}</span>
-                                                <span className="text-base font-bold tracking-wider uppercase"><AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} /></span>
+                                                <span className="text-base font-mono font-bold w-10">{floor.floor}</span>
+                                                <span className="text-lg font-black tracking-wider uppercase"><AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} /></span>
                                             </div>
                                             {isActive && (
                                                 <motion.div
@@ -121,9 +121,9 @@ export const GlobalMiniMap: React.FC = () => {
                                                                 navigate(`/category/${sub.id}`);
                                                                 setIsExpanded(false);
                                                             }}
-                                                            className={`w-full text-left text-sm font-bold transition-all flex items-center gap-2 ${active ? 'text-white' : 'text-white/60 hover:text-white'}`}
+                                                            className={`w-full text-left text-base font-black transition-all flex items-center gap-2 ${active ? 'text-white' : 'text-white/60 hover:text-white'}`}
                                                         >
-                                                            {active && <ChevronRight size={12} style={{ color: floor.color }} />}
+                                                            {active && <ChevronRight size={14} style={{ color: floor.color }} />}
                                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                         </button>
 
@@ -136,7 +136,7 @@ export const GlobalMiniMap: React.FC = () => {
                                                                             navigate(`/category/${sub.id}`);
                                                                             setIsExpanded(false);
                                                                         }}
-                                                                        className="w-full text-left text-xs text-white/80 font-medium leading-tight hover:text-white transition-colors"
+                                                                        className="w-full text-left text-sm text-white/80 font-bold leading-tight hover:text-white transition-colors"
                                                                     >
                                                                         <AutoTranslatedText text={typeof item.title === 'string' ? item.title : item.title?.ko || ''} />
                                                                     </button>
