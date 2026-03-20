@@ -84,8 +84,8 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                 </mesh>
 
                 {/* Perspective-aligned Floor Info lying on the ground - CENTERED */}
-                <group position={[0, 0.5, 20]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <Html transform distanceFactor={35} position={[0, 0, 0]} pointerEvents="auto">
+                <group position={[0, 0.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <Html transform distanceFactor={30} position={[0, 0, 0]} pointerEvents="auto">
                         <div className="flex flex-col items-center gap-6 select-none cursor-default" style={{ width: '1000px' }}>
                             <div className="flex flex-col items-center gap-4 mb-4 border-b-2 pb-8 w-full" style={{ borderColor: activeFloorData.color }}>
                                 <span className="text-9xl font-black font-serif italic mb-2" style={{ color: activeFloorData.color, textShadow: `0 0 30px ${activeFloorData.color}80` }}>
@@ -107,15 +107,6 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                 <span className="font-serif font-black text-4xl leading-none" style={{ color: buttonTextColor }}>→</span>
                                 <AutoTranslatedText text="ENTER ZONE" />
                             </button>
-                        </div>
-                    </Html>
-                </group>
-
-                {/* Background Instruction Message - Floating subtly in the sky/far background */}
-                <group position={[0, 40, -80]}>
-                    <Html transform distanceFactor={40} position={[0, 0, 0]}>
-                        <div className="text-white/40 font-sans text-3xl font-light tracking-[0.5em] uppercase whitespace-nowrap select-none pointer-events-none">
-                            <AutoTranslatedText text="배경을 클릭하면 층별 안내페이지로 이동" />
                         </div>
                     </Html>
                 </group>
@@ -947,6 +938,13 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer bg-[#0A100D]"
             onClick={onClose}
         >
+            {/* Top Overlay Instruction */}
+            <div className="absolute top-8 md:top-12 left-0 right-0 z-[1100] flex justify-center pointer-events-none">
+                <div className="text-white/40 font-mono text-[10px] md:text-xs tracking-[0.5em] uppercase whitespace-nowrap bg-black/40 px-6 py-2 rounded-full border border-white/10 backdrop-blur-sm">
+                    <AutoTranslatedText text="배경을 클릭하면 층별 안내페이지로 이동" />
+                </div>
+            </div>
+
             {/* 3D Background Space */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <Canvas camera={{ position: [0, 5, 45], fov: 50 }}>
@@ -979,10 +977,14 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                     ]
                 }}
                 transition={{ 
-                    duration: 3, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    times: [0, 0.5, 1]
+                    opacity: { duration: 0.8, delay: 0.2 },
+                    scale: { duration: 0.8, delay: 0.2 },
+                    x: { duration: 0.8, delay: 0.2 },
+                    boxShadow: { 
+                        duration: 3, 
+                        repeat: Infinity, 
+                        ease: "easeInOut"
+                    }
                 }}
                 className="absolute right-8 md:right-16 top-12 md:top-24 z-60 rounded-full"
                 onClick={(e) => {
