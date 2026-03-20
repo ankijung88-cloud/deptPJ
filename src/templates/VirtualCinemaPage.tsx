@@ -38,6 +38,7 @@ const VirtualCinemaPage: React.FC = () => {
     const [newThumbnailUrl, setNewThumbnailUrl] = useState('');
     const [newVideoUrl, setNewVideoUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -123,6 +124,7 @@ const VirtualCinemaPage: React.FC = () => {
         setNewThumbnailUrl(item.imageUrl || (item as any).image_url || '');
         setNewVideoUrl(item.videoUrl || (item as any).video_url || '');
         setPreviewUrl(null);
+        setVideoPreviewUrl(null);
         setShowAddModal(true);
     };
 
@@ -149,13 +151,16 @@ const VirtualCinemaPage: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
         const file = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                if (type === 'image') setPreviewUrl(reader.result as string);
-                // Video doesn't need data-url preview necessarily for the modal if we trust the upload, 
-                // but we can show it if needed.
-            };
-            reader.readAsDataURL(file);
+            if (type === 'image') {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewUrl(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+                setVideoPreviewUrl(URL.createObjectURL(file));
+            }
         }
     };
 
@@ -243,6 +248,7 @@ const VirtualCinemaPage: React.FC = () => {
                 setNewThumbnailUrl('');
                 setNewVideoUrl('');
                 setPreviewUrl(null);
+                setVideoPreviewUrl(null);
                 setShowAddModal(false);
                 setIsEditMode(false);
                 setEditingId(null);
@@ -416,6 +422,7 @@ const VirtualCinemaPage: React.FC = () => {
                                 setNewThumbnailUrl('');
                                 setNewVideoUrl('');
                                 setPreviewUrl(null);
+                                setVideoPreviewUrl(null);
                                 setShowAddModal(true); 
                             }}
                             className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
@@ -517,7 +524,12 @@ const VirtualCinemaPage: React.FC = () => {
                                         <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">{isEditMode ? "Edit Video Info" : "Add New Cinematic Content"}</p>
                                     </div>
                                     <button 
-                                        onClick={() => { setShowAddModal(false); setIsEditMode(false); setEditingId(null); }}
+                                        onClick={() => { 
+                                            setShowAddModal(false); 
+                                            setIsEditMode(false); 
+                                            setEditingId(null); 
+                                            setVideoPreviewUrl(null);
+                                        }}
                                         className="p-3 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition-colors"
                                     >
                                         <X size={20} />
@@ -585,16 +597,32 @@ const VirtualCinemaPage: React.FC = () => {
                                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
                                                 />
                                                 <input type="file" ref={videoInputRef} onChange={(e) => handleFileChange(e, 'video')} accept="video/*" className="hidden" />
-                                                {!newVideoUrl ? (
+                                                {!newVideoUrl && !videoPreviewUrl ? (
                                                     <button onClick={() => videoInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
                                                         <Play size={24} className="text-white/20 group-hover:text-white/40 mb-2" />
                                                         <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 uppercase"><AutoTranslatedText text="영상 파일 업로드" /></span>
                                                     </button>
                                                 ) : (
                                                     <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32 flex items-center justify-center bg-black/40">
-                                                        <Film size={32} className="text-white/20" />
-                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-white/40 truncate w-full px-4 text-center">Video Selected</span>
-                                                        <button onClick={() => { setNewVideoUrl(''); if (videoInputRef.current) videoInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12}/></button>
+                                                        <video 
+                                                            src={videoPreviewUrl || newVideoUrl} 
+                                                            className="w-full h-full object-cover"
+                                                            onLoadedMetadata={(e) => {
+                                                                (e.target as HTMLVideoElement).currentTime = 0.1;
+                                                            }}
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Preview Loaded</span>
+                                                        <button 
+                                                            onClick={() => { 
+                                                                setNewVideoUrl(''); 
+                                                                setVideoPreviewUrl(null);
+                                                                if (videoInputRef.current) videoInputRef.current.value = ''; 
+                                                            }} 
+                                                            className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors shadow-lg"
+                                                        >
+                                                            <X size={12}/>
+                                                        </button>
                                                     </div>
                                                 )}
                                             </div>
