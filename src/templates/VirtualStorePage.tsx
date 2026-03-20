@@ -141,6 +141,7 @@ const VirtualStorePage: React.FC = () => {
     const parentId = paramId || location.state?.parentId;
     const [isPurchasing, setIsPurchasing] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const { isAdmin: isAdminLoggedIn } = useAdmin();
@@ -332,69 +333,57 @@ const VirtualStorePage: React.FC = () => {
             return;
         }
 
-        let finalImageUrl = newImageUrl;
-        let finalDetailImageUrl = newDetailImageUrl;
-        let finalSideImageUrl = newSideImageUrl;
-        let finalBackImageUrl = newBackImageUrl;
-
-        const uploadFile = async (file: File) => {
-            const adminToken = localStorage.getItem('admin_token');
-            const formData = new FormData();
-            formData.append('file', file);
-            const uploadRes = await fetch('/api/upload', { 
-                method: 'POST', 
-                body: formData,
-                headers: { 'Authorization': `Bearer ${adminToken}` }
-            });
-            if (!uploadRes.ok) throw new Error('Upload failed');
-            const data = await uploadRes.json();
-            return data.url;
-        };
-
-        if (isEditMode) {
-            if (!finalImageUrl && previewUrl && !previewUrl.startsWith('data:')) finalImageUrl = previewUrl;
-            if (!finalDetailImageUrl && detailPreviewUrl && !detailPreviewUrl.startsWith('data:')) finalDetailImageUrl = detailPreviewUrl;
-            if (!finalSideImageUrl && sidePreviewUrl && !sidePreviewUrl.startsWith('data:')) finalSideImageUrl = sidePreviewUrl;
-            if (!finalBackImageUrl && backPreviewUrl && !backPreviewUrl.startsWith('data:')) finalBackImageUrl = backPreviewUrl;
-        }
-
+        setIsUploading(true);
         try {
+            let finalImageUrl = newImageUrl;
+            let finalDetailImageUrl = newDetailImageUrl;
+            let finalSideImageUrl = newSideImageUrl;
+            let finalBackImageUrl = newBackImageUrl;
+
+            const adminToken = localStorage.getItem('admin_token');
+
+            const uploadFile = async (file: File) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                const uploadRes = await fetch('/api/upload', { 
+                    method: 'POST', 
+                    body: formData,
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                if (!uploadRes.ok) throw new Error('Upload failed');
+                const data = await uploadRes.json();
+                return data.url;
+            };
+
             if (fileInputRef.current?.files?.[0]) finalImageUrl = await uploadFile(fileInputRef.current.files[0]);
             if (detailFileInputRef.current?.files?.[0]) finalDetailImageUrl = await uploadFile(detailFileInputRef.current.files[0]);
             if (sideFileInputRef.current?.files?.[0]) finalSideImageUrl = await uploadFile(sideFileInputRef.current.files[0]);
             if (backFileInputRef.current?.files?.[0]) finalBackImageUrl = await uploadFile(backFileInputRef.current.files[0]);
-        } catch (error) {
-            console.error('Upload failed:', error);
-            alert('이미지 업로드에 실패했습니다.');
-            return;
-        }
 
-        if (!finalImageUrl) {
-            alert('기본 상품 이미지를 등록해주세요.');
-            return;
-        }
+            if (!finalImageUrl) {
+                alert('기본 상품 이미지를 등록해주세요.');
+                return;
+            }
 
-        const newItem = {
-            id: isEditMode ? editingId : `store-${Date.now()}`,
-            title: { ko: newTitle, en: newTitle },
-            category: 'store',
-            subcategory: 'general',
-            description: { ko: newShortDescription || '장인의 손길이 닿은 프리미엄 전통 공예품입니다.', en: 'Premium traditional craft made by a master.' },
-            long_description: { ko: newLongDescription || '상세 정보가 등록되지 않았습니다.', en: newLongDescription || 'No detailed info.' },
-            image_url: finalImageUrl,
-            thumbnail_url: finalDetailImageUrl || '',
-            side_image_url: finalSideImageUrl || '',
-            back_image_url: finalBackImageUrl || '',
-            event_date: { ko: 'In Stock', en: 'In Stock' },
-            location: { ko: 'Boutique', en: 'Boutique' },
-            price: newPrice || `₩${Math.floor(Math.random() * 10 + 5)},000`,
-            parent_id: location.state?.parentId || null
-        };
+            const newItem = {
+                id: isEditMode ? editingId : `store-${Date.now()}`,
+                title: { ko: newTitle, en: newTitle },
+                category: 'store',
+                subcategory: 'general',
+                description: { ko: newShortDescription || '장인의 손길이 닿은 프리미엄 전통 공예품입니다.', en: 'Premium traditional craft made by a master.' },
+                long_description: { ko: newLongDescription || '상세 정보가 등록되지 않았습니다.', en: newLongDescription || 'No detailed info.' },
+                image_url: finalImageUrl,
+                thumbnail_url: finalDetailImageUrl || '',
+                side_image_url: finalSideImageUrl || '',
+                back_image_url: finalBackImageUrl || '',
+                event_date: { ko: 'In Stock', en: 'In Stock' },
+                location: { ko: 'Boutique', en: 'Boutique' },
+                price: newPrice || `₩${Math.floor(Math.random() * 10 + 5)},000`,
+                parent_id: location.state?.parentId || null
+            };
 
-        try {
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
             const method = isEditMode ? 'PUT' : 'POST';
-            const adminToken = localStorage.getItem('admin_token');
 
             const res = await fetch(endpoint, {
                 method,
@@ -428,8 +417,10 @@ const VirtualStorePage: React.FC = () => {
                 alert(`처리 실패: ${errorData.message || '알 수 없는 오류'}`);
             }
         } catch (error) {
-            console.error('Save failed:', error);
+            console.error('Operation failed:', error);
             alert('서버 연결에 실패했습니다.');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -826,11 +817,18 @@ const VirtualStorePage: React.FC = () => {
 
                                     <button 
                                         onClick={handleAddItem}
-                                        disabled={!newTitle || (!newImageUrl && !previewUrl)}
-                                        className="w-full py-5 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest disabled:opacity-20 translate-y-2"
+                                        disabled={isUploading || !newTitle || (!newImageUrl && !previewUrl)}
+                                        className="w-full py-5 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest disabled:opacity-20 translate-y-2 flex items-center justify-center gap-3"
                                         style={{ backgroundColor: theme.accentColor }}
                                     >
-                                        {isEditMode ? 'Update Product' : 'Register Product'}
+                                        {isUploading ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <AutoTranslatedText text="업로드 중..." />
+                                            </>
+                                        ) : (
+                                            <AutoTranslatedText text={isEditMode ? 'Update Product' : 'Register Product'} />
+                                        )}
                                     </button>
                                 </div>
                             </div>

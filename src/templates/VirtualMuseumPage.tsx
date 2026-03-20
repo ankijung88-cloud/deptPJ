@@ -151,6 +151,7 @@ const VirtualMuseumPage: React.FC = () => {
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
     const { floors } = useFloors();
 
     // Set Breadcrumb Path
@@ -273,52 +274,52 @@ const VirtualMuseumPage: React.FC = () => {
             return;
         }
 
-        let finalImageUrl = newImageUrl;
-        
-        // 1. If file uploaded, upload to server first
-        if (fileInputRef.current?.files?.[0]) {
-            try {
-                const adminToken = localStorage.getItem('admin_token');
-                const formData = new FormData();
-                formData.append('file', fileInputRef.current.files[0]);
-                const uploadRes = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (!uploadRes.ok) throw new Error('Upload failed');
-                const uploadData = await uploadRes.json();
-                finalImageUrl = uploadData.url;
-            } catch (error) {
-                console.error('File upload failed:', error);
-                alert('이미지 업로드에 실패했습니다.');
+        setIsUploading(true);
+        try {
+            let finalImageUrl = newImageUrl;
+            const adminToken = localStorage.getItem('admin_token');
+            
+            // 1. If file uploaded, upload to server first
+            if (fileInputRef.current?.files?.[0]) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fileInputRef.current.files[0]);
+                    const uploadRes = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    if (!uploadRes.ok) throw new Error('Upload failed');
+                    const uploadData = await uploadRes.json();
+                    finalImageUrl = uploadData.url;
+                } catch (error) {
+                    console.error('File upload failed:', error);
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
+            if (!finalImageUrl) {
+                alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
                 return;
             }
-        }
+            
+            // 2. Save to DB
+            const newItem = {
+                id: isEditMode ? editingId : `museum-${Date.now()}`,
+                title: { ko: newTitle, en: newTitle },
+                category: 'museum',
+                subcategory: 'general',
+                description: { ko: '', en: '' },
+                image_url: finalImageUrl,
+                event_date: { ko: new Date().toLocaleDateString(), en: new Date().toLocaleDateString() },
+                location: { ko: '가상 박물관', en: 'Virtual Museum' },
+                price: '전시중',
+                parent_id: location.state?.parentId || null
+            };
 
-        if (!finalImageUrl) {
-            alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
-            return;
-        }
-        
-        // 2. Save to DB
-        const newItem = {
-            id: isEditMode ? editingId : `museum-${Date.now()}`,
-            title: { ko: newTitle, en: newTitle },
-            category: 'museum',
-            subcategory: 'general',
-            description: { ko: '', en: '' },
-            image_url: finalImageUrl,
-            event_date: { ko: new Date().toLocaleDateString(), en: new Date().toLocaleDateString() },
-            location: { ko: '가상 박물관', en: 'Virtual Museum' },
-            price: '전시중',
-            parent_id: location.state?.parentId || null // Add parent_id here
-        };
-
-        try {
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
             const method = isEditMode ? 'PUT' : 'POST';
-            const adminToken = localStorage.getItem('admin_token');
 
             const res = await fetch(endpoint, {
                 method,
@@ -330,7 +331,7 @@ const VirtualMuseumPage: React.FC = () => {
             });
             if (res.ok) {
                 alert(isEditMode ? '수정 성공' : '등록 성공');
-                await fetchItems(); // Refresh List
+                await fetchItems();
                 setNewTitle('');
                 setNewImageUrl('');
                 setPreviewUrl(null);
@@ -344,6 +345,8 @@ const VirtualMuseumPage: React.FC = () => {
         } catch (error) {
             console.error('Save failed:', error);
             alert('서버 연결에 실패했습니다.');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -550,10 +553,18 @@ const VirtualMuseumPage: React.FC = () => {
 
                                 <button 
                                     onClick={handleAddItem}
-                                    className="w-full py-5 rounded-2xl font-black tracking-[0.2em] uppercase transition-all shadow-xl"
+                                    disabled={isUploading}
+                                    className="w-full py-5 rounded-2xl font-black tracking-[0.2em] uppercase transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                     style={{ backgroundColor: theme.accentColor, color: theme.color1 }}
                                 >
-                                    <AutoTranslatedText text={isEditMode ? "Update Collection" : "Add to Collection"} />
+                                    {isUploading ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                            <AutoTranslatedText text="업로드 중..." />
+                                        </>
+                                    ) : (
+                                        <AutoTranslatedText text={isEditMode ? "Update Collection" : "Add to Collection"} />
+                                    )}
                                 </button>
                             </div>
                         </motion.div>

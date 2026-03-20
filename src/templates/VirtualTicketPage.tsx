@@ -314,6 +314,7 @@ const VirtualTicketPage: React.FC = () => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingItemId, setEditingItemId] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const fetchItems = async () => {
@@ -409,47 +410,47 @@ const VirtualTicketPage: React.FC = () => {
             return;
         }
 
-        let finalImageUrl = newImageUrl;
-        if (fileInputRef.current?.files?.[0]) {
-            try {
-                const adminToken = localStorage.getItem('admin_token');
-                const formData = new FormData();
-                formData.append('file', fileInputRef.current.files[0]);
-                const uploadRes = await fetch('/api/upload', { 
-                    method: 'POST', 
-                    body: formData,
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (!uploadRes.ok) throw new Error('Upload failed');
-                const uploadData = await uploadRes.json();
-                finalImageUrl = uploadData.url;
-            } catch (error) {
-                console.error('Upload failed:', error);
-                alert('이미지 업로드에 실패했습니다.');
+        try {
+            let finalImageUrl = newImageUrl;
+            const adminToken = localStorage.getItem('admin_token');
+
+            if (fileInputRef.current?.files?.[0]) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fileInputRef.current.files[0]);
+                    const uploadRes = await fetch('/api/upload', { 
+                        method: 'POST', 
+                        body: formData,
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    if (!uploadRes.ok) throw new Error('Upload failed');
+                    const uploadData = await uploadRes.json();
+                    finalImageUrl = uploadData.url;
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                    alert('이미지 업로드에 실패했습니다.');
+                    return;
+                }
+            }
+
+            if (!finalImageUrl) {
+                alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
                 return;
             }
-        }
 
-        if (!finalImageUrl) {
-            alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
-            return;
-        }
+            const itemData = {
+                id: isEditMode ? editingItemId : `ticket-${Date.now()}`,
+                title: { ko: newTitle, en: newTitle },
+                category: 'ticket',
+                subcategory: 'general',
+                description: { ko: '', en: '' },
+                image_url: finalImageUrl,
+                event_date: { ko: newEventDate || 'Reservation Open', en: newEventDate || 'Reservation Open' },
+                location: { ko: 'Main Hall', en: 'Main Hall' },
+                price: '₩0',
+                parent_id: location.state?.parentId || null
+            };
 
-        const itemData = {
-            id: isEditMode ? editingItemId : `ticket-${Date.now()}`,
-            title: { ko: newTitle, en: newTitle },
-            category: 'ticket',
-            subcategory: 'general',
-            description: { ko: '', en: '' },
-            image_url: finalImageUrl,
-            event_date: { ko: newEventDate || 'Reservation Open', en: newEventDate || 'Reservation Open' },
-            location: { ko: 'Main Hall', en: 'Main Hall' },
-            price: '₩0',
-            parent_id: location.state?.parentId || null
-        };
-
-        try {
-            const adminToken = localStorage.getItem('admin_token');
             const res = await fetch(isEditMode ? `/api/products/${encodeURIComponent(editingItemId!)}` : '/api/products', {
                 method: isEditMode ? 'PUT' : 'POST',
                 headers: { 
@@ -475,6 +476,8 @@ const VirtualTicketPage: React.FC = () => {
         } catch (error) {
             console.error('Operation failed:', error);
             alert('서버 연결에 실패했습니다.');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -744,11 +747,18 @@ return (
 
                                     <button 
                                         onClick={handleAddItem}
-                                        disabled={!newTitle || (!newImageUrl && !previewUrl)}
-                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                                        disabled={isUploading || !newTitle || (!newImageUrl && !previewUrl)}
+                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                                         style={{ backgroundColor: theme.accentColor }}
                                     >
-                                        <AutoTranslatedText text={isEditMode ? "수정하기 (Update Event)" : "등록하기 (Register Event)"} />
+                                        {isUploading ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <AutoTranslatedText text="업로드 중..." />
+                                            </>
+                                        ) : (
+                                            <AutoTranslatedText text={isEditMode ? "수정하기 (Update Event)" : "등록하기 (Register Event)"} />
+                                        )}
                                     </button>
                                 </div>
                             </div>

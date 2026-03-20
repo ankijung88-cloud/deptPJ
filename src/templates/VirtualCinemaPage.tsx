@@ -40,6 +40,7 @@ const VirtualCinemaPage: React.FC = () => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
@@ -164,65 +165,66 @@ const VirtualCinemaPage: React.FC = () => {
             return;
         }
 
-        let finalImageUrl = newThumbnailUrl;
-        let finalVideoUrl = newVideoUrl;
-        
-        const adminToken = localStorage.getItem('admin_token');
-
-        // Handle Image Upload
-        const imageFile = fileInputRef.current?.files?.[0];
-        if (imageFile) {
-            try {
-                const formData = new FormData();
-                formData.append('file', imageFile);
-                const uploadRes = await fetch('/api/upload', { 
-                    method: 'POST', body: formData,
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (uploadRes.ok) {
-                    const data = await uploadRes.json();
-                    finalImageUrl = data.url;
-                }
-            } catch (err) { console.error('Image upload failed:', err); }
-        }
-
-        // Handle Video Upload
-        const videoFile = videoInputRef.current?.files?.[0];
-        if (videoFile) {
-            try {
-                const formData = new FormData();
-                formData.append('file', videoFile);
-                const uploadRes = await fetch('/api/upload', { 
-                    method: 'POST', body: formData,
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (uploadRes.ok) {
-                    const data = await uploadRes.json();
-                    finalVideoUrl = data.url;
-                }
-            } catch (err) { console.error('Video upload failed:', err); }
-        }
-
-        if (!finalImageUrl) {
-            alert('썸네일 이미지가 필요합니다.');
-            return;
-        }
-
-        const itemData = {
-            id: isEditMode ? editingId : `cinema-${Date.now()}`,
-            title: { ko: newTitle, en: newTitle },
-            category: 'cinema',
-            subcategory: 'general',
-            description: { ko: '', en: '' },
-            image_url: finalImageUrl,
-            video_url: finalVideoUrl,
-            event_date: { ko: 'Now Playing', en: 'Now Playing' },
-            location: { ko: 'Theatre 01', en: 'Theatre 01' },
-            price: '4K HD',
-            parent_id: parentId || null
-        };
-
+        setIsUploading(true);
         try {
+            let finalImageUrl = newThumbnailUrl;
+            let finalVideoUrl = newVideoUrl;
+            
+            const adminToken = localStorage.getItem('admin_token');
+
+            // Handle Image Upload
+            const imageFile = fileInputRef.current?.files?.[0];
+            if (imageFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', imageFile);
+                    const uploadRes = await fetch('/api/upload', { 
+                        method: 'POST', body: formData,
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    if (uploadRes.ok) {
+                        const data = await uploadRes.json();
+                        finalImageUrl = data.url;
+                    }
+                } catch (err) { console.error('Image upload failed:', err); }
+            }
+
+            // Handle Video Upload
+            const videoFile = videoInputRef.current?.files?.[0];
+            if (videoFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', videoFile);
+                    const uploadRes = await fetch('/api/upload', { 
+                        method: 'POST', body: formData,
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    if (uploadRes.ok) {
+                        const data = await uploadRes.json();
+                        finalVideoUrl = data.url;
+                    }
+                } catch (err) { console.error('Video upload failed:', err); }
+            }
+
+            if (!finalImageUrl) {
+                alert('썸네일 이미지가 필요합니다.');
+                return;
+            }
+
+            const itemData = {
+                id: isEditMode ? editingId : `cinema-${Date.now()}`,
+                title: { ko: newTitle, en: newTitle },
+                category: 'cinema',
+                subcategory: 'general',
+                description: { ko: '', en: '' },
+                image_url: finalImageUrl,
+                video_url: finalVideoUrl,
+                event_date: { ko: 'Now Playing', en: 'Now Playing' },
+                location: { ko: 'Theatre 01', en: 'Theatre 01' },
+                price: '4K HD',
+                parent_id: parentId || null
+            };
+
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
             const method = isEditMode ? 'PUT' : 'POST';
 
@@ -248,6 +250,8 @@ const VirtualCinemaPage: React.FC = () => {
         } catch (error) {
             console.error('Save failed:', error);
             alert('서버 연결에 실패했습니다.');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -599,11 +603,18 @@ const VirtualCinemaPage: React.FC = () => {
 
                                     <button 
                                         onClick={handleAddItem}
-                                        disabled={!newTitle || (!newThumbnailUrl && !previewUrl)}
-                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4"
+                                        disabled={isUploading || !newTitle || (!newThumbnailUrl && !previewUrl)}
+                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-3"
                                         style={{ backgroundColor: theme.accentColor }}
                                     >
-                                        <AutoTranslatedText text={isEditMode ? "수정하기 (Update Video)" : "등록하기 (Register Video)"} />
+                                        {isUploading ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <AutoTranslatedText text="업로드 중..." />
+                                            </>
+                                        ) : (
+                                            <AutoTranslatedText text={isEditMode ? "수정하기 (Update Video)" : "등록하기 (Register Video)"} />
+                                        )}
                                     </button>
                                 </div>
                             </div>
