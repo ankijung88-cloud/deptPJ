@@ -981,7 +981,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                     <OrbitControls 
                         enableDamping 
                         dampingFactor={0.06} 
-                        rotateSpeed={0.5} 
+                        rotateSpeed={-0.5} 
                         enableZoom={true} // Allow wheel zoom as well
                         maxPolarAngle={Math.PI / 2.2}
                         minPolarAngle={Math.PI / 10}
