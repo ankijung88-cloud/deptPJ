@@ -981,10 +981,10 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                     <OrbitControls 
                         enableDamping 
                         dampingFactor={0.06} 
-                        rotateSpeed={-0.5} 
-                        enableZoom={true} // Allow wheel zoom as well
-                        maxPolarAngle={Math.PI / 2.2}
-                        minPolarAngle={Math.PI / 10}
+                        rotateSpeed={-0.8} // Slightly faster for responsiveness
+                        enableZoom={true}
+                        maxPolarAngle={Math.PI / 1.3} // Increased significantly to allow sky view
+                        minPolarAngle={0.1} // Allow looking directly down
                     />
                 </Canvas>
             </div>
