@@ -155,6 +155,25 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
                 )}
             </AnimatePresence>
 
+            <AnimatePresence>
+                {!isExpanded && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className="text-white text-[10px] font-black tracking-[0.2em] uppercase">
+                                <AutoTranslatedText text="전체 공간 안내" />
+                            </span>
+                        </div>
+                        {/* Speech Bubble Arrow */}
+                        <div className="absolute left-6 -bottom-1 w-2 h-2 bg-white/10 border-r border-b border-white/20 rotate-45 backdrop-blur-md" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Toggle Button */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
