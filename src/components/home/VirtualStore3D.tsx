@@ -956,8 +956,8 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
     const [cameraZPos, setCameraZPos] = useState(60);
 
-    // Mobile 2D Modal Layout (Image 1 style)
-    if (isMobile) {
+    // Mobile 2D Modal Layout (Image 1 style) - Restricted to smaller touch-sized screens
+    if (isMobile && window.innerWidth < 1024) {
         return (
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
@@ -1307,18 +1307,14 @@ export const VirtualStore3D: React.FC = () => {
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const navigate = useNavigate();
-
-    // Store navigate globally for the central modal (since it's in a functional component nested deeper)
+    const [isMobile, setIsMobile] = useState(false); // Default to false for initial SSR/Safety
+    
+    // Proper device detection on mount and resize
     React.useEffect(() => {
-        (window as any)._deptNavigate = navigate;
-    }, [navigate]);
-
-    React.useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     const activeFloorData = useMemo(() => {
