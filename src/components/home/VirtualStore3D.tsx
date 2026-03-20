@@ -670,7 +670,15 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                     isHovered={hoveredFloor === parseInt(floor.floor)}
                     isSelectedAnything={selectedFloor !== null}
                     onHover={setHoveredFloor}
-                    onToggleModal={() => setActiveModalFloor(activeModalFloor === parseInt(floor.floor) ? null : parseInt(floor.floor))}
+                    onToggleModal={() => {
+                        const floorNum = parseInt(floor.floor);
+                        if (isMobile) {
+                            setActiveModalFloor(activeModalFloor === floorNum ? null : floorNum);
+                        } else {
+                            // On desktop, directly enter the zone skip intermediate modal as requested
+                            setSelectedFloor(floorNum);
+                        }
+                    }}
                     isMobile={isMobile}
                     lang={lang}
                 />
@@ -679,7 +687,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
 
             {/* Central Fixed Hover Modal */}
             <AnimatePresence>
-                {activeModalFloor && !selectedFloor && (() => {
+                {isMobile && activeModalFloor && !selectedFloor && (() => {
                     const activeFloorData = floors.find((f: any) => parseInt(f.floor) === activeModalFloor);
                     if (!activeFloorData) return null;
 
