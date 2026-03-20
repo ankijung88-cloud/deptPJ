@@ -55,7 +55,56 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
 );
 
 // --- 3D Background for Modal ---
-const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage }: { activeFloorData: any, onClose: () => void, buttonTextColor: string, i18nLanguage: string }) => {
+const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { category: any, position: [number, number, number], color: string, i18nLanguage: string, onClick: () => void }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const [hovered, setHovered] = useState(false);
+    
+    useFrame(() => {
+        if (!meshRef.current) return;
+        meshRef.current.rotation.x += 0.005;
+        meshRef.current.rotation.y += 0.008;
+    });
+
+    return (
+        <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+            <group position={position}>
+                <mesh 
+                    ref={meshRef}
+                    onPointerOver={() => { document.body.style.cursor = 'pointer'; setHovered(true); }}
+                    onPointerOut={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
+                    onClick={(e) => { e.stopPropagation(); onClick(); }}
+                >
+                    <boxGeometry args={[16, 9, 3]} />
+                    <meshPhysicalMaterial 
+                        transparent 
+                        opacity={hovered ? 0.35 : 0.12} 
+                        transmission={0.95} 
+                        thickness={1.5} 
+                        roughness={0.05} 
+                        metalness={0.2}
+                        color={color}
+                    />
+                    <Edges color={hovered ? '#FFF' : color} threshold={15} opacity={0.7} transparent />
+                </mesh>
+                <Html transform distanceFactor={25} position={[0, 0, 1.6]} pointerEvents="none">
+                    <div className="flex flex-col items-center justify-center p-4 w-[320px] pointer-events-none select-none">
+                        <span className="text-4xl font-black tracking-widest text-white text-center leading-tight transition-all duration-300"
+                              style={{ 
+                                  textShadow: hovered ? `0 0 25px ${color}, 0 0 50px ${color}` : `0 0 15px ${color}, 0 0 30px ${color}80`,
+                                  color: 'white',
+                                  transform: hovered ? 'scale(1.1)' : 'scale(1)'
+                              }}>
+                            <AutoTranslatedText text={getLocalizedText(category.name, i18nLanguage)} />
+                        </span>
+                        <div className="mt-2 w-16 h-[2.5px] transition-all duration-300" style={{ backgroundColor: color, boxShadow: hovered ? `0 0 20px ${color}` : `0 0 10px ${color}`, width: hovered ? '100px' : '48px' }}></div>
+                    </div>
+                </Html>
+            </group>
+        </Float>
+    );
+};
+
+const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick }: { activeFloorData: any, onClose: () => void, buttonTextColor: string, i18nLanguage: string, categories: any[], onCategoryClick: (catId: string) => void }) => {
     const groupRef = useRef<THREE.Group>(null);
     
     useFrame((state) => {
@@ -65,6 +114,24 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
         groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, x * 0.06, 0.05);
         groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -y * 0.03, 0.05);
     });
+
+    // Strategy for non-overlapping fragments around center [0, 0.5, 0]
+    const fragmentPositions = useMemo(() => {
+        if (!categories) return [];
+        const positions: [number, number, number][] = [];
+        const radius = 60;
+        const startAngle = -Math.PI * 0.8;
+        const totalAngle = Math.PI * 1.6;
+        
+        categories.forEach((_, i) => {
+            const angle = startAngle + (totalAngle / (categories.length - 1 || 1)) * i;
+            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 15 : -10));
+            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 10 : -15)) - 10;
+            const y = 5 + Math.sin(i * 1.5) * 8; // Float height variation
+            positions.push([x, y, z]);
+        });
+        return positions;
+    }, [categories]);
 
     return (
         <group ref={groupRef}>
@@ -111,17 +178,17 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                     </Html>
                 </group>
 
-                {/* Cyber-mountain or abstract landscape elements */}
-                <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
-                    <mesh position={[40, 5, -60]} rotation={[0.5, 0.5, 0]}>
-                        <octahedronGeometry args={[15, 0]} />
-                        <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.04} />
-                    </mesh>
-                    <mesh position={[-50, 8, -80]} rotation={[0.2, 0.8, 0.1]}>
-                        <octahedronGeometry args={[25, 0]} />
-                        <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.03} />
-                    </mesh>
-                </Float>
+                {/* 3D Glass Category Shards */}
+                {categories && categories.map((cat, idx) => (
+                    <GlassFragment 
+                        key={idx} 
+                        category={cat} 
+                        position={fragmentPositions[idx]} 
+                        color={activeFloorData.color} 
+                        i18nLanguage={i18nLanguage} 
+                        onClick={() => onCategoryClick(cat._id)}
+                    />
+                ))}
             </group>
             
             <ambientLight intensity={1.5} />
@@ -854,7 +921,7 @@ const CityBackground3D = () => {
 };
 
 // --- Fragmented Blueprint Modal ---
-const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
+const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -883,47 +950,6 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isVideoExpanded]);
 
-    // Generate scattered positions for subcategories
-    const fragments = useMemo(() => {
-        if (!activeFloorData?.subitems) return [];
-
-        const zones = isMobile ? [
-            { t: [5, 12], l: [5, 25] },
-            { t: [5, 12], l: [65, 85] },
-            { t: [15, 22], l: [10, 35] },
-            { t: [15, 22], l: [60, 80] },
-            { t: [25, 32], l: [5, 25] },
-            { t: [25, 32], l: [65, 85] },
-            { t: [35, 42], l: [10, 40] },
-            { t: [72, 78], l: [2, 25] }
-        ] : [
-            { t: [10, 22], l: [5, 15] }, // Left Columns
-            { t: [8, 20], l: [20, 35] }, 
-            { t: [25, 40], l: [8, 20] }, 
-            { t: [45, 60], l: [5, 18] }, 
-            { t: [65, 80], l: [8, 22] }, 
-            { t: [15, 30], l: [40, 55] }, // Mid Left-Center
-            { t: [35, 50], l: [40, 55] }, 
-            { t: [55, 75], l: [30, 48] }  
-        ];
-
-        // Shuffle zones to distribute subcategories uniquely
-        const shuffledZones = [...zones].sort(() => Math.random() - 0.5);
-
-        return activeFloorData.subitems.slice(0, zones.length).map((sub: any, i: number) => {
-            const zone = shuffledZones[i];
-            return {
-                id: i,
-                subId: sub.id,
-                text: getLocalizedText(sub.label, i18n.language),
-                // Positions are still randomized by zone
-                top: zone.t[0] + Math.random() * (zone.t[1] - zone.t[0]),
-                left: zone.l[0] + Math.random() * (zone.l[1] - zone.l[0]),
-                delay: i * 0.08,
-                type: Math.floor(Math.random() * 4)
-            };
-        });
-    }, [activeFloorData, isMobile]);
 
     /* Decorative blocks removed to prevent visual confusion */
 
@@ -948,7 +974,17 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             {/* 3D Background Space */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <Canvas camera={{ position: [0, 5, 45], fov: 50 }}>
-                    <ModalBackground3D activeFloorData={activeFloorData} onClose={onClose} buttonTextColor={buttonTextColor} i18nLanguage={i18n.language} />
+                    <ModalBackground3D 
+                        activeFloorData={activeFloorData} 
+                        onClose={onClose} 
+                        buttonTextColor={buttonTextColor} 
+                        i18nLanguage={i18n.language} 
+                        categories={activeFloorData.categories}
+                        onCategoryClick={(catId) => {
+                            onClose();
+                            navigate(`/category/${catId}`);
+                        }}
+                    />
                 </Canvas>
             </div>
 
@@ -962,7 +998,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
             {/* Decorative geometrical blocks removed */}
 
-            {/* Perspective Floor Info lying on ground via R3F Html in background */}
+            {/* 3D Background Space Handles Fragments */}
             
             <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 100 }}
@@ -1149,51 +1185,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                 )}
             </AnimatePresence>
 
-            {/* Scattered Subcategory Fragments */}
-            {fragments.map((frag: any) => {
-                let bg, border, textColor;
-                if (frag.type === 0) { // Dark Solid
-                    bg = COLORS.line; border = 'transparent'; textColor = COLORS.paper;
-                } else if (frag.type === 1) { // Brand Color Solid
-                    bg = activeFloorData.color; border = 'transparent'; textColor = getContrastColor(activeFloorData.color);
-                } else if (frag.type === 2) { // Cyber Paper with Border
-                    bg = '#1A2420'; border = MODAL_COLORS.line; textColor = MODAL_COLORS.line;
-                } else { // Translucent Brand Color
-                    bg = activeFloorData.color + '40'; // 25% opacity hex
-                    border = activeFloorData.color; textColor = getContrastColor(activeFloorData.color);
-                }
-
-                return (
-                    <motion.div
-                        key={`frag-${frag.id}`}
-                        initial={{ opacity: 0, scale: 0.3, x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300 }}
-                        animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 + frag.delay, type: 'spring', bounce: 0.5 }}
-                        className="absolute shadow-xl flex items-center justify-center p-3 md:p-5 cursor-pointer hover:scale-105 hover:z-[70] transition-all duration-300 z-40 backdrop-blur-sm"
-                        style={{
-                            top: `${frag.top}%`,
-                            left: `${frag.left}%`,
-                            minWidth: isMobile ? '100px' : '160px',
-                            minHeight: isMobile ? '60px' : '80px',
-                            maxWidth: isMobile ? '160px' : '300px',
-                            backgroundColor: bg,
-                            border: border !== 'transparent' ? `2px solid ${border}` : 'none',
-                            color: textColor,
-                        }}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/category/${frag.subId}`);
-                        }}
-                    >
-                        <div className="flex flex-col items-center justify-center w-full px-2 py-1">
-                            <span className="text-[8px] md:text-[10px] font-mono tracking-widest opacity-60 mb-1 md:mb-2 uppercase border-b border-current pb-1 w-full text-center">{activeFloorData.floor}.Z{frag.id + 1}</span>
-                            <span className="font-black text-[11px] md:text-xl text-center tracking-tighter leading-[1.1] md:leading-tight break-words w-full">
-                                <AutoTranslatedText text={frag.text} />
-                            </span>
-                        </div>
-                    </motion.div>
-                );
-            })}
+            {/* Subcategory Fragments are now rendered in 3D Background */}
         </motion.div>
     );
 };
@@ -1306,7 +1298,6 @@ export const VirtualStore3D: React.FC = () => {
                     <FragmentedModal
                         activeFloorData={activeFloorData}
                         onClose={() => setSelectedFloor(null)}
-                        isMobile={isMobile}
                     />
                 )}
             </AnimatePresence>
