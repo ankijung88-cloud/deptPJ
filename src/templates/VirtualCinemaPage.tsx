@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
@@ -267,7 +267,13 @@ const VirtualCinemaPage: React.FC = () => {
             <header className="relative w-full py-20 px-6 md:px-12" style={{ borderBottom: `1px solid ${theme.color3}44` }}>
                 <div className="container mx-auto relative z-10">
                     <button 
-                        onClick={() => navigate(-1)}
+                        onClick={() => {
+                            if (currentFloor) {
+                                navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                            } else {
+                                navigate('/inspiration');
+                            }
+                        }}
                         className="flex items-center gap-2 mb-10 opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.3em]"
                     >
                         <ArrowLeft size={12} />
@@ -277,10 +283,12 @@ const VirtualCinemaPage: React.FC = () => {
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
                         <div className="max-w-4xl">
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-white/10 bg-white/5" 
+                                <Link 
+                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
+                                    className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all" 
                                      style={{ color: theme.highlightColor }}>
-                                    <AutoTranslatedText text="Multiplex Virtual" />
-                                </div>
+                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                                </Link>
                                 <div className="h-4 w-[1px] bg-white/20" />
                                 <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Now Streaming in 4K</span>
                             </div>

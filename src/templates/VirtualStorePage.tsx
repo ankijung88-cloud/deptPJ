@@ -4,7 +4,7 @@ console.log("VirtualStorePage.tsx version 2 loaded");
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Float, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
@@ -450,7 +450,13 @@ const VirtualStorePage: React.FC = () => {
             <header className="relative w-full py-12 px-6 md:px-12 border-b" style={{ borderColor: `${theme.color3}22` }}>
                 <div className="container mx-auto relative z-10">
                     <button 
-                        onClick={() => navigate(-1)}
+                        onClick={() => {
+                            if (currentFloor) {
+                                navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                            } else {
+                                navigate('/inspiration');
+                            }
+                        }}
                         className="flex items-center gap-2 mb-6 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest"
                         style={{ color: theme.highlightColor }}
                     >
@@ -461,10 +467,12 @@ const VirtualStorePage: React.FC = () => {
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div className="max-w-3xl">
                              <div className="flex items-center gap-4 mb-3">
-                                <div className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg" 
+                                <Link 
+                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
+                                    className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all" 
                                      style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor, border: `1px solid ${theme.color3}33` }}>
-                                    <AutoTranslatedText text="Premium Hub" />
-                                </div>
+                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                                </Link>
                                 <div className="h-[1px] w-12 bg-white/10" />
                                 <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20">Virtual Commerce V2</span>
                             </div>

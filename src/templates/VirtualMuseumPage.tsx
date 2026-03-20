@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
@@ -362,7 +362,13 @@ const VirtualMuseumPage: React.FC = () => {
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8">
                         <button 
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                if (currentFloor) {
+                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                } else {
+                                    navigate('/inspiration');
+                                }
+                            }}
                             className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest"
                             style={{ color: theme.highlightColor }}
                         >
@@ -384,10 +390,13 @@ const VirtualMuseumPage: React.FC = () => {
                     
                     <div className="max-w-4xl">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase" 
-                                 style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor }}>
-                                <AutoTranslatedText text="Museum Collection" />
-                            </div>
+                        <Link 
+                            to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
+                            className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-lg" 
+                            style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor }}
+                        >
+                            <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                        </Link>
                             <div className="h-[1px] w-12 bg-white/10" />
                         </div>
                         

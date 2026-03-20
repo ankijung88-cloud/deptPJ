@@ -1,5 +1,5 @@
-import React, { useRef, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
@@ -1406,7 +1406,28 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
 export const VirtualStore3D: React.FC = () => {
     const { floors, loading } = useFloors();
     const { i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
+    
+    // Initialize selectedFloor from URL query param if present
+    const initialFloorNum = useMemo(() => {
+        const floorParam = searchParams.get('floor');
+        if (!floorParam) return null;
+        
+        // Handle both simple "5" and "floor-5" formats
+        const num = floorParam.toLowerCase().replace('floor-', '');
+        const parsed = parseInt(num, 10);
+        return isNaN(parsed) ? null : parsed;
+    }, [searchParams]);
+
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
+
+    // Sync selectedFloor with URL parameter once data is loaded
+    useEffect(() => {
+        if (!loading && initialFloorNum && floors.length > 0) {
+            setSelectedFloor(initialFloorNum);
+        }
+    }, [loading, initialFloorNum, floors]);
+
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);

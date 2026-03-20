@@ -278,7 +278,13 @@ export const DetailPage: React.FC = () => {
                 <div className="absolute inset-0 z-20 flex flex-col justify-end pb-20">
                     <div className="container mx-auto px-6">
                         <button 
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                if (currentFloor) {
+                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                } else {
+                                    navigate('/inspiration');
+                                }
+                            }}
                             className="inline-flex items-center text-white/60 hover:text-[#00FFC2] mb-8 transition-colors group"
                         >
                             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -292,11 +298,14 @@ export const DetailPage: React.FC = () => {
                             className="max-w-4xl"
                         >
                             <div className="flex items-center gap-4 mb-6">
-                                <span className="px-4 py-1.5 rounded-full bg-[#00FFC2] text-black text-xs font-bold uppercase tracking-widest">
-                                    {item.category}
-                                </span>
+                                <Link 
+                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
+                                    className="px-4 py-1.5 rounded-full bg-[#00FFC2] text-black text-xs font-bold uppercase tracking-widest hover:brightness-110 hover:shadow-[0_0_15px_rgba(0,255,194,0.5)] transition-all flex items-center gap-2"
+                                >
+                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || item.category}F
+                                </Link>
                                 {item.subcategory && (
-                                    <span className="text-white/40 text-xs font-mono tracking-widest uppercase">
+                                    <span className="text-white/40 text-xs font-mono tracking-widest uppercase ml-2">
                                         / {item.subcategory}
                                     </span>
                                 )}
