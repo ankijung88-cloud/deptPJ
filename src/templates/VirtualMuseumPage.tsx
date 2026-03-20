@@ -157,9 +157,11 @@ const VirtualMuseumPage: React.FC = () => {
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
-    
+    const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
+    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: '상세', type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
@@ -358,18 +360,20 @@ const VirtualMuseumPage: React.FC = () => {
             `}} />
 
             {/* Header Section */}
-            <header className="relative w-full py-16 px-6 md:px-12 border-b" style={{ borderColor: `${theme.color3}44` }}>
+            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50]" style={{ borderColor: `${theme.color3}44` }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8">
                         <button 
                             onClick={() => {
-                                if (currentFloor) {
+                                if (parentId) {
+                                    navigate(`/detail/${parentId}`);
+                                } else if (currentFloor) {
                                     navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
                                 } else {
                                     navigate('/inspiration');
                                 }
                             }}
-                            className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest"
+                            className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                             style={{ color: theme.highlightColor }}
                         >
                             <ArrowLeft size={14} />
@@ -392,10 +396,10 @@ const VirtualMuseumPage: React.FC = () => {
                         <div className="flex items-center gap-4 mb-4">
                         <Link 
                             to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                            className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-lg" 
+                            className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-lg relative z-[60]" 
                             style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor }}
                         >
-                            <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                            <AutoTranslatedText text="아카이브" /> {floorLabel}
                         </Link>
                             <div className="h-[1px] w-12 bg-white/10" />
                         </div>

@@ -273,9 +273,11 @@ const VirtualTicketPage: React.FC = () => {
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
-    
+    const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
+    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: '상세', type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
@@ -497,21 +499,23 @@ const handleReservation = () => {
 return (
         <div className="min-h-screen font-sans overflow-hidden" style={theme.bgStyle}>
             {/* Ticket Header */}
-            <header className="relative w-full py-16 md:py-24 px-6 md:px-12 border-b-2" style={{ borderColor: `${theme.accentColor}22` }}>
+            <header className="relative w-full py-16 md:py-24 px-6 md:px-12 border-b-2 z-[50]" style={{ borderColor: `${theme.accentColor}22` }}>
                 <div className="container mx-auto relative z-10">
                     <button 
                         onClick={() => {
-                            if (currentFloor) {
+                            if (parentId) {
+                                navigate(`/detail/${parentId}`);
+                            } else if (currentFloor) {
                                 navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
                             } else {
                                 navigate('/inspiration');
                             }
                         }}
-                        className="flex items-center gap-3 mb-10 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.4em]"
+                        className="flex items-center gap-3 mb-10 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.4em] relative z-[60]"
                         style={{ color: theme.highlightColor }}
                     >
                         <ArrowLeft size={16} />
-                        <AutoTranslatedText text="Back to Main" />
+                        <AutoTranslatedText text="Back" />
                     </button>
                     
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
@@ -519,9 +523,9 @@ return (
                             <div className="flex items-center gap-4 mb-6">
                                 <Link 
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all uppercase" 
+                                    className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all uppercase relative z-[60]" 
                                      style={{ color: theme.highlightColor }}>
-                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-20 bg-white/10" />
                             </div>

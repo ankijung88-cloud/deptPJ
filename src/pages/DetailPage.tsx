@@ -26,14 +26,20 @@ export const DetailPage: React.FC = () => {
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const { isAdmin: isAdminLoggedIn } = useAdmin();
     const { floors } = useFloors();
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
 
     // Set Breadcrumb Path
-    const currentFloor = floors.find(f => f.floor.toLowerCase() === item?.category?.toLowerCase());
-    const currentCategory = currentFloor?.subitems?.find(s => s.id === item?.subcategory);
+    const effectiveCategory = item?.category || parentProduct?.category;
+    const effectiveSubcategory = item?.subcategory || parentProduct?.subcategory;
+    const currentFloor = floors.find(f => f.floor.toLowerCase() === effectiveCategory?.toLowerCase());
+    const currentCategory = currentFloor?.subitems?.find(s => s.id === effectiveSubcategory);
     
+    const floorNum = effectiveCategory?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
+    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || effectiveCategory || '');
+
     useSetBreadcrumbPath(item ? [
-        { id: currentFloor?.floor || item.category, label: currentFloor?.floor || item.category, type: 'floor' },
-        { id: currentCategory?.id || item.subcategory, label: currentCategory?.label || item.subcategory, type: 'category' },
+        { id: currentFloor?.floor || effectiveCategory, label: floorLabel, type: 'floor' },
+        { id: currentCategory?.id || effectiveSubcategory, label: currentCategory?.label || effectiveSubcategory, type: 'category' },
         { id: 'detail', label: '상세', type: 'detail' },
         { id: item.id, label: item.title, type: 'detail' }
     ] : []);
@@ -45,7 +51,15 @@ export const DetailPage: React.FC = () => {
             setLoading(true);
             try {
                 const data = await getProductById(id);
-                setItem(data);
+                if (data) {
+                    setItem(data);
+                    
+                    // Fetch parent if parent_id exists
+                    if (data.parent_id) {
+                        const parentData = await getProductById(data.parent_id);
+                        if (parentData) setParentProduct(parentData);
+                    }
+                }
             } catch (error) {
                 console.error('Failed to fetch product detail:', error);
             } finally {
@@ -83,6 +97,27 @@ export const DetailPage: React.FC = () => {
             setSelectedTemplates([]);
         }
     }, [item]);
+
+    const handleBack = () => {
+        if (item?.parent_id) {
+            const templateKeywords = ['cinema', 'museum', 'store', 'ticket'];
+            const template = templateKeywords.find(k => 
+                item.category?.toLowerCase().includes(k) || 
+                item.subcategory?.toLowerCase().includes(k)
+            );
+            
+            if (template) {
+                navigate(`/detail/${item.parent_id}/${template}`);
+                return;
+            }
+        }
+        
+        if (currentFloor) {
+            navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+        } else {
+            navigate('/inspiration');
+        }
+    };
 
     const handleShare = () => {
         setShowShareModal(true);
@@ -275,17 +310,12 @@ export const DetailPage: React.FC = () => {
                     <div className="absolute inset-0 z-10" style={{ background: `linear-gradient(to top, ${theme.bgColor}, ${theme.bgColor}33, transparent)` }} />
                 </motion.div>
 
-                <div className="absolute inset-0 z-20 flex flex-col justify-end pb-20">
+                <div className="absolute inset-0 z-[50] flex flex-col justify-end pb-20">
                     <div className="container mx-auto px-6">
                         <button 
-                            onClick={() => {
-                                if (currentFloor) {
-                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                                } else {
-                                    navigate('/inspiration');
-                                }
-                            }}
-                            className="inline-flex items-center text-white/60 hover:text-[#00FFC2] mb-8 transition-colors group"
+                            onClick={handleBack}
+                            className="inline-flex items-center mb-8 transition-colors group relative z-[60]"
+                            style={{ color: `${theme.highlightColor}de` }}
                         >
                             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
                             <span className="font-bold tracking-widest uppercase text-sm">{t('common.back')}</span>
@@ -298,12 +328,13 @@ export const DetailPage: React.FC = () => {
                             className="max-w-4xl"
                         >
                             <div className="flex items-center gap-4 mb-6">
-                                <Link 
-                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-4 py-1.5 rounded-full bg-[#00FFC2] text-black text-xs font-bold uppercase tracking-widest hover:brightness-110 hover:shadow-[0_0_15px_rgba(0,255,194,0.5)] transition-all flex items-center gap-2"
+                                <button 
+                                    onClick={handleBack}
+                                    className="px-4 py-1.5 rounded-full text-black text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 relative z-[60]"
+                                    style={{ backgroundColor: theme.highlightColor, boxShadow: `0 0 15px ${theme.glowColor}` }}
                                 >
-                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || item.category}F
-                                </Link>
+                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
+                                </button>
                                 {item.subcategory && (
                                     <span className="text-white/40 text-xs font-mono tracking-widest uppercase ml-2">
                                         / {item.subcategory}

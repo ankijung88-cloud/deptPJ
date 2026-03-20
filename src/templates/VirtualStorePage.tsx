@@ -151,9 +151,11 @@ const VirtualStorePage: React.FC = () => {
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
-    
+    const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
+    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: currentFloor?.floor || parentProduct.category, type: 'floor' },
+        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: '상세', type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
@@ -447,21 +449,23 @@ const VirtualStorePage: React.FC = () => {
     return (
         <div className="min-h-screen font-sans overflow-x-hidden" style={theme.bgStyle}>
             {/* Store Header */}
-            <header className="relative w-full py-12 px-6 md:px-12 border-b" style={{ borderColor: `${theme.color3}22` }}>
+            <header className="relative w-full py-12 px-6 md:px-12 border-b z-[50]" style={{ borderColor: `${theme.color3}22` }}>
                 <div className="container mx-auto relative z-10">
                     <button 
                         onClick={() => {
-                            if (currentFloor) {
+                            if (parentId) {
+                                navigate(`/detail/${parentId}`);
+                            } else if (currentFloor) {
                                 navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
                             } else {
                                 navigate('/inspiration');
                             }
                         }}
-                        className="flex items-center gap-2 mb-6 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest"
+                        className="flex items-center gap-2 mb-6 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                         style={{ color: theme.highlightColor }}
                     >
                         <ArrowLeft size={14} />
-                        <AutoTranslatedText text="Back to Curation" />
+                        <AutoTranslatedText text="Back" />
                     </button>
                     
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
@@ -469,9 +473,9 @@ const VirtualStorePage: React.FC = () => {
                              <div className="flex items-center gap-4 mb-3">
                                 <Link 
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all" 
+                                    className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all relative z-[60]" 
                                      style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor, border: `1px solid ${theme.color3}33` }}>
-                                    <AutoTranslatedText text="아카이브" /> {currentFloor?.floor || parentProduct?.category}F
+                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-12 bg-white/10" />
                                 <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20">Virtual Commerce V2</span>
