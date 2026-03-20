@@ -921,8 +921,140 @@ const CityBackground3D = () => {
     );
 };
 
-// --- Fragmented Blueprint Modal ---
-const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
+// --- 2D Mobile Modal (Image 1 Style) ---
+const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+    const navigate = useNavigate();
+    const { i18n } = useTranslation();
+    const [isVideoExpanded, setIsVideoExpanded] = useState(false);
+    
+    // Keyboard support for closing video modal
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsVideoExpanded(false);
+        };
+        if (isVideoExpanded) window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isVideoExpanded]);
+    
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+            onClick={onClose}
+        >
+            <motion.div 
+                className="relative w-full max-w-sm bg-[#1A2420] border-2 border-[#00FFC2] p-8 flex flex-col gap-8 shadow-[0_0_50px_rgba(0,255,194,0.2)]"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header: Floor Info */}
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-baseline gap-4">
+                        <span className="text-[64px] font-black text-[#00FFC2] leading-none tracking-tighter">
+                            {activeFloorData.floor}
+                        </span>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-mono font-bold text-[#00FFC2] tracking-[0.3em] uppercase opacity-70">Floor Title</span>
+                            <h2 className="text-2xl font-black text-white uppercase leading-tight">
+                                <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
+                            </h2>
+                        </div>
+                    </div>
+                    
+                    {/* Video Link */}
+                    <button 
+                        onClick={() => setIsVideoExpanded(true)}
+                        className="flex items-center gap-2 text-[#00FFC2] hover:text-[#00FFC2]/80 transition-colors mt-2"
+                    >
+                        <Play size={14} fill="currentColor" />
+                        <span className="text-[10px] font-bold tracking-widest uppercase"><AutoTranslatedText text="영상보러가기" /></span>
+                    </button>
+                </div>
+
+                {/* Subcategories List */}
+                <div className="flex flex-col gap-6 py-4">
+                    {activeFloorData.subitems?.map((sub: any, idx: number) => (
+                        <button 
+                            key={idx}
+                            onClick={() => {
+                                onClose();
+                                navigate(`/category/${sub.id}`);
+                            }}
+                            className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
+                        >
+                            <span className="w-4 h-[2px] bg-[#00FFC2] block transition-transform group-hover:scale-x-150 origin-left" />
+                            <span className="text-lg font-black tracking-wider group-hover:translate-x-1 transition-transform">
+                                <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                            </span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Footer: Metadata & Close */}
+                <div className="mt-4 pt-8 border-t border-white/10 flex items-center justify-between">
+                    <div className="flex flex-col gap-1 opacity-50">
+                        <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase">Structural Fragment</span>
+                        <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
+                    </div>
+                    
+                    <button 
+                        onClick={onClose}
+                        className="flex items-center gap-3 text-[#00FFC2] group"
+                    >
+                        <div className="flex items-center justify-center translate-y-[1px]">
+                            <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                                <ArrowRight size={18} />
+                            </motion.div>
+                        </div>
+                        <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:tracking-[0.4em] transition-all">Close</span>
+                    </button>
+                </div>
+            </motion.div>
+
+            {/* Mobile Video Expanded Modal */}
+            <AnimatePresence>
+                {isVideoExpanded && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[2000] bg-black flex items-center justify-center"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsVideoExpanded(false);
+                        }}
+                    >
+                        <button
+                            className="absolute top-6 right-6 text-white z-[2100]"
+                            onClick={() => setIsVideoExpanded(false)}
+                        >
+                            <X size={32} />
+                        </button>
+
+                        <motion.div
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            className="relative w-[90vw] aspect-video bg-black rounded-lg overflow-hidden border border-white/20"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <video
+                                autoPlay
+                                loop
+                                playsInline
+                                src={activeFloorData.videoUrl}
+                                className="w-full h-full object-cover"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+};
+
+// --- 3D Desktop Virtual Space (Image 2 Style) ---
+const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -931,16 +1063,17 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [cameraZPos, setCameraZPos] = useState(60);
 
     const MODAL_COLORS = {
         bg: '#1A2420',
         line: '#00FFC2',
-        accent: activeFloorData?.color || '#FF3B30'
+        accent: activeFloorData?.color || '#FF3B30',
+        glass: 'rgba(255, 255, 255, 0.05)'
     };
 
     const buttonTextColor = getContrastColor(activeFloorData.color);
 
-    // Keyboard support for closing video modal
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') setIsVideoExpanded(false);
@@ -950,92 +1083,6 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
         }
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isVideoExpanded]);
-
-
-    /* Decorative blocks removed to prevent visual confusion */
-
-    const [cameraZPos, setCameraZPos] = useState(60);
-
-    // Mobile 2D Modal Layout (Image 1 style) - Restricted to smaller touch-sized screens
-    if (isMobile && window.innerWidth < 1024) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 50 }}
-                className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
-                onClick={onClose}
-            >
-                <motion.div 
-                    className="relative w-full max-w-sm bg-[#1A2420] border-2 border-[#00FFC2] p-8 flex flex-col gap-8 shadow-[0_0_50px_rgba(0,255,194,0.2)]"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    {/* Header: Floor Info */}
-                    <div className="flex flex-col gap-1">
-                        <div className="flex items-baseline gap-4">
-                            <span className="text-[64px] font-black text-[#00FFC2] leading-none tracking-tighter">
-                                {activeFloorData.floor}
-                            </span>
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-mono font-bold text-[#00FFC2] tracking-[0.3em] uppercase opacity-70">Floor Title</span>
-                                <h2 className="text-2xl font-black text-white uppercase leading-tight">
-                                    <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
-                                </h2>
-                            </div>
-                        </div>
-                        
-                        {/* Video Link */}
-                        <button 
-                            onClick={() => setIsVideoExpanded(true)}
-                            className="flex items-center gap-2 text-[#00FFC2] hover:text-[#00FFC2]/80 transition-colors mt-2"
-                        >
-                            <Play size={14} fill="currentColor" />
-                            <span className="text-[10px] font-bold tracking-widest uppercase"><AutoTranslatedText text="영상보러가기" /></span>
-                        </button>
-                    </div>
-
-                    {/* Subcategories List */}
-                    <div className="flex flex-col gap-6 py-4">
-                        {activeFloorData.subitems?.map((sub: any, idx: number) => (
-                            <button 
-                                key={idx}
-                                onClick={() => {
-                                    onClose();
-                                    navigate(`/category/${sub.id}`);
-                                }}
-                                className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
-                            >
-                                <span className="w-4 h-[2px] bg-[#00FFC2] block transition-transform group-hover:scale-x-150 origin-left" />
-                                <span className="text-lg font-black tracking-wider group-hover:translate-x-1 transition-transform">
-                                    <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Footer: Metadata & Close */}
-                    <div className="mt-4 pt-8 border-t border-white/10 flex items-center justify-between">
-                        <div className="flex flex-col gap-1 opacity-50">
-                            <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase">Structural Fragment</span>
-                            <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
-                        </div>
-                        
-                        <button 
-                            onClick={onClose}
-                            className="flex items-center gap-3 text-[#00FFC2] group"
-                        >
-                            <div className="flex items-center justify-center translate-y-[1px]">
-                                <motion.div animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                                    <ArrowRight size={18} />
-                                </motion.div>
-                            </div>
-                            <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:tracking-[0.4em] transition-all">Close</span>
-                        </button>
-                    </div>
-                </motion.div>
-            </motion.div>
-        );
-    }
 
     return (
              <motion.div
@@ -1307,14 +1354,18 @@ export const VirtualStore3D: React.FC = () => {
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);
-    const [isMobile, setIsMobile] = useState(false); // Default to false for initial SSR/Safety
+    const [isMobile, setIsMobile] = useState(false);
     
-    // Proper device detection on mount and resize
+    // Improved device detection using matchMedia
     React.useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        const mediaQuery = window.matchMedia("(max-width: 1023px)"); // Desktop starts at 1024
+        const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+            setIsMobile(e.matches);
+        };
+        
+        handleMediaChange(mediaQuery);
+        mediaQuery.addEventListener('change', handleMediaChange);
+        return () => mediaQuery.removeEventListener('change', handleMediaChange);
     }, []);
 
     const activeFloorData = useMemo(() => {
@@ -1399,13 +1450,21 @@ export const VirtualStore3D: React.FC = () => {
                 </group>
             </Canvas>
 
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {activeFloorData && (
-                    <FragmentedModal
-                        activeFloorData={activeFloorData}
-                        onClose={() => setSelectedFloor(null)}
-                        isMobile={isMobile}
-                    />
+                    isMobile ? (
+                        <MobileFloorModal
+                            key="mobile-modal"
+                            activeFloorData={activeFloorData}
+                            onClose={() => setSelectedFloor(null)}
+                        />
+                    ) : (
+                        <DesktopVirtualSpace
+                            key="desktop-space"
+                            activeFloorData={activeFloorData}
+                            onClose={() => setSelectedFloor(null)}
+                        />
+                    )
                 )}
             </AnimatePresence>
 
