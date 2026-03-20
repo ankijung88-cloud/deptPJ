@@ -59,7 +59,7 @@ const BroadwayTicketCard: React.FC<{
             {/* Ticket Info */}
             <div className="p-8 space-y-4">
                 <div className="space-y-1">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tighter leading-tight group-hover:text-yellow-400 transition-colors">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tighter leading-tight group-hover:text-yellow-400 transition-colors whitespace-pre-wrap break-keep">
                         <AutoTranslatedText text={getLoc(ticket.title, lang)} />
                     </h3>
                     <div className="flex items-center gap-2 opacity-40">
@@ -532,7 +532,7 @@ return (
                                 <div className="h-[1px] w-20 bg-white/10" />
                             </div>
                             
-                            <h1 className="text-5xl md:text-9xl font-black mb-10 leading-[0.8] tracking-tighter uppercase" 
+                            <h1 className="text-5xl md:text-9xl font-black mb-10 leading-[0.8] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
                                 style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}55` }}>
                                 <AutoTranslatedText text="3D 가상 티켓 부스" />
                             </h1>
@@ -543,14 +543,20 @@ return (
                         </div>
 
                         <div className="flex flex-col gap-6">
-                            <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-3xl relative overflow-hidden group">
+                            <button 
+                                onClick={() => {
+                                    const element = document.getElementById('availability-section');
+                                    element?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-3xl relative overflow-hidden group hover:bg-white/10 hover:border-white/30 transition-all active:scale-95"
+                            >
                                 <div className="absolute top-0 right-0 w-20 h-20 opacity-10 bg-white transform rotate-45 -translate-y-1/2 translate-x-1/2" />
                                 <div className="relative z-10 flex flex-col items-center gap-2">
-                                     <Ticket size={24} className="mb-2 opacity-40 group-hover:scale-110 transition-transform" />
-                                     <span className="text-3xl font-black tracking-tighter" style={{ color: theme.highlightColor }}>08</span>
+                                     <Ticket size={24} className="mb-2 opacity-40 group-hover:scale-110 transition-transform" style={{ color: theme.highlightColor }} />
+                                     <span className="text-3xl font-black tracking-tighter" style={{ color: theme.highlightColor }}>{ticketItems.length.toString().padStart(2, '0')}</span>
                                      <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">Running Events</span>
                                 </div>
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -563,7 +569,7 @@ return (
             </header>
 
             {/* Event Selection Grid / 3D Layout */}
-            <main className="container mx-auto px-6 md:px-12 py-24">
+            <main id="availability-section" className="container mx-auto px-6 md:px-12 py-24">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-10">
                     <div className="flex items-center gap-6">
                          <div className="w-14 h-14 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center" style={{ color: theme.accentColor }}>
@@ -697,12 +703,12 @@ return (
                                         </label>
                                         <div className="relative">
                                             <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
-                                            <input 
-                                                type="text"
+                                            <textarea 
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 placeholder="Enter event title..."
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                rows={2}
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
                                             />
                                         </div>
                                     </div>

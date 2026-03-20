@@ -55,7 +55,7 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                         <Compass size={32} />
                     </div>
                     
-                    <h3 className="text-lg font-serif font-black leading-tight mb-2" style={{ color: theme.highlightColor }}>
+                    <h3 className="text-lg font-serif font-black leading-tight mb-2 whitespace-pre-wrap break-keep" style={{ color: theme.highlightColor }}>
                         <AutoTranslatedText text={displayName} />
                     </h3>
                     
@@ -406,7 +406,7 @@ const VirtualMuseumPage: React.FC = () => {
                             <div className="h-[1px] w-12 bg-white/10" />
                         </div>
                         
-                        <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight" 
+                        <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight whitespace-pre-wrap break-keep" 
                             style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}22` }}>
                             <AutoTranslatedText text="3D 가상 전시 박물관" />
                         </h1>
@@ -490,12 +490,12 @@ const VirtualMuseumPage: React.FC = () => {
                                     </label>
                                     <div className="relative">
                                         <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
-                                        <input 
-                                            type="text"
+                                        <textarea 
                                             value={newTitle}
                                             onChange={(e) => setNewTitle(e.target.value)}
                                             placeholder="예: 금동향로"
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all"
+                                            rows={2}
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all resize-none text-sm"
                                         />
                                     </div>
                                 </div>

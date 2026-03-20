@@ -50,7 +50,7 @@ export const AutoTranslatedText: React.FC<AutoTranslatedTextProps> = ({
     };
 
     return (
-        <Element className={className}>
+        <Element className={`whitespace-pre-wrap break-keep ${className || ''}`}>
             {renderText()}
         </Element>
     );

@@ -300,7 +300,7 @@ const VirtualCinemaPage: React.FC = () => {
                                 <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Now Streaming in 4K</span>
                             </div>
                             
-                            <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase" 
+                            <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
                                 style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}44` }}>
                                 <AutoTranslatedText text="3D 가상 상영관" />
                             </h1>
@@ -396,9 +396,9 @@ const VirtualCinemaPage: React.FC = () => {
                                         <div className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-1">
                                             {typeof item.price === 'string' ? item.price : (item.price as any).ko}
                                         </div>
-                                        <div className="text-xs font-bold text-white uppercase truncate">
-                                            <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
-                                        </div>
+                                         <div className="text-xs font-bold text-white uppercase whitespace-pre-wrap break-keep">
+                                             <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
+                                         </div>
                                     </div>
                                     {selectedCinemaItem?.id === item.id && (
                                         <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_#fff]" />
@@ -558,12 +558,12 @@ const VirtualCinemaPage: React.FC = () => {
                                         </label>
                                         <div className="relative">
                                             <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
-                                            <input 
-                                                type="text"
+                                            <textarea 
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 placeholder="Enter video title..."
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                rows={2}
+                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
                                             />
                                         </div>
                                     </div>
