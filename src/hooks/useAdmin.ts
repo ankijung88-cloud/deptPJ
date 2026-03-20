@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
  * Hook to manage admin authentication state consistently across the app.
  */
 export const useAdmin = () => {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(() => {
+        const token = localStorage.getItem('admin_token');
+        return !!(token && token.startsWith('mock-admin-token-'));
+    });
 
     const checkAdmin = () => {
         const token = localStorage.getItem('admin_token');

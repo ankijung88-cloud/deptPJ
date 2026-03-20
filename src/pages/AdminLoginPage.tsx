@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User, ArrowRight } from 'lucide-react';
@@ -11,7 +11,13 @@ export const AdminLoginPage: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { login } = useAdmin();
+    const { isAdmin, login } = useAdmin();
+
+    useEffect(() => {
+        if (isAdmin) {
+            navigate('/admin');
+        }
+    }, [isAdmin, navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
