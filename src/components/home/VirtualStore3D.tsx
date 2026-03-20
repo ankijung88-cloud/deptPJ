@@ -12,7 +12,9 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown, ArrowRight } from 'lucide-react';
+import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown, ArrowRight, Compass, MousePointer2 } from 'lucide-react';
+import { GlobalMiniMap } from '../common/GlobalMiniMap';
+import { MouseTrail3D } from '../common/MouseTrail3D';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { getContrastColor } from '../../utils/themeUtils';
@@ -1072,6 +1074,8 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [cameraZPos, setCameraZPos] = useState(60);
+    const [showMinimap, setShowMinimap] = useState(false);
+    const [showMouseTrail, setShowMouseTrail] = useState(false);
 
     const MODAL_COLORS = {
         bg: '#1A2420',
@@ -1101,6 +1105,15 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
             className="fixed inset-0 z-[1000] hidden lg:flex flex-col bg-[#0A100D] overflow-hidden"
             data-engine-version="1.0.2"
         >
+            {/* Logo (Top Left) */}
+            <div className="absolute top-8 left-8 md:top-12 md:left-12 z-[1100] pointer-events-none">
+                <img 
+                    src="/K로고.png" 
+                    alt="Logo" 
+                    className="h-16 md:h-20 w-auto drop-shadow-[0_0_15px_rgba(0,255,194,0.3)] opacity-80" 
+                />
+            </div>
+
             {/* 3D Immersive Explorer - Force Desktop Precedence Marker v1.0.2 */}
             <div className="absolute top-4 right-4 text-[8px] font-mono text-white/10 pointer-events-none uppercase tracking-widest z-[10000]">
                 3D Immersive Engine v1.0.2 (Desktop Only)
@@ -1145,16 +1158,41 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
                 </button>
 
                 {/* Move Backward (Bottom) */}
-                <button 
-                    onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setCameraZPos(prev => Math.min(100, prev + 10)); 
-                    }}
-                    className="absolute bottom-32 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
-                >
-                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
-                    <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
-                </button>
+                <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex items-center gap-12 pointer-events-none">
+                    {/* Minimap Toggle */}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setShowMinimap(!showMinimap); }}
+                        className="pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                    >
+                        <div className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMinimap ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}>
+                            <Compass size={24} className={showMinimap ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
+                        </div>
+                        <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Minimap</span>
+                    </button>
+
+                    {/* Back Button (Existing) */}
+                    <button 
+                        onClick={(e) => { 
+                            e.stopPropagation(); 
+                            setCameraZPos(prev => Math.min(100, prev + 10)); 
+                        }}
+                        className="p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                    >
+                        <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
+                        <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
+                    </button>
+
+                    {/* Mouse Trail Toggle */}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setShowMouseTrail(!showMouseTrail); }}
+                        className="pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                    >
+                        <div className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMouseTrail ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}>
+                            <MousePointer2 size={24} className={showMouseTrail ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
+                        </div>
+                        <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Trail</span>
+                    </button>
+                </div>
             </div>
 
 
@@ -1356,6 +1394,14 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
             </AnimatePresence>
 
             {/* Subcategory Fragments are now rendered in 3D Background */}
+            
+            {/* Global Features (when toggled from inside 3D View) */}
+            {showMinimap && (
+                <div className="fixed inset-0 pointer-events-none z-[1500]">
+                    <GlobalMiniMap />
+                </div>
+            )}
+            {showMouseTrail && <MouseTrail3D />}
         </motion.div>
     );
 };
