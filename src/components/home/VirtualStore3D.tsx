@@ -1158,40 +1158,37 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
                 </button>
 
                 {/* Move Backward (Bottom) */}
-                <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex items-center gap-12 pointer-events-none">
-                    {/* Minimap Toggle */}
+                <button 
+                    onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setCameraZPos(prev => Math.min(100, prev + 10)); 
+                    }}
+                    className="absolute bottom-32 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                >
+                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
+                    <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
+                </button>
+
+                {/* Minimap Toggle (Bottom Left) */}
+                <div className="absolute bottom-12 left-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
                     <button 
                         onClick={(e) => { e.stopPropagation(); setShowMinimap(!showMinimap); }}
-                        className="pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                        className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMinimap ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
                     >
-                        <div className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMinimap ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}>
-                            <Compass size={24} className={showMinimap ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
-                        </div>
-                        <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Minimap</span>
+                        <Compass size={24} className={showMinimap ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
                     </button>
+                    <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Minimap</span>
+                </div>
 
-                    {/* Back Button (Existing) */}
-                    <button 
-                        onClick={(e) => { 
-                            e.stopPropagation(); 
-                            setCameraZPos(prev => Math.min(100, prev + 10)); 
-                        }}
-                        className="p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
-                    >
-                        <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
-                        <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
-                    </button>
-
-                    {/* Mouse Trail Toggle */}
+                {/* Mouse Trail Toggle (Bottom Right) */}
+                <div className="absolute bottom-12 right-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
                     <button 
                         onClick={(e) => { e.stopPropagation(); setShowMouseTrail(!showMouseTrail); }}
-                        className="pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                        className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMouseTrail ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
                     >
-                        <div className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMouseTrail ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}>
-                            <MousePointer2 size={24} className={showMouseTrail ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
-                        </div>
-                        <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Trail</span>
+                        <MousePointer2 size={24} className={showMouseTrail ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
                     </button>
+                    <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Trail</span>
                 </div>
             </div>
 
@@ -1398,7 +1395,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
             {/* Global Features (when toggled from inside 3D View) */}
             {showMinimap && (
                 <div className="fixed inset-0 pointer-events-none z-[1500]">
-                    <GlobalMiniMap />
+                    <GlobalMiniMap initialExpanded={true} />
                 </div>
             )}
             {showMouseTrail && <MouseTrail3D />}

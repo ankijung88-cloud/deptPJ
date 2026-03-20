@@ -8,8 +8,8 @@ import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
 
 
-export const GlobalMiniMap: React.FC = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
+export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initialExpanded = false }) => {
+    const [isExpanded, setIsExpanded] = useState(initialExpanded);
     const [items, setItems] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
 
