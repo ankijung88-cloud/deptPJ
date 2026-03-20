@@ -99,6 +99,13 @@ export const DetailPage: React.FC = () => {
     }, [item]);
 
     const handleBack = () => {
+        // Simple heuristic to check if we can go back in history
+        // If we are at the first entry of the session, just fallback
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+            return;
+        }
+
         if (item?.parent_id) {
             const templateKeywords = ['cinema', 'museum', 'store', 'ticket'];
             const template = templateKeywords.find(k => 

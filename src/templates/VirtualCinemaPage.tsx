@@ -270,7 +270,9 @@ const VirtualCinemaPage: React.FC = () => {
                 <div className="container mx-auto relative z-10">
                     <button 
                         onClick={() => {
-                            if (parentId) {
+                            if (window.history.state && window.history.state.idx > 0) {
+                                navigate(-1);
+                            } else if (parentId) {
                                 navigate(`/detail/${parentId}`);
                             } else if (currentFloor) {
                                 navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
