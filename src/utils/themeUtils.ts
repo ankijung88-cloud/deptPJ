@@ -178,6 +178,11 @@ function buildTheme(data: PaletteData): JoseonTheme {
 
 export const JOSEON_THEMES: JoseonTheme[] = JOSEON_PALETTE_DATA.map(buildTheme);
 
+export const getContrastColor = (bgHex: string): string => {
+    const lum = getLuminance(bgHex);
+    return lum < 0.35 ? '#FFFFFF' : '#0F172A';
+};
+
 export const getComplementaryColor = (hex: string): string => {
     if (!hex || !hex.startsWith('#')) return '#FFFFFF';
     
