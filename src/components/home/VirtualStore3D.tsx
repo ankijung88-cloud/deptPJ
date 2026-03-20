@@ -7,7 +7,8 @@ import {
     PerspectiveCamera,
     PresentationControls,
     Float,
-    Stars
+    Stars,
+    OrbitControls
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -74,25 +75,25 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { c
                     onPointerOut={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
                     onClick={(e) => { e.stopPropagation(); onClick(); }}
                 >
-                    <icosahedronGeometry args={[8, 1]} />
+                    <icosahedronGeometry args={[4.5, 1]} />
                     <meshPhysicalMaterial 
                         transparent 
-                        opacity={hovered ? 0.35 : 0.15} 
+                        opacity={hovered ? 0.4 : 0.18} 
                         transmission={0.9} 
-                        thickness={1.5} 
+                        thickness={1} 
                         roughness={0.05} 
-                        metalness={0.3}
+                        metalness={0.4}
                         color={color}
                     />
                     <Edges color={hovered ? '#FFF' : color} threshold={15} opacity={0.7} transparent />
                 </mesh>
-                <Html transform distanceFactor={26} position={[0, 0, 0]} pointerEvents="none">
-                    <div className="flex flex-col items-center justify-center p-4 w-[320px] pointer-events-none select-none">
-                        <span className="text-4xl font-black tracking-widest text-white text-center leading-tight transition-all duration-300"
+                <Html transform distanceFactor={28} position={[0, 0, 0]} pointerEvents="none">
+                    <div className="flex flex-col items-center justify-center p-4 w-[280px] pointer-events-none select-none">
+                        <span className="text-2xl font-black tracking-widest text-white text-center leading-tight transition-all duration-300"
                               style={{ 
-                                  textShadow: hovered ? `0 0 30px ${color}, 0 0 60px ${color}` : `0 0 20px ${color}, 0 0 40px ${color}80`,
+                                  textShadow: hovered ? `0 0 35px ${color}, 0 0 70px ${color}` : `0 0 20px ${color}, 0 0 40px ${color}80`,
                                   color: 'white',
-                                  transform: hovered ? 'scale(1.15)' : 'scale(1)'
+                                  transform: hovered ? 'scale(1.1)' : 'scale(1)'
                               }}>
                             <AutoTranslatedText text={getLocalizedText(category.label, i18nLanguage)} />
                         </span>
@@ -118,16 +119,16 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     const fragmentPositions = useMemo(() => {
         if (!categories) return [];
         const positions: [number, number, number][] = [];
-        const radius = 35; // Slightly push back/out to match higher y
-        const startAngle = -Math.PI * 0.75;
-        const totalAngle = Math.PI * 1.5;
+        const radius = 35; 
+        const startAngle = -Math.PI * 0.9; // Shifted Left/Center
+        const totalAngle = Math.PI * 0.9;  // Avoid right side (video frame)
         
         categories.forEach((_, i) => {
             const angle = startAngle + (totalAngle / (categories.length - 1 || 1)) * i;
-            // Higher altitude - Floating in the sky space
-            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 10 : -5));
-            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 5 : -10)) - 25; // More push back
-            const y = 28 + Math.sin(i * 1.5) * 12; // Far higher y for sky placement
+            // High sky - avoiding center-ground and right-video areas
+            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 12 : -8));
+            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 6 : -12)) - 35; // Further back
+            const y = 32 + Math.sin(i * 1.5) * 15; 
             positions.push([x, y, z]);
         });
         return positions;
@@ -956,24 +957,16 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
     if (!activeFloorData) return null;
 
     return (
-        <motion.div
+             <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer bg-[#0A100D]"
-            onClick={onClose}
+            className="fixed inset-0 z-[1000] overflow-hidden bg-[#0A100D]"
         >
-            {/* Top Overlay Instruction */}
-            <div className="absolute top-8 md:top-12 left-0 right-0 z-[1100] flex justify-center pointer-events-none">
-                <div className="text-white/40 font-mono text-[10px] md:text-xs tracking-[0.5em] uppercase whitespace-nowrap bg-black/40 px-6 py-2 rounded-full border border-white/10 backdrop-blur-sm">
-                    <AutoTranslatedText text="배경을 클릭하면 층별 안내페이지로 이동" />
-                </div>
-            </div>
-
-            {/* 3D Background Space */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <Canvas camera={{ position: [0, 5, 45], fov: 50 }}>
+            {/* 3D Background Space - Enabled Pointer Events for OrbitControls */}
+            <div className="absolute inset-0 z-0 pointer-events-auto">
+                <Canvas camera={{ position: [0, 15, 60], fov: 50 }}>
                     <ModalBackground3D 
                         activeFloorData={activeFloorData} 
                         onClose={onClose} 
@@ -985,8 +978,17 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                             navigate(`/category/${catId}`);
                         }}
                     />
+                    <OrbitControls 
+                        enableDamping 
+                        dampingFactor={0.05} 
+                        rotateSpeed={0.5} 
+                        enableZoom={false}
+                        maxPolarAngle={Math.PI / 2.2}
+                        minPolarAngle={Math.PI / 10}
+                    />
                 </Canvas>
             </div>
+
 
             {/* Subtle SVG overlay for architectural grit */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-10">
