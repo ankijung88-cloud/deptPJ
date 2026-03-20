@@ -54,6 +54,54 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
     />
 );
 
+// --- 3D Background for Modal ---
+const ModalBackground3D = () => {
+    const groupRef = useRef<THREE.Group>(null);
+    
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const { x, y } = state.mouse;
+        // Subtle parallax
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, x * 0.06, 0.05);
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -y * 0.03, 0.05);
+    });
+
+    return (
+        <group ref={groupRef}>
+            {/* Stars in the upper background */}
+            <Stars radius={150} depth={60} count={6000} factor={5} saturation={0} fade speed={1} />
+            
+            {/* 3D Land at the bottom */}
+            <group position={[0, -15, -15]}>
+                <gridHelper args={[300, 60, COLORS.line, COLORS.line]} rotation={[0, 0, 0]}>
+                    <lineBasicMaterial attach="material" transparent opacity={0.12} color={COLORS.line} />
+                </gridHelper>
+                
+                {/* Ground plane for depth */}
+                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
+                    <planeGeometry args={[300, 300]} />
+                    <meshBasicMaterial color={COLORS.paper} transparent opacity={0.4} />
+                </mesh>
+
+                {/* Cyber-mountain or abstract landscape elements */}
+                <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
+                    <mesh position={[40, 5, -60]} rotation={[0.5, 0.5, 0]}>
+                        <octahedronGeometry args={[15, 0]} />
+                        <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.04} />
+                    </mesh>
+                    <mesh position={[-50, 8, -80]} rotation={[0.2, 0.8, 0.1]}>
+                        <octahedronGeometry args={[25, 0]} />
+                        <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.03} />
+                    </mesh>
+                </Float>
+            </group>
+            
+            <ambientLight intensity={1.5} />
+            <pointLight position={[30, 30, 30]} intensity={2.5} color={COLORS.line} />
+        </group>
+    );
+};
+
 // --- Traditional Pagoda Parts ---
 
 const TraditionalRoof = ({ width, depth, color }: { width: number, depth: number, color?: string }) => {
@@ -777,50 +825,6 @@ const CityBackground3D = () => {
     );
 };
 
-// --- 3D Background for Modal ---
-const ModalBackground3D = () => {
-    const groupRef = useRef<THREE.Group>(null);
-    
-    useFrame((state) => {
-        if (!groupRef.current) return;
-        const { x, y } = state.mouse;
-        // Subtle parallax based on mouse position
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, x * 0.08, 0.05);
-        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -y * 0.08, 0.05);
-    });
-
-    return (
-        <group ref={groupRef}>
-            {/* Ambient starlight for depth */}
-            <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
-            
-            {/* Perspective Grid - Blueprint style */}
-            <gridHelper args={[200, 40, COLORS.line, COLORS.line]} rotation={[Math.PI / 2.2, 0, 0]} position={[0, -5, -20]}>
-                <lineBasicMaterial attach="material" transparent opacity={0.08} color={COLORS.line} />
-            </gridHelper>
-            
-            {/* Floating Architectural Fragments */}
-            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-                <mesh position={[15, 8, -35]} rotation={[0.4, 0.2, 0]}>
-                    <boxGeometry args={[20, 20, 20]} />
-                    <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.03} />
-                </mesh>
-            </Float>
-            
-            <Float speed={2} rotationIntensity={0.4} floatIntensity={1}>
-                <mesh position={[-18, -10, -45]} rotation={[0.1, 0.6, 0.2]}>
-                    <sphereGeometry args={[12, 24, 24]} />
-                    <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.02} />
-                </mesh>
-            </Float>
-
-            {/* Subtle light to pick up wireframes */}
-            <ambientLight intensity={1} />
-            <pointLight position={[10, 10, 10]} intensity={1.5} color={COLORS.line} />
-        </group>
-    );
-};
-
 // --- Fragmented Blueprint Modal ---
 const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
     const navigate = useNavigate();
@@ -865,14 +869,14 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             { t: [35, 42], l: [10, 40] },
             { t: [72, 78], l: [2, 25] }
         ] : [
-            { t: [10, 22], l: [10, 25] }, // Top Left
-            { t: [8, 20], l: [35, 50] }, // Top Mid-Left
-            { t: [8, 20], l: [60, 75] }, // Top Mid-Right
-            { t: [30, 45], l: [8, 22] },  // Mid Left
-            { t: [55, 70], l: [8, 22] },  // Mid-Bottom Left
-            { t: [78, 90], l: [10, 25] }, // Far Bottom Left
-            { t: [30, 45], l: [30, 45] }, // Near Top-Center Left
-            { t: [55, 70], l: [30, 45] }  // Near Center-Left
+            { t: [10, 22], l: [5, 15] }, // Left Columns
+            { t: [8, 20], l: [20, 35] }, 
+            { t: [25, 40], l: [8, 20] }, 
+            { t: [45, 60], l: [5, 18] }, 
+            { t: [65, 80], l: [8, 22] }, 
+            { t: [15, 30], l: [40, 55] }, // Mid Left-Center
+            { t: [35, 50], l: [40, 55] }, 
+            { t: [55, 75], l: [30, 48] }  
         ];
 
         // Shuffle zones to distribute subcategories uniquely
@@ -924,12 +928,12 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
             {/* Decorative geometrical blocks removed */}
 
-            {/* Bottom-Right Anchor Title Fragment (More ergonomic placement) */}
+            {/* Bottom-Left Anchor Title Fragment (Moved as requested) */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 50 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9, x: -50 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute inset-x-4 bottom-8 md:right-12 md:bottom-12 md:left-auto bg-[#1A2420]/95 backdrop-blur-xl border-2 shadow-2xl p-5 md:p-10 z-50 md:min-w-[500px] cursor-default"
+                className="absolute inset-x-4 bottom-8 md:left-12 md:bottom-12 md:right-auto bg-[#1A2420]/95 backdrop-blur-xl border-2 shadow-2xl p-5 md:p-10 z-50 md:min-w-[500px] cursor-default"
                 style={{ borderColor: MODAL_COLORS.line }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -955,12 +959,12 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                 </button>
             </motion.div>
 
-            {/* Central Circular Video Frame */}
+            {/* Top-Right Circular Video Frame (Moved as requested) */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.8, x: 100 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.2 }}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-60"
+                className="absolute right-8 md:right-16 top-12 md:top-24 z-60"
                 onClick={(e) => {
                     e.stopPropagation();
                     setIsVideoExpanded(true);
