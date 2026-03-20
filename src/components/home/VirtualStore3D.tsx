@@ -12,7 +12,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Volume2, VolumeX } from 'lucide-react';
+import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { getContrastColor } from '../../utils/themeUtils';
@@ -954,7 +954,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
 
     /* Decorative blocks removed to prevent visual confusion */
 
-    if (!activeFloorData) return null;
+    const [cameraZPos, setCameraZPos] = useState(60);
 
     return (
              <motion.div
@@ -966,7 +966,7 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
         >
             {/* 3D Background Space - Enabled Pointer Events for OrbitControls */}
             <div className="absolute inset-0 z-0 pointer-events-auto">
-                <Canvas camera={{ position: [0, 15, 60], fov: 50 }}>
+                <Canvas camera={{ position: [0, 15, cameraZPos], fov: 50 }}>
                     <ModalBackground3D 
                         activeFloorData={activeFloorData} 
                         onClose={onClose} 
@@ -980,13 +980,40 @@ const FragmentedModal = ({ activeFloorData, onClose }: { activeFloorData: any, o
                     />
                     <OrbitControls 
                         enableDamping 
-                        dampingFactor={0.05} 
+                        dampingFactor={0.06} 
                         rotateSpeed={0.5} 
-                        enableZoom={false}
+                        enableZoom={true} // Allow wheel zoom as well
                         maxPolarAngle={Math.PI / 2.2}
                         minPolarAngle={Math.PI / 10}
                     />
                 </Canvas>
+            </div>
+
+            {/* Navigation Overlay (Arrows and Click Areas) */}
+            <div className="absolute inset-0 pointer-events-none z-[1100]">
+                {/* Move Forward (Top) */}
+                <button 
+                    onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setCameraZPos(prev => Math.max(25, prev - 10)); 
+                    }}
+                    className="absolute top-12 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                >
+                    <ChevronUp size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:-translate-y-1 transition-all" />
+                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Forward</span>
+                </button>
+
+                {/* Move Backward (Bottom) */}
+                <button 
+                    onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setCameraZPos(prev => Math.min(100, prev + 10)); 
+                    }}
+                    className="absolute bottom-32 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
+                >
+                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
+                    <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
+                </button>
             </div>
 
 
