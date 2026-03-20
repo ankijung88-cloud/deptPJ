@@ -5,7 +5,9 @@ import {
     Html,
     Edges,
     PerspectiveCamera,
-    PresentationControls
+    PresentationControls,
+    Float,
+    Stars
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -775,6 +777,50 @@ const CityBackground3D = () => {
     );
 };
 
+// --- 3D Background for Modal ---
+const ModalBackground3D = () => {
+    const groupRef = useRef<THREE.Group>(null);
+    
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const { x, y } = state.mouse;
+        // Subtle parallax based on mouse position
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, x * 0.08, 0.05);
+        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -y * 0.08, 0.05);
+    });
+
+    return (
+        <group ref={groupRef}>
+            {/* Ambient starlight for depth */}
+            <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
+            
+            {/* Perspective Grid - Blueprint style */}
+            <gridHelper args={[200, 40, COLORS.line, COLORS.line]} rotation={[Math.PI / 2.2, 0, 0]} position={[0, -5, -20]}>
+                <lineBasicMaterial attach="material" transparent opacity={0.08} color={COLORS.line} />
+            </gridHelper>
+            
+            {/* Floating Architectural Fragments */}
+            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+                <mesh position={[15, 8, -35]} rotation={[0.4, 0.2, 0]}>
+                    <boxGeometry args={[20, 20, 20]} />
+                    <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.03} />
+                </mesh>
+            </Float>
+            
+            <Float speed={2} rotationIntensity={0.4} floatIntensity={1}>
+                <mesh position={[-18, -10, -45]} rotation={[0.1, 0.6, 0.2]}>
+                    <sphereGeometry args={[12, 24, 24]} />
+                    <meshBasicMaterial color={COLORS.line} wireframe transparent opacity={0.02} />
+                </mesh>
+            </Float>
+
+            {/* Subtle light to pick up wireframes */}
+            <ambientLight intensity={1} />
+            <pointLight position={[10, 10, 10]} intensity={1.5} color={COLORS.line} />
+        </group>
+    );
+};
+
 // --- Fragmented Blueprint Modal ---
 const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorData: any, onClose: () => void, isMobile: boolean }) => {
     const navigate = useNavigate();
@@ -861,16 +907,17 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             style={{ backgroundColor: MODAL_COLORS.bg }}
             onClick={onClose}
         >
-            {/* Background SVG lines mimicking architectural sketch */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-                <line x1="0%" y1="20%" x2="100%" y2="80%" stroke={MODAL_COLORS.line} strokeWidth="1.5" />
-                <line x1="10%" y1="0%" x2="90%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" />
-                <line x1="30%" y1="0%" x2="40%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1.5" strokeDasharray="6 6" />
-                <line x1="80%" y1="0%" x2="60%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" strokeDasharray="4 4" />
-                <line x1="0%" y1="60%" x2="100%" y2="40%" stroke={MODAL_COLORS.line} strokeWidth="2" />
+            {/* 3D Background Space */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+                <Canvas camera={{ position: [0, 0, 30], fov: 50 }}>
+                    <ModalBackground3D />
+                </Canvas>
+            </div>
+
+            {/* Subtle SVG overlay for architectural grit */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-10">
+                <line x1="0%" y1="20%" x2="100%" y2="80%" stroke={MODAL_COLORS.line} strokeWidth="1" />
                 <line x1="100%" y1="10%" x2="0%" y2="90%" stroke={MODAL_COLORS.line} strokeWidth="0.5" />
-                <line x1="50%" y1="0%" x2="50%" y2="100%" stroke={MODAL_COLORS.line} strokeWidth="1" opacity={0.1} />
-                <line x1="0%" y1="50%" x2="100%" y2="50%" stroke={MODAL_COLORS.line} strokeWidth="1" opacity={0.1} />
             </svg>
 
             {/* Close button removed as requested. Modal can be closed via backdrop click or the ENTER ZONE button below. */}
