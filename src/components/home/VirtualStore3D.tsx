@@ -74,29 +74,28 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { c
                     onPointerOut={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
                     onClick={(e) => { e.stopPropagation(); onClick(); }}
                 >
-                    <boxGeometry args={[16, 9, 3]} />
+                    <icosahedronGeometry args={[8, 1]} />
                     <meshPhysicalMaterial 
                         transparent 
-                        opacity={hovered ? 0.35 : 0.12} 
-                        transmission={0.95} 
+                        opacity={hovered ? 0.35 : 0.15} 
+                        transmission={0.9} 
                         thickness={1.5} 
                         roughness={0.05} 
-                        metalness={0.2}
+                        metalness={0.3}
                         color={color}
                     />
                     <Edges color={hovered ? '#FFF' : color} threshold={15} opacity={0.7} transparent />
                 </mesh>
-                <Html transform distanceFactor={25} position={[0, 0, 1.6]} pointerEvents="none">
+                <Html transform distanceFactor={26} position={[0, 0, 0]} pointerEvents="none">
                     <div className="flex flex-col items-center justify-center p-4 w-[320px] pointer-events-none select-none">
                         <span className="text-4xl font-black tracking-widest text-white text-center leading-tight transition-all duration-300"
                               style={{ 
-                                  textShadow: hovered ? `0 0 25px ${color}, 0 0 50px ${color}` : `0 0 15px ${color}, 0 0 30px ${color}80`,
+                                  textShadow: hovered ? `0 0 30px ${color}, 0 0 60px ${color}` : `0 0 20px ${color}, 0 0 40px ${color}80`,
                                   color: 'white',
-                                  transform: hovered ? 'scale(1.1)' : 'scale(1)'
+                                  transform: hovered ? 'scale(1.15)' : 'scale(1)'
                               }}>
                             <AutoTranslatedText text={getLocalizedText(category.label, i18nLanguage)} />
                         </span>
-                        <div className="mt-2 w-16 h-[2.5px] transition-all duration-300" style={{ backgroundColor: color, boxShadow: hovered ? `0 0 20px ${color}` : `0 0 10px ${color}`, width: hovered ? '100px' : '48px' }}></div>
                     </div>
                 </Html>
             </group>
@@ -119,16 +118,16 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     const fragmentPositions = useMemo(() => {
         if (!categories) return [];
         const positions: [number, number, number][] = [];
-        const radius = 32; // Reduced radius to bring shards into FOV
-        const startAngle = -Math.PI * 0.7;
-        const totalAngle = Math.PI * 1.4;
+        const radius = 35; // Slightly push back/out to match higher y
+        const startAngle = -Math.PI * 0.75;
+        const totalAngle = Math.PI * 1.5;
         
         categories.forEach((_, i) => {
             const angle = startAngle + (totalAngle / (categories.length - 1 || 1)) * i;
-            // More compact distribution
-            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 8 : -6));
-            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 5 : -8)) - 15;
-            const y = 8 + Math.sin(i * 1.5) * 6; // Adjusted height for visibility
+            // Higher altitude - Floating in the sky space
+            const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 10 : -5));
+            const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 5 : -10)) - 25; // More push back
+            const y = 28 + Math.sin(i * 1.5) * 12; // Far higher y for sky placement
             positions.push([x, y, z]);
         });
         return positions;
