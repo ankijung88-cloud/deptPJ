@@ -84,9 +84,9 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                 </mesh>
 
                 {/* Perspective-aligned Floor Info lying on the ground */}
-                <group position={[-60, 0.5, 40]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <Html transform distanceFactor={30} position={[0, 0, 0]} pointerEvents="auto" className="pointer-events-auto">
-                        <div className="flex flex-col gap-6 select-none cursor-default" style={{ width: '800px' }}>
+                <group position={[-25, 0.5, 30]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <Html transform distanceFactor={35} position={[0, 0, 0]} pointerEvents="auto">
+                        <div className="flex flex-col gap-6 select-none cursor-default" style={{ width: '900px' }}>
                             <div className="flex items-center gap-8 mb-4 border-b-2 pb-6" style={{ borderColor: activeFloorData.color }}>
                                 <span className="text-9xl font-black font-serif italic" style={{ color: activeFloorData.color, textShadow: `0 0 20px ${activeFloorData.color}40` }}>
                                     {activeFloorData.floor}
@@ -935,13 +935,12 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer"
-            style={{ backgroundColor: MODAL_COLORS.bg }}
+            className="fixed inset-0 z-[1000] overflow-hidden cursor-pointer bg-[#1A2420]/80 backdrop-blur-sm"
             onClick={onClose}
         >
             {/* 3D Background Space */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
-                <Canvas camera={{ position: [0, 0, 30], fov: 50 }}>
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <Canvas camera={{ position: [0, 5, 45], fov: 50 }}>
                     <ModalBackground3D activeFloorData={activeFloorData} onClose={onClose} buttonTextColor={buttonTextColor} i18nLanguage={i18n.language} />
                 </Canvas>
             </div>
@@ -958,12 +957,25 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
             {/* Perspective Floor Info lying on ground via R3F Html in background */}
             
-            {/* Top-Right Circular Video Frame (Moved as requested) */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 100 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
-                className="absolute right-8 md:right-16 top-12 md:top-24 z-60"
+                animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    x: 0,
+                    boxShadow: [
+                        "0 0 50px rgba(255, 140, 0, 0.4), 0 0 100px rgba(255, 140, 0, 0.2)",
+                        "0 0 80px rgba(255, 140, 0, 0.6), 0 0 150px rgba(255, 140, 0, 0.3)",
+                        "0 0 50px rgba(255, 140, 0, 0.4), 0 0 100px rgba(255, 140, 0, 0.2)"
+                    ]
+                }}
+                transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1]
+                }}
+                className="absolute right-8 md:right-16 top-12 md:top-24 z-60 rounded-full"
                 onClick={(e) => {
                     e.stopPropagation();
                     setIsVideoExpanded(true);
@@ -971,7 +983,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             >
                 <div className="relative group cursor-pointer">
                     <div
-                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-[6px] border-[#FF8C00]/40 shadow-[0_0_80px_rgba(255,140,0,0.5),0_0_120px_rgba(255,165,0,0.3),inset_0_0_40px_rgba(255,215,0,0.2)] transition-all duration-700 group-hover:scale-110 group-hover:shadow-[0_0_100px_rgba(255,140,0,0.7),0_0_150px_rgba(255,215,0,0.4)] bg-[#0A100D] relative"
+                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-[6px] border-[#FF8C00] shadow-[0_0_40px_rgba(255,140,0,0.6),inset_0_0_30px_rgba(255,215,0,0.4)] transition-all duration-700 group-hover:scale-110 bg-[#0A100D] relative"
                         style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
                     >
                         <video
@@ -996,17 +1008,18 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
                     </div>
 
-                    {/* Sun-like Glow and Rays (SVG enhancement) */}
-                    <svg className="absolute inset-[-60px] w-[420px] h-[420px] pointer-events-none overflow-visible">
-                        {/* Outer solar flares/circles */}
-                        <circle cx="210" cy="210" r="190" fill="none" stroke="#FF8C00" strokeWidth="0.5" opacity="0.1" />
-                        <circle cx="210" cy="210" r="200" fill="none" stroke="#FFD700" strokeWidth="1" strokeDasharray="10 20" className="animate-[spin_40s_linear_infinite] opacity-20" />
+                    {/* Sun-like Neon Aura (Expanding light effect) */}
+                    <svg className="absolute inset-[-100px] w-[500px] h-[500px] pointer-events-none overflow-visible">
+                        {/* Core Neon ring */}
+                        <circle cx="250" cy="250" r="170" fill="none" stroke="#FF8C00" strokeWidth="2" opacity="0.8" />
                         
-                        {/* Rotating inner sun decorative circle */}
-                        <circle cx="210" cy="210" r="180" fill="none" stroke="#FF8C00" strokeWidth="1.5" strokeDasharray="4 8" className="animate-[spin_20s_linear_infinite]" />
+                        {/* Spreading Glow Layers */}
+                        <circle cx="250" cy="250" r="175" fill="none" stroke="#FF8C00" strokeWidth="8" opacity="0.2" filter="blur(4px)" className="animate-pulse" />
+                        <circle cx="250" cy="250" r="190" fill="none" stroke="#FFD700" strokeWidth="20" opacity="0.1" filter="blur(15px)" />
+                        <circle cx="250" cy="250" r="220" fill="none" stroke="#FFA500" strokeWidth="40" opacity="0.05" filter="blur(40px)" />
                         
-                        {/* Static accent circle using floor color */}
-                        <circle cx="210" cy="210" r="170" fill="none" stroke={activeFloorData.color} strokeWidth="1" opacity="0.2" />
+                        {/* Static subtle floor accent */}
+                        <circle cx="250" cy="250" r="165" fill="none" stroke={activeFloorData.color} strokeWidth="2" opacity="0.3" />
                     </svg>
 
                     <div className="absolute inset-0 flex items-center justify-center">
