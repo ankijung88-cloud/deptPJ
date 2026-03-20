@@ -55,7 +55,7 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
 );
 
 // --- 3D Background for Modal ---
-const ModalBackground3D = () => {
+const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage }: { activeFloorData: any, onClose: () => void, buttonTextColor: string, i18nLanguage: string }) => {
     const groupRef = useRef<THREE.Group>(null);
     
     useFrame((state) => {
@@ -82,6 +82,34 @@ const ModalBackground3D = () => {
                     <planeGeometry args={[300, 300]} />
                     <meshBasicMaterial color={COLORS.paper} transparent opacity={0.4} />
                 </mesh>
+
+                {/* Perspective-aligned Floor Info lying on the ground */}
+                <group position={[-60, 0.5, 40]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <Html transform distanceFactor={30} position={[0, 0, 0]} pointerEvents="auto" className="pointer-events-auto">
+                        <div className="flex flex-col gap-6 select-none cursor-default" style={{ width: '800px' }}>
+                            <div className="flex items-center gap-8 mb-4 border-b-2 pb-6" style={{ borderColor: activeFloorData.color }}>
+                                <span className="text-9xl font-black font-serif italic" style={{ color: activeFloorData.color, textShadow: `0 0 20px ${activeFloorData.color}40` }}>
+                                    {activeFloorData.floor}
+                                </span>
+                                <span className="text-6xl font-black text-white tracking-tighter leading-none break-words max-w-[500px]">
+                                    <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18nLanguage)} />
+                                </span>
+                            </div>
+                            <p className="text-white/80 font-sans text-2xl font-medium leading-relaxed mb-10 tracking-widest uppercase">
+                                <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
+                                <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
+                            </p>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onClose(); }}
+                                className="w-[400px] py-6 font-bold tracking-[0.3em] text-2xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] border border-white/20"
+                                style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
+                            >
+                                <span className="font-serif font-black text-3xl leading-none" style={{ color: buttonTextColor }}>→</span>
+                                <AutoTranslatedText text="ENTER ZONE" />
+                            </button>
+                        </div>
+                    </Html>
+                </group>
 
                 {/* Cyber-mountain or abstract landscape elements */}
                 <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
@@ -914,7 +942,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             {/* 3D Background Space */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
                 <Canvas camera={{ position: [0, 0, 30], fov: 50 }}>
-                    <ModalBackground3D />
+                    <ModalBackground3D activeFloorData={activeFloorData} onClose={onClose} buttonTextColor={buttonTextColor} i18nLanguage={i18n.language} />
                 </Canvas>
             </div>
 
@@ -928,37 +956,8 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
 
             {/* Decorative geometrical blocks removed */}
 
-            {/* Bottom-Left Anchor Title Fragment (Moved as requested) */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9, x: -50 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute inset-x-4 bottom-8 md:left-12 md:bottom-12 md:right-auto bg-[#1A2420]/95 backdrop-blur-xl border-2 shadow-2xl p-5 md:p-10 z-50 md:min-w-[500px] cursor-default"
-                style={{ borderColor: MODAL_COLORS.line }}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex items-center gap-3 md:gap-6 mb-3 md:mb-6 pb-3 md:pb-6 border-b-2" style={{ borderColor: activeFloorData.color }}>
-                    <span className="text-4xl md:text-8xl font-black font-serif" style={{ color: activeFloorData.color }}>
-                        {activeFloorData.floor}
-                    </span>
-                    <span className="text-lg md:text-4xl font-black text-white tracking-tighter leading-none break-words max-w-[150px] md:max-w-[250px]">
-                        <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
-                    </span>
-                </div>
-                <p className="text-white/80 font-sans text-[11px] md:text-sm font-medium leading-relaxed mb-6 md:mb-8 tracking-wide">
-                    <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
-                    <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
-                </p>
-                <button
-                    onClick={(e) => { e.stopPropagation(); onClose(); }}
-                    className="w-full py-3 md:py-4 font-bold tracking-widest text-sm md:text-lg transition-transform hover:bg-opacity-90 active:scale-95 flex justify-center items-center gap-4 shadow-md"
-                    style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
-                >
-                    <span className="font-serif font-black text-xl md:text-2xl leading-none relative -top-[1px] md:-top-[2px]" style={{ color: buttonTextColor }}>→</span>
-                    <AutoTranslatedText text="ENTER ZONE" />
-                </button>
-            </motion.div>
-
+            {/* Perspective Floor Info lying on ground via R3F Html in background */}
+            
             {/* Top-Right Circular Video Frame (Moved as requested) */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 100 }}
@@ -972,7 +971,7 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
             >
                 <div className="relative group cursor-pointer">
                     <div
-                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-[#00F2FF]/30 shadow-[0_0_50px_rgba(0,242,255,0.2)] transition-transform duration-500 group-hover:scale-110 bg-[#0A100D] relative"
+                        className="w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-[6px] border-[#FF8C00]/40 shadow-[0_0_80px_rgba(255,140,0,0.5),0_0_120px_rgba(255,165,0,0.3),inset_0_0_40px_rgba(255,215,0,0.2)] transition-all duration-700 group-hover:scale-110 group-hover:shadow-[0_0_100px_rgba(255,140,0,0.7),0_0_150px_rgba(255,215,0,0.4)] bg-[#0A100D] relative"
                         style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
                     >
                         <video
@@ -997,10 +996,17 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
                     </div>
 
-                    {/* Architectural decoration around video */}
-                    <svg className="absolute inset-[-40px] w-[380px] h-[380px] pointer-events-none overflow-visible">
-                        <circle cx="190" cy="190" r="170" fill="none" stroke={MODAL_COLORS.line} strokeWidth="1" strokeDasharray="5 5" className="animate-[spin_60s_linear_infinite]" />
-                        <circle cx="190" cy="190" r="185" fill="none" stroke={activeFloorData.color} strokeWidth="0.5" opacity="0.3" />
+                    {/* Sun-like Glow and Rays (SVG enhancement) */}
+                    <svg className="absolute inset-[-60px] w-[420px] h-[420px] pointer-events-none overflow-visible">
+                        {/* Outer solar flares/circles */}
+                        <circle cx="210" cy="210" r="190" fill="none" stroke="#FF8C00" strokeWidth="0.5" opacity="0.1" />
+                        <circle cx="210" cy="210" r="200" fill="none" stroke="#FFD700" strokeWidth="1" strokeDasharray="10 20" className="animate-[spin_40s_linear_infinite] opacity-20" />
+                        
+                        {/* Rotating inner sun decorative circle */}
+                        <circle cx="210" cy="210" r="180" fill="none" stroke="#FF8C00" strokeWidth="1.5" strokeDasharray="4 8" className="animate-[spin_20s_linear_infinite]" />
+                        
+                        {/* Static accent circle using floor color */}
+                        <circle cx="210" cy="210" r="170" fill="none" stroke={activeFloorData.color} strokeWidth="1" opacity="0.2" />
                     </svg>
 
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -1013,8 +1019,8 @@ const FragmentedModal = ({ activeFloorData, onClose, isMobile }: { activeFloorDa
                         </motion.div>
                     </div>
 
-                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#00FFC2] bg-black/40 px-4 py-1.5 rounded-full border border-[#00FFC2]/30 backdrop-blur-md">
+                    <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#FFD700] bg-black/60 px-6 py-2 rounded-full border border-[#FFD700]/40 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
                             <AutoTranslatedText text="Click to Expand View" />
                         </span>
                     </div>
