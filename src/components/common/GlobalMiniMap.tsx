@@ -6,10 +6,12 @@ import { Compass, ChevronRight, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
+import { getComplementaryColor } from '../../utils/themeUtils';
 
 
 export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initialExpanded = false }) => {
     const [isExpanded, setIsExpanded] = useState(initialExpanded);
+    const [isHovered, setIsHovered] = useState(false);
     const [items, setItems] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
 
@@ -59,11 +61,13 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
         return [...subItems, ...subStories];
     };
 
+    const compColor = (currentFloor && currentFloor.color) ? getComplementaryColor(currentFloor.color) : '#FFFFFF';
+
     return (
         <div
             className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 p-4 -m-4"
-            onMouseEnter={() => setIsExpanded(true)}
-            onMouseLeave={() => setIsExpanded(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <AnimatePresence>
                 {isExpanded && (
@@ -156,20 +160,21 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
             </AnimatePresence>
 
             <AnimatePresence>
-                {!isExpanded && (
+                {!isExpanded && isHovered && (
                     <motion.div
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
+                        className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-black/60 backdrop-blur-xl border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
+                        style={{ borderColor: `${compColor}44` }}
                     >
                         <div className="flex items-center gap-2">
-                            <span className="text-white text-[10px] font-black tracking-[0.2em] uppercase">
+                            <span className="font-black tracking-[0.2em] uppercase" style={{ color: compColor }}>
                                 <AutoTranslatedText text="전체 공간 안내" />
                             </span>
                         </div>
                         {/* Speech Bubble Arrow */}
-                        <div className="absolute left-6 -bottom-1 w-2 h-2 bg-white/10 border-r border-b border-white/20 rotate-45 backdrop-blur-md" />
+                        <div className="absolute left-6 -bottom-1 w-2 h-2 bg-black/60 border-r border-b border-white/20 rotate-45 backdrop-blur-md" style={{ borderColor: `${compColor}44` }} />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -177,16 +182,18 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
             {/* Toggle Button */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:border-white/30 hover:scale-105'}`}
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
+                style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
             >
                 <Compass
                     size={24}
-                    className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'text-white/60 group-hover:text-white'}`}
+                    className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'group-hover:scale-110'}`}
+                    style={!isExpanded ? { color: compColor } : {}}
                 />
 
                 {/* Visual HUD Pulse when collapsed */}
                 {!isExpanded && (
-                    <span className="absolute inset-0 rounded-full animate-ping bg-white/5 pointer-events-none" />
+                    <span className="absolute inset-0 rounded-full animate-ping pointer-events-none opacity-20" style={{ backgroundColor: compColor }} />
                 )}
 
                 {currentFloor && !isExpanded && (

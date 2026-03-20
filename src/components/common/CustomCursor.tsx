@@ -1,4 +1,7 @@
 import React, { useEffect, useRef } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import { useFloors } from '../../context/FloorContext';
+import { getComplementaryColor } from '../../utils/themeUtils';
 
 const CONFIG = {
     // Rendering Config
@@ -96,6 +99,18 @@ class Particle {
 
 export const CustomCursor: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const location = useLocation();
+    const { subId } = useParams<{ subId: string }>();
+    const { floors } = useFloors();
+
+    // Identify current floor
+    const currentPath = location.pathname;
+    const currentFloor = floors.find(f =>
+        currentPath.includes(`/category/${f.floor.toLowerCase()}`) ||
+        f.subitems?.some(s => s.id === subId)
+    );
+
+    const compColor = (currentFloor && currentFloor.color) ? getComplementaryColor(currentFloor.color) : 'rgba(245, 245, 220, 0.9)';
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -194,14 +209,14 @@ export const CustomCursor: React.FC = () => {
                     // Ultra-minimal premium pointer
                     ctx.beginPath();
                     ctx.arc(displayMouse.x, displayMouse.y, 18, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)'; // Dancheong Gold Border
+                    ctx.strokeStyle = `${compColor}33`; // Complementary Border (20% opacity)
                     ctx.lineWidth = 1;
                     ctx.stroke();
 
                     // Active dot
                     ctx.beginPath();
                     ctx.arc(displayMouse.x, displayMouse.y, 2, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(161, 45, 39, 0.9)'; // Dancheong Red (Jangdan)
+                    ctx.fillStyle = compColor; // Complementary Core
                     ctx.fill();
                 } else {
                     // Smooth Silk Follow
@@ -210,12 +225,12 @@ export const CustomCursor: React.FC = () => {
 
                     ctx.beginPath();
                     ctx.arc(displayMouse.x, displayMouse.y, 4, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(245, 245, 220, 0.9)'; // Dancheong White (Oksun)
+                    ctx.fillStyle = compColor; // Complementary Core
                     ctx.fill();
                 }
 
                 ctx.shadowBlur = 8;
-                ctx.shadowColor = 'rgba(212, 175, 55, 0.2)';
+                ctx.shadowColor = `${compColor}33`;
             }
 
             animationFrameId = requestAnimationFrame(animate);

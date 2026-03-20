@@ -178,11 +178,23 @@ function buildTheme(data: PaletteData): JoseonTheme {
 
 export const JOSEON_THEMES: JoseonTheme[] = JOSEON_PALETTE_DATA.map(buildTheme);
 
-export const getContrastColor = (bgHex: string): string => {
-    const lum = getLuminance(bgHex);
-    return lum < 0.35 ? '#FFFFFF' : '#0F172A';
+export const getComplementaryColor = (hex: string): string => {
+    if (!hex || !hex.startsWith('#')) return '#FFFFFF';
+    
+    // Convert hex to RGB
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    
+    // Invert colors
+    const rInv = 255 - r;
+    const gInv = 255 - g;
+    const bInv = 255 - b;
+    
+    // Ensure sufficient contrast vs white/black of the icons
+    // But for complementary, pure inversion is what was asked.
+    return `#${rInv.toString(16).padStart(2, '0')}${gInv.toString(16).padStart(2, '0')}${bInv.toString(16).padStart(2, '0')}`;
 };
-
 
 export const DEFAULT_THEME: JoseonTheme = buildTheme([
     '#1A2420', '#00FFC2', '#FF3B30', 'rgba(0,255,194,0.3)',
