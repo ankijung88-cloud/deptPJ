@@ -941,7 +941,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[1000] flex lg:hidden items-center justify-center p-6 bg-black/80 backdrop-blur-md"
             onClick={onClose}
         >
             <motion.div 
@@ -1085,13 +1085,18 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
     }, [isVideoExpanded]);
 
     return (
-             <motion.div
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[1000] overflow-hidden bg-[#0A100D]"
+            className="fixed inset-0 z-[1000] hidden lg:flex flex-col bg-[#0A100D] overflow-hidden"
+            data-engine-version="1.0.2"
         >
+            {/* 3D Immersive Explorer - Force Desktop Precedence Marker v1.0.2 */}
+            <div className="absolute top-4 right-4 text-[8px] font-mono text-white/10 pointer-events-none uppercase tracking-widest z-[10000]">
+                3D Immersive Engine v1.0.2 (Desktop Only)
+            </div>
             {/* 3D Background Space - Enabled Pointer Events for OrbitControls */}
             <div className="absolute inset-0 z-0 pointer-events-auto">
                 <Canvas camera={{ position: [0, 15, cameraZPos], fov: 50 }}>
