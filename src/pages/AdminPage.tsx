@@ -3,6 +3,7 @@ import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../hooks/useAdmin';
+import { TEMPLATE_CATEGORIES } from '../utils/constants';
 import { 
     LayoutDashboard, 
     Package, 
@@ -103,7 +104,8 @@ const normalizeProductData = (product: any) => {
         price: '',
         video_url: '',
         long_description: { ...DEFAULT_LONG_DESCRIPTION },
-        closed_days: []
+        closed_days: [],
+        parent_id: ''
     };
     if (!product) return defaultData;
 
@@ -133,7 +135,8 @@ const normalizeProductData = (product: any) => {
         long_description: normalized_long_description,
         event_date: normalizeLocalizedString(raw_event_date),
         location: normalizeLocalizedString(product.location),
-        closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : []
+        closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : [],
+        parent_id: product.parent_id || ''
     };
 };
 
@@ -218,10 +221,15 @@ const ProductManager = () => {
             displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.category.toLowerCase().includes(searchTerm.toLowerCase());
         
+        
         const matchesFloor = !selectedFloor || 
-            (selectedFloor === 'uncategorized' 
-                ? !floors.some(f => f.id === p.category) 
-                : p.category === selectedFloor);
+            (selectedFloor === 'templates'
+                ? TEMPLATE_CATEGORIES.includes(p.category)
+                : (selectedFloor === 'uncategorized' 
+                    ? !floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category)
+                    : p.category === selectedFloor
+                )
+            );
         const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
         
         return matchesSearch && matchesFloor && matchesSub;
@@ -270,6 +278,7 @@ const ProductManager = () => {
                         {floors.map(f => (
                             <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
                         ))}
+                        <option value="templates">템플릿 (Templates)</option>
                         <option value="uncategorized">기타/미분류 (Other/Uncategorized)</option>
                     </select>
 
@@ -280,7 +289,10 @@ const ProductManager = () => {
                         disabled={!selectedFloor}
                     >
                         <option value="">{allCategoriesLabel}</option>
-                        {selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
+                        {selectedFloor === 'templates' && TEMPLATE_CATEGORIES.map(t => (
+                            <option key={t} value={t}>{t.toUpperCase()}</option>
+                        ))}
+                        {selectedFloor && selectedFloor !== 'templates' && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
                             <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
                         ))}
                     </select>
@@ -313,13 +325,17 @@ const ProductManager = () => {
                                         <span className="text-white font-bold">
                                             {(() => {
                                                 const floor = floors.find(f => f.id === product.category);
-                                                return floor ? `${floor.floor}` : displayLocalized(product.category);
+                                                if (floor) return `${floor.floor}`;
+                                                if (TEMPLATE_CATEGORIES.includes(product.category)) return 'Template';
+                                                return displayLocalized(product.category);
                                             })()}
                                         </span>
                                         <span className="text-white/40 text-xs">
                                             {(() => {
                                                 const floor = floors.find(f => f.id === product.category);
-                                                return floor ? displayLocalized(floor.title) : '';
+                                                if (floor) return displayLocalized(floor.title);
+                                                if (TEMPLATE_CATEGORIES.includes(product.category)) return product.category.toUpperCase();
+                                                return '';
                                             })()}
                                         </span>
                                     </div>
@@ -535,6 +551,11 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             {floor.floor} - {typeof floor.title === 'string' ? floor.title : floor.title.ko}
                                         </option>
                                     ))}
+                                    <optgroup label="Templates">
+                                        {TEMPLATE_CATEGORIES.map(t => (
+                                            <option key={t} value={t}>{t.toUpperCase()}</option>
+                                        ))}
+                                    </optgroup>
                                 </select>
                             </div>
                             <div>
@@ -547,11 +568,15 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                     disabled={!formData.category}
                                 >
                                     <option value="">Select Subcategory</option>
-                                    {floors.find(f => f.id === formData.category)?.subitems?.map(sub => (
-                                        <option key={sub.id} value={sub.id}>
-                                            {typeof sub.label === 'string' ? sub.label : sub.label.ko}
-                                        </option>
-                                    ))}
+                                    {TEMPLATE_CATEGORIES.includes(formData.category) ? (
+                                        <option value="general">General</option>
+                                    ) : (
+                                        floors.find(f => f.id === formData.category)?.subitems?.map(sub => (
+                                            <option key={sub.id} value={sub.id}>
+                                                {typeof sub.label === 'string' ? sub.label : sub.label.ko}
+                                            </option>
+                                        ))
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -566,6 +591,25 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
                         />
                     </div>
+
+                    {/* Template specific fields: Parent ID */}
+                    {TEMPLATE_CATEGORIES.includes(formData.category) && (
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block">
+                                <AutoTranslatedText text="Template Linked Parent ID (필수)" />
+                            </label>
+                            <input 
+                                type="text" 
+                                value={formData.parent_id || ''} 
+                                onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
+                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                placeholder="연결할 상위 제품의 ID를 입력하세요 (예: global-exchange-week)"
+                            />
+                            <p className="text-[10px] text-white/30 mt-2 px-1">
+                                * 템플릿(Cinema, Museum 등) 데이터는 상위 제품 ID가 정확히 입력되어야 해당 페이지에서 노출됩니다.
+                            </p>
+                        </div>
+                    )}
 
                     {/* 5-2. Detailed Description */}
                     <div>
