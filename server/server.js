@@ -73,56 +73,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Dept Backend is running - V2' });
 });
 
-// DEBUG: Check DB content
-import pool from './config/db.js';
-app.get('/api/debug/subcategories', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT DISTINCT subcategory FROM featured_items');
-    const [all] = await pool.query('SELECT id, title, category, subcategory, agency_id FROM featured_items LIMIT 50');
-    res.json({ 
-      unique_subcategories: rows.map(r => r.subcategory),
-      sample_items: all 
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ADMIN: Emergency Migration Trigger
-app.get('/api/admin/migrate-now', async (req, res) => {
-  const uploadDir = path.join(__dirname, 'uploads');
-  const results = { total: 0, success: 0, errors: [] };
-  
-  try {
-    if (!fs.existsSync(uploadDir)) {
-      return res.status(404).json({ error: 'Upload directory not found', path: uploadDir });
-    }
-
-    const files = fs.readdirSync(uploadDir).filter(f => f !== '.gitkeep');
-    results.total = files.length;
-
-    for (const filename of files) {
-      try {
-        const filePath = path.join(uploadDir, filename);
-        const data = fs.readFileSync(filePath);
-        const ext = path.extname(filename).toLowerCase();
-        const mimetype = ext === '.png' ? 'image/png' : (ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : (ext === '.webm' ? 'video/webm' : 'application/octet-stream'));
-
-        await pool.query(
-          'INSERT INTO media_storage (filename, mimetype, data) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mimetype=VALUES(mimetype), data=VALUES(data)',
-          [filename, mimetype, data]
-        );
-        results.success++;
-      } catch (err) {
-        results.errors.push({ file: filename, error: err.message });
-      }
-    }
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
