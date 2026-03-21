@@ -1651,9 +1651,9 @@ const AgencyManager = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="flex flex-col">
+                                    <div className="flex flex-col gap-1">
                                         <span className="text-white/60 text-xs font-mono">{agency.username}</span>
-                                        <span className="text-white/40 text-[10px] font-mono select-all hover:text-[#00FFC2] transition-colors">{agency.password}</span>
+                                        <span className="text-white/90 text-sm font-mono select-all hover:text-[#00FFC2] transition-colors bg-white/5 px-2 py-0.5 rounded-md w-fit">{agency.password}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">

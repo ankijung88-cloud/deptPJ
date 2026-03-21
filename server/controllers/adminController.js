@@ -7,7 +7,7 @@ export const getAgencies = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      'SELECT id, username, role, agency_name, status, created_at FROM users WHERE role = ?',
+      'SELECT id, username, password, role, agency_name, birth_date, phone_mobile, phone_company, address, address_detail, status, created_at FROM users WHERE role = ?',
       ['AGENCY']
     );
     res.json(rows);
@@ -21,12 +21,14 @@ export const createAgency = async (req, res) => {
     return res.status(403).json({ message: 'Admin privileges required' });
   }
 
-  const { username, password, agencyName } = req.body;
+  const { 
+    username, password, agencyName, birthDate, phoneMobile, phoneCompany, address, addressDetail 
+  } = req.body;
 
   try {
     await pool.query(
-      'INSERT INTO users (username, password, role, agency_name) VALUES (?, ?, ?, ?)',
-      [username, password, 'AGENCY', agencyName]
+      'INSERT INTO users (username, password, role, agency_name, birth_date, phone_mobile, phone_company, address, address_detail, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [username, password, 'AGENCY', agencyName, birthDate, phoneMobile, phoneCompany, address, addressDetail, 'APPROVED']
     );
     res.status(201).json({ message: 'Agency created successfully' });
   } catch (error) {
@@ -43,11 +45,13 @@ export const updateAgency = async (req, res) => {
   }
 
   const { id } = req.params;
-  const { username, password, agencyName } = req.body;
+  const { 
+    username, password, agencyName, birthDate, phoneMobile, phoneCompany, address, addressDetail 
+  } = req.body;
 
   try {
-    let query = 'UPDATE users SET username = ?, agency_name = ?';
-    let params = [username, agencyName];
+    let query = 'UPDATE users SET username = ?, agency_name = ?, birth_date = ?, phone_mobile = ?, phone_company = ?, address = ?, address_detail = ?';
+    let params = [username, agencyName, birthDate, phoneMobile, phoneCompany, address, addressDetail];
 
     if (password) {
       query += ', password = ?';
