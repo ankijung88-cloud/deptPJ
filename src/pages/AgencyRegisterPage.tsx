@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone, MapPin, Search } from 'lucide-react';
+import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone, MapPin } from 'lucide-react';
 import { registerAgency } from '../api/auth';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 
@@ -27,51 +27,8 @@ const AgencyRegisterPage: React.FC = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    // Load Daum Postcode Script
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-        script.async = true;
-        document.head.appendChild(script);
-
-        return () => {
-            const scripts = document.head.getElementsByTagName('script');
-            for (let i = 0; i < scripts.length; i++) {
-                if (scripts[i].src.includes('postcode.v2.js')) {
-                    document.head.removeChild(scripts[i]);
-                }
-            }
-        };
-    }, []);
-
-    const handleAddressSearch = () => {
-        if (!window.daum || !window.daum.Postcode) {
-            setError('주소 검색 서비스를 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
-            return;
-        }
-
-        new window.daum.Postcode({
-            oncomplete: (data: any) => {
-                let fullAddress = data.address;
-                let extraAddress = '';
-
-                if (data.addressType === 'R') {
-                    if (data.bname !== '') {
-                        extraAddress += data.bname;
-                    }
-                    if (data.buildingName !== '') {
-                        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
-                    }
-                    fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-                }
-
-                setFormData(prev => ({ ...prev, address: fullAddress }));
-                // Auto-focus on detail address
-                const detailInput = document.getElementById('addressDetail');
-                if (detailInput) detailInput.focus();
-            }
-        }).open();
-    };
+    // No longer using Daum Postcode script for manual entry
+    useEffect(() => {}, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -245,30 +202,19 @@ const AgencyRegisterPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">회사 주소</label>
-                                <div className="flex gap-3">
-                                    <div className="relative flex-1 group">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">회사 주소</label>
+                                    <div className="relative group">
                                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                         <input
                                             type="text"
-                                            readOnly
-                                            placeholder="검색 버튼을 눌러 주소를 입력하세요"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium cursor-pointer placeholder:text-white/20"
+                                            placeholder="회사 주소를 직접 입력해 주세요"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
                                             value={formData.address}
-                                            onClick={handleAddressSearch}
+                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                         />
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddressSearch}
-                                        className="px-6 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/10 flex items-center gap-2 font-bold whitespace-nowrap"
-                                    >
-                                        <Search size={18} />
-                                        <span>검색</span>
-                                    </button>
                                 </div>
-                            </div>
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">상세 주소</label>
