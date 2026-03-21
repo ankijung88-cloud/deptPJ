@@ -71,12 +71,18 @@ export const getProductById = async (req, res) => {
 
 export const searchProducts = async (req, res) => {
   const { q } = req.query;
+  const user = req.user;
+
   try {
-    const query = `
-      SELECT * FROM featured_items 
-      WHERE title LIKE ? OR description LIKE ?
-    `;
-    const [rows] = await pool.query(query, [`%${q}%`, `%${q}%`]);
+    let query = 'SELECT * FROM featured_items WHERE (title LIKE ? OR description LIKE ?)';
+    let params = [`%${q}%`, `%${q}%`];
+
+    if (user && user.role === 'AGENCY') {
+      query += ' AND agency_id = ?';
+      params.push(user.id);
+    }
+
+    const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -111,7 +117,16 @@ export const createProduct = async (req, res) => {
       return JSON.stringify(val);
     };
 
-    const agency_id = req.user?.id || null;
+    let agency_id = req.user?.id || null;
+    
+    if (req.user?.role === 'ADMIN') {
+      // Admins can specify an agency_id or it defaults to null (admin-owned)
+      agency_id = req.body.agency_id || req.body.agencyId || null;
+      if (agency_id === 'null' || agency_id === '') agency_id = null;
+    } else if (req.user?.role === 'AGENCY') {
+      // Agencies always own what they create
+      agency_id = req.user.id;
+    }
 
     const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const params = [

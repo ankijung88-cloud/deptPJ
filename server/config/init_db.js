@@ -117,6 +117,32 @@ async function initDB() {
       }
       console.log('[DB] Migration successful: Added agency_id to featured_items.');
     }
+    
+    // Check if agency_id exists in notices
+    const [noticeAgencyCols] = await pool.query("SHOW COLUMNS FROM notices LIKE 'agency_id'");
+    if (noticeAgencyCols.length === 0) {
+      console.log('[DB] Missing agency_id column in notices. Running migration...');
+      await pool.query("ALTER TABLE notices ADD COLUMN agency_id INT NULL AFTER id");
+      
+      const [adminRows] = await pool.query("SELECT id FROM users WHERE role = 'ADMIN' LIMIT 1");
+      if (adminRows.length > 0) {
+        await pool.query("UPDATE notices SET agency_id = ? WHERE agency_id IS NULL", [adminRows[0].id]);
+      }
+      console.log('[DB] Migration successful: Added agency_id to notices.');
+    }
+    
+    // Check if agency_id exists in faqs
+    const [faqAgencyCols] = await pool.query("SHOW COLUMNS FROM faqs LIKE 'agency_id'");
+    if (faqAgencyCols.length === 0) {
+      console.log('[DB] Missing agency_id column in faqs. Running migration...');
+      await pool.query("ALTER TABLE faqs ADD COLUMN agency_id INT NULL AFTER id");
+      
+      const [adminRows] = await pool.query("SELECT id FROM users WHERE role = 'ADMIN' LIMIT 1");
+      if (adminRows.length > 0) {
+        await pool.query("UPDATE faqs SET agency_id = ? WHERE agency_id IS NULL", [adminRows[0].id]);
+      }
+      console.log('[DB] Migration successful: Added agency_id to faqs.');
+    }
 
     // Ensure data column allows NULL
     const [mediaColumns] = await pool.query("SHOW COLUMNS FROM media_storage LIKE 'data'");

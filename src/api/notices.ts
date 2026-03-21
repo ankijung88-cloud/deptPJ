@@ -2,7 +2,11 @@ import { Notice } from '../types';
 
 export const getNotices = async (): Promise<Notice[]> => {
     try {
-        const response = await fetch('/api/notices');
+        const response = await fetch('/api/notices', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || `API Error: ${response.status}`);

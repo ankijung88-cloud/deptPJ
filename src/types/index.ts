@@ -48,6 +48,7 @@ export interface FeaturedItem {
     event_dates?: string[];
     eventDates?: string[];
     selected_templates?: SelectedTemplate[] | string; // Can be string (JSON) from DB or array in frontend
+    agency_id?: string | number;
 }
 
 export interface FloorContent {
@@ -106,6 +107,7 @@ export interface Notice {
     category: string;
     date: string;
     is_important: boolean;
+    agency_id?: string | number;
 }
 
 export interface FAQ {
@@ -114,4 +116,5 @@ export interface FAQ {
     answer: LocalizedString;
     category?: string;
     display_order?: number;
+    agency_id?: string | number;
 }

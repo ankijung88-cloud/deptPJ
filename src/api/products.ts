@@ -101,7 +101,11 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
 
 export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch('/api/products', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
@@ -140,7 +144,11 @@ export const getProductById = async (id: string): Promise<FeaturedItem | null> =
 
 export const searchProducts = async (query: string): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}`);
+        const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);

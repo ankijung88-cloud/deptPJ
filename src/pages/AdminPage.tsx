@@ -177,11 +177,10 @@ const normalizeFAQData = (faq: any) => {
 };
 
 // Components for different sections
-const ProductManager = () => {
+const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const { isAdmin } = useAdmin();
     const { floors } = useFloors();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
-    const [agencies, setAgencies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFloor, setSelectedFloor] = useState('');
@@ -198,24 +197,12 @@ const ProductManager = () => {
 
     useEffect(() => {
         fetchProducts();
-        if (isAdmin) {
-            fetchAgenciesList();
-        }
-    }, [isAdmin]);
+    }, []);
 
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, selectedFloor, selectedSubcategory, selectedAgency]);
-
-    const fetchAgenciesList = async () => {
-        try {
-            const data = await getAgencies();
-            setAgencies(data);
-        } catch (err) {
-            console.error('Failed to fetch agencies:', err);
-        }
-    };
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -1218,7 +1205,8 @@ const NOTICE_FALLBACK: Notice[] = [
     { id: '3', title: { ko: '지하 주차장 보수 공사 일정 안내', en: 'Parking Lot Maintenance Schedule' }, category: '공지', date: '2024-03-15', content: { ko: '3월 25일부터 27일까지 주차장 일부 구역의 보수 공사가 진행됩니다.' }, is_important: false },
 ];
 
-const NoticeManager = () => {
+const NoticeManager = ({ agencies }: { agencies: any[] }) => {
+    const { isAdmin } = useAdmin();
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -1304,6 +1292,7 @@ const NoticeManager = () => {
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Date" /></th>
+                            {isAdmin && <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>}
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
                     </thead>
@@ -1316,6 +1305,11 @@ const NoticeManager = () => {
                                 </td>
                                 <td className="px-6 py-4 text-white/40">{notice.category}</td>
                                 <td className="px-6 py-4 text-white/40">{notice.date}</td>
+                                {isAdmin && (
+                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
+                                        {agencies.find(a => a.id === notice.agency_id)?.agency_name || <span className="text-white/20">Admin</span>}
+                                    </td>
+                                )}
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <button onClick={() => { setEditingNotice(notice); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
@@ -1329,12 +1323,13 @@ const NoticeManager = () => {
                 {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading notices..." /></div>}
             </div>
 
-            {isModalOpen && <NoticeFormModal notice={editingNotice} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchNotices(); }} />}
+            {isModalOpen && <NoticeFormModal notice={editingNotice} agencies={agencies} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchNotices(); }} />}
         </div>
     );
 };
 
-const NoticeFormModal = ({ notice, onClose, onSuccess }: any) => {
+const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
+    const { isAdmin } = useAdmin();
     const { floors } = useFloors();
     const [formData, setFormData] = useState<any>(() => normalizeNoticeData(notice));
 
@@ -1357,6 +1352,21 @@ const NoticeFormModal = ({ notice, onClose, onSuccess }: any) => {
                     <AutoTranslatedText text={isEdit ? 'Edit Notice' : 'Add Notice'} />
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {isAdmin && (
+                        <div>
+                            <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                            <select 
+                                value={formData.agency_id || ''} 
+                                onChange={e => setFormData({...formData, agency_id: e.target.value})}
+                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                            >
+                                <option value="">Admin (Default)</option>
+                                {agencies.map((a: any) => (
+                                    <option key={a.id} value={a.id}>{a.agency_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
@@ -1409,7 +1419,8 @@ const FAQ_FALLBACK = [
     { id: '5', question: { ko: '환불 및 교환 규정은 어떻게 되나요?' }, answer: { ko: '구매 후 7일 이내에 영수증과 미개봉 상태의 상품을 지참하시면 환불 및 교환이 가능합니다.' }, category: 'GENERAL', display_order: 5 },
 ];
 
-const FAQManager = () => {
+const FAQManager = ({ agencies }: { agencies: any[] }) => {
+    const { isAdmin } = useAdmin();
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -1494,6 +1505,7 @@ const FAQManager = () => {
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Question" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
+                            {isAdmin && <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>}
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
                     </thead>
@@ -1502,6 +1514,11 @@ const FAQManager = () => {
                             <tr key={faq.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 text-white font-medium">{displayLocalized(faq.question)}</td>
                                 <td className="px-6 py-4 text-white/40">{faq.category || 'General'}</td>
+                                {isAdmin && (
+                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
+                                        {agencies.find(a => a.id === faq.agency_id)?.agency_name || <span className="text-white/20">Admin</span>}
+                                    </td>
+                                )}
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <button onClick={() => { setEditingFaq(faq); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
@@ -1515,12 +1532,13 @@ const FAQManager = () => {
                 {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading FAQs..." /></div>}
             </div>
 
-            {isModalOpen && <FAQFormModal faq={editingFaq} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchFaqs(); }} />}
+            {isModalOpen && <FAQFormModal faq={editingFaq} agencies={agencies} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchFaqs(); }} />}
         </div>
     );
 };
 
-const FAQFormModal = ({ faq, onClose, onSuccess }: any) => {
+const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
+    const { isAdmin } = useAdmin();
     const { floors } = useFloors();
     const [formData, setFormData] = useState<any>(() => normalizeFAQData(faq));
 
@@ -1543,6 +1561,21 @@ const FAQFormModal = ({ faq, onClose, onSuccess }: any) => {
                     <AutoTranslatedText text={isEdit ? 'Edit FAQ' : 'Add FAQ'} />
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {isAdmin && (
+                        <div>
+                            <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                            <select 
+                                value={formData.agency_id || ''} 
+                                onChange={e => setFormData({...formData, agency_id: e.target.value})}
+                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                            >
+                                <option value="">Admin (Default)</option>
+                                {agencies.map((a: any) => (
+                                    <option key={a.id} value={a.id}>{a.agency_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
@@ -1842,6 +1875,23 @@ export const AdminPage: React.FC = () => {
         if (!isAuthenticated) navigate('/admin/login');
     }, [isAuthenticated, navigate]);
 
+    const [agencies, setAgencies] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (isAdmin) {
+            fetchAgenciesList();
+        }
+    }, [isAdmin]);
+
+    const fetchAgenciesList = async () => {
+        try {
+            const data = await getAgencies();
+            setAgencies(data || []);
+        } catch (err) {
+            console.error('Failed to fetch agencies:', err);
+        }
+    };
+
     const tabs = [
         { id: 'products', label: 'Products', icon: Package },
         ...(isAdmin ? [{ id: 'agencies', label: 'Agencies', icon: Layers }] : []),
@@ -1910,12 +1960,12 @@ export const AdminPage: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.3 }}
                     >
-                        {activeTab === 'products' && <ProductManager />}
+                        {activeTab === 'products' && <ProductManager agencies={agencies} />}
                         {activeTab === 'agencies' && <AgencyManager />}
                         {activeTab === 'floors' && <FloorManager />}
 
-                        {activeTab === 'notices' && <NoticeManager />}
-                        {activeTab === 'faqs' && <FAQManager />}
+                        {activeTab === 'notices' && <NoticeManager agencies={agencies} />}
+                        {activeTab === 'faqs' && <FAQManager agencies={agencies} />}
                     </motion.div>
                 </div>
             </main>
