@@ -16,7 +16,9 @@ import {
     X,
     Megaphone,
     HelpCircle,
-    Upload
+    Upload,
+    Check,
+    RotateCcw
 } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useFloors } from '../context/FloorContext';
@@ -28,7 +30,7 @@ import {
 } from '../api/categories';
 import { getNotices, createNotice as apiCreateNotice, updateNotice as apiUpdateNotice, deleteNotice as apiDeleteNotice } from '../api/notices';
 import { getFaqs, createFaq as apiCreateFaq, updateFaq as apiUpdateFaq, deleteFaq as apiDeleteFaq } from '../api/faqs';
-import { getAgencies, createAgency, updateAgency, deleteAgency } from '../api/auth';
+import { getAgencies, createAgency, updateAgency, deleteAgency, updateAgencyStatus } from '../api/auth';
 import { FeaturedItem, Notice, FAQ } from '../types';
 
 // Helper for localized text
@@ -1599,6 +1601,13 @@ const AgencyManager = () => {
         }
     };
 
+    const handleStatusUpdate = async (id: number, status: string) => {
+        try {
+            await updateAgencyStatus(id, status);
+            fetchAgencies();
+        } catch (err) { alert('Status update failed'); }
+    };
+
     const handleDelete = async (id: number) => {
         if (confirm('모든 제품과 함께 에이전시 정보를 삭제하시겠습니까?')) {
             try {
@@ -1626,6 +1635,7 @@ const AgencyManager = () => {
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Agency Name" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Username" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Status" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Created At" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
@@ -1635,11 +1645,49 @@ const AgencyManager = () => {
                             <tr key={agency.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 text-white font-medium">{agency.agency_name}</td>
                                 <td className="px-6 py-4 text-white/40">{agency.username}</td>
-                                <td className="px-6 py-4 text-white/40">{new Date(agency.created_at).toLocaleDateString()}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
+                                        agency.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
+                                        agency.status === 'REJECTED' ? 'bg-red-500/20 text-red-400' :
+                                        'bg-yellow-500/20 text-yellow-400'
+                                    }`}>
+                                        {agency.status}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 text-white/40 text-xs">{new Date(agency.created_at).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
-                                        <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                    <div className="flex justify-end items-center gap-2">
+                                        <div className="flex gap-1 mr-2 border-r border-white/10 pr-2">
+                                            {agency.status === 'PENDING' && (
+                                                <>
+                                                    <button 
+                                                        onClick={() => handleStatusUpdate(agency.id, 'APPROVED')} 
+                                                        className="p-1.5 hover:bg-green-500/20 rounded-lg text-green-500/60 hover:text-green-400"
+                                                        title="승인"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleStatusUpdate(agency.id, 'REJECTED')} 
+                                                        className="p-1.5 hover:bg-red-500/20 rounded-lg text-red-500/60 hover:text-red-400"
+                                                        title="거절"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </>
+                                            )}
+                                            {(agency.status === 'APPROVED' || agency.status === 'REJECTED') && (
+                                                <button 
+                                                    onClick={() => handleStatusUpdate(agency.id, 'PENDING')} 
+                                                    className="p-1.5 hover:bg-yellow-500/20 rounded-lg text-yellow-500/60 hover:text-yellow-400"
+                                                    title="대기로 변경"
+                                                >
+                                                    <RotateCcw size={14} />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={16} /></button>
+                                        <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={16} /></button>
                                     </div>
                                 </td>
                             </tr>

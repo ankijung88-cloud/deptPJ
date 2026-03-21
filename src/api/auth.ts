@@ -47,3 +47,31 @@ export const deleteAgency = async (id: number) => {
     if (!response.ok) throw new Error('Failed to delete agency');
     return response.json();
 };
+
+export const registerAgency = async (agency: any) => {
+    const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(agency)
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Registration failed');
+    }
+    return response.json();
+};
+
+export const updateAgencyStatus = async (id: number, status: string) => {
+    const response = await fetch(`/api/auth/agencies/${id}/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+        },
+        body: JSON.stringify({ status })
+    });
+    if (!response.ok) throw new Error('Failed to update agency status');
+    return response.json();
+};

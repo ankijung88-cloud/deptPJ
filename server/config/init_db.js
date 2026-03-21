@@ -57,9 +57,19 @@ async function initDB() {
         password VARCHAR(255) NOT NULL,
         role ENUM('ADMIN', 'AGENCY') NOT NULL DEFAULT 'AGENCY',
         agency_name VARCHAR(255) NULL,
+        status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB;
     `);
+    
+    // Migration: Check if status column exists for existing table
+    const [statusColumns] = await pool.query("SHOW COLUMNS FROM users LIKE 'status'");
+    if (statusColumns.length === 0) {
+      console.log('[DB] Missing status column in users. Running migration...');
+      await pool.query("ALTER TABLE users ADD COLUMN status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING' AFTER agency_name");
+      await pool.query("UPDATE users SET status = 'APPROVED' WHERE role = 'ADMIN'");
+      console.log('[DB] Migration successful: Added status to users.');
+    }
     console.log('[DB] users table is ready.');
 
     // Seed default admin if no users exist

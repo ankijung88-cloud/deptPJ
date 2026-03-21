@@ -200,8 +200,14 @@ export const HeroSection: React.FC = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 2, duration: 1 }}
-                                className="mt-12"
+                                className="mt-12 flex flex-col items-center gap-4"
                             >
+                                <button
+                                    onClick={() => navigate('/about')}
+                                    className="px-10 py-3 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full font-medium hover:bg-white/10 transition-all min-w-[200px]"
+                                >
+                                    <AutoTranslatedText text={t('hero.philosophy') || '브랜드 철학'} />
+                                </button>
                                 <button
                                     onClick={() => {
                                         navigate('/inspiration');

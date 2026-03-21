@@ -73,6 +73,7 @@ const resources = {
                 "warping": "워핑 중...",
                 "explore": "컬렉션 둘러보기",
                 "story": "브랜드 스토리",
+                "philosophy": "브랜드 철학",
                 "arrived": "가상의 공간에 도착했습니다",
                 "welcome": "Welcome to the Virtual Gateway",
                 "site_description": "당신의 시선이 머무는 모든 곳이 예술이 되는 공간. 전통의 가치와 현대의 감각이 공존하는 프리미엄 문화 큐레이션 플랫폼 department입니다.",
@@ -387,6 +388,7 @@ const resources = {
                 "warping": "Warping...",
                 "explore": "Explore Collection",
                 "story": "Brand Story",
+                "philosophy": "Brand Philosophy",
                 "arrived": "Arrived at Virtual Space",
                 "welcome": "Welcome to the Virtual Gateway",
                 "start": "Start"
@@ -704,6 +706,7 @@ const resources = {
                 "warping": "ワーピング中...",
                 "explore": "コレクションを見る",
                 "story": "ブランドストーリー",
+                "philosophy": "ブランド哲学",
                 "arrived": "仮想空間に到着しました",
                 "welcome": "Welcome to the Virtual Gateway",
                 "start": "開始する"

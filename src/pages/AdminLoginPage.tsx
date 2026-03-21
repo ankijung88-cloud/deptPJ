@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User, ArrowRight } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
@@ -141,6 +141,15 @@ export const AdminLoginPage: React.FC = () => {
                         )}
                     </button>
                 </form>
+
+                <div className="mt-8 text-center pt-6 border-t border-white/5">
+                    <p className="text-white/40 text-sm">
+                        에이전시 파트너이신가요?{' '}
+                        <Link to="/register" className="text-[#00FFC2] hover:underline font-medium ml-1">
+                            파트너 등록 신청하기
+                        </Link>
+                    </p>
+                </div>
 
                 <div className="mt-8 pt-8 border-t border-white/5 text-center">
                     <button 

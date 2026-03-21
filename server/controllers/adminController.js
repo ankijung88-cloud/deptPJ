@@ -7,7 +7,7 @@ export const getAgencies = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      'SELECT id, username, role, agency_name, created_at FROM users WHERE role = ?',
+      'SELECT id, username, role, agency_name, status, created_at FROM users WHERE role = ?',
       ['AGENCY']
     );
     res.json(rows);
@@ -75,9 +75,33 @@ export const deleteAgency = async (req, res) => {
     // Delete agency products first or nullify them? 
     // Requirement says "Admin can delete everything". 
     // I'll delete products too for consistency if the agency is gone.
+    // Delete agency products first
     await pool.query('DELETE FROM featured_items WHERE agency_id = ?', [id]);
     await pool.query('DELETE FROM users WHERE id = ? AND role = ?', [id, 'AGENCY']);
     res.json({ message: 'Agency and its products deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateAgencyStatus = async (req, res) => {
+  if (req.user.role !== 'ADMIN') {
+    return res.status(403).json({ message: 'Admin privileges required' });
+  }
+
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!['APPROVED', 'REJECTED', 'PENDING'].includes(status)) {
+    return res.status(400).json({ message: 'Invalid status' });
+  }
+
+  try {
+    await pool.query(
+      'UPDATE users SET status = ? WHERE id = ? AND role = ?',
+      [status, id, 'AGENCY']
+    );
+    res.json({ message: `Agency status updated to ${status}` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
