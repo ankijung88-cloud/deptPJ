@@ -109,7 +109,7 @@ const SubCategoryPage: React.FC = () => {
             setLoading(true);
             try {
                 const [itemsResponse, storiesResponse] = await Promise.all([
-                    fetch(`/api/products?subcategory=${targetSubId}`, {
+                    fetch(`/api/products`, {
                         headers: {
                             'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                         }
@@ -127,7 +127,6 @@ const SubCategoryPage: React.FC = () => {
 
                     if (itemsResponse.ok) {
                         const itemsData = await itemsResponse.json();
-                        console.log(`[SubCategoryPage] Raw items count: ${itemsData.length}`, itemsData);
                         const seen = new Set<string>();
                         finalItems = itemsData
                             .map(mapToFeaturedItem)
@@ -148,14 +147,12 @@ const SubCategoryPage: React.FC = () => {
                                         ))
                                     );
 
-                                    const match = exactMatch || !!labelMatch;
                                     
-                                    if (!match) console.log(`[SubCategoryPage] Filtering out item ${item.id} (subcategory: ${item.subcategory} not matching ID: ${targetSubId} or Label: ${JSON.stringify(subcategoryData?.label)})`);
+                                    const match = exactMatch || !!labelMatch;
                                     return match;
                                 }
                                 return true;
                             });
-                        console.log(`[SubCategoryPage] Final filtered items count: ${finalItems.length}`);
                     }
 
                     if (storiesResponse.ok) {

@@ -420,13 +420,16 @@ const Header: React.FC = () => {
                                             <AutoTranslatedText text="Admin" />
                                         </Link>
                                     ) : (
-                                        <div
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all cursor-default"
+                                        <Link
+                                            to="/admin"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
                                             style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = '#00FFC225')}
+                                            onMouseLeave={e => (e.currentTarget.style.background = '#00FFC210')}
                                         >
                                             <Shield size={13} />
                                             <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency'} />
-                                        </div>
+                                        </Link>
                                     )}
                                     <button
                                         onClick={handleLogout}
@@ -553,13 +556,15 @@ const Header: React.FC = () => {
                                         <AutoTranslatedText text="Admin 관리자 페이지" />
                                     </Link>
                                 ) : (
-                                    <div
+                                    <Link
+                                        to="/admin"
                                         className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
                                         style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                        onClick={() => setIsMenuOpen(false)}
                                     >
                                         <Shield size={16} />
                                         <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency 에이전시'} />
-                                    </div>
+                                    </Link>
                                 )}
                                 <button
                                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
