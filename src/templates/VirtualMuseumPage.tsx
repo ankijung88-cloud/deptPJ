@@ -19,10 +19,10 @@ interface MuseumCardProps {
     onImageClick: (url: string) => void;
     onEdit: (item: FeaturedItem) => void;
     onDelete: (id: string) => void;
-    isAdminLoggedIn?: boolean;
+    isManagementAllowed?: boolean;
 }
 
-const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick, onEdit, onDelete, isAdminLoggedIn }) => {
+const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick, onEdit, onDelete, isManagementAllowed }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const displayName = getLocalizedText(item.title, lang);
 
@@ -88,7 +88,7 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                             <span className="text-[10px] font-mono text-white/60 tracking-tighter">
                                 <AutoTranslatedText text={getLocalizedText(item.date, lang)} />
                             </span>
-                            {isAdminLoggedIn && (
+                            {isManagementAllowed && (
                                 <div className="flex gap-2 mt-2">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onEdit(item); }}
@@ -132,7 +132,7 @@ const VirtualMuseumPage: React.FC = () => {
     const { id: paramId } = useParams();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     useImmersiveMode(!!selectedImage);
-    const { isAdmin: isAdminLoggedIn } = useAdmin();
+    const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     
     // Determine the effective parent ID (favor params, fallback to state)
     const parentId = paramId || location.state?.parentId;
@@ -151,6 +151,7 @@ const VirtualMuseumPage: React.FC = () => {
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
     const [isUploading, setIsUploading] = useState(false);
     const { floors } = useFloors();
 
@@ -387,7 +388,7 @@ const VirtualMuseumPage: React.FC = () => {
                             <AutoTranslatedText text="Back" />
                         </button>
 
-                        {isAdminLoggedIn && (
+                        {isManagementAllowed && (
                             <button 
                                 onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
                                 className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
@@ -444,7 +445,7 @@ const VirtualMuseumPage: React.FC = () => {
                                 onImageClick={(url) => setSelectedImage(url)}
                                 onEdit={handleEditInitiate}
                                 onDelete={handleDelete}
-                                isAdminLoggedIn={isAdminLoggedIn}
+                                isManagementAllowed={isManagementAllowed}
                             />
                         ))}
                     </div>

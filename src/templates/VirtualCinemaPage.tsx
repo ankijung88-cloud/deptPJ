@@ -27,8 +27,7 @@ const VirtualCinemaPage: React.FC = () => {
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
     const theme = JOSEON_THEMES[10]; 
 
-    const { isAdmin: isAdminLoggedIn } = useAdmin();
-
+    const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [cinemaItems, setCinemaItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -45,6 +44,7 @@ const VirtualCinemaPage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
     const { floors } = useFloors();
 
     // Set Breadcrumb Path
@@ -409,7 +409,7 @@ const VirtualCinemaPage: React.FC = () => {
                                         <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_#fff]" />
                                     )}
 
-                                    {isAdminLoggedIn && (
+                                    {isManagementAllowed && (
                                         <div className="absolute top-3 left-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
@@ -432,7 +432,7 @@ const VirtualCinemaPage: React.FC = () => {
                 )}
 
                 {/* Management Section */}
-                {isAdminLoggedIn && (
+                {isManagementAllowed && (
                     <div className="mt-12 flex flex-col items-center gap-8">
                         <button 
                             onClick={() => { 

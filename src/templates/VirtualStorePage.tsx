@@ -144,8 +144,9 @@ const VirtualStorePage: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const { isAdmin: isAdminLoggedIn } = useAdmin();
+    const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
     const { floors } = useFloors();
 
     // Set Breadcrumb Path
@@ -640,7 +641,7 @@ const VirtualStorePage: React.FC = () => {
                                           <AutoTranslatedText text="상세설명보기 (View Details)" />
                                      </button>
 
-                                      {isAdminLoggedIn && (
+                                      {isManagementAllowed && (
                                          <div className="grid grid-cols-2 gap-4">
                                              <button 
                                                   onClick={() => handleEditInitiate(selectedItem)}
@@ -672,7 +673,7 @@ const VirtualStorePage: React.FC = () => {
                     </div>
                 </section>
 
-                {isAdminLoggedIn && (
+                {isManagementAllowed && (
                     <div className="flex justify-center pt-10">
                         <button 
                             onClick={() => setShowAddModal(true)}
