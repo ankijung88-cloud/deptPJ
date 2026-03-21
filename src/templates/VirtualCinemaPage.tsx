@@ -44,7 +44,7 @@ const VirtualCinemaPage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
-    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
 
     // Set Breadcrumb Path

@@ -146,7 +146,7 @@ const VirtualStorePage: React.FC = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
-    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
 
     // Set Breadcrumb Path

@@ -472,7 +472,7 @@ export const DetailPage: React.FC = () => {
                             </div>
 
                             {/* Template Usage Card */}
-                            {(isAdminLoggedIn || (role === 'agency' && item?.agency_id === user?.id)) && (
+                            {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
                                 <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-bold text-[#00FFC2] uppercase tracking-[0.2em]"><AutoTranslatedText text="템플릿 선택 사용" /></span>

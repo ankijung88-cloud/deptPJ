@@ -151,7 +151,7 @@ const VirtualMuseumPage: React.FC = () => {
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
-    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && parentProduct?.agency_id === user?.id);
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const [isUploading, setIsUploading] = useState(false);
     const { floors } = useFloors();
 

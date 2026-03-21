@@ -34,7 +34,7 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isGlobalMuted, setIsGlobalMuted] = useState(true);
-    const { isAdmin: isAdminLoggedIn, logout } = useAdmin();
+    const { isAdmin: isAdminLoggedIn, isAgency: isAgencyLoggedIn, user, logout } = useAdmin();
 
     const handleLogout = () => {
         logout();
@@ -404,20 +404,30 @@ const Header: React.FC = () => {
 
                             <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
 
-                            {/* Admin Controls */}
-                            {isAdminLoggedIn && (
+                            {/* Admin & Agency Controls */}
+                            {(isAdminLoggedIn || isAgencyLoggedIn) && (
                                 <div className="flex items-center gap-2">
                                     <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
-                                    <Link
-                                        to="/admin"
-                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
-                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = '#00FFC225')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = '#00FFC210')}
-                                    >
-                                        <Shield size={13} />
-                                        <AutoTranslatedText text="Admin" />
-                                    </Link>
+                                    {isAdminLoggedIn ? (
+                                        <Link
+                                            to="/admin"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all"
+                                            style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = '#00FFC225')}
+                                            onMouseLeave={e => (e.currentTarget.style.background = '#00FFC210')}
+                                        >
+                                            <Shield size={13} />
+                                            <AutoTranslatedText text="Admin" />
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all cursor-default"
+                                            style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                        >
+                                            <Shield size={13} />
+                                            <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency'} />
+                                        </div>
+                                    )}
                                     <button
                                         onClick={handleLogout}
                                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest text-red-400/80 hover:text-red-400 transition-all"
@@ -529,18 +539,28 @@ const Header: React.FC = () => {
 
                         <hr className="border-dancheong-gold/10 my-4" />
 
-                        {/* Mobile Admin Controls */}
-                        {isAdminLoggedIn && (
+                        {/* Mobile Admin & Agency Controls */}
+                        {(isAdminLoggedIn || isAgencyLoggedIn) && (
                             <div className="flex flex-col gap-2 pb-2">
-                                <Link
-                                    to="/admin"
-                                    className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
-                                    style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    <Shield size={16} />
-                                    <AutoTranslatedText text="Admin 관리자 페이지" />
-                                </Link>
+                                {isAdminLoggedIn ? (
+                                    <Link
+                                        to="/admin"
+                                        className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
+                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <Shield size={16} />
+                                        <AutoTranslatedText text="Admin 관리자 페이지" />
+                                    </Link>
+                                ) : (
+                                    <div
+                                        className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
+                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                    >
+                                        <Shield size={16} />
+                                        <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency 에이전시'} />
+                                    </div>
+                                )}
                                 <button
                                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                                     className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm text-red-400"

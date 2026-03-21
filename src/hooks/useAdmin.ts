@@ -61,10 +61,10 @@ export const useAdmin = () => {
     };
 
     return { 
-        isAdmin: auth.isAuthenticated && auth.role === 'admin', 
-        isAgency: auth.isAuthenticated && auth.role === 'agency',
+        isAdmin: auth.isAuthenticated && auth.role?.toLowerCase() === 'admin', 
+        isAgency: auth.isAuthenticated && auth.role?.toLowerCase() === 'agency',
         isAuthenticated: auth.isAuthenticated,
-        role: auth.role,
+        role: auth.role?.toLowerCase(),
         user: auth.user,
         logout, 
         login, 
