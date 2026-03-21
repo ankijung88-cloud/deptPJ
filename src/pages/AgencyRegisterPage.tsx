@@ -156,7 +156,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </motion.div>
                         )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">에이전시 명</label>
                                 <div className="relative group">
