@@ -18,7 +18,8 @@ import {
     HelpCircle,
     Upload,
     Check,
-    RotateCcw
+    RotateCcw,
+    LogOut
 } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useFloors } from '../context/FloorContext';
@@ -1869,7 +1870,7 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
     const navigate = useNavigate();
-    const { isAdmin, isAuthenticated } = useAdmin();
+    const { isAdmin, isAuthenticated, logout } = useAdmin();
 
     useEffect(() => {
         if (!isAuthenticated) navigate('/admin/login');
@@ -1936,8 +1937,15 @@ export const AdminPage: React.FC = () => {
                     ))}
                 </nav>
 
-
-
+                <div className="p-4 border-t border-white/5 mt-auto">
+                    <button
+                        onClick={logout}
+                        className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all font-bold"
+                    >
+                        <LogOut size={20} />
+                        <span><AutoTranslatedText text="Logout" /></span>
+                    </button>
+                </div>
             </aside>
 
             {/* Main Content */}
