@@ -127,17 +127,35 @@ const SubCategoryPage: React.FC = () => {
 
                     if (itemsResponse.ok) {
                         const itemsData = await itemsResponse.json();
+                        console.log(`[SubCategoryPage] Raw items count: ${itemsData.length}`, itemsData);
                         const seen = new Set<string>();
                         finalItems = itemsData
                             .map(mapToFeaturedItem)
                             .filter((item: FeaturedItem) => { if (seen.has(item.id)) return false; seen.add(item.id); return true; })
                             .filter((item: FeaturedItem) => {
-                                // Defensive filtering in case backend doesn't filter by subcategory
                                 if (targetSubId) {
-                                    return item.subcategory === targetSubId;
+                                    // Robust matching:
+                                    // 1. Exact ID match (e.g., 'f4_book' === 'f4_book')
+                                    // 2. Label match (e.g., DB has '도서관 섹션' and targetSubId is 'f4_book' which labels to '도서관 섹션')
+                                    const exactMatch = item.subcategory === targetSubId;
+                                    
+                                    // Check if the current subcategory label matches
+                                    const labelMatch = subcategoryData && subcategoryData.label && (
+                                        (typeof subcategoryData.label === 'string' && subcategoryData.label === item.subcategory) ||
+                                        (typeof subcategoryData.label === 'object' && (
+                                            (subcategoryData.label as any).ko === item.subcategory ||
+                                            (subcategoryData.label as any).en === item.subcategory
+                                        ))
+                                    );
+
+                                    const match = exactMatch || !!labelMatch;
+                                    
+                                    if (!match) console.log(`[SubCategoryPage] Filtering out item ${item.id} (subcategory: ${item.subcategory} not matching ID: ${targetSubId} or Label: ${JSON.stringify(subcategoryData?.label)})`);
+                                    return match;
                                 }
                                 return true;
                             });
+                        console.log(`[SubCategoryPage] Final filtered items count: ${finalItems.length}`);
                     }
 
                     if (storiesResponse.ok) {

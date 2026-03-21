@@ -4,16 +4,24 @@ export const getAllProducts = async (req, res) => {
   const { subcategory, agencyId } = req.query;
   const user = req.user; // From authMiddleware
 
+  console.log(`[getAllProducts] Subcategory: ${subcategory}, AgencyId: ${agencyId}, UserID: ${user?.id}, Role: ${user?.role}`);
+
   try {
     let query = 'SELECT * FROM featured_items';
     let params = [];
     let conditions = [];
     
-    // Role-based filtering
+    // ROLE-BASED VISIBILITY:
+    // - AGENCY: Only see items where agency_id = user.id
+    // - ADMIN: See all items
+    // - GUEST: See all items
     if (user && user.role === 'AGENCY') {
+      console.log(`[getAllProducts] Applying Agency filter (User is AGENCY): ${user.id}`);
       conditions.push('agency_id = ?');
       params.push(user.id);
     } else if (agencyId) {
+      // Explicit agencyId from query (likely for public agency page)
+      console.log(`[getAllProducts] Applying explicit AgencyId filter: ${agencyId}`);
       conditions.push('agency_id = ?');
       params.push(agencyId);
     }
@@ -27,9 +35,13 @@ export const getAllProducts = async (req, res) => {
       query += ' WHERE ' + conditions.join(' AND ');
     }
     
+    console.log(`[getAllProducts] Final Query: ${query} params: ${JSON.stringify(params)}`);
+
     const [rows] = await pool.query(query, params);
+    console.log(`[getAllProducts] Found ${rows.length} products`);
     res.json(rows);
   } catch (error) {
+    console.error(`[getAllProducts] Error: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };
@@ -39,11 +51,18 @@ export const getProductsByCategory = async (req, res) => {
   const { parentId } = req.query;
   const user = req.user;
   
+  console.log(`[getProductsByCategory] Category: ${category}, ParentID: ${parentId}, UserID: ${user?.id}, Role: ${user?.role}`);
+
   try {
+    // If category is 'store', 'museum', or 'cinema', we should match those strings
+    // as well as any floor categories that might be associated with them.
     let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
     let params = [`%${category}%`, `%${category}%`];
 
+    // Role-based filtering:
+    // Only restrict for AGENCY users. ADMIN and GUEST see all.
     if (user && user.role === 'AGENCY') {
+      console.log(`[getProductsByCategory] Applying Agency filter: ${user.id}`);
       query += ' AND agency_id = ?';
       params.push(user.id);
     }
@@ -53,9 +72,13 @@ export const getProductsByCategory = async (req, res) => {
       params.push(parentId, parentId);
     }
 
+    console.log(`[getProductsByCategory] Final Query: ${query} params: ${JSON.stringify(params)}`);
+
     const [rows] = await pool.query(query, params);
+    console.log(`[getProductsByCategory] Found ${rows.length} products`);
     res.json(rows);
   } catch (error) {
+    console.error(`[getProductsByCategory] Error: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };

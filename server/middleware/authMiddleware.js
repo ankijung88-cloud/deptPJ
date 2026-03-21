@@ -30,11 +30,15 @@ export const authenticateAdmin = (req, res, next) => {
 };
 export const optionalAuthenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(`[OptionalAuth] Header present: ${!!authHeader}`);
+  
   if (!authHeader) {
     return next();
   }
 
   const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+  console.log(`[OptionalAuth] Token: ${token?.substring(0, 20)}...`);
+
   if (token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-'))) {
     const parts = token.split('-');
     const role = parts[1].toUpperCase();
@@ -44,6 +48,7 @@ export const optionalAuthenticate = (req, res, next) => {
       id: parseInt(userId),
       role: role
     };
+    console.log(`[OptionalAuth] Identified User: ${req.user.id}, Role: ${req.user.role}`);
   }
   next();
 };

@@ -12,7 +12,7 @@ import { authenticateAdmin, optionalAuthenticate } from '../middleware/authMiddl
 
 const router = express.Router();
 
-router.get('/', authenticateAdmin, getAllProducts);
+router.get('/', optionalAuthenticate, getAllProducts);
 router.post('/', authenticateAdmin, createProduct);
 router.get('/category/:category', optionalAuthenticate, getProductsByCategory);
 router.get('/search', authenticateAdmin, searchProducts);

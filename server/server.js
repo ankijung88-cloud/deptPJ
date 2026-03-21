@@ -75,10 +75,14 @@ app.get('/health', (req, res) => {
 
 // DEBUG: Check DB content
 import pool from './config/db.js';
-app.get('/api/debug/db-files', async (req, res) => {
+app.get('/api/debug/subcategories', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, filename, mimetype, LENGTH(data) as size FROM media_storage LIMIT 100');
-    res.json({ count: rows.length, files: rows });
+    const [rows] = await pool.query('SELECT DISTINCT subcategory FROM featured_items');
+    const [all] = await pool.query('SELECT id, title, category, subcategory, agency_id FROM featured_items LIMIT 50');
+    res.json({ 
+      unique_subcategories: rows.map(r => r.subcategory),
+      sample_items: all 
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
