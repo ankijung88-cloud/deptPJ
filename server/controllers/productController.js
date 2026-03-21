@@ -1,14 +1,30 @@
 import pool from '../config/db.js';
 
 export const getAllProducts = async (req, res) => {
-  const { subcategory } = req.query;
+  const { subcategory, agencyId } = req.query;
+  const user = req.user; // From authMiddleware
+
   try {
     let query = 'SELECT * FROM featured_items';
     let params = [];
+    let conditions = [];
     
+    // Role-based filtering
+    if (user && user.role === 'AGENCY') {
+      conditions.push('agency_id = ?');
+      params.push(user.id);
+    } else if (agencyId) {
+      conditions.push('agency_id = ?');
+      params.push(agencyId);
+    }
+
     if (subcategory) {
-      query += ' WHERE subcategory = ?';
+      conditions.push('subcategory = ?');
       params.push(subcategory);
+    }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
     }
     
     const [rows] = await pool.query(query, params);
@@ -95,7 +111,9 @@ export const createProduct = async (req, res) => {
       return JSON.stringify(val);
     };
 
-    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const agency_id = req.user?.id || null;
+
+    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const params = [
       id,
       toJson(title),
@@ -115,7 +133,8 @@ export const createProduct = async (req, res) => {
       page_type || 'standard',
       parent_id || null,
       toJson(theme_data),
-      toJson(selected_templates)
+      toJson(selected_templates),
+      agency_id
     ];
     await pool.query(query, params);
     res.status(201).json({ id, message: 'Product created successfully' });
@@ -153,9 +172,25 @@ export const updateProduct = async (req, res) => {
       return JSON.stringify(val);
     };
 
+    // Ownership and Role-based agency_id handling
+    let agency_id = req.user?.id || null;
+    
+    if (req.user?.role === 'AGENCY') {
+      const [existing] = await pool.query('SELECT agency_id FROM featured_items WHERE id = ?', [id]);
+      if (existing.length === 0 || existing[0].agency_id !== req.user.id) {
+        return res.status(403).json({ message: 'You do not have permission to update this product' });
+      }
+      // Agencies cannot change the owner
+      agency_id = req.user.id;
+    } else if (req.user?.role === 'ADMIN') {
+      // Admins can specify an agency_id or it defaults to null (admin-owned)
+      agency_id = req.query.agencyId || req.body.agency_id || null;
+      if (agency_id === 'null' || agency_id === '') agency_id = null;
+    }
+
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?
       WHERE id = ?
     `;
 
@@ -178,6 +213,7 @@ export const updateProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
+      agency_id || null,
       id
     ];
     const [result] = await pool.query(query, params);
@@ -191,6 +227,14 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
+    // If agency, verify ownership
+    if (req.user?.role === 'AGENCY') {
+      const [existing] = await pool.query('SELECT agency_id FROM featured_items WHERE id = ?', [id]);
+      if (existing.length === 0 || existing[0].agency_id !== req.user.id) {
+        return res.status(403).json({ message: 'You do not have permission to delete this product' });
+      }
+    }
+
     await pool.query('DELETE FROM featured_items WHERE id = ?', [id]);
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {

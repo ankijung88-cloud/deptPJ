@@ -3,22 +3,32 @@ import pool from '../config/db.js';
 export const login = async (req, res) => {
   const { username, password } = req.body;
   
-  // Simple hardcoded admin credentials for now
-  // In a real app, this should check a 'users' table with hashed passwords
-  const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-  const ADMIN_PASS = process.env.ADMIN_PASS || 'admin1234';
-
   console.log(`Login attempt for user: ${username}`);
   
-  if (username === ADMIN_USER && password === ADMIN_PASS) {
-    // Return a simple success response
-    // In a full implementation, we would return a JWT token here
-    res.json({ 
-      success: true, 
-      token: 'mock-admin-token-' + Date.now(),
-      user: { username: ADMIN_USER, role: 'admin' }
-    });
-  } else {
-    res.status(401).json({ message: 'Invalid username or password' });
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, username, password, role, agency_name FROM users WHERE username = ? AND password = ?',
+      [username, password]
+    );
+
+    if (rows.length > 0) {
+      const user = rows[0];
+      // In a full implementation, we would return a JWT token here
+      res.json({ 
+        success: true, 
+        token: `mock-${user.role.toLowerCase()}-token-${Date.now()}-${user.id}`,
+        user: { 
+          id: user.id,
+          username: user.username, 
+          role: user.role.toLowerCase(),
+          agencyName: user.agency_name
+        }
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('[Auth] Login error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };

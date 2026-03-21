@@ -4,30 +4,42 @@ import { useState, useEffect } from 'react';
  * Hook to manage admin authentication state consistently across the app.
  */
 export const useAdmin = () => {
-    const [isAdmin, setIsAdmin] = useState(() => {
+    const [auth, setAuth] = useState<{
+        isAuthenticated: boolean;
+        role: 'admin' | 'agency' | null;
+        user: any | null;
+    }>(() => {
         const token = localStorage.getItem('admin_token');
-        return !!(token && token.startsWith('mock-admin-token-'));
+        const userStr = localStorage.getItem('admin_user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        
+        const isValidToken = !!(token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-')));
+        
+        return {
+            isAuthenticated: isValidToken,
+            role: user?.role || null,
+            user: user
+        };
     });
 
     const checkAdmin = () => {
         const token = localStorage.getItem('admin_token');
-        // Robust check: token must exist and follow the expected mock prefix for this project.
-        if (token && token.startsWith('mock-admin-token-')) {
-            setIsAdmin(true);
-        } else {
-            setIsAdmin(false);
-        }
+        const userStr = localStorage.getItem('admin_user');
+        const user = userStr ? JSON.parse(userStr) : null;
+
+        const isValidToken = !!(token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-')));
+        
+        setAuth({
+            isAuthenticated: isValidToken,
+            role: user?.role || null,
+            user: user
+        });
     };
 
     useEffect(() => {
         checkAdmin();
-        
-        // Listen for changes in other tabs/windows
         window.addEventListener('storage', checkAdmin);
-        
-        // Custom event for same-tab updates (e.g. after login/logout)
         window.addEventListener('admin-state-change', checkAdmin);
-        
         return () => {
             window.removeEventListener('storage', checkAdmin);
             window.removeEventListener('admin-state-change', checkAdmin);
@@ -37,17 +49,25 @@ export const useAdmin = () => {
     const logout = () => {
         localStorage.removeItem('admin_token');
         localStorage.removeItem('admin_user');
-        setIsAdmin(false);
-        // Trigger event for common components
+        setAuth({ isAuthenticated: false, role: null, user: null });
         window.dispatchEvent(new Event('admin-state-change'));
     };
 
-    const login = (token: string, user?: any) => {
+    const login = (token: string, user: any) => {
         localStorage.setItem('admin_token', token);
-        if (user) localStorage.setItem('admin_user', JSON.stringify(user));
-        setIsAdmin(true);
+        localStorage.setItem('admin_user', JSON.stringify(user));
+        setAuth({ isAuthenticated: true, role: user.role, user: user });
         window.dispatchEvent(new Event('admin-state-change'));
     };
 
-    return { isAdmin, logout, login, checkAdmin };
+    return { 
+        isAdmin: auth.isAuthenticated && auth.role === 'admin', 
+        isAgency: auth.isAuthenticated && auth.role === 'agency',
+        isAuthenticated: auth.isAuthenticated,
+        role: auth.role,
+        user: auth.user,
+        logout, 
+        login, 
+        checkAdmin 
+    };
 };

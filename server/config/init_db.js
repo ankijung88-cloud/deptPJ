@@ -48,6 +48,46 @@ async function initDB() {
     `);
     console.log('[DB] media_storage table is ready.');
 
+    // NEW: Create users table if it doesn't exist
+    console.log('[DB] Ensuring users table exists...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role ENUM('ADMIN', 'AGENCY') NOT NULL DEFAULT 'AGENCY',
+        agency_name VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `);
+    console.log('[DB] users table is ready.');
+
+    // Seed default admin if no users exist
+    const [userRows] = await pool.query('SELECT COUNT(*) as count FROM users');
+    if (userRows[0].count === 0) {
+      console.log('[DB] Seeding default admin user...');
+      const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+      const ADMIN_PASS = process.env.ADMIN_PASS || 'admin1234';
+      await pool.query(
+        'INSERT INTO users (username, password, role, agency_name) VALUES (?, ?, ?, ?)',
+        [ADMIN_USER, ADMIN_PASS, 'ADMIN', 'System Admin']
+      );
+    }
+
+    // Check if agency_id exists in featured_items
+    const [agencyColumns] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'agency_id'");
+    if (agencyColumns.length === 0) {
+      console.log('[DB] Missing agency_id column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN agency_id INT NULL AFTER id");
+      
+      // Assign existing products to the first admin
+      const [adminRows] = await pool.query("SELECT id FROM users WHERE role = 'ADMIN' LIMIT 1");
+      if (adminRows.length > 0) {
+        await pool.query("UPDATE featured_items SET agency_id = ? WHERE agency_id IS NULL", [adminRows[0].id]);
+      }
+      console.log('[DB] Migration successful: Added agency_id to featured_items.');
+    }
+
     // Ensure data column allows NULL
     const [mediaColumns] = await pool.query("SHOW COLUMNS FROM media_storage LIKE 'data'");
     if (mediaColumns.length > 0 && mediaColumns[0].Null === 'NO') {

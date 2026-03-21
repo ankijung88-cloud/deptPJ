@@ -28,6 +28,7 @@ import {
 } from '../api/categories';
 import { getNotices, createNotice as apiCreateNotice, updateNotice as apiUpdateNotice, deleteNotice as apiDeleteNotice } from '../api/notices';
 import { getFaqs, createFaq as apiCreateFaq, updateFaq as apiUpdateFaq, deleteFaq as apiDeleteFaq } from '../api/faqs';
+import { getAgencies, createAgency, updateAgency, deleteAgency } from '../api/auth';
 import { FeaturedItem, Notice, FAQ } from '../types';
 
 // Helper for localized text
@@ -175,34 +176,64 @@ const normalizeFAQData = (faq: any) => {
 
 // Components for different sections
 const ProductManager = () => {
+    const { isAdmin } = useAdmin();
     const { floors } = useFloors();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
+    const [agencies, setAgencies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFloor, setSelectedFloor] = useState('');
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
+    const [selectedAgency, setSelectedAgency] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
     const { translatedText: searchPlaceholder } = useAutoTranslate("Search products...");
     const { translatedText: allFloorsLabel } = useAutoTranslate("모든 층");
     const { translatedText: allCategoriesLabel } = useAutoTranslate("모든 카테고리");
+    const { translatedText: allAgenciesLabel } = useAutoTranslate("모든 에이전시");
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+        if (isAdmin) {
+            fetchAgenciesList();
+        }
+    }, [isAdmin]);
 
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedFloor, selectedSubcategory]);
+    }, [searchTerm, selectedFloor, selectedSubcategory, selectedAgency]);
+
+    const fetchAgenciesList = async () => {
+        try {
+            const data = await getAgencies();
+            setAgencies(data);
+        } catch (err) {
+            console.error('Failed to fetch agencies:', err);
+        }
+    };
 
     const fetchProducts = async () => {
         setLoading(true);
-        const data = await getFeaturedProducts();
-        setProducts(data);
-        setLoading(false);
+        try {
+            // Updated API call to support role-based filtering on server side if needed, 
+            // but here we get all for simpler filtering if it's admin.
+            // Actually, best to pass agencyId if admin selected one.
+            const queryParams: any = {};
+            if (isAdmin && selectedAgency) {
+                queryParams.agencyId = selectedAgency;
+            }
+            
+            // Note: getFeaturedProducts would need to be updated to accept params if we want server-side filtering.
+            // For now, I'll rely on client-side filtering since the data size is manageable, 
+            // but I'll update the fetch call to include the token.
+            const data = await getFeaturedProducts();
+            setProducts(data);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDelete = async (id: string) => {
@@ -221,7 +252,6 @@ const ProductManager = () => {
             displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.category.toLowerCase().includes(searchTerm.toLowerCase());
         
-        
         const matchesFloor = !selectedFloor || 
             (selectedFloor === 'templates'
                 ? TEMPLATE_CATEGORIES.includes(p.category)
@@ -232,7 +262,10 @@ const ProductManager = () => {
             );
         const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
         
-        return matchesSearch && matchesFloor && matchesSub;
+        // Agency filter for Admin
+        const matchesAgency = !selectedAgency || (p as any).agency_id === parseInt(selectedAgency);
+        
+        return matchesSearch && matchesFloor && matchesSub && matchesAgency;
     });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -265,7 +298,20 @@ const ProductManager = () => {
                     />
                 </div>
                 
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
+                    {isAdmin && (
+                        <select 
+                            value={selectedAgency}
+                            onChange={(e) => setSelectedAgency(e.target.value)}
+                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px] font-bold"
+                        >
+                            <option value="">{allAgenciesLabel}</option>
+                            {agencies.map(a => (
+                                <option key={a.id} value={a.id}>{a.agency_name}</option>
+                            ))}
+                        </select>
+                    )}
+
                     <select 
                         value={selectedFloor}
                         onChange={(e) => {
@@ -305,6 +351,7 @@ const ProductManager = () => {
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Image" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
+                            {isAdmin && <th className="px-6 py-4 text-[#00FFC2]"><AutoTranslatedText text="Agency" /></th>}
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
@@ -319,6 +366,11 @@ const ProductManager = () => {
                                 <td className="px-6 py-4 text-white font-medium">
                                     {displayLocalized(product.title)}
                                 </td>
+                                {isAdmin && (
+                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
+                                        {agencies.find(a => a.id === (product as any).agency_id)?.agency_name || '-'}
+                                    </td>
+                                )}
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === product.category)?.color || '#333' }}></div>
@@ -427,9 +479,32 @@ const ProductManager = () => {
 };
 
 const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
+    const { isAdmin } = useAdmin();
     const { floors } = useFloors();
-    const [formData, setFormData] = useState<any>(() => normalizeProductData(product));
+    const [agencies, setAgencies] = useState<any[]>([]);
+    const [formData, setFormData] = useState<any>(() => {
+        const data = normalizeProductData(product);
+        return {
+            ...data,
+            agency_id: (product as any)?.agency_id || ''
+        };
+    });
     const [uploading, setUploading] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isAdmin) {
+            fetchAgencies();
+        }
+    }, [isAdmin]);
+
+    const fetchAgencies = async () => {
+        try {
+            const data = await getAgencies();
+            setAgencies(data);
+        } catch (err) {
+            console.error('Failed to fetch agencies for modal:', err);
+        }
+    };
 
     const isEdit = !!product;
 
@@ -529,6 +604,21 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
                         {/* 3. Category & 4. Subcategory */}
                         <div className="space-y-4">
+                            {isAdmin && (
+                                <div>
+                                    <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                                    <select 
+                                        value={formData.agency_id || ''} 
+                                        onChange={(e) => setFormData({...formData, agency_id: e.target.value})}
+                                        className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                                    >
+                                        <option value="">Admin (Default)</option>
+                                        {agencies.map(a => (
+                                            <option key={a.id} value={a.id}>{a.agency_name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                             <div>
                                 <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
                                 <select 
@@ -1489,20 +1579,147 @@ const FAQFormModal = ({ faq, onClose, onSuccess }: any) => {
         </div>
     );
 };
+const AgencyManager = () => {
+    const [agencies, setAgencies] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingAgency, setEditingAgency] = useState<any>(null);
 
+    useEffect(() => { fetchAgencies(); }, []);
+
+    const fetchAgencies = async () => {
+        setLoading(true);
+        try {
+            const data = await getAgencies();
+            setAgencies(data);
+        } catch {
+            setAgencies([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('모든 제품과 함께 에이전시 정보를 삭제하시겠습니까?')) {
+            try {
+                await deleteAgency(id);
+                fetchAgencies();
+            } catch (err) { alert('Delete failed'); }
+        }
+    };
+
+    return (
+        <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Agency Management" /></h2>
+                <button 
+                    onClick={() => { setEditingAgency(null); setIsModalOpen(true); }}
+                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                >
+                    <Plus size={18} /> <AutoTranslatedText text="Add Agency" />
+                </button>
+            </div>
+
+            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                        <tr>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Agency Name" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Username" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Created At" /></th>
+                            <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                        {agencies.map(agency => (
+                            <tr key={agency.id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 text-white font-medium">{agency.agency_name}</td>
+                                <td className="px-6 py-4 text-white/40">{agency.username}</td>
+                                <td className="px-6 py-4 text-white/40">{new Date(agency.created_at).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 text-right">
+                                    <div className="flex justify-end gap-2">
+                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
+                                        <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading agencies..." /></div>}
+            </div>
+
+            {isModalOpen && (
+                <AgencyFormModal 
+                    agency={editingAgency} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={() => { setIsModalOpen(false); fetchAgencies(); }} 
+                />
+            )}
+        </div>
+    );
+};
+
+const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
+    const [formData, setFormData] = useState({
+        username: agency?.username || '',
+        password: '',
+        agencyName: agency?.agency_name || ''
+    });
+
+    const isEdit = !!agency;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (isEdit) await updateAgency(agency.id, formData);
+            else await createAgency(formData);
+            onSuccess();
+        } catch (err: any) { alert(err.message || 'Operation failed'); }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-md bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
+                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">
+                    <AutoTranslatedText text={isEdit ? 'Edit Agency' : 'Add Agency'} />
+                </h3>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
+                        <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                    </div>
+                    <div>
+                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
+                        <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                    </div>
+                    <div>
+                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
+                        <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required={!isEdit} />
+                    </div>
+                    <div className="flex justify-end gap-4 pt-4 border-t border-white/5">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
+    );
+};
 
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
     const navigate = useNavigate();
-    const { isAdmin } = useAdmin();
+    const { isAdmin, isAuthenticated } = useAdmin();
 
     useEffect(() => {
-        if (!isAdmin) navigate('/admin/login');
-    }, [isAdmin, navigate]);
-
+        if (!isAuthenticated) navigate('/admin/login');
+    }, [isAuthenticated, navigate]);
 
     const tabs = [
         { id: 'products', label: 'Products', icon: Package },
+        ...(isAdmin ? [{ id: 'agencies', label: 'Agencies', icon: Layers }] : []),
         { id: 'floors', label: 'Floors', icon: Layers },
         { id: 'notices', label: 'Notices', icon: Megaphone },
         { id: 'faqs', label: 'FAQs', icon: HelpCircle },
@@ -1569,6 +1786,7 @@ export const AdminPage: React.FC = () => {
                         transition={{ duration: 0.3 }}
                     >
                         {activeTab === 'products' && <ProductManager />}
+                        {activeTab === 'agencies' && <AgencyManager />}
                         {activeTab === 'floors' && <FloorManager />}
 
                         {activeTab === 'notices' && <NoticeManager />}

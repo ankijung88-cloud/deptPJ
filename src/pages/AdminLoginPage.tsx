@@ -11,13 +11,13 @@ export const AdminLoginPage: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { isAdmin, login } = useAdmin();
+    const { isAuthenticated, login } = useAdmin();
 
     useEffect(() => {
-        if (isAdmin) {
+        if (isAuthenticated) {
             navigate('/admin');
         }
-    }, [isAdmin, navigate]);
+    }, [isAuthenticated, navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -74,10 +74,10 @@ export const AdminLoginPage: React.FC = () => {
                         <Lock className="text-[#00FFC2]" size={32} />
                     </div>
                     <h1 className="text-3xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="Admin Access" />
+                        <AutoTranslatedText text="Partner Access" />
                     </h1>
                     <p className="text-white/40 text-sm">
-                        <AutoTranslatedText text="Please enter your credentials to manage Dept." />
+                        <AutoTranslatedText text="Please enter your credentials to manage products." />
                     </p>
                 </div>
 
