@@ -312,12 +312,11 @@ const Header: React.FC = () => {
                                         </span>
                                     </div>
 
-                                    {/* Floor title text below button */}
                                     <div
-                                        className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap text-[18px] font-black tracking-widest text-center ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
-                                        style={{ color: theme.accentColor, textShadow: `0 0 10px ${theme.accentColor}44` }}
+                                        className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap text-[18px] font-black tracking-widest text-center !break-keep ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
+                                        style={{ color: theme.accentColor, textShadow: `0 0 10px ${theme.accentColor}44`, whiteSpace: 'nowrap' }}
                                     >
-                                        <AutoTranslatedText text={floorTitle} />
+                                        <AutoTranslatedText text={floorTitle} className="!whitespace-nowrap" />
                                     </div>
 
                                     {/* Dropdown sub-items */}
