@@ -253,8 +253,8 @@ const AgencyRegisterPage: React.FC = () => {
                                         <input
                                             type="text"
                                             readOnly
-                                            placeholder="주소 검색을 클릭해 주세요"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium cursor-default"
+                                            placeholder="검색 버튼을 눌러 주소를 입력하세요"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium cursor-pointer placeholder:text-white/20"
                                             value={formData.address}
                                             onClick={handleAddressSearch}
                                         />

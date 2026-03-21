@@ -1838,7 +1838,14 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
                         <div>
                             <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Company Address" /></label>
                             <div className="flex gap-2">
-                                <input type="text" value={formData.address} readOnly className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white/60 focus:outline-none" />
+                                <input 
+                                    type="text" 
+                                    value={formData.address} 
+                                    readOnly 
+                                    placeholder="검색 버튼을 선택해 주세요" 
+                                    onClick={handleAddressSearch}
+                                    className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white/60 focus:outline-none cursor-pointer placeholder:text-white/20" 
+                                />
                                 <button type="button" onClick={handleAddressSearch} className="px-4 bg-white/5 border border-white/10 rounded-xl text-white hover:bg-white/10 transition-colors">
                                     <AutoTranslatedText text="Search" />
                                 </button>
