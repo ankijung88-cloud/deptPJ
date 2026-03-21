@@ -296,7 +296,7 @@ const VirtualTicketPage: React.FC = () => {
 
     useEffect(() => {
         const checkAdmin = () => {
-            setIsAdminLoggedIn(!!localStorage.getItem('admin_token'));
+            setIsAdminLoggedIn(!!sessionStorage.getItem('admin_token'));
         };
         checkAdmin();
         window.addEventListener('storage', checkAdmin);
@@ -388,7 +388,7 @@ const VirtualTicketPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
             const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
@@ -414,7 +414,7 @@ const VirtualTicketPage: React.FC = () => {
 
         try {
             let finalImageUrl = newImageUrl;
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
 
             if (fileInputRef.current?.files?.[0]) {
                 try {

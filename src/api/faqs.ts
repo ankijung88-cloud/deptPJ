@@ -4,7 +4,7 @@ export const getFaqs = async (): Promise<FAQ[]> => {
     try {
         const response = await fetch('/api/faqs', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
             }
         });
         if (!response.ok) {
@@ -28,7 +28,7 @@ export const createFaq = async (data: any): Promise<void> => {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -40,7 +40,7 @@ export const updateFaq = async (id: string | number, data: any): Promise<void> =
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -51,7 +51,7 @@ export const deleteFaq = async (id: string | number): Promise<void> => {
     const response = await fetch(`/api/faqs/${id}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) throw new Error('Delete failed');

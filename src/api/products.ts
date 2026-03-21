@@ -103,7 +103,7 @@ export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
     try {
         const response = await fetch('/api/products', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
             }
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,7 +146,7 @@ export const searchProducts = async (query: string): Promise<FeaturedItem[]> => 
     try {
         const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
             }
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -175,7 +175,7 @@ export const deleteProduct = async (id: string): Promise<void> => {
     const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) {
@@ -189,7 +189,7 @@ export const createProduct = async (productData: any): Promise<{ id: string }> =
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(productData),
     });
@@ -205,7 +205,7 @@ export const updateProduct = async (id: string, productData: any): Promise<void>
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(productData),
     });

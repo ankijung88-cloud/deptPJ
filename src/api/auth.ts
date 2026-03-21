@@ -1,7 +1,7 @@
 export const getAgencies = async () => {
     const response = await fetch('/api/auth/agencies', {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) throw new Error('Failed to fetch agencies');
@@ -13,7 +13,7 @@ export const createAgency = async (agency: any) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(agency)
     });
@@ -29,7 +29,7 @@ export const updateAgency = async (id: number, agency: any) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(agency)
     });
@@ -41,7 +41,7 @@ export const deleteAgency = async (id: number) => {
     const response = await fetch(`/api/auth/agencies/${id}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) throw new Error('Failed to delete agency');
@@ -68,7 +68,7 @@ export const updateAgencyStatus = async (id: number, status: string) => {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify({ status })
     });

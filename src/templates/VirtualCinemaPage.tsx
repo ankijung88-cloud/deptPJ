@@ -133,7 +133,7 @@ const VirtualCinemaPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
@@ -177,7 +177,7 @@ const VirtualCinemaPage: React.FC = () => {
             let finalImageUrl = newThumbnailUrl;
             let finalVideoUrl = newVideoUrl;
             
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
 
             // Handle Image Upload
             const imageFile = fileInputRef.current?.files?.[0];

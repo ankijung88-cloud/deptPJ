@@ -234,7 +234,7 @@ const VirtualMuseumPage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
@@ -279,7 +279,7 @@ const VirtualMuseumPage: React.FC = () => {
         setIsUploading(true);
         try {
             let finalImageUrl = newImageUrl;
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
             
             // 1. If file uploaded, upload to server first
             if (fileInputRef.current?.files?.[0]) {

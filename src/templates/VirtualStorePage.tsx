@@ -296,7 +296,7 @@ const VirtualStorePage: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
@@ -342,7 +342,7 @@ const VirtualStorePage: React.FC = () => {
             let finalSideImageUrl = newSideImageUrl;
             let finalBackImageUrl = newBackImageUrl;
 
-            const adminToken = localStorage.getItem('admin_token');
+            const adminToken = sessionStorage.getItem('admin_token');
 
             const uploadFile = async (file: File) => {
                 const formData = new FormData();

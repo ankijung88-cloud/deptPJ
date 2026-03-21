@@ -9,8 +9,8 @@ export const useAdmin = () => {
         role: 'admin' | 'agency' | null;
         user: any | null;
     }>(() => {
-        const token = localStorage.getItem('admin_token');
-        const userStr = localStorage.getItem('admin_user');
+        const token = sessionStorage.getItem('admin_token');
+        const userStr = sessionStorage.getItem('admin_user');
         const user = userStr ? JSON.parse(userStr) : null;
         
         const isValidToken = !!(token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-')));
@@ -23,8 +23,8 @@ export const useAdmin = () => {
     });
 
     const checkAdmin = () => {
-        const token = localStorage.getItem('admin_token');
-        const userStr = localStorage.getItem('admin_user');
+        const token = sessionStorage.getItem('admin_token');
+        const userStr = sessionStorage.getItem('admin_user');
         const user = userStr ? JSON.parse(userStr) : null;
 
         const isValidToken = !!(token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-')));
@@ -47,15 +47,15 @@ export const useAdmin = () => {
     }, []);
 
     const logout = () => {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
+        sessionStorage.removeItem('admin_token');
+        sessionStorage.removeItem('admin_user');
         setAuth({ isAuthenticated: false, role: null, user: null });
         window.dispatchEvent(new Event('admin-state-change'));
     };
 
     const login = (token: string, user: any) => {
-        localStorage.setItem('admin_token', token);
-        localStorage.setItem('admin_user', JSON.stringify(user));
+        sessionStorage.setItem('admin_token', token);
+        sessionStorage.setItem('admin_user', JSON.stringify(user));
         setAuth({ isAuthenticated: true, role: user.role, user: user });
         window.dispatchEvent(new Event('admin-state-change'));
     };

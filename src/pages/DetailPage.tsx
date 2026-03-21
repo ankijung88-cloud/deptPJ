@@ -209,7 +209,7 @@ export const DetailPage: React.FC = () => {
                     method: 'PUT',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                     },
                     body: JSON.stringify(backendData)
                 });
@@ -249,7 +249,7 @@ export const DetailPage: React.FC = () => {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 },
                 body: JSON.stringify(backendData)
             });

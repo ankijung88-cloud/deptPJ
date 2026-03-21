@@ -70,7 +70,7 @@ export const createFloorCategory = async (data: any): Promise<void> => {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -85,7 +85,7 @@ export const updateFloorCategory = async (id: string, data: any): Promise<void> 
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -99,7 +99,7 @@ export const deleteFloorCategory = async (id: string): Promise<void> => {
     const response = await fetch(`/api/categories/floors/${encodeURIComponent(id)}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) throw new Error('Delete failed');
@@ -110,7 +110,7 @@ export const createNavItem = async (data: any): Promise<void> => {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -125,7 +125,7 @@ export const updateNavItem = async (id: string, data: any): Promise<void> => {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         },
         body: JSON.stringify(data),
     });
@@ -139,7 +139,7 @@ export const deleteNavItem = async (id: string): Promise<void> => {
     const response = await fetch(`/api/categories/nav/${encodeURIComponent(id)}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
         }
     });
     if (!response.ok) throw new Error('Delete failed');
