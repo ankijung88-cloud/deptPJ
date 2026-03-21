@@ -1,10 +1,19 @@
 import pool from '../config/db.js';
 
 export const register = async (req, res) => {
-  const { username, password, agencyName } = req.body;
+  const { 
+    username, 
+    password, 
+    agencyName, 
+    birthDate, 
+    phoneMobile, 
+    phoneCompany, 
+    address, 
+    addressDetail 
+  } = req.body;
   
   if (!username || !password || !agencyName) {
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(400).json({ message: 'All required fields must be filled' });
   }
 
   try {
@@ -14,8 +23,8 @@ export const register = async (req, res) => {
     }
 
     await pool.query(
-      'INSERT INTO users (username, password, role, agency_name, status) VALUES (?, ?, ?, ?, ?)',
-      [username, password, 'AGENCY', agencyName, 'PENDING']
+      'INSERT INTO users (username, password, role, agency_name, birth_date, phone_mobile, phone_company, address, address_detail, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [username, password, 'AGENCY', agencyName, birthDate, phoneMobile, phoneCompany, address, addressDetail, 'PENDING']
     );
 
     res.status(201).json({ success: true, message: 'Registration successful. Waiting for admin approval.' });

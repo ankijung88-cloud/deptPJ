@@ -1634,7 +1634,7 @@ const AgencyManager = () => {
                     <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Agency Name" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Username" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Contact (Mobile)" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Status" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Created At" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
@@ -1643,8 +1643,15 @@ const AgencyManager = () => {
                     <tbody className="divide-y divide-white/5">
                         {agencies.map(agency => (
                             <tr key={agency.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 text-white font-medium">{agency.agency_name}</td>
-                                <td className="px-6 py-4 text-white/40">{agency.username}</td>
+                                <td className="px-6 py-4">
+                                    <div className="flex flex-col">
+                                        <span className="text-white font-medium">{agency.agency_name}</span>
+                                        <span className="text-white/30 text-[10px]">{agency.username}</span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 text-white/60 text-sm">
+                                    {agency.phone_mobile || '-'}
+                                </td>
                                 <td className="px-6 py-4">
                                     <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                                         agency.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
@@ -1686,7 +1693,7 @@ const AgencyManager = () => {
                                                 </button>
                                             )}
                                         </div>
-                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={16} /></button>
+                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Search size={16} /></button>
                                         <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={16} /></button>
                                     </div>
                                 </td>
@@ -1712,8 +1719,46 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
     const [formData, setFormData] = useState({
         username: agency?.username || '',
         password: '',
-        agencyName: agency?.agency_name || ''
+        agencyName: agency?.agency_name || '',
+        birthDate: agency?.birth_date || '',
+        phoneMobile: agency?.phone_mobile || '',
+        phoneCompany: agency?.phone_company || '',
+        address: agency?.address || '',
+        addressDetail: agency?.address_detail || ''
     });
+
+    useEffect(() => {
+        const scriptId = 'daum-postcode-script';
+        if (!document.getElementById(scriptId)) {
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+            script.async = true;
+            document.head.appendChild(script);
+        }
+    }, []);
+
+    const handleAddressSearch = () => {
+        if (window.daum && window.daum.Postcode) {
+            new window.daum.Postcode({
+                oncomplete: (data: any) => {
+                    let fullAddress = data.address;
+                    let extraAddress = '';
+
+                    if (data.addressType === 'R') {
+                        if (data.bname !== '') extraAddress += data.bname;
+                        if (data.buildingName !== '') extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+                        fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+                    }
+
+                    setFormData(prev => ({
+                        ...prev,
+                        address: fullAddress
+                    }));
+                }
+            }).open();
+        }
+    };
 
     const isEdit = !!agency;
 
@@ -1729,32 +1774,79 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-md bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
-                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">
-                    <AutoTranslatedText text={isEdit ? 'Edit Agency' : 'Add Agency'} />
-                </h3>
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+            >
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-serif font-bold text-white uppercase tracking-widest">
+                        <AutoTranslatedText text={isEdit ? 'Agency Details / Edit' : 'Add Agency'} />
+                    </h3>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40"><X size={20} /></button>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
-                        <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
+                                <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
+                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
+                                <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required={!isEdit} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Birth Date" /></label>
+                                <input type="text" placeholder="YYYY.MM.DD" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
+                                <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Company)" /></label>
+                                <input type="text" value={formData.phoneCompany} onChange={e => setFormData({...formData, phoneCompany: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
-                        <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Company Address" /></label>
+                            <div className="flex gap-2">
+                                <input type="text" value={formData.address} readOnly className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white/60 focus:outline-none" />
+                                <button type="button" onClick={handleAddressSearch} className="px-4 bg-white/5 border border-white/10 rounded-xl text-white hover:bg-white/10 transition-colors">
+                                    <AutoTranslatedText text="Search" />
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Detailed Address" /></label>
+                            <input type="text" value={formData.addressDetail} onChange={e => setFormData({...formData, addressDetail: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                        </div>
                     </div>
-                    <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
-                        <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required={!isEdit} />
-                    </div>
-                    <div className="flex justify-end gap-4 pt-4 border-t border-white/5">
+
+                    <div className="flex justify-end gap-4 pt-6 border-t border-white/5">
                         <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
+                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
+                            <AutoTranslatedText text={isEdit ? 'Save Changes' : 'Submit'} />
+                        </button>
                     </div>
                 </form>
             </motion.div>
         </div>
     );
 };
+
 
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');

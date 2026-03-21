@@ -57,6 +57,11 @@ async function initDB() {
         password VARCHAR(255) NOT NULL,
         role ENUM('ADMIN', 'AGENCY') NOT NULL DEFAULT 'AGENCY',
         agency_name VARCHAR(255) NULL,
+        birth_date VARCHAR(10) NULL,
+        phone_mobile VARCHAR(20) NULL,
+        phone_company VARCHAR(20) NULL,
+        address TEXT NULL,
+        address_detail TEXT NULL,
         status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB;
@@ -69,6 +74,21 @@ async function initDB() {
       await pool.query("ALTER TABLE users ADD COLUMN status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING' AFTER agency_name");
       await pool.query("UPDATE users SET status = 'APPROVED' WHERE role = 'ADMIN'");
       console.log('[DB] Migration successful: Added status to users.');
+    }
+
+    // New Migration: Add birth_date, phone_mobile, phone_company, address, address_detail
+    const [birthColumns] = await pool.query("SHOW COLUMNS FROM users LIKE 'birth_date'");
+    if (birthColumns.length === 0) {
+      console.log('[DB] Missing extended info columns in users. Running migration...');
+      await pool.query(`
+        ALTER TABLE users 
+        ADD COLUMN birth_date VARCHAR(10) NULL AFTER agency_name,
+        ADD COLUMN phone_mobile VARCHAR(20) NULL AFTER birth_date,
+        ADD COLUMN phone_company VARCHAR(20) NULL AFTER phone_mobile,
+        ADD COLUMN address TEXT NULL AFTER phone_company,
+        ADD COLUMN address_detail TEXT NULL AFTER address
+      `);
+      console.log('[DB] Migration successful: Added extended info columns to users.');
     }
     console.log('[DB] users table is ready.');
 
