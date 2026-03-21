@@ -78,7 +78,11 @@ const VirtualCinemaPage: React.FC = () => {
             const url = effectiveParentId 
                 ? `/api/products/category/cinema?parentId=${effectiveParentId}`
                 : '/api/products/category/cinema';
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                }
+            });
             const data = await response.json();
             const normalizedData = data.map((dbItem: any) => ({
                 id: dbItem.id,

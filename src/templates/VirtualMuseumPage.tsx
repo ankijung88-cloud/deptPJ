@@ -185,7 +185,11 @@ const VirtualMuseumPage: React.FC = () => {
             const url = effectiveParentId 
                 ? `/api/products/category/museum?parentId=${effectiveParentId}`
                 : '/api/products/category/museum';
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                }
+            });
             const data = await response.json();
             
             // Normalize DB items to FeaturedItem interface

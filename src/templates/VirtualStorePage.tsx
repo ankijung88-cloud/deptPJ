@@ -212,7 +212,11 @@ const VirtualStorePage: React.FC = () => {
             const url = effectiveParentId 
                 ? `/api/products/category/store?parentId=${effectiveParentId}`
                 : '/api/products/category/store';
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                }
+            });
             const data = await response.json();
             const normalizedData = data.map((dbItem: any) => ({
                 id: dbItem.id,

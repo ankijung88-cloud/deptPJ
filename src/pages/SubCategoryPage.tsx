@@ -109,8 +109,16 @@ const SubCategoryPage: React.FC = () => {
             setLoading(true);
             try {
                 const [itemsResponse, storiesResponse] = await Promise.all([
-                    fetch(`/api/products?subcategory=${targetSubId}`),
-                    fetch(`/api/categories/nav?subcategory=${targetSubId}`)
+                    fetch(`/api/products?subcategory=${targetSubId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                        }
+                    }),
+                    fetch(`/api/categories/nav?subcategory=${targetSubId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                        }
+                    })
                 ]);
 
                 if (mounted) {
