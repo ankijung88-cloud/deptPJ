@@ -125,7 +125,7 @@ export const HeroSection: React.FC = () => {
                                     {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                                 </button>
                                 <button
-                                    onClick={() => navigate('/about')}
+                                    onClick={() => navigate('/admin/login')}
                                     className="px-10 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-sm hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
                                 >
                                     <AutoTranslatedText text={t('hero.story')} />
@@ -196,22 +196,23 @@ export const HeroSection: React.FC = () => {
                             >
                                 <AutoTranslatedText text={t('hero.site_description')} />
                             </motion.p>
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 2, duration: 1 }}
-                                className="mt-12 flex flex-col items-center gap-4"
-                            >
-                                <button
-                                    onClick={() => navigate('/about')}
-                                    className="px-10 py-3 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full font-medium hover:bg-white/10 transition-all min-w-[200px]"
-                                >
-                                    <AutoTranslatedText text={t('hero.philosophy') || '브랜드 철학'} />
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        navigate('/inspiration');
-                                    }}
+                             <motion.div
+                                 initial={{ opacity: 0 }}
+                                 animate={{ opacity: 1 }}
+                                 transition={{ delay: 2, duration: 1 }}
+                                 className="mt-12 flex flex-col items-center gap-6"
+                             >
+                                 <button
+                                     onClick={() => navigate('/about')}
+                                     className="px-12 py-3.5 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full font-medium hover:bg-white/10 transition-all min-w-[240px] group relative overflow-hidden"
+                                 >
+                                     <div className="absolute inset-0 bg-gradient-to-r from-dancheong-red/0 via-dancheong-red/10 to-dancheong-red/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                     <AutoTranslatedText text={t('hero.philosophy') || '브랜드 철학'} />
+                                 </button>
+                                 <button
+                                     onClick={() => {
+                                         navigate('/inspiration');
+                                     }}
                                     className="px-8 py-3 border border-[#FFD700]/30 text-[#FFD700] rounded-full hover:bg-[#FFD700]/10 transition-all duration-300 pointer-events-auto"
                                 >
                                     <AutoTranslatedText text={t('hero.start')} />
