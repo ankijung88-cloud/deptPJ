@@ -19,7 +19,8 @@ import {
     Upload,
     Check,
     RotateCcw,
-    LogOut
+    LogOut,
+    Menu
 } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useFloors } from '../context/FloorContext';
@@ -157,7 +158,8 @@ const normalizeNoticeData = (notice: any) => {
         ...defaultData,
         ...notice,
         title: normalizeLocalizedString(notice.title),
-        content: normalizeLocalizedString(notice.content)
+        content: normalizeLocalizedString(notice.content),
+        agency_id: notice.agency_id || null
     };
 };
 
@@ -173,7 +175,8 @@ const normalizeFAQData = (faq: any) => {
         ...defaultData,
         ...faq,
         question: normalizeLocalizedString(faq.question),
-        answer: normalizeLocalizedString(faq.answer)
+        answer: normalizeLocalizedString(faq.answer),
+        agency_id: faq.agency_id || null
     };
 };
 
@@ -253,7 +256,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
         
         // Agency filter for Admin
-        const matchesAgency = !selectedAgency || (p as any).agency_id === parseInt(selectedAgency);
+        const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
         
         return matchesSearch && matchesFloor && matchesSub && matchesAgency;
     });
@@ -510,7 +513,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
             const response = await fetch('/api/upload', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 },
                 body: uploadData
             });
@@ -975,7 +978,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
             const response = await fetch('/api/upload', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 },
                 body: uploadData
             });
@@ -1308,7 +1311,7 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
                                 <td className="px-6 py-4 text-white/40">{notice.date}</td>
                                 {isAdmin && (
                                     <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
-                                        {agencies.find(a => a.id === notice.agency_id)?.agency_name || <span className="text-white/20">Admin</span>}
+                                        {agencies.find(a => Number(a.id) === Number(notice.agency_id))?.agency_name || <span className="text-white/20">Admin</span>}
                                     </td>
                                 )}
                                 <td className="px-6 py-4 text-right">
@@ -1517,7 +1520,7 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
                                 <td className="px-6 py-4 text-white/40">{faq.category || 'General'}</td>
                                 {isAdmin && (
                                     <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
-                                        {agencies.find(a => a.id === faq.agency_id)?.agency_name || <span className="text-white/20">Admin</span>}
+                                        {agencies.find(a => Number(a.id) === Number(faq.agency_id))?.agency_name || <span className="text-white/20">Admin</span>}
                                     </td>
                                 )}
                                 <td className="px-6 py-4 text-right">
@@ -1869,6 +1872,7 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
 
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
     const { isAdmin, isAuthenticated, logout } = useAdmin();
 
@@ -1902,9 +1906,26 @@ export const AdminPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0D17] flex">
+        <div className="min-h-screen bg-[#0A0D17] flex relative">
+            {/* Mobile Sidebar Overlay */}
+            <AnimatePresence>
+                {isSidebarOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Sidebar */}
-            <aside className="w-72 border-r border-white/5 bg-[#1A2420]/40 flex flex-col">
+            <aside className={`
+                fixed inset-y-0 left-0 w-72 border-r border-white/5 bg-[#1A2420] flex flex-col z-[110] transition-transform duration-300 transform
+                lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                h-screen sticky top-0 overflow-y-auto
+            `}>
                 <div className="p-8 border-b border-white/5">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="w-10 h-10 bg-[#00FFC2]/10 rounded-xl flex items-center justify-center border border-[#00FFC2]/30">
@@ -1923,7 +1944,10 @@ export const AdminPage: React.FC = () => {
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => {
+                                setActiveTab(tab.id);
+                                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                            }}
                             className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${
                                 activeTab === tab.id 
                                 ? 'bg-[#00FFC2] text-[#0A0D17] font-bold shadow-[0_0_20px_rgba(0,255,194,0.2)]' 
@@ -1950,14 +1974,22 @@ export const AdminPage: React.FC = () => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto bg-black/40">
-                <header className="px-10 py-8 border-b border-white/5 flex justify-between items-center bg-[#1A2420]/20 backdrop-blur-md sticky top-0 z-50">
-                    <div>
-                        <h2 className="text-sm font-bold text-white/40 uppercase tracking-[0.3em] mb-1">
-                            <AutoTranslatedText text="Overview" />
-                        </h2>
-                        <h3 className="text-2xl font-serif font-bold text-white">
-                            <AutoTranslatedText text={tabs.find(t => t.id === activeTab)?.label || ''} />
-                        </h3>
+                <header className="px-6 md:px-10 py-6 md:py-8 border-b border-white/5 flex justify-between items-center bg-[#1A2420]/20 backdrop-blur-md sticky top-0 z-50">
+                    <div className="flex items-center gap-4">
+                        <button 
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="p-2 lg:hidden text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                        >
+                            <Menu size={24} />
+                        </button>
+                        <div>
+                            <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-1">
+                                <AutoTranslatedText text="Overview" />
+                            </h2>
+                            <h3 className="text-xl md:text-2xl font-serif font-bold text-white">
+                                <AutoTranslatedText text={tabs.find(t => t.id === activeTab)?.label || ''} />
+                            </h3>
+                        </div>
                     </div>
                 </header>
 

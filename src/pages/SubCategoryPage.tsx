@@ -68,6 +68,7 @@ const mapToFeaturedItem = (item: any): FeaturedItem => ({
     price: item.price,
     closedDays: item.closed_days || item.closedDays || [],
     videoUrl: item.video_url || item.videoUrl,
+    agency_id: item.agency_id,
     user_id: item.user_id,
     eventDates: item.event_dates || item.eventDates || [],
 });

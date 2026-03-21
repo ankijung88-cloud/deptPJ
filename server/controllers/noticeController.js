@@ -20,10 +20,10 @@ export const getAllNotices = async (req, res) => {
 };
 
 export const createNotice = async (req, res) => {
-  const { title, content, category, date, is_important } = req.body;
+  const { title, content, category, date, is_important, agency_id: bodyAgencyId } = req.body;
   const user = req.user;
   try {
-    const agency_id = user?.id || null;
+    const agency_id = (user.role === 'ADMIN' && bodyAgencyId) ? bodyAgencyId : (user.role === 'AGENCY' ? user.id : null);
     const query = `
       INSERT INTO notices (title, content, category, date, is_important, agency_id)
       VALUES (?, ?, ?, ?, ?, ?)
@@ -44,7 +44,7 @@ export const createNotice = async (req, res) => {
 
 export const updateNotice = async (req, res) => {
   const { id } = req.params;
-  const { title, content, category, date, is_important } = req.body;
+  const { title, content, category, date, is_important, agency_id: bodyAgencyId } = req.body;
   try {
     const [existing] = await pool.query('SELECT agency_id FROM notices WHERE id = ?', [id]);
     if (existing.length === 0) return res.status(404).json({ message: 'Notice not found' });
@@ -55,15 +55,17 @@ export const updateNotice = async (req, res) => {
 
     const query = `
       UPDATE notices 
-      SET title = ?, content = ?, category = ?, date = ?, is_important = ?
+      SET title = ?, content = ?, category = ?, date = ?, is_important = ?, agency_id = ?
       WHERE id = ?
     `;
+    const agency_id = (user.role === 'ADMIN' && bodyAgencyId) ? bodyAgencyId : existing[0].agency_id;
     await pool.query(query, [
       JSON.stringify(title),
       JSON.stringify(content),
       category,
       date,
       is_important,
+      agency_id,
       id
     ]);
     res.json({ message: 'Notice updated successfully' });

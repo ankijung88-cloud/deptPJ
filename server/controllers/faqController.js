@@ -20,10 +20,10 @@ export const getAllFaqs = async (req, res) => {
 };
 
 export const createFaq = async (req, res) => {
-  const { question, answer, category, display_order } = req.body;
+  const { question, answer, category, display_order, agency_id: bodyAgencyId } = req.body;
   const user = req.user;
   try {
-    const agency_id = user?.id || null;
+    const agency_id = (user.role === 'ADMIN' && bodyAgencyId) ? bodyAgencyId : (user.role === 'AGENCY' ? user.id : null);
     const query = `
       INSERT INTO faqs (question, answer, category, display_order, agency_id)
       VALUES (?, ?, ?, ?, ?)
@@ -43,7 +43,7 @@ export const createFaq = async (req, res) => {
 
 export const updateFaq = async (req, res) => {
   const { id } = req.params;
-  const { question, answer, category, display_order } = req.body;
+  const { question, answer, category, display_order, agency_id: bodyAgencyId } = req.body;
   try {
     const [existing] = await pool.query('SELECT agency_id FROM faqs WHERE id = ?', [id]);
     if (existing.length === 0) return res.status(404).json({ message: 'FAQ not found' });
@@ -54,14 +54,16 @@ export const updateFaq = async (req, res) => {
 
     const query = `
       UPDATE faqs 
-      SET question = ?, answer = ?, category = ?, display_order = ?
+      SET question = ?, answer = ?, category = ?, display_order = ?, agency_id = ?
       WHERE id = ?
     `;
+    const agency_id = (user.role === 'ADMIN' && bodyAgencyId) ? bodyAgencyId : existing[0].agency_id;
     await pool.query(query, [
       JSON.stringify(question),
       JSON.stringify(answer),
       category,
       display_order,
+      agency_id,
       id
     ]);
     res.json({ message: 'FAQ updated successfully' });

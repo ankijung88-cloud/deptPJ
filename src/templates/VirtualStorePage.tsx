@@ -226,7 +226,8 @@ const VirtualStorePage: React.FC = () => {
                 backImageUrl: dbItem.back_image_url,
                 date: typeof dbItem.event_date === 'string' ? JSON.parse(dbItem.event_date) : dbItem.event_date,
                 location: typeof dbItem.location === 'string' ? JSON.parse(dbItem.location) : dbItem.location,
-                price: dbItem.price || '₩0'
+                price: dbItem.price || '₩0',
+                agency_id: dbItem.agency_id
             }));
             setStoreItems(normalizedData);
             

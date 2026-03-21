@@ -197,7 +197,8 @@ const VirtualMuseumPage: React.FC = () => {
                 imageUrl: dbItem.image_url,
                 date: typeof dbItem.event_date === 'string' ? JSON.parse(dbItem.event_date) : dbItem.event_date,
                 location: typeof dbItem.location === 'string' ? JSON.parse(dbItem.location) : dbItem.location,
-                price: dbItem.price
+                price: dbItem.price,
+                agency_id: dbItem.agency_id
             }));
             
             setMuseumItems(normalizedData);
