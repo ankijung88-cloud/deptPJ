@@ -8,15 +8,15 @@ import {
   updateProduct,
   deleteProduct
 } from '../controllers/productController.js';
-import { authenticateAdmin } from '../middleware/authMiddleware.js';
+import { authenticateAdmin, optionalAuthenticate } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get('/', authenticateAdmin, getAllProducts);
 router.post('/', authenticateAdmin, createProduct);
-router.get('/category/:category', getProductsByCategory);
+router.get('/category/:category', optionalAuthenticate, getProductsByCategory);
 router.get('/search', authenticateAdmin, searchProducts);
-router.get('/:id', getProductById);
+router.get('/:id', optionalAuthenticate, getProductById);
 router.put('/:id', authenticateAdmin, updateProduct);
 router.delete('/:id', authenticateAdmin, deleteProduct);
 

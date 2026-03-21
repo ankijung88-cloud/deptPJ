@@ -118,7 +118,11 @@ export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
 
 export const getProductsByCategory = async (category: string): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch(`/api/products/category/${encodeURIComponent(category)}`);
+        const response = await fetch(`/api/products/category/${encodeURIComponent(category)}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
@@ -130,7 +134,11 @@ export const getProductsByCategory = async (category: string): Promise<FeaturedI
 
 export const getProductById = async (id: string): Promise<FeaturedItem | null> => {
     try {
-        const response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+        const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) {
             if (response.status === 404) return null;
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -162,7 +170,11 @@ export const searchProducts = async (query: string): Promise<FeaturedItem[]> => 
 export const getProductsByUser = async (userId: string): Promise<FeaturedItem[]> => {
     // Note: User-specific fetching might need Auth later
     try {
-        const response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`);
+        const response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+            }
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);

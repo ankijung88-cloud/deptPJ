@@ -28,3 +28,22 @@ export const authenticateAdmin = (req, res, next) => {
     res.status(403).json({ message: 'Access denied: Valid token required' });
   }
 };
+export const optionalAuthenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return next();
+  }
+
+  const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+  if (token && (token.startsWith('mock-admin-token-') || token.startsWith('mock-agency-token-'))) {
+    const parts = token.split('-');
+    const role = parts[1].toUpperCase();
+    const userId = parts[parts.length - 1];
+    
+    req.user = {
+      id: parseInt(userId),
+      role: role
+    };
+  }
+  next();
+};

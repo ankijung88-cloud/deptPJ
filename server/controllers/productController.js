@@ -37,32 +37,40 @@ export const getAllProducts = async (req, res) => {
 export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
   const { parentId } = req.query;
-  console.log(`[getProductsByCategory] Fetching category: ${category}, parentId: ${parentId}`);
+  const user = req.user;
+  
   try {
     let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
     let params = [`%${category}%`, `%${category}%`];
+
+    if (user && user.role === 'AGENCY') {
+      query += ' AND agency_id = ?';
+      params.push(user.id);
+    }
 
     if (parentId && parentId !== 'undefined' && parentId !== 'null') {
       query += ' AND (parent_id = ? AND id != ?)';
       params.push(parentId, parentId);
     }
 
-    console.log(`[getProductsByCategory] Final Query: ${query} with params: ${JSON.stringify(params)}`);
-
     const [rows] = await pool.query(query, params);
-    console.log(`[getProductsByCategory] Returned ${rows.length} rows`);
     res.json(rows);
   } catch (error) {
-    console.error('[getProductsByCategory] Error:', error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
 export const getProductById = async (req, res) => {
   const { id } = req.params;
+  const user = req.user;
   try {
     const [rows] = await pool.query('SELECT * FROM featured_items WHERE id = ?', [id]);
     if (rows.length === 0) return res.status(404).json({ message: 'Product not found' });
+    
+    if (user && user.role === 'AGENCY' && rows[0].agency_id !== user.id) {
+      return res.status(403).json({ message: 'Access denied: You do not own this product' });
+    }
+    
     res.json(rows[0]);
   } catch (error) {
     res.status(500).json({ message: error.message });
