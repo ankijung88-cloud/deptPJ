@@ -15,6 +15,7 @@ const VirtualMuseumPage = lazy(() => import('./templates/VirtualMuseumPage'));
 const VirtualStorePage = lazy(() => import('./templates/VirtualStorePage'));
 const VirtualCinemaPage = lazy(() => import('./templates/VirtualCinemaPage'));
 const VirtualTicketPage = lazy(() => import('./templates/VirtualTicketPage'));
+const AgencyRegisterPage = lazy(() => import('./pages/AgencyRegisterPage'));
 import NoticePage from './pages/NoticePage';
 import FAQPage from './pages/FAQPage';
 import TermsPage from './pages/TermsPage';
@@ -40,6 +41,7 @@ function App() {
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/admin" element={<AdminPage />} />
                         <Route path="/admin/login" element={<AdminLoginPage />} />
+                        <Route path="/register" element={<AgencyRegisterPage />} />
                         <Route path="/detail/:id/museum" element={<VirtualMuseumPage />} />
                         <Route path="/detail/:id/store" element={<VirtualStorePage />} />
                         <Route path="/detail/:id/cinema" element={<VirtualCinemaPage />} />
