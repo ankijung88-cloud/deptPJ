@@ -10,6 +10,8 @@ export const AdminLoginPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isRecoveryOpen, setIsRecoveryOpen] = useState(false);
+    const [recoveryType, setRecoveryType] = useState<'ID' | 'PASSWORD'>('ID');
     const navigate = useNavigate();
     const { isAuthenticated, login } = useAdmin();
 
@@ -116,6 +118,12 @@ export const AdminLoginPage: React.FC = () => {
                         </div>
                     </div>
 
+                    <div className="flex justify-end gap-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                        <button type="button" onClick={() => { setRecoveryType('ID'); setIsRecoveryOpen(true); }} className="hover:text-[#00FFC2] transition-colors">아이디 찾기</button>
+                        <span className="text-white/10">|</span>
+                        <button type="button" onClick={() => { setRecoveryType('PASSWORD'); setIsRecoveryOpen(true); }} className="hover:text-[#00FFC2] transition-colors">비밀번호 찾기</button>
+                    </div>
+
                     {error && (
                         <motion.div
                             initial={{ opacity: 0, height: 0 }}
@@ -160,8 +168,109 @@ export const AdminLoginPage: React.FC = () => {
                     </button>
                 </div>
             </motion.div>
+
+            {isRecoveryOpen && (
+                <FindAccountModal 
+                    type={recoveryType} 
+                    onClose={() => setIsRecoveryOpen(false)} 
+                />
+            )}
         </div>
     );
 };
+
+const FindAccountModal = ({ type, onClose }: { type: 'ID' | 'PASSWORD', onClose: () => void }) => {
+    const [subType, setSubType] = useState<'ID' | 'PASSWORD'>(type);
+    const [formData, setFormData] = useState({ agencyName: '', phoneMobile: '', username: '', newPassword: '' });
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<any>(null);
+    const [error, setError] = useState('');
+
+    const handleFindID = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/find-id', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agencyName: formData.agencyName, phoneMobile: formData.phoneMobile })
+            });
+            const data = await res.json();
+            if (data.success) setResult(data.username);
+            else setError(data.message);
+        } catch { setError('Connection failed'); }
+        finally { setLoading(false); }
+    };
+
+    const handleResetPW = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const data = await res.json();
+            if (data.success) setResult('success');
+            else setError(data.message);
+        } catch { setError('Connection failed'); }
+        finally { setLoading(false); }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-md bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
+                <div className="flex gap-4 mb-8">
+                    <button onClick={() => { setSubType('ID'); setResult(null); setError(''); }} className={`flex-1 pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${subType === 'ID' ? 'text-[#00FFC2] border-b-2 border-[#00FFC2]' : 'text-white/20'}`}>아이디 찾기</button>
+                    <button onClick={() => { setSubType('PASSWORD'); setResult(null); setError(''); }} className={`flex-1 pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${subType === 'PASSWORD' ? 'text-[#00FFC2] border-b-2 border-[#00FFC2]' : 'text-white/20'}`}>비밀번호 재설정</button>
+                </div>
+
+                {result ? (
+                    <div className="text-center py-6">
+                        {subType === 'ID' ? (
+                            <>
+                                <p className="text-white/40 text-sm mb-4">입력하신 정보와 일치하는 아이디입니다.</p>
+                                <div className="bg-black/40 rounded-xl p-4 text-white font-mono text-lg mb-8">{result}</div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <div className="w-8 h-8 text-green-500">✓</div>
+                                </div>
+                                <p className="text-white text-lg font-bold mb-8">비밀번호가 재설정되었습니다.</p>
+                            </>
+                        )}
+                        <button onClick={onClose} className="w-full bg-[#00FFC2] text-[#0A0D17] font-bold py-4 rounded-xl">확인</button>
+                    </div>
+                ) : (
+                    <form onSubmit={subType === 'ID' ? handleFindID : handleResetPW} className="space-y-4">
+                        {subType === 'PASSWORD' && (
+                            <input type="email" placeholder="아이디 (이메일)" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white" required />
+                        )}
+                        <input type="text" placeholder="에이전시 명" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white" required />
+                        <input type="text" placeholder="휴대폰 번호 (010-0000-0000)" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white" required />
+                        {subType === 'PASSWORD' && (
+                            <input type="password" placeholder="새 비밀번호" value={formData.newPassword} onChange={e => setFormData({...formData, newPassword: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white" required />
+                        )}
+                        
+                        {error && <p className="text-red-400 text-xs text-center">{error}</p>}
+                        
+                        <div className="flex gap-4 pt-4">
+                            <button type="button" onClick={onClose} className="flex-1 py-4 text-white/40 font-bold">취소</button>
+                            <button type="submit" disabled={loading} className="flex-2 bg-[#00FFC2] text-[#0A0D17] font-bold py-4 px-8 rounded-xl disabled:opacity-50">
+                                {loading ? '처리 중...' : (subType === 'ID' ? '아이디 찾기' : '비밀번호 재설정')}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </motion.div>
+        </div>
+    );
+};
+
 
 export default AdminLoginPage;

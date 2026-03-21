@@ -1,5 +1,4 @@
 import express from 'express';
-import { login } from '../controllers/authController.js';
 import * as authController from '../controllers/authController.js';
 import * as adminController from '../controllers/adminController.js';
 import { authenticateAdmin } from '../middleware/authMiddleware.js';
@@ -9,6 +8,8 @@ const router = express.Router();
 // Auth routes
 router.post('/login', authController.login);
 router.post('/register', authController.register);
+router.post('/find-id', authController.findId);
+router.post('/reset-password', authController.resetPassword);
 
 // Protected agency management routes (Admin only)
 router.get('/agencies', authenticateAdmin, adminController.getAgencies);
