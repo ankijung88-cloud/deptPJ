@@ -1633,24 +1633,40 @@ const AgencyManager = () => {
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Agency Name" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Contact (Mobile)" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="ID / PW" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Contact" /></th>
+                            <th className="px-6 py-4"><AutoTranslatedText text="Address" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Status" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Created At" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {agencies.map(agency => (
-                            <tr key={agency.id} className="hover:bg-white/5 transition-colors">
+                            <tr key={agency.id} className="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">
-                                        <span className="text-white font-medium">{agency.agency_name}</span>
-                                        <span className="text-white/30 text-[10px]">{agency.username}</span>
+                                        <span className="text-white font-bold">{agency.agency_name}</span>
+                                        <span className="text-white/30 text-[10px]">{new Date(agency.created_at).toLocaleDateString()}</span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-white/60 text-sm">
-                                    {agency.phone_mobile || '-'}
+                                <td className="px-6 py-4">
+                                    <div className="flex flex-col">
+                                        <span className="text-white/60 text-xs font-mono">{agency.username}</span>
+                                        <span className="text-white/40 text-[10px] font-mono select-all hover:text-[#00FFC2] transition-colors">{agency.password}</span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex flex-col text-[10px] text-white/60 space-y-0.5">
+                                        <span className="flex items-center gap-1"><span className="text-white/20 italic">M:</span> {agency.phone_mobile || '-'}</span>
+                                        <span className="flex items-center gap-1"><span className="text-white/20 italic">C:</span> {agency.phone_company || '-'}</span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex flex-col max-w-[200px]">
+                                        <span className="text-white/60 text-[10px] line-clamp-1" title={agency.address}>{agency.address || '-'}</span>
+                                        <span className="text-white/40 text-[9px] line-clamp-1" title={agency.address_detail}>{agency.address_detail || '-'}</span>
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
@@ -1661,7 +1677,6 @@ const AgencyManager = () => {
                                         {agency.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-white/40 text-xs">{new Date(agency.created_at).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end items-center gap-2">
                                         <div className="flex gap-1 mr-2 border-r border-white/10 pr-2">
