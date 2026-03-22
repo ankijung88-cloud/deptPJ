@@ -218,11 +218,11 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             transition={{ duration: 1.5, ease: "easeOut" }}
                             className="absolute z-40 flex flex-col items-center justify-center p-20 bg-black/40 backdrop-blur-sm rounded-3xl"
                         >
-                            <span className="text-[20rem] md:text-[28rem] font-black font-serif italic mb-8 leading-none" style={{ color: floorColor, textShadow: `0 0 100px ${floorColor}aa` }}>
+                            <span className="text-[10rem] md:text-[14rem] font-black font-serif italic mb-4 leading-none" style={{ color: floorColor, textShadow: `0 0 100px ${floorColor}aa` }}>
                                 {floorNumber}
                             </span>
-                            <div className="flex flex-col items-center -mt-16">
-                                <h2 className="text-7xl md:text-9xl font-black text-white tracking-[0.8em] uppercase mb-10">
+                            <div className="flex flex-col items-center -mt-8">
+                                <h2 className="text-4xl md:text-5xl font-black text-white tracking-[0.8em] uppercase mb-10">
                                     <AutoTranslatedText text={floorTitle} />
                                 </h2>
                                 <div className="w-80 h-[3px] bg-[#00FFC2] shadow-[0_0_30px_#00FFC2]" />
