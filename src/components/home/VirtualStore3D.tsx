@@ -21,6 +21,7 @@ import { getContrastColor } from '../../utils/themeUtils';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { useFloors } from '../../context/FloorContext';
 import { FloorCategory } from '../../types';
+import { FloorTransitionOverlay } from './FloorTransitionOverlay';
 
 // --- Theme & Configuration ---
 const COLORS = {
@@ -932,7 +933,7 @@ const CityBackground3D = () => {
 };
 
 // --- 2D Mobile Modal (Image 1 Style) ---
-const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+const MobileFloorModal = ({ activeFloorData, onClose, onSelectFloor }: { activeFloorData: any, onClose: () => void, onSelectFloor?: (num: number) => void }) => {
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -989,6 +990,10 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                             key={idx}
                             onClick={() => {
                                 onClose();
+                                if (onSelectFloor) {
+                                    const floorNum = parseInt(sub.id.split('-')[1]) || activeFloorData.floor;
+                                    onSelectFloor(parseInt(floorNum));
+                                }
                                 navigate(`/category/${sub.id}`);
                             }}
                             className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
@@ -1430,6 +1435,7 @@ export const VirtualStore3D: React.FC = () => {
 
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
+    const [transitioningFloor, setTransitioningFloor] = useState<number | null>(null);
     const [resetKey, setResetKey] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     
@@ -1518,7 +1524,7 @@ export const VirtualStore3D: React.FC = () => {
                                 activeModalFloor={activeModalFloor}
                                 setHoveredFloor={setHoveredFloor}
                                 setActiveModalFloor={setActiveModalFloor}
-                                setSelectedFloor={setSelectedFloor}
+                                setSelectedFloor={(num: number) => setTransitioningFloor(num)}
                                 isMobile={isMobile}
                                 lang={i18n.language}
                             />
@@ -1528,12 +1534,25 @@ export const VirtualStore3D: React.FC = () => {
             </Canvas>
 
             <AnimatePresence mode="wait">
-                {activeFloorData && (
+                {transitioningFloor && (
+                    <FloorTransitionOverlay
+                        key="floor-transition"
+                        floorNumber={transitioningFloor}
+                        floorTitle={getLocalizedText(floors.find(f => parseInt(f.floor) === transitioningFloor)?.title || { ko: '' }, i18n.language)}
+                        floorColor={floors.find(f => parseInt(f.floor) === transitioningFloor)?.color || '#00FFC2'}
+                        onComplete={() => {
+                            setSelectedFloor(transitioningFloor);
+                            setTransitioningFloor(null);
+                        }}
+                    />
+                )}
+                {activeFloorData && !transitioningFloor && (
                     isMobile ? (
                         <MobileFloorModal
                             key="mobile-modal"
                             activeFloorData={activeFloorData}
                             onClose={() => setSelectedFloor(null)}
+                            onSelectFloor={(num) => setTransitioningFloor(num)}
                         />
                     ) : (
                         <DesktopVirtualSpace
