@@ -1524,7 +1524,7 @@ export const VirtualStore3D: React.FC = () => {
                         polar={[0, 0]}
                         azimuth={[-Infinity, Infinity]}
                     >
-                        {!loading && (
+                        {!loading && !transitioningFloor && (
                             <BlueprintBuilding
                                 floors={floors}
                                 selectedFloor={selectedFloor}

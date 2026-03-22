@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
@@ -34,18 +34,20 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     }, [onComplete]);
 
     // Simulated Stars for the Starfield
-    const stars = Array.from({ length: 140 }).map((_, i) => ({
+    const stars = useMemo(() => Array.from({ length: 800 }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: 0.8 + Math.random() * 1.8,
-    }));
+        size: 0.5 + Math.random() * 1.5,
+        opacity: 0.2 + Math.random() * 0.8,
+        twinkle: Math.random() * 2,
+    })), []);
 
-    // Simulated Glowing Spheres (Matching Image 2 primary nodes for seamless arrival)
+    // Simulated Glowing Nodes (Matching Image 2 and GlassFragments)
     const spheres = [
-        { x: -28, y: -15, size: 30, delay: 0.1, label: '문화 담론' },
-        { x: -6, y: -30, size: 48, delay: 0.3, label: '아티스트 인터뷰' },
-        { x: 18, y: -22, size: 32, delay: 0.05, label: '토크 플러스' },
+        { x: -30, y: -18, size: 35, delay: 0.1, label: '문화 담론' },
+        { x: -5, y: -32, size: 55, delay: 0.3, label: '아티스트 인터뷰' },
+        { x: 22, y: -25, size: 38, delay: 0.05, label: '토크 플러스' },
     ];
 
     // Studs for Gwanghwamun Gate (Brass nubs)
@@ -131,21 +133,22 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 ))}
                             </div>
 
-                            {/* Cyan 3D Grid Plane (Image 2 Precise) */}
+                            {/* Neon Mint 3D Grid Plane (Exact Match) */}
                             <div 
-                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] opacity-100"
+                                className="absolute bottom-[-10%] w-[180vw] h-[100vh]"
                                 style={{ 
                                     backgroundImage: `
-                                        linear-gradient(to right, #00E5FF 1.8px, transparent 1.8px),
-                                        linear-gradient(to bottom, #00E5FF 1.8px, transparent 1.8px)
+                                        linear-gradient(to right, #00FFC2 1px, transparent 1px),
+                                        linear-gradient(to bottom, #00FFC2 1px, transparent 1px)
                                     `,
-                                    backgroundSize: '75px 75px',
-                                    transform: 'perspective(1500px) rotateX(75deg)'
+                                    backgroundSize: '80px 80px', // Precise density
+                                    transform: 'perspective(1500px) rotateX(78deg)', // Low angle matching VirtualStore3D
+                                    opacity: 0.25
                                 }}
                             />
 
                             {/* Labeled Spheres (Matching Image 2) */}
-                            {spheres.map((s, i) => (
+                            {spheres.map((s: any, i: number) => (
                                 <motion.div
                                     key={i}
                                     initial={{ opacity: 0, scale: 0 }}
@@ -169,14 +172,27 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                         <AutoTranslatedText text={s.label} />
                                     </span>
                                     <div 
-                                        className="rounded-full shadow-[0_0_30px_rgba(255,82,82,0.5)]"
+                                        className="relative rounded-full flex items-center justify-center overflow-hidden"
                                         style={{ 
                                             width: s.size,
                                             height: s.size,
-                                            background: `radial-gradient(circle at 30% 30%, #fff, #FF5252 45%, #4A0E0E 100%)`,
-                                            border: '1px solid rgba(255,160,160,0.3)'
+                                            background: `radial-gradient(circle at center, ${floorColor}44 0%, transparent 70%)`,
+                                            border: `1px solid ${floorColor}44`,
+                                            boxShadow: `0 0 30px ${floorColor}33`,
                                         }}
-                                    />
+                                    >
+                                        {/* Wireframe Simulation (Matches Icosahedron) */}
+                                        <div className="absolute inset-0 opacity-40">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full scale-[0.7]">
+                                                <path d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" fill="none" stroke={floorColor} strokeWidth="1.5" />
+                                                <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.8" />
+                                                <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.8" />
+                                                <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.8" />
+                                                <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.8" />
+                                                <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.8" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </motion.div>
                             ))}
 
