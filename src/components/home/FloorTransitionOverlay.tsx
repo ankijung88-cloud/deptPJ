@@ -18,25 +18,25 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Timeline for maximum impact
-        const zoomTimer = setTimeout(() => setStage('door'), 600); // Faster zoom
-        const doorTimer = setTimeout(() => setStage('suck'), 1600);
-        const completeTimer = setTimeout(() => onComplete(), 3800);
+        // Refined Timeline for "Slow Zoom into Facade -> Door -> Internal Vortex"
+        const zoomTimer = setTimeout(() => setStage('door'), 2000); 
+        const suckTimer = setTimeout(() => setStage('suck'), 3200); 
+        const completeTimer = setTimeout(() => onComplete(), 5500); 
 
         return () => {
             clearTimeout(zoomTimer);
-            clearTimeout(doorTimer);
+            clearTimeout(suckTimer);
             clearTimeout(completeTimer);
         };
     }, [onComplete]);
 
     // Particles for the vacuum effect
-    const particles = Array.from({ length: 40 }).map((_, i) => ({
+    const particles = Array.from({ length: 45 }).map((_, i) => ({
         id: i,
-        angle: (i / 40) * Math.PI * 2,
-        delay: Math.random() * 0.8,
-        duration: 0.8 + Math.random() * 0.4,
-        scale: 0.5 + Math.random() * 1.5,
+        angle: (i / 45) * Math.PI * 2,
+        delay: Math.random() * 1.5,
+        duration: 1.0 + Math.random() * 0.5,
+        scale: 0.8 + Math.random() * 1.5,
     }));
 
     return (
@@ -44,132 +44,76 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             initial={{ opacity: 0 }}
             animate={{ 
                 opacity: 1,
-                x: stage === 'door' || stage === 'suck' ? [0, -2, 2, -2, 2, 0] : 0 // Subtle shake
+                x: stage === 'suck' ? [0, -1, 1, -1, 1, 0] : 0 
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-                x: { duration: 0.2, repeat: stage === 'suck' ? Infinity : 0 }
+                x: { duration: 0.1, repeat: stage === 'suck' ? Infinity : 0 }
             }}
             className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black"
         >
-            {/* 1. Dramatic Background Zoom/Flare */}
+            {/* 1. LAYER: Vertical Facade Zoom (Background Side Wall) */}
             <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
+                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
-                    scale: stage === 'zoom' ? 1.2 : 2.5, 
-                    opacity: stage === 'complete' ? 0 : 0.4
+                    scale: stage === 'zoom' ? 1.2 : 6, 
+                    opacity: stage === 'complete' ? 0 : 0.6
                 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
+                transition={{ 
+                    scale: { duration: stage === 'zoom' ? 2 : 4, ease: "linear" },
+                    opacity: { duration: 1 }
+                }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
+                {/* Building Side Wall (Facade) with architectural panels */}
                 <div 
-                    className="w-full h-full"
+                    className="w-[200vw] h-[200vh] opacity-30"
                     style={{ 
-                        background: `radial-gradient(circle at center, ${floorColor} 0%, transparent 60%)`,
-                        filter: 'blur(60px)'
+                        backgroundImage: `
+                            linear-gradient(to right, ${floorColor}22 2px, transparent 2px),
+                            linear-gradient(to bottom, ${floorColor}22 2px, transparent 2px),
+                            linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 50%, rgba(255,255,255,0.02) 100%)
+                        `,
+                        backgroundSize: '200px 200px, 200px 200px, 100% 100%',
+                        // No rotateX to maintain vertical wall look
+                        transform: 'perspective(1000px) translateZ(-100px)'
                     }}
                 />
             </motion.div>
 
-            {/* 2. Traditional Dancheong Doors with Depth */}
-            <div className="relative w-full h-full flex items-center justify-center perspective-[2000px]">
-                {/* Shockwave Ring (Triggers when doors open) */}
-                <AnimatePresence>
-                    {(stage === 'door' || stage === 'suck') && (
-                        <motion.div
-                            initial={{ scale: 0.1, opacity: 0, border: `2px solid ${floorColor}` }}
-                            animate={{ scale: 8, opacity: [0, 1, 0] }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="absolute w-64 h-64 rounded-full pointer-events-none"
-                        />
-                    )}
-                </AnimatePresence>
-
-                {/* Left Door */}
-                <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'door' || stage === 'suck' || stage === 'complete') ? -115 : 0 }}
-                    transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
-                    className="absolute right-1/2 w-[50vw] h-full border-r-[2px] border-[#00FFC2]/30 origin-right overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.8)] z-20"
-                    style={{ 
-                        backgroundColor: '#151C1A',
-                        backgroundImage: `
-                            linear-gradient(90deg, transparent 95%, ${floorColor}22 95%),
-                            linear-gradient(0deg, transparent 95%, ${floorColor}22 95%)
-                        `,
-                        backgroundSize: '40px 40px'
-                    }}
-                >
-                    {/* Dancheong-inspired Pattern */}
-                    <div className="absolute inset-0 opacity-10 pointer-events-none">
-                        <div className="w-full h-full" style={{ 
-                            backgroundImage: `radial-gradient(circle at 50% 50%, ${floorColor} 1px, transparent 1px)`,
-                            backgroundSize: '20px 20px'
-                        }} />
-                    </div>
-                    <div className="absolute inset-16 border-[4px] border-[#00FFC2]/10 flex items-center justify-center">
-                        <div className="w-[70%] h-[70%] border-[2px] border-[#00FFC2]/5 flex items-center justify-center relative">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#00FFC2]/20 rotate-45" />
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#00FFC2]/20 rotate-45" />
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Right Door */}
-                <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'door' || stage === 'suck' || stage === 'complete') ? 115 : 0 }}
-                    transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
-                    className="absolute left-1/2 w-[50vw] h-full border-l-[2px] border-[#00FFC2]/30 origin-left overflow-hidden shadow-[-20px_0_50px_rgba(0,0,0,0.8)] z-20"
-                    style={{ 
-                        backgroundColor: '#151C1A',
-                        backgroundImage: `
-                            linear-gradient(90deg, transparent 95%, ${floorColor}22 95%),
-                            linear-gradient(0deg, transparent 95%, ${floorColor}22 95%)
-                        `,
-                        backgroundSize: '40px 40px'
-                    }}
-                >
-                    <div className="absolute inset-0 opacity-10 pointer-events-none">
-                        <div className="w-full h-full" style={{ 
-                            backgroundImage: `radial-gradient(circle at 50% 50%, ${floorColor} 1px, transparent 1px)`,
-                            backgroundSize: '20px 20px'
-                        }} />
-                    </div>
-                    <div className="absolute inset-16 border-[4px] border-[#00FFC2]/10 flex items-center justify-center">
-                        <div className="w-[70%] h-[70%] border-[2px] border-[#00FFC2]/5 flex items-center justify-center relative">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#00FFC2]/20 rotate-45" />
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#00FFC2]/20 rotate-45" />
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* 3. High-Intensity Vacuum Vortex */}
+            {/* 2. LAYER: Internal Vortex (Behind Doors) */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                            {/* Central Light core */}
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="relative w-full h-full flex items-center justify-center"
+                        >
                             <motion.div
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ 
-                                    scale: [0, 5, 4.5], 
-                                    opacity: [0, 1, 0.9],
-                                    boxShadow: [`0 0 0px ${floorColor}`, `0 0 100px ${floorColor}`, `0 0 60px ${floorColor}`]
-                                }}
-                                transition={{ duration: 1, ease: "easeOut" }}
-                                className="w-32 h-32 rounded-full"
-                                style={{ 
-                                    background: `radial-gradient(circle, #fff 0%, ${floorColor} 40%, transparent 75%)`,
-                                }}
+                                initial={{ scale: 0.05, opacity: 0, border: `6px solid ${floorColor}` }}
+                                animate={{ scale: 20, opacity: [0, 1, 0] }}
+                                transition={{ duration: 2.5, ease: "easeOut" }}
+                                className="absolute w-32 h-32 rounded-full"
                             />
-                            
-                            {/* Particles - Sucking IN */}
+
+                            <motion.div
+                                animate={{ 
+                                    scale: [1, 1.3, 1],
+                                    opacity: [0.6, 1, 0.6]
+                                }}
+                                transition={{ duration: 0.4, repeat: Infinity }}
+                                className="w-64 h-64 rounded-full blur-[80px]"
+                                style={{ backgroundColor: floorColor }}
+                            />
+
                             {particles.map((p) => (
                                 <motion.div
                                     key={p.id}
                                     initial={{ 
-                                        x: Math.cos(p.angle) * window.innerWidth * 1.2,
-                                        y: Math.sin(p.angle) * window.innerHeight * 1.2,
+                                        x: Math.cos(p.angle) * window.innerWidth * 1.5,
+                                        y: Math.sin(p.angle) * window.innerHeight * 1.5,
                                         scale: 0,
                                         opacity: 0
                                     }}
@@ -185,52 +129,88 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                         repeat: Infinity,
                                         ease: "circIn"
                                     }}
-                                    className="absolute w-0.5 h-48 rounded-full z-30"
+                                    className="absolute w-1 h-80 rounded-full"
                                     style={{ 
                                         backgroundColor: floorColor,
-                                        boxShadow: `0 0 10px ${floorColor}`,
+                                        boxShadow: `0 0 20px ${floorColor}`,
                                         rotate: `${p.angle}rad`,
                                         transformOrigin: '50% 100%'
                                     }}
                                 />
                             ))}
-                        </div>
+                        </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* 4. Dramatic Typography */}
-                {stage !== 'suck' && stage !== 'complete' && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.7, y: 100 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 2.5, filter: 'blur(30px)', y: -100 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative z-30 flex flex-col items-center justify-center pointer-events-none"
-                    >
-                        <motion.span 
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                            className="text-[12rem] md:text-[18rem] font-black font-serif italic leading-none" 
-                            style={{ color: floorColor, textShadow: `0 0 60px ${floorColor}88` }}
-                        >
-                            {floorNumber}
-                        </motion.span>
-                        <div className="flex flex-col items-center -mt-8">
-                            <h2 className="text-4xl md:text-6xl font-black text-white tracking-[0.4em] uppercase mb-4 drop-shadow-2xl">
-                                <AutoTranslatedText text={floorTitle} />
-                            </h2>
-                            <div className="w-48 h-[2px] bg-[#00FFC2] shadow-[0_0_15px_#00FFC2]" />
-                        </div>
-                    </motion.div>
-                )}
             </div>
 
-            {/* 5. Final Portal Entry Flash */}
+            {/* 3. LAYER: Traditional Dancheong Doors (Foreground) */}
+            <div className="relative w-full h-full flex items-center justify-center perspective-[2000px] z-30 pointer-events-none">
+                <motion.div
+                    initial={{ rotateY: 0 }}
+                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? -125 : 0 }}
+                    transition={{ duration: 1.8, ease: [0.7, 0, 0.3, 1] }}
+                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 origin-right overflow-hidden shadow-[30px_0_80px_rgba(0,0,0,1)]"
+                    style={{ 
+                        backgroundColor: '#121917',
+                        backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
+                    }}
+                >
+                    <div className="absolute inset-16 border-[3px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-32">
+                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-20 h-20 border-[3px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
+                           <div className="w-8 h-8 bg-[#00FFC2]/20" />
+                        </div>
+                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ rotateY: 0 }}
+                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? 125 : 0 }}
+                    transition={{ duration: 1.8, ease: [0.7, 0, 0.3, 1] }}
+                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 origin-left overflow-hidden shadow-[-30px_0_80px_rgba(0,0,0,1)]"
+                    style={{ 
+                        backgroundColor: '#121917',
+                        backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
+                    }}
+                >
+                    <div className="absolute inset-16 border-[3px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-32">
+                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-20 h-20 border-[3px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
+                           <div className="w-8 h-8 bg-[#00FFC2]/20" />
+                        </div>
+                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                    </div>
+                </motion.div>
+
+                <AnimatePresence>
+                    {(stage === 'zoom' || stage === 'door') && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                            animate={{ opacity: 1, scale: 1.2, y: 0 }}
+                            exit={{ opacity: 0, scale: 4, filter: 'blur(40px)', y: -200 }}
+                            transition={{ duration: 1.8, ease: "easeOut" }}
+                            className="absolute z-40 flex flex-col items-center justify-center"
+                        >
+                            <span className="text-[18rem] md:text-[24rem] font-black font-serif italic mb-6 leading-none" style={{ color: floorColor, textShadow: `0 0 70px ${floorColor}cc` }}>
+                                {floorNumber}
+                            </span>
+                            <div className="flex flex-col items-center -mt-12">
+                                <h2 className="text-6xl md:text-8xl font-black text-white tracking-[0.6em] uppercase mb-8">
+                                    <AutoTranslatedText text={floorTitle} />
+                                </h2>
+                                <div className="w-64 h-[2px] bg-[#00FFC2] shadow-[0_0_20px_#00FFC2]" />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
             {stage === 'complete' && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                     className="absolute inset-0 bg-white z-[6000]"
                 />
             )}
