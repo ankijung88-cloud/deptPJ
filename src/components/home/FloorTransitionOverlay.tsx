@@ -168,29 +168,38 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                         top: `calc(50% + ${s.y}vh)`,
                                     }}
                                 >
-                                    <span className="text-white text-[10px] md:text-[12px] font-bold mb-2 opacity-95 whitespace-nowrap bg-black/80 px-3 py-1 rounded-sm border border-[#00FFC2]/30 shadow-[0_0_15px_rgba(0,255,194,0.3)]">
-                                        <AutoTranslatedText text={s.label} />
-                                    </span>
                                     <div 
                                         className="relative rounded-full flex items-center justify-center overflow-hidden"
                                         style={{ 
-                                            width: s.size,
-                                            height: s.size,
-                                            background: `radial-gradient(circle at center, ${floorColor}44 0%, transparent 70%)`,
-                                            border: `1px solid ${floorColor}44`,
-                                            boxShadow: `0 0 30px ${floorColor}33`,
+                                            width: s.size + 20, // Slightly larger for centered text
+                                            height: s.size + 20,
+                                            background: `radial-gradient(circle at center, ${floorColor}aa 0%, transparent 70%)`,
+                                            border: `1px solid ${floorColor}66`,
+                                            boxShadow: `0 0 40px ${floorColor}44, inset 0 0 20px ${floorColor}44`,
                                         }}
                                     >
-                                        {/* Wireframe Simulation (Matches Icosahedron) */}
-                                        <div className="absolute inset-0 opacity-40">
-                                            <svg viewBox="0 0 100 100" className="w-full h-full scale-[0.7]">
-                                                <path d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" fill="none" stroke={floorColor} strokeWidth="1.5" />
-                                                <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.8" />
-                                                <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.8" />
-                                                <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.8" />
-                                                <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.8" />
-                                                <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.8" />
+                                        {/* Wireframe Simulation (Matches Icosahedron exactly) */}
+                                        <div className="absolute inset-0 opacity-60">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full scale-[1.05]">
+                                                <path d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" fill="none" stroke={floorColor} strokeWidth="1.2" />
+                                                <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.6" />
+                                                <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.6" />
+                                                <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.6" />
+                                                <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.6" />
+                                                <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.6" />
+                                                <path d="M15 25 L50 95" stroke={floorColor} strokeWidth="0.4" opacity="0.5" />
+                                                <path d="M85 25 L50 95" stroke={floorColor} strokeWidth="0.4" opacity="0.5" />
                                             </svg>
+                                        </div>
+
+                                        {/* Centered Text (Matching Image 3) */}
+                                        <div className="relative z-10 text-center px-4 pointer-events-none">
+                                            <span 
+                                                className="text-white text-[10px] md:text-[13px] font-black tracking-tighter whitespace-nowrap"
+                                                style={{ textShadow: `0 0 10px ${floorColor}, 0 0 20px black` }}
+                                            >
+                                                <AutoTranslatedText text={s.label} />
+                                            </span>
                                         </div>
                                     </div>
                                 </motion.div>
