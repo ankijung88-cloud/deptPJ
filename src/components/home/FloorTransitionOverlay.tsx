@@ -18,7 +18,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Refined Timeline for "Slow Zoom into Facade -> Door -> Internal Vortex"
+        // Refined Timeline for "Slow Zoom -> Lateral Sliding Doors -> Internal Vortex"
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
         const suckTimer = setTimeout(() => setStage('suck'), 3200); 
         const completeTimer = setTimeout(() => onComplete(), 5500); 
@@ -52,7 +52,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             }}
             className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black"
         >
-            {/* 1. LAYER: Vertical Facade Zoom (Background Side Wall) */}
+            {/* 1. LAYER: Vertical Facade Zoom (Background) */}
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
@@ -65,7 +65,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-                {/* Building Side Wall (Facade) with architectural panels */}
                 <div 
                     className="w-[200vw] h-[200vh] opacity-30"
                     style={{ 
@@ -75,13 +74,12 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 50%, rgba(255,255,255,0.02) 100%)
                         `,
                         backgroundSize: '200px 200px, 200px 200px, 100% 100%',
-                        // No rotateX to maintain vertical wall look
                         transform: 'perspective(1000px) translateZ(-100px)'
                     }}
                 />
             </motion.div>
 
-            {/* 2. LAYER: Internal Vortex (Behind Doors) */}
+            {/* 2. LAYER: Internal Vortex (Visible through sliding gap) */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
@@ -143,15 +141,15 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 </AnimatePresence>
             </div>
 
-            {/* 3. LAYER: Traditional Dancheong Doors (Foreground) */}
-            <div className="relative w-full h-full flex items-center justify-center perspective-[2000px] z-30 pointer-events-none">
+            {/* 3. LAYER: Lateral Sliding Doors (Foreground) */}
+            <div className="relative w-full h-full flex items-center justify-center z-30 pointer-events-none overflow-hidden">
+                {/* Left Sliding Door */}
                 <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? -125 : 0 }}
-                    transition={{ duration: 1.8, ease: [0.7, 0, 0.3, 1] }}
-                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 origin-right overflow-hidden shadow-[30px_0_80px_rgba(0,0,0,1)]"
+                    initial={{ x: 0 }}
+                    animate={{ x: (stage === 'suck' || stage === 'complete') ? '-100%' : 0 }}
+                    transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
+                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.8)] bg-[#121917]"
                     style={{ 
-                        backgroundColor: '#121917',
                         backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
                     }}
                 >
@@ -164,13 +162,13 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     </div>
                 </motion.div>
 
+                {/* Right Sliding Door */}
                 <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? 125 : 0 }}
-                    transition={{ duration: 1.8, ease: [0.7, 0, 0.3, 1] }}
-                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 origin-left overflow-hidden shadow-[-30px_0_80px_rgba(0,0,0,1)]"
+                   initial={{ x: 0 }}
+                   animate={{ x: (stage === 'suck' || stage === 'complete') ? '100%' : 0 }}
+                   transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
+                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[-20px_0_50px_rgba(0,0,0,0.8)] bg-[#121917]"
                     style={{ 
-                        backgroundColor: '#121917',
                         backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
                     }}
                 >
@@ -183,6 +181,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     </div>
                 </motion.div>
 
+                {/* Typography Overlay */}
                 <AnimatePresence>
                     {(stage === 'zoom' || stage === 'door') && (
                         <motion.div
