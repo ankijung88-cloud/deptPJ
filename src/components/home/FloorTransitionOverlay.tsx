@@ -54,10 +54,10 @@ const PerspectiveSphere = ({ node, floorColor, stage, getProjection }: any) => {
                 style={{ 
                     width: projection.size + 25,
                     height: projection.size + 25,
-                    background: `radial-gradient(circle at center, ${floorColor}aa 0%, transparent 75%)`,
-                    border: `1px solid ${floorColor}33`,
-                    boxShadow: `0 0 ${projection.size / 2}px ${floorColor}44`,
-                    transform: `scale(${1 + Math.sin(Date.now() / 1000 + node.id) * 0.05})` // Subtle pulse
+                    background: `radial-gradient(circle at center, ${floorColor}cc 0%, transparent 75%)`, // Increased from aa to cc
+                    border: `1px solid ${floorColor}44`,
+                    boxShadow: `0 0 ${projection.size / 1.5}px ${floorColor}55`, // Larger bloom
+                    transform: `scale(${1 + Math.sin(Date.now() / 1000 + node.id) * 0.05})` 
                 }}
             >
                 {/* Dotted Wireframe */}
@@ -70,21 +70,21 @@ const PerspectiveSphere = ({ node, floorColor, stage, getProjection }: any) => {
                             strokeWidth="1.2" 
                             strokeDasharray="1.5 2" 
                         />
-                        <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                        <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
+                        <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
+                        <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
+                        <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
+                        <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
                     </svg>
                 </div>
 
                 {/* Label */}
                 <div className="relative z-10 text-center px-4">
                     <span 
-                        className="text-white font-[900] tracking-tighter whitespace-nowrap"
+                        className="text-white font-[900] tracking-tighter whitespace-nowrap drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
                         style={{ 
-                            fontSize: `${Math.max(8, projection.size / 3)}px`,
-                            textShadow: `0 0 20px ${floorColor}, 0 0 40px black` 
+                            fontSize: `${Math.max(10, projection.size / 2.2)}px`, // Increased from /3
+                            textShadow: `0 0 25px ${floorColor}, 0 0 50px black, 0 0 10px white` 
                         }}
                     >
                         <AutoTranslatedText text={node.label} />
@@ -128,15 +128,15 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
 
     const mappedSpheres = useMemo(() => {
         const positions: any[] = [];
-        const radius = 35; 
-        const startAngle = -Math.PI * 0.9; 
-        const totalAngle = Math.PI * 0.9;  
+        const radius = 48; // Expanded from 35 for better screen spread
+        const startAngle = -Math.PI * 0.95; 
+        const totalAngle = Math.PI * 0.95;  
         
         subcategories.forEach((sub, i) => {
             const angle = startAngle + (totalAngle / (subcategories.length - 1 || 1)) * i;
-            const x3d = Math.cos(angle) * (radius + (i % 2 === 0 ? 12 : -8));
+            const x3d = Math.cos(angle) * (radius + (i % 2 === 0 ? 15 : -10));
             const y3d = (32 + Math.sin(i * 1.5) * 15) - 30; 
-            const z3d = (Math.sin(angle) * (radius + (i % 2 === 1 ? 6 : -12)) - 35) - 15; 
+            const z3d = (Math.sin(angle) * (radius + (i % 2 === 1 ? 8 : -15)) - 35) - 15; 
 
             positions.push({
                 id: i,
@@ -148,15 +148,15 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     }, [subcategories]);
 
     const getProjection = useMemo(() => (node: any, progress: number) => {
-        const cameraZ = 500 * (1 - progress); 
-        const distance = Math.max(10, cameraZ - node.z3d + 60); 
-        const scaleFactor = 1000 / distance;
+        const cameraZ = 450 * (1 - progress); // Slightly shallower zoom for visibility
+        const distance = Math.max(10, cameraZ - node.z3d + 55); 
+        const scaleFactor = 1100 / distance; // Increased from 1000 for larger landing size
         
         return {
             x: node.x3d * scaleFactor,
-            y: (node.y3d - 5) * scaleFactor,
-            size: 4.5 * scaleFactor * 9,
-            opacity: Math.min(1, progress * 4), 
+            y: (node.y3d - 8) * scaleFactor, // More horizon tilt
+            size: 4.5 * scaleFactor * 10.5, // Increased node size factor
+            opacity: Math.min(1, progress * 4.5), 
         };
     }, []);
 
