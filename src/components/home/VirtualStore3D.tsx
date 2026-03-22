@@ -1548,6 +1548,7 @@ export const VirtualStore3D: React.FC = () => {
                         floorNumber={transitioningFloor}
                         floorTitle={getLocalizedText(floors.find(f => parseInt(f.floor) === transitioningFloor)?.title || { ko: '' }, i18n.language)}
                         floorColor={floors.find(f => parseInt(f.floor) === transitioningFloor)?.color || '#00FFC2'}
+                        subcategories={floors.find(f => parseInt(f.floor) === transitioningFloor)?.subitems || []}
                         onComplete={handleTransitionComplete}
                     />
                 )}

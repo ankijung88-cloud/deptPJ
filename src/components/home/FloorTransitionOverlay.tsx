@@ -6,6 +6,7 @@ interface FloorTransitionOverlayProps {
     floorNumber: number;
     floorTitle: string;
     floorColor: string;
+    subcategories?: any[];
     onComplete: () => void;
 }
 
@@ -13,6 +14,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     floorNumber,
     floorTitle,
     floorColor,
+    subcategories = [],
     onComplete
 }) => {
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
@@ -43,12 +45,18 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
         twinkle: Math.random() * 2,
     })), []);
 
-    // Simulated Glowing Nodes (Matching Image 2 and GlassFragments)
-    const spheres = [
-        { x: -30, y: -18, size: 35, delay: 0.1, label: '문화 담론' },
-        { x: -5, y: -32, size: 55, delay: 0.3, label: '아티스트 인터뷰' },
-        { x: 22, y: -25, size: 38, delay: 0.05, label: '토크 플러스' },
-    ];
+    // Dynamically map all subcategories to simulated 3D nodes
+    const mappedSpheres = useMemo(() => {
+        return subcategories.map((sub, i) => ({
+            id: i,
+            label: sub.label?.ko || sub.label || '',
+            // Spread nodes across the view field based on index
+            x: ((i % 3) - 1) * 30 + (Math.random() - 0.5) * 10,
+            y: (Math.floor(i / 3) * -15) - 15 + (Math.random() - 0.5) * 10,
+            size: 40 + (Math.random() * 20),
+            delay: i * 0.1,
+        }));
+    }, [subcategories]);
 
     // Studs for Gwanghwamun Gate (Brass nubs)
     const studs = Array.from({ length: 15 }).map((_, i) => ({
@@ -147,20 +155,20 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 }}
                             />
 
-                            {/* Labeled Spheres (Matching Image 2) */}
-                            {spheres.map((s: any, i: number) => (
+                            {/* Dynamic Subcategory Nodes (Matching Image 4) */}
+                            {mappedSpheres.map((s, i) => (
                                 <motion.div
-                                    key={i}
+                                    key={`sphere-${i}`}
                                     initial={{ opacity: 0, scale: 0 }}
                                     animate={{ 
                                         opacity: 1, 
                                         scale: 1,
-                                        y: [0, -10, 0] // Subtle floating animation for 3D depth
+                                        y: [0, -12, 0] 
                                     }}
                                     transition={{ 
-                                        delay: s.delay, 
-                                        duration: 1,
-                                        y: { duration: 3 + i, repeat: Infinity, ease: "easeInOut" }
+                                        delay: s.delay + 0.5, 
+                                        duration: 1.2,
+                                        y: { duration: 4 + (i * 0.5), repeat: Infinity, ease: "easeInOut" }
                                     }}
                                     className="absolute flex flex-col items-center pointer-events-none z-20"
                                     style={{ 
@@ -169,34 +177,42 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                     }}
                                 >
                                     <div 
-                                        className="relative rounded-full flex items-center justify-center overflow-hidden"
+                                        className="relative rounded-full flex items-center justify-center"
                                         style={{ 
-                                            width: s.size + 20, // Slightly larger for centered text
-                                            height: s.size + 20,
-                                            background: `radial-gradient(circle at center, ${floorColor}aa 0%, transparent 70%)`,
-                                            border: `1px solid ${floorColor}66`,
-                                            boxShadow: `0 0 40px ${floorColor}44, inset 0 0 20px ${floorColor}44`,
+                                            width: s.size + 25,
+                                            height: s.size + 25,
+                                            background: `radial-gradient(circle at center, ${floorColor}cc 0%, transparent 75%)`, // Stronger core glow
+                                            border: `1px solid ${floorColor}44`,
+                                            boxShadow: `0 0 50px ${floorColor}55`,
                                         }}
                                     >
-                                        {/* Wireframe Simulation (Matches Icosahedron exactly) */}
-                                        <div className="absolute inset-0 opacity-60">
-                                            <svg viewBox="0 0 100 100" className="w-full h-full scale-[1.05]">
-                                                <path d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" fill="none" stroke={floorColor} strokeWidth="1.2" />
-                                                <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.6" />
-                                                <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.6" />
-                                                <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.6" />
-                                                <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.6" />
-                                                <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.6" />
-                                                <path d="M15 25 L50 95" stroke={floorColor} strokeWidth="0.4" opacity="0.5" />
-                                                <path d="M85 25 L50 95" stroke={floorColor} strokeWidth="0.4" opacity="0.5" />
+                                        {/* High-Fidelity Dotted Wireframe (Matches Image 4) */}
+                                        <div className="absolute inset-[-10%] opacity-70">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full scale-[1.1]">
+                                                {/* Hexagon with dotted lines */}
+                                                <path 
+                                                    d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" 
+                                                    fill="none" 
+                                                    stroke={floorColor} 
+                                                    strokeWidth="1.2" 
+                                                    strokeDasharray="1.5 2" // Dotted effect from Image 4
+                                                />
+                                                {/* Internal structural lines */}
+                                                <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                                                <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                                                <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                                                <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                                                <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.6" strokeDasharray="1 3" opacity="0.6" />
+                                                <path d="M15 25 L50 95" stroke={floorColor} strokeWidth="0.4" strokeDasharray="1 3" opacity="0.4" />
+                                                <path d="M85 25 L50 95" stroke={floorColor} strokeWidth="0.4" strokeDasharray="1 3" opacity="0.4" />
                                             </svg>
                                         </div>
 
-                                        {/* Centered Text (Matching Image 3) */}
-                                        <div className="relative z-10 text-center px-4 pointer-events-none">
+                                        {/* Centered Bold Tag (Matching Image 4) */}
+                                        <div className="relative z-10 text-center px-6 pointer-events-none">
                                             <span 
-                                                className="text-white text-[10px] md:text-[13px] font-black tracking-tighter whitespace-nowrap"
-                                                style={{ textShadow: `0 0 10px ${floorColor}, 0 0 20px black` }}
+                                                className="text-white text-[10px] md:text-[14px] font-[900] tracking-tighter whitespace-nowrap drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+                                                style={{ textShadow: `0 0 20px ${floorColor}, 0 0 40px black` }}
                                             >
                                                 <AutoTranslatedText text={s.label} />
                                             </span>
