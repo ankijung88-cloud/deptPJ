@@ -1,5 +1,6 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
@@ -1408,6 +1409,9 @@ export const VirtualStore3D: React.FC = () => {
     const { floors, loading } = useFloors();
     const { i18n } = useTranslation();
     const [searchParams] = useSearchParams();
+    const location = useLocation();
+    const isAtInspiration = location.pathname === '/inspiration';
+
     
     // Initialize selectedFloor from URL query param if present
     const initialFloorNum = useMemo(() => {
@@ -1520,7 +1524,9 @@ export const VirtualStore3D: React.FC = () => {
                         polar={[0, 0]}
                         azimuth={[-Infinity, Infinity]}
                     >
-                        {!loading && !transitioningFloor && !selectedFloor && (
+                        {/* Main Interaction: Floor Selector Building (Pagoda) - Only allowed when on inspiration path */}
+                        {!loading && !transitioningFloor && !selectedFloor && isAtInspiration && (
+
                             <BlueprintBuilding
                                 floors={floors}
                                 selectedFloor={selectedFloor}
@@ -1548,7 +1554,9 @@ export const VirtualStore3D: React.FC = () => {
                         onComplete={handleTransitionComplete}
                     />
                 )}
-                {activeFloorData && !transitioningFloor && (
+                {/* Floor Detail Space Overlay - Only allowed when on inspiration path */}
+                {activeFloorData && !transitioningFloor && isAtInspiration && (
+
                     isMobile ? (
                         <MobileFloorModal
                             key="mobile-modal"
@@ -1565,21 +1573,23 @@ export const VirtualStore3D: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-                <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
-                    <AutoTranslatedText text="[Drag to Rotate] • [Click Floor Button to Select]" />
+            {isAtInspiration && (
+                <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                    <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
+                        <AutoTranslatedText text="[Drag to Rotate] • [Click Floor Button to Select]" />
+                    </div>
+                    
+                    <button 
+                        onClick={() => setResetKey(prev => prev + 1)}
+                        className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300 backdrop-blur-md"
+                    >
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2] group-hover:shadow-[0_0_8px_#00FFC2] transition-all" />
+                        <span className="text-[#00FFC2] font-bold text-[10px] md:text-sm tracking-widest uppercase">
+                            <AutoTranslatedText text="원위치" />
+                        </span>
+                    </button>
                 </div>
-                
-                <button 
-                    onClick={() => setResetKey(prev => prev + 1)}
-                    className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300 backdrop-blur-md"
-                >
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2] group-hover:shadow-[0_0_8px_#00FFC2] transition-all" />
-                    <span className="text-[#00FFC2] font-bold text-[10px] md:text-sm tracking-widest uppercase">
-                        <AutoTranslatedText text="원위치" />
-                    </span>
-                </button>
-            </div>
+            )}
         </div>
     );
 };
