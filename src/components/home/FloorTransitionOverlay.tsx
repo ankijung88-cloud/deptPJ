@@ -31,19 +31,19 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     }, [onComplete]);
 
     // Simulated Stars for the Starfield
-    const stars = Array.from({ length: 100 }).map((_, i) => ({
+    const stars = Array.from({ length: 80 }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: 1 + Math.random() * 2,
+        size: 1.5 + Math.random() * 2.5,
     }));
 
     // Simulated Glowing Spheres from the user image
     const spheres = [
-        { x: -20, y: -10, size: 40, delay: 0.1 },
-        { x: 15, y: -30, size: 55, delay: 0.3 },
-        { x: -40, y: -25, size: 30, delay: 0 },
-        { x: 35, y: -15, size: 45, delay: 0.2 },
+        { x: -20, y: -10, size: 45, delay: 0.1 },
+        { x: 15, y: -30, size: 60, delay: 0.3 },
+        { x: -40, y: -25, size: 35, delay: 0 },
+        { x: 35, y: -15, size: 50, delay: 0.2 },
     ];
 
     return (
@@ -63,8 +63,8 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
-                    scale: stage === 'zoom' ? 1.2 : 10, 
-                    opacity: stage === 'complete' ? 0 : 0.6
+                    scale: stage === 'zoom' ? 1.2 : 4, 
+                    opacity: stage === 'complete' ? 0 : 0.8
                 }}
                 transition={{ 
                     scale: { duration: stage === 'zoom' ? 2 : 4, ease: "linear" },
@@ -73,14 +73,14 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
                 <div 
-                    className="w-[200vw] h-[200vh] opacity-30"
+                    className="w-[200vw] h-[200vh] opacity-40"
                     style={{ 
                         backgroundImage: `
-                            linear-gradient(to right, ${floorColor}22 2px, transparent 2px),
-                            linear-gradient(to bottom, ${floorColor}22 2px, transparent 2px)
+                            linear-gradient(to right, ${floorColor}44 2.5px, transparent 2.5px),
+                            linear-gradient(to bottom, ${floorColor}44 2.5px, transparent 2.5px)
                         `,
-                        backgroundSize: '200px 200px, 200px 200px',
-                        transform: 'perspective(1000px) translateZ(-100px)'
+                        backgroundSize: '150px 150px, 150px 150px',
+                        transform: 'perspective(1200px) translateZ(-100px)'
                     }}
                 />
             </motion.div>
@@ -91,9 +91,9 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     {(stage === 'suck' || stage === 'complete') && (
                         <motion.div 
                             initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 10, opacity: 1 }}
+                            animate={{ scale: 3.5, opacity: 1 }}
                             exit={{ opacity: 1 }}
-                            transition={{ duration: 2.8, ease: "easeIn" }}
+                            transition={{ duration: 3, ease: "easeOut" }}
                             className="relative w-full h-full flex items-center justify-center bg-black"
                         >
                             {/* Starfield */}
@@ -101,7 +101,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 {stars.map(s => (
                                     <div 
                                         key={s.id}
-                                        className="absolute bg-white rounded-full opacity-40"
+                                        className="absolute bg-white rounded-full opacity-70 shadow-[0_0_8px_#fff]"
                                         style={{ 
                                             left: `${s.x}%`, 
                                             top: `${s.y}%`, 
@@ -114,14 +114,14 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
 
                             {/* Cyan 3D Grid Plane (from user image) */}
                             <div 
-                                className="absolute bottom-[-20%] w-[150vw] h-[100vh] opacity-50"
+                                className="absolute bottom-[-20%] w-[150vw] h-[120vh] opacity-80"
                                 style={{ 
                                     backgroundImage: `
-                                        linear-gradient(to right, #00E5FF 1px, transparent 1px),
-                                        linear-gradient(to bottom, #00E5FF 1px, transparent 1px)
+                                        linear-gradient(to right, #00E5FF 1.5px, transparent 1.5px),
+                                        linear-gradient(to bottom, #00E5FF 1.5px, transparent 1.5px)
                                     `,
-                                    backgroundSize: '80px 80px',
-                                    transform: 'perspective(1000px) rotateX(75deg)'
+                                    backgroundSize: '100px 100px',
+                                    transform: 'perspective(1200px) rotateX(72deg)'
                                 }}
                             />
 
@@ -132,24 +132,24 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                     initial={{ opacity: 0, scale: 0 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: s.delay, duration: 0.8 }}
-                                    className="absolute rounded-full blur-[2px]"
+                                    className="absolute rounded-full blur-[1px] z-20"
                                     style={{ 
                                         left: `calc(50% + ${s.x}vw)`,
                                         top: `calc(50% + ${s.y}vh)`,
                                         width: s.size,
                                         height: s.size,
                                         background: `radial-gradient(circle at 30% 30%, #fff, #00E5FF 40%, #0091EA 100%)`,
-                                        boxShadow: `0 0 40px rgba(0,229,255,0.6)`
+                                        boxShadow: `0 0 50px rgba(0,229,255,0.8)`
                                     }}
                                 />
                             ))}
 
-                            {/* Center Glow Flash */}
+                            {/* Impact Glow Flash - subtle ambient effect */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: [0, 0.4, 0] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                className="absolute w-full h-full bg-[#00E5FF] blur-[150px] opacity-20"
+                                transition={{ duration: 2.5, repeat: Infinity }}
+                                className="absolute w-full h-full bg-[#00E5FF] blur-[180px] opacity-20 z-30"
                             />
                         </motion.div>
                     )}
