@@ -1541,7 +1541,7 @@ export const VirtualStore3D: React.FC = () => {
                 </group>
             </Canvas>
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {transitioningFloor !== null && (
                     <FloorTransitionOverlay
                         key="floor-transition"
