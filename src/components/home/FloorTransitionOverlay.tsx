@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { motion, AnimatePresence, useTime, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 interface FloorTransitionOverlayProps {
@@ -12,7 +12,6 @@ interface FloorTransitionOverlayProps {
 
 // Sub-component to handle individual node perspective projection
 const PerspectiveSphere = ({ node, floorColor, stage, getProjection }: any) => {
-    const time = useTime();
     // Map time to a 0-1 progress over the transition duration (3.5s for suck stage)
     // The 'suck' stage starts at 2.1s and ends at 5.6s (3.5s duration)
     const [startTime] = useState(Date.now() + 2100); 
@@ -232,7 +231,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 }}
                             />
 
-                            {mappedSpheres.map((s, i) => (
+                            {mappedSpheres.map((s) => (
                                 <PerspectiveSphere key={s.id} node={s} floorColor={floorColor} stage={stage} getProjection={getProjection} />
                             ))}
 
