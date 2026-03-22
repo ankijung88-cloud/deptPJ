@@ -18,9 +18,9 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Refined Timeline for "Slow Zoom -> Doors Opening & Light Tunnel Launch"
+        // Refined Timeline for "Slow Zoom -> Doors Opening & White Core Expansion"
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
-        // Launch the light tunnel (suck) almost immediately as doors start sliding (at 2.1s)
+        // Launch the pure white light expansion immediately as doors start sliding (at 2.1s)
         const suckTimer = setTimeout(() => setStage('suck'), 2100); 
         const completeTimer = setTimeout(() => onComplete(), 4500); 
 
@@ -30,15 +30,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             clearTimeout(completeTimer);
         };
     }, [onComplete]);
-
-    // Particles for the Light Tunnel effect
-    const particles = Array.from({ length: 50 }).map((_, i) => ({
-        id: i,
-        angle: (i / 50) * Math.PI * 2,
-        delay: Math.random() * 1,
-        duration: 0.6 + Math.random() * 0.4, // Faster for tunnel effect
-        scale: 1 + Math.random() * 2,
-    }));
 
     return (
         <motion.div 
@@ -80,7 +71,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 />
             </motion.div>
 
-            {/* 2. LAYER: Light Tunnel (Behind Doors, Expands through gap) */}
+            {/* 2. LAYER: Light Expansion (Behind Doors, Fills screen through gap) */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
@@ -90,7 +81,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             exit={{ opacity: 1 }}
                             className="relative w-full h-full flex items-center justify-center"
                         >
-                            {/* Expanding White Core - Fills screen quickly */}
+                            {/* Pure White Core - Rapid Screen Fill */}
                             <motion.div
                                 initial={{ scale: 0.01, opacity: 0 }}
                                 animate={{ 
@@ -101,7 +92,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                     duration: 2.2, 
                                     ease: "easeIn" 
                                 }}
-                                className="absolute w-64 h-64 rounded-full bg-white blur-[40px] shadow-[0_0_100px_#fff]"
+                                className="absolute w-64 h-64 rounded-full bg-white blur-[40px] shadow-[0_0_120px_#fff]"
                             />
 
                             {/* Shockwave Glow Expansion */}
@@ -111,38 +102,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 transition={{ duration: 1.8, ease: "easeOut" }}
                                 className="absolute w-32 h-32 rounded-full"
                             />
-
-                            {/* Light Tunnel Particles */}
-                            {particles.map((p) => (
-                                <motion.div
-                                    key={p.id}
-                                    initial={{ 
-                                        x: Math.cos(p.angle) * window.innerWidth * 1.5,
-                                        y: Math.sin(p.angle) * window.innerHeight * 1.5,
-                                        scale: 0,
-                                        opacity: 0
-                                    }}
-                                    animate={{ 
-                                        x: 0, 
-                                        y: 0, 
-                                        scale: [0, p.scale, 0],
-                                        opacity: [0, 1, 0]
-                                    }}
-                                    transition={{ 
-                                        duration: p.duration, 
-                                        delay: p.delay,
-                                        repeat: Infinity,
-                                        ease: "circIn"
-                                    }}
-                                    className="absolute w-1.5 h-96 rounded-full z-40"
-                                    style={{ 
-                                        backgroundColor: '#fff',
-                                        boxShadow: `0 0 30px #fff, 0 0 10px ${floorColor}`,
-                                        rotate: `${p.angle}rad`,
-                                        transformOrigin: '50% 100%'
-                                    }}
-                                />
-                            ))}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -186,7 +145,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     </div>
                 </motion.div>
 
-                {/* Initial Typography (Fade out as doors open) */}
                 <AnimatePresence>
                     {(stage === 'zoom' || stage === 'door') && (
                         <motion.div
