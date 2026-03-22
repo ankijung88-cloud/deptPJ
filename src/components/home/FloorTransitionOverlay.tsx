@@ -18,10 +18,13 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Timeline for "Slow Zoom -> Gwanghwamun Door Opening -> 3D Arrival Sync"
+        // Timeline: 2s (Facade) -> 0.1s (Hinge Start) -> 3.5s (Suck Zoom) -> Complete
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
         const arrivalTimer = setTimeout(() => setStage('suck'), 2100); 
-        const completeTimer = setTimeout(() => onComplete(), 5200); 
+        const completeTimer = setTimeout(() => {
+            setStage('complete');
+            setTimeout(() => onComplete(), 350); // Handover Flash overlap
+        }, 5600); 
 
         return () => {
             clearTimeout(zoomTimer);
@@ -31,20 +34,18 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     }, [onComplete]);
 
     // Simulated Stars for the Starfield
-    const stars = Array.from({ length: 120 }).map((_, i) => ({
+    const stars = Array.from({ length: 140 }).map((_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: 1 + Math.random() * 2,
+        size: 0.8 + Math.random() * 1.8,
     }));
 
-    // Simulated Glowing Spheres (syncing to overview size)
+    // Simulated Glowing Spheres (Matching Image 2 primary nodes for seamless arrival)
     const spheres = [
-        { x: -25, y: -10, size: 30, delay: 0.1, label: '문화 담론' },
-        { x: -5, y: -25, size: 50, delay: 0.3, label: '아티스트 인터뷰' },
-        { x: 15, y: -18, size: 25, delay: 0, label: '토크 플러스' },
-        { x: 25, y: -5, size: 40, delay: 0.2, label: '도서관 섹션' },
-        { x: 5, y: 10, size: 35, delay: 0.4, label: '세미나 룸' },
+        { x: -28, y: -15, size: 30, delay: 0.1, label: '문화 담론' },
+        { x: -6, y: -30, size: 48, delay: 0.3, label: '아티스트 인터뷰' },
+        { x: 18, y: -22, size: 32, delay: 0.05, label: '토크 플러스' },
     ];
 
     // Studs for Gwanghwamun Gate (Brass nubs)
@@ -104,14 +105,14 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             transition={{ duration: 3.5, ease: "easeOut" }}
                             className="relative w-full h-full flex items-center justify-center bg-black"
                         >
-                            {/* Nebula Glow Background */}
+                            {/* Nebula Glow Background (Depth Sync) */}
                             <motion.div 
                                 animate={{ 
-                                    opacity: [0.1, 0.3, 0.1],
+                                    opacity: [0.15, 0.3, 0.15],
                                     scale: [1, 1.1, 1]
                                 }}
-                                transition={{ duration: 10, repeat: Infinity }}
-                                className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(66,56,202,0.2),transparent_70%)]"
+                                transition={{ duration: 15, repeat: Infinity }}
+                                className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(66,56,202,0.25),transparent_75%)]"
                             />
 
                             {/* Starfield */}
@@ -119,7 +120,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 {stars.map(s => (
                                     <div 
                                         key={s.id}
-                                        className="absolute bg-white rounded-full opacity-60 shadow-[0_0_8px_#fff]"
+                                        className="absolute bg-white rounded-full opacity-50 shadow-[0_0_6px_#fff]"
                                         style={{ 
                                             left: `${s.x}%`, 
                                             top: `${s.y}%`, 
@@ -130,43 +131,50 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 ))}
                             </div>
 
-                            {/* Cyan 3D Grid Plane (Image Accuracy) */}
+                            {/* Cyan 3D Grid Plane (Image 2 Precise) */}
                             <div 
-                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] opacity-80"
+                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] opacity-100"
                                 style={{ 
                                     backgroundImage: `
-                                        linear-gradient(to right, #00E5FF 1px, transparent 1px),
-                                        linear-gradient(to bottom, #00E5FF 1px, transparent 1px)
+                                        linear-gradient(to right, #00E5FF 1.8px, transparent 1.8px),
+                                        linear-gradient(to bottom, #00E5FF 1.8px, transparent 1.8px)
                                     `,
-                                    backgroundSize: '80px 80px',
+                                    backgroundSize: '75px 75px',
                                     transform: 'perspective(1500px) rotateX(75deg)'
                                 }}
                             />
 
-                            {/* Detailed Labeled Spheres (Matching Image 2) */}
+                            {/* Labeled Spheres (Matching Image 2) */}
                             {spheres.map((s, i) => (
                                 <motion.div
                                     key={i}
                                     initial={{ opacity: 0, scale: 0 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: s.delay, duration: 0.8 }}
+                                    animate={{ 
+                                        opacity: 1, 
+                                        scale: 1,
+                                        y: [0, -10, 0] // Subtle floating animation for 3D depth
+                                    }}
+                                    transition={{ 
+                                        delay: s.delay, 
+                                        duration: 1,
+                                        y: { duration: 3 + i, repeat: Infinity, ease: "easeInOut" }
+                                    }}
                                     className="absolute flex flex-col items-center pointer-events-none z-20"
                                     style={{ 
                                         left: `calc(50% + ${s.x}vw)`,
                                         top: `calc(50% + ${s.y}vh)`,
                                     }}
                                 >
-                                    <span className="text-white text-[12px] md:text-[14px] font-bold mb-2 whitespace-nowrap bg-black/60 px-2 py-0.5 rounded border border-[#FF5252]/50 shadow-[0_0_15px_rgba(255,82,82,0.6)]">
+                                    <span className="text-white text-[10px] md:text-[12px] font-bold mb-1 opacity-90 whitespace-nowrap bg-black/70 px-2 py-0.5 rounded border border-[#FF5252]/40 shadow-[0_0_20px_rgba(255,82,82,0.4)]">
                                         <AutoTranslatedText text={s.label} />
                                     </span>
                                     <div 
-                                        className="rounded-full blur-[0.5px]"
+                                        className="rounded-full shadow-[0_0_30px_rgba(255,82,82,0.5)]"
                                         style={{ 
                                             width: s.size,
                                             height: s.size,
-                                            background: `radial-gradient(circle at 30% 30%, #fff, #FF5252 40%, #640D14 100%)`,
-                                            boxShadow: `0 0 40px rgba(255,82,82,0.6), inset 0 0 20px rgba(0,0,0,0.5)`,
-                                            border: '1px solid rgba(255,255,255,0.2)'
+                                            background: `radial-gradient(circle at 30% 30%, #fff, #FF5252 45%, #4A0E0E 100%)`,
+                                            border: '1px solid rgba(255,160,160,0.3)'
                                         }}
                                     />
                                 </motion.div>
@@ -257,7 +265,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.3 }}
                     className="absolute inset-0 bg-white z-[6000]"
                 />
             )}
