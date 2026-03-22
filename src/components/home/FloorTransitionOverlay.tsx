@@ -18,10 +18,10 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Timeline for "Slow Zoom -> Door Slide -> 3D Space Arrival"
+        // Timeline for "Slow Zoom -> Gwanghwamun Door Opening -> 3D Arrival Sync"
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
         const arrivalTimer = setTimeout(() => setStage('suck'), 2100); 
-        const completeTimer = setTimeout(() => onComplete(), 4800); 
+        const completeTimer = setTimeout(() => onComplete(), 5200); 
 
         return () => {
             clearTimeout(zoomTimer);
@@ -38,13 +38,20 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
         size: 1.5 + Math.random() * 2.5,
     }));
 
-    // Simulated Glowing Spheres from the user image
+    // Simulated Glowing Spheres (syncing to overview size)
     const spheres = [
-        { x: -20, y: -10, size: 45, delay: 0.1 },
-        { x: 15, y: -30, size: 60, delay: 0.3 },
-        { x: -40, y: -25, size: 35, delay: 0 },
-        { x: 35, y: -15, size: 50, delay: 0.2 },
+        { x: -15, y: -5, size: 30, delay: 0.1 },
+        { x: 10, y: -20, size: 40, delay: 0.3 },
+        { x: -30, y: -15, size: 25, delay: 0 },
+        { x: 25, y: -10, size: 35, delay: 0.2 },
     ];
+
+    // Studs for Gwanghwamun Gate (Brass nubs)
+    const studs = Array.from({ length: 15 }).map((_, i) => ({
+        id: i,
+        x: (i % 3) * 35 + 15, // 3 columns
+        y: Math.floor(i / 3) * 20 + 10, // 5 rows
+    }));
 
     return (
         <motion.div 
@@ -57,7 +64,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             transition={{ 
                 x: { duration: 0.1, repeat: stage === 'suck' ? Infinity : 0 }
             }}
-            className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black"
+            className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black [perspective:1500px]"
         >
             {/* 1. LAYER: Vertical Facade Zoom (Background) */}
             <motion.div
@@ -80,20 +87,20 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             linear-gradient(to bottom, ${floorColor}44 2.5px, transparent 2.5px)
                         `,
                         backgroundSize: '150px 150px, 150px 150px',
-                        transform: 'perspective(1200px) translateZ(-100px)'
+                        transform: 'translateZ(-100px)'
                     }}
                 />
             </motion.div>
 
-            {/* 2. LAYER: 3D Space Arrival (Behind Doors, Zooms through gap) */}
+            {/* 2. LAYER: 3D Space Arrival (Behind Doors, Scaled Sync) */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
                         <motion.div 
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 3.5, opacity: 1 }}
+                            initial={{ scale: 0.2, opacity: 0 }} // Starts at Image 1 size (Overview)
+                            animate={{ scale: 1.5, opacity: 1 }} // Arrives at Image 2 size (Detail)
                             exit={{ opacity: 1 }}
-                            transition={{ duration: 3, ease: "easeOut" }}
+                            transition={{ duration: 3.5, ease: "easeOut" }}
                             className="relative w-full h-full flex items-center justify-center bg-black"
                         >
                             {/* Starfield */}
@@ -112,20 +119,20 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 ))}
                             </div>
 
-                            {/* Cyan 3D Grid Plane (from user image) */}
+                            {/* Cyan 3D Grid Plane (Image Accuracy) */}
                             <div 
-                                className="absolute bottom-[-20%] w-[150vw] h-[120vh] opacity-80"
+                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] opacity-80"
                                 style={{ 
                                     backgroundImage: `
-                                        linear-gradient(to right, #00E5FF 1.5px, transparent 1.5px),
-                                        linear-gradient(to bottom, #00E5FF 1.5px, transparent 1.5px)
+                                        linear-gradient(to right, #00E5FF 1px, transparent 1px),
+                                        linear-gradient(to bottom, #00E5FF 1px, transparent 1px)
                                     `,
-                                    backgroundSize: '100px 100px',
-                                    transform: 'perspective(1200px) rotateX(72deg)'
+                                    backgroundSize: '80px 80px',
+                                    transform: 'perspective(1500px) rotateX(75deg)'
                                 }}
                             />
 
-                            {/* Glowing Spheres (from user image) */}
+                            {/* Glowing Spheres (Overview setup) */}
                             {spheres.map((s, i) => (
                                 <motion.div
                                     key={i}
@@ -144,7 +151,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 />
                             ))}
 
-                            {/* Impact Glow Flash - subtle ambient effect */}
+                            {/* Impact Glow Flash */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: [0, 0.4, 0] }}
@@ -156,41 +163,49 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 </AnimatePresence>
             </div>
 
-            {/* 3. LAYER: Lateral Sliding Doors (Foreground) */}
-            <div className="relative w-full h-full flex items-center justify-center z-30 pointer-events-none overflow-hidden">
+            {/* 3. LAYER: Gwanghwamun Gates (Swinging Mid/Ingress) */}
+            <div className="relative w-full h-full flex items-center justify-center z-30 pointer-events-none [preserve-3d]">
                 <motion.div
-                    initial={{ x: 0 }}
-                    animate={{ x: (stage === 'suck' || stage === 'complete') ? '-100%' : 0 }}
-                    transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
-                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[20px_0_100px_rgba(0,0,0,1)] bg-[#121917]"
+                    initial={{ rotateY: 0 }}
+                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? -105 : 0 }}
+                    transition={{ duration: 1.8, ease: [0.45, 0.05, 0.55, 0.95] }}
+                    className="absolute right-1/2 w-[50.2vw] h-full border-r-[8px] border-[#3F1105] bg-[#7C2D12] overflow-hidden shadow-[20px_0_100px_rgba(0,0,0,1)]"
                     style={{ 
-                        backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
+                        transformOrigin: 'left center', // Swing INWARDS
+                        backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.5), transparent)`
                     }}
                 >
-                    <div className="absolute inset-20 border-[2px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-40">
-                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
-                        <div className="w-24 h-24 border-[2px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
-                           <div className="w-10 h-10 bg-[#00FFC2]/20" />
-                        </div>
-                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
+                    {/* Brass Studs Grid (3x5) */}
+                    <div className="absolute inset-0 flex flex-wrap content-start">
+                        {studs.map(s => (
+                            <div 
+                                key={s.id}
+                                className="absolute w-10 h-10 rounded-full bg-gradient-to-br from-[#FDE68A] via-[#B45309] to-[#451A03] shadow-[4px_4px_10px_rgba(0,0,0,0.5)] border-[1px] border-[#FDE68A]/30"
+                                style={{ left: `${s.x}%`, top: `${s.y}%` }}
+                            />
+                        ))}
                     </div>
                 </motion.div>
 
                 <motion.div
-                   initial={{ x: 0 }}
-                   animate={{ x: (stage === 'suck' || stage === 'complete') ? '100%' : 0 }}
-                   transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
-                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[-20px_0_100px_rgba(0,0,0,1)] bg-[#121917]"
+                   initial={{ rotateY: 0 }}
+                   animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? 105 : 0 }}
+                   transition={{ duration: 1.8, ease: [0.45, 0.05, 0.55, 0.95] }}
+                    className="absolute left-1/2 w-[50.2vw] h-full border-l-[8px] border-[#3F1105] bg-[#7C2D12] overflow-hidden shadow-[-20px_0_100px_rgba(0,0,0,1)]"
                     style={{ 
-                        backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
+                        transformOrigin: 'right center', // Swing INWARDS
+                        backgroundImage: `linear-gradient(to left, rgba(0,0,0,0.5), transparent)`
                     }}
                 >
-                    <div className="absolute inset-20 border-[2px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-40">
-                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
-                        <div className="w-24 h-24 border-[2px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
-                           <div className="w-10 h-10 bg-[#00FFC2]/20" />
-                        </div>
-                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
+                    {/* Brass Studs Grid (3x5) */}
+                    <div className="absolute inset-0 flex flex-wrap content-start">
+                        {studs.map(s => (
+                            <div 
+                                key={s.id}
+                                className="absolute w-10 h-10 rounded-full bg-gradient-to-br from-[#FDE68A] via-[#B45309] to-[#451A03] shadow-[4px_4px_10px_rgba(0,0,0,0.5)] border-[1px] border-[#FDE68A]/30"
+                                style={{ left: `${100 - s.x}%`, top: `${s.y}%`, transform: 'translateX(-100%)' }}
+                            />
+                        ))}
                     </div>
                 </motion.div>
 
@@ -201,7 +216,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             animate={{ opacity: 1, scale: 1.2, y: 0 }}
                             exit={{ opacity: 0, scale: 5, filter: 'blur(60px)', y: -300 }}
                             transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="absolute z-40 flex flex-col items-center justify-center"
+                            className="absolute z-40 flex flex-col items-center justify-center p-20 bg-black/40 backdrop-blur-sm rounded-3xl"
                         >
                             <span className="text-[20rem] md:text-[28rem] font-black font-serif italic mb-8 leading-none" style={{ color: floorColor, textShadow: `0 0 100px ${floorColor}aa` }}>
                                 {floorNumber}
