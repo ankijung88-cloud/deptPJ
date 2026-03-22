@@ -135,15 +135,15 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
 
                             {/* Neon Mint 3D Grid Plane (Exact Match) */}
                             <div 
-                                className="absolute bottom-[-10%] w-[180vw] h-[100vh]"
+                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] bg-black" // Absolute black base to hide #1A2420
                                 style={{ 
                                     backgroundImage: `
                                         linear-gradient(to right, #00FFC2 1px, transparent 1px),
                                         linear-gradient(to bottom, #00FFC2 1px, transparent 1px)
                                     `,
-                                    backgroundSize: '80px 80px', // Precise density
-                                    transform: 'perspective(1500px) rotateX(78deg)', // Low angle matching VirtualStore3D
-                                    opacity: 0.25
+                                    backgroundSize: '80px 80px', 
+                                    transform: 'perspective(1500px) rotateX(78deg)', 
+                                    opacity: 0.45 // Sharper Mint for Image 2 parity
                                 }}
                             />
 
@@ -168,7 +168,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                         top: `calc(50% + ${s.y}vh)`,
                                     }}
                                 >
-                                    <span className="text-white text-[10px] md:text-[12px] font-bold mb-1 opacity-90 whitespace-nowrap bg-black/70 px-2 py-0.5 rounded border border-[#FF5252]/40 shadow-[0_0_20px_rgba(255,82,82,0.4)]">
+                                    <span className="text-white text-[10px] md:text-[12px] font-bold mb-2 opacity-95 whitespace-nowrap bg-black/80 px-3 py-1 rounded-sm border border-[#00FFC2]/30 shadow-[0_0_15px_rgba(0,255,194,0.3)]">
                                         <AutoTranslatedText text={s.label} />
                                     </span>
                                     <div 
