@@ -72,7 +72,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
                     scale: stage === 'zoom' ? 1.2 : 4, 
-                    opacity: stage === 'complete' ? 0 : 1.0
+                    opacity: (stage === 'zoom' || stage === 'door') ? 1.0 : 0
                 }}
                 transition={{ 
                     scale: { duration: stage === 'zoom' ? 2 : 4, ease: "linear" },
