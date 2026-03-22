@@ -1436,6 +1436,14 @@ export const VirtualStore3D: React.FC = () => {
     const [hoveredFloor, setHoveredFloor] = useState<number | null>(null);
     const [activeModalFloor, setActiveModalFloor] = useState<number | null>(null);
     const [transitioningFloor, setTransitioningFloor] = useState<number | null>(null);
+
+    const handleTransitionComplete = React.useCallback(() => {
+        if (transitioningFloor !== null) {
+            setSelectedFloor(transitioningFloor);
+            setTransitioningFloor(null);
+        }
+    }, [transitioningFloor]);
+
     const [resetKey, setResetKey] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     
@@ -1458,7 +1466,7 @@ export const VirtualStore3D: React.FC = () => {
 
     return (
         <div
-            className={`fixed inset-0 top-0 left-0 w-full h-full transition-all duration-300 ${selectedFloor ? 'z-[100]' : 'z-[40]'}`}
+            className={`fixed inset-0 top-0 left-0 w-full h-full transition-all duration-300 ${(selectedFloor || transitioningFloor) ? 'z-[100]' : 'z-[40]'}`}
             style={{ backgroundColor: COLORS.paper, touchAction: 'none' }}
         >
 
@@ -1534,16 +1542,13 @@ export const VirtualStore3D: React.FC = () => {
             </Canvas>
 
             <AnimatePresence mode="wait">
-                {transitioningFloor && (
+                {transitioningFloor !== null && (
                     <FloorTransitionOverlay
                         key="floor-transition"
                         floorNumber={transitioningFloor}
                         floorTitle={getLocalizedText(floors.find(f => parseInt(f.floor) === transitioningFloor)?.title || { ko: '' }, i18n.language)}
                         floorColor={floors.find(f => parseInt(f.floor) === transitioningFloor)?.color || '#00FFC2'}
-                        onComplete={() => {
-                            setSelectedFloor(transitioningFloor);
-                            setTransitioningFloor(null);
-                        }}
+                        onComplete={handleTransitionComplete}
                     />
                 )}
                 {activeFloorData && !transitioningFloor && (

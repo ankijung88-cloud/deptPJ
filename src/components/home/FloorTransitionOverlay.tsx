@@ -31,7 +31,12 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     }, [onComplete]);
 
     return (
-        <div className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black"
+        >
             {/* Background Zooming Layer */}
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -56,7 +61,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 {/* Left Door */}
                 <motion.div
                     initial={{ rotateY: 0 }}
-                    animate={{ rotateY: stage === 'door' || stage === 'suck' ? -110 : 0 }}
+                    animate={{ rotateY: (stage === 'door' || stage === 'suck' || stage === 'complete') ? -110 : 0 }}
                     transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
                     className="absolute right-1/2 w-[50vw] h-full border-r-[1px] border-white/20 origin-right overflow-hidden shadow-2xl"
                     style={{ 
@@ -65,7 +70,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                         backgroundSize: '40px 40px'
                     }}
                 >
-                    {/* Door Detail (Korean traditional pattern) */}
                     <div className="absolute inset-10 border-[1px] border-white/10 flex items-center justify-center">
                         <div className="w-[80%] h-[80%] border-[2px] border-white/5 opacity-20" />
                     </div>
@@ -74,7 +78,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 {/* Right Door */}
                 <motion.div
                     initial={{ rotateY: 0 }}
-                    animate={{ rotateY: stage === 'door' || stage === 'suck' ? 110 : 0 }}
+                    animate={{ rotateY: (stage === 'door' || stage === 'suck' || stage === 'complete') ? 110 : 0 }}
                     transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
                     className="absolute left-1/2 w-[50vw] h-full border-l-[1px] border-white/20 origin-left overflow-hidden shadow-2xl"
                     style={{ 
@@ -83,7 +87,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                         backgroundSize: '40px 40px'
                     }}
                 >
-                    {/* Door Detail */}
                     <div className="absolute inset-10 border-[1px] border-white/10 flex items-center justify-center">
                         <div className="w-[80%] h-[80%] border-[2px] border-white/5 opacity-20" />
                     </div>
@@ -91,9 +94,8 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
 
                 {/* Sucking In Effect (Vacuum Vortex) */}
                 <AnimatePresence>
-                    {stage === 'suck' && (
+                    {(stage === 'suck' || stage === 'complete') && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            {/* Inner Portal Light */}
                             <motion.div
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 4, opacity: [0, 1, 0.8] }}
@@ -105,44 +107,46 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 }}
                             />
                             
-                            {/* Speed Lines / Particles */}
-                            {[...Array(24)].map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ 
-                                        x: (Math.random() - 0.5) * window.innerWidth * 1.5,
-                                        y: (Math.random() - 0.5) * window.innerHeight * 1.5,
-                                        scale: 0,
-                                        opacity: 0
-                                    }}
-                                    animate={{ 
-                                        x: 0, 
-                                        y: 0, 
-                                        scale: [0, 1, 0],
-                                        opacity: [0, 0.8, 0]
-                                    }}
-                                    transition={{ 
-                                        duration: 1.5, 
-                                        delay: Math.random() * 0.5,
-                                        repeat: Infinity,
-                                        ease: "circIn"
-                                    }}
-                                    className="absolute w-1 h-32 rounded-full"
-                                    style={{ 
-                                        backgroundColor: floorColor,
-                                        rotate: `${Math.atan2(0, 0) * (180 / Math.PI)}deg` // Needs better rotation logic
-                                    }}
-                                />
-                            ))}
+                            {[...Array(24)].map((_, i) => {
+                                const angle = (i / 24) * Math.PI * 2;
+                                return (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ 
+                                            x: Math.cos(angle) * window.innerWidth,
+                                            y: Math.sin(angle) * window.innerHeight,
+                                            scale: 0,
+                                            opacity: 0
+                                        }}
+                                        animate={{ 
+                                            x: 0, 
+                                            y: 0, 
+                                            scale: [0, 1, 0],
+                                            opacity: [0, 0.8, 0]
+                                        }}
+                                        transition={{ 
+                                            duration: 1.2, 
+                                            delay: Math.random() * 0.5,
+                                            repeat: Infinity,
+                                            ease: "circIn"
+                                        }}
+                                        className="absolute w-1 h-32 rounded-full"
+                                        style={{ 
+                                            backgroundColor: floorColor,
+                                            rotate: `${angle}rad`
+                                        }}
+                                    />
+                                );
+                            })}
                         </div>
                     )}
                 </AnimatePresence>
 
                 {/* Floor Info Fragment */}
-                {stage !== 'suck' && (
+                {stage !== 'suck' && stage !== 'complete' && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 2, filter: 'blur(20px)' }}
                         className="relative z-10 flex flex-col items-center justify-center pointer-events-none"
                     >
@@ -165,6 +169,6 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     className="absolute inset-0 bg-white z-[6000]"
                 />
             )}
-        </div>
+        </motion.div>
     );
 };
