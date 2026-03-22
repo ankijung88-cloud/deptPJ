@@ -18,25 +18,40 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Refined Timeline for "Slow Zoom -> Doors Opening & White Core Expansion"
+        // Timeline for "Slow Zoom -> Door Slide -> 3D Space Arrival"
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
-        // Launch the pure white light expansion immediately as doors start sliding (at 2.1s)
-        const suckTimer = setTimeout(() => setStage('suck'), 2100); 
-        const completeTimer = setTimeout(() => onComplete(), 4500); 
+        const arrivalTimer = setTimeout(() => setStage('suck'), 2100); 
+        const completeTimer = setTimeout(() => onComplete(), 4800); 
 
         return () => {
             clearTimeout(zoomTimer);
-            clearTimeout(suckTimer);
+            clearTimeout(arrivalTimer);
             clearTimeout(completeTimer);
         };
     }, [onComplete]);
+
+    // Simulated Stars for the Starfield
+    const stars = Array.from({ length: 100 }).map((_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: 1 + Math.random() * 2,
+    }));
+
+    // Simulated Glowing Spheres from the user image
+    const spheres = [
+        { x: -20, y: -10, size: 40, delay: 0.1 },
+        { x: 15, y: -30, size: 55, delay: 0.3 },
+        { x: -40, y: -25, size: 30, delay: 0 },
+        { x: 35, y: -15, size: 45, delay: 0.2 },
+    ];
 
     return (
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ 
                 opacity: 1,
-                x: stage === 'suck' ? [0, -2, 2, -2, 2, 0] : 0 
+                x: stage === 'suck' ? [0, -1, 1, -1, 1, 0] : 0 
             }}
             exit={{ opacity: 0 }}
             transition={{ 
@@ -48,7 +63,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
-                    scale: stage === 'zoom' ? 1.2 : 6, 
+                    scale: stage === 'zoom' ? 1.2 : 10, 
                     opacity: stage === 'complete' ? 0 : 0.6
                 }}
                 transition={{ 
@@ -62,45 +77,79 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                     style={{ 
                         backgroundImage: `
                             linear-gradient(to right, ${floorColor}22 2px, transparent 2px),
-                            linear-gradient(to bottom, ${floorColor}22 2px, transparent 2px),
-                            linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 50%, rgba(255,255,255,0.02) 100%)
+                            linear-gradient(to bottom, ${floorColor}22 2px, transparent 2px)
                         `,
-                        backgroundSize: '200px 200px, 200px 200px, 100% 100%',
+                        backgroundSize: '200px 200px, 200px 200px',
                         transform: 'perspective(1000px) translateZ(-100px)'
                     }}
                 />
             </motion.div>
 
-            {/* 2. LAYER: Light Expansion (Behind Doors, Fills screen through gap) */}
+            {/* 2. LAYER: 3D Space Arrival (Behind Doors, Zooms through gap) */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
                         <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 10, opacity: 1 }}
                             exit={{ opacity: 1 }}
-                            className="relative w-full h-full flex items-center justify-center"
+                            transition={{ duration: 2.8, ease: "easeIn" }}
+                            className="relative w-full h-full flex items-center justify-center bg-black"
                         >
-                            {/* Pure White Core - Rapid Screen Fill */}
-                            <motion.div
-                                initial={{ scale: 0.01, opacity: 0 }}
-                                animate={{ 
-                                    scale: [0.01, 15], 
-                                    opacity: [0, 1] 
+                            {/* Starfield */}
+                            <div className="absolute inset-0">
+                                {stars.map(s => (
+                                    <div 
+                                        key={s.id}
+                                        className="absolute bg-white rounded-full opacity-40"
+                                        style={{ 
+                                            left: `${s.x}%`, 
+                                            top: `${s.y}%`, 
+                                            width: s.size, 
+                                            height: s.size 
+                                        }}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Cyan 3D Grid Plane (from user image) */}
+                            <div 
+                                className="absolute bottom-[-20%] w-[150vw] h-[100vh] opacity-50"
+                                style={{ 
+                                    backgroundImage: `
+                                        linear-gradient(to right, #00E5FF 1px, transparent 1px),
+                                        linear-gradient(to bottom, #00E5FF 1px, transparent 1px)
+                                    `,
+                                    backgroundSize: '80px 80px',
+                                    transform: 'perspective(1000px) rotateX(75deg)'
                                 }}
-                                transition={{ 
-                                    duration: 2.2, 
-                                    ease: "easeIn" 
-                                }}
-                                className="absolute w-64 h-64 rounded-full bg-white blur-[40px] shadow-[0_0_120px_#fff]"
                             />
 
-                            {/* Shockwave Glow Expansion */}
+                            {/* Glowing Spheres (from user image) */}
+                            {spheres.map((s, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: s.delay, duration: 0.8 }}
+                                    className="absolute rounded-full blur-[2px]"
+                                    style={{ 
+                                        left: `calc(50% + ${s.x}vw)`,
+                                        top: `calc(50% + ${s.y}vh)`,
+                                        width: s.size,
+                                        height: s.size,
+                                        background: `radial-gradient(circle at 30% 30%, #fff, #00E5FF 40%, #0091EA 100%)`,
+                                        boxShadow: `0 0 40px rgba(0,229,255,0.6)`
+                                    }}
+                                />
+                            ))}
+
+                            {/* Center Glow Flash */}
                             <motion.div
-                                initial={{ scale: 0.1, opacity: 0, border: `10px solid #fff` }}
-                                animate={{ scale: 25, opacity: [0, 0.8, 0] }}
-                                transition={{ duration: 1.8, ease: "easeOut" }}
-                                className="absolute w-32 h-32 rounded-full"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: [0, 0.4, 0] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute w-full h-full bg-[#00E5FF] blur-[150px] opacity-20"
                             />
                         </motion.div>
                     )}
