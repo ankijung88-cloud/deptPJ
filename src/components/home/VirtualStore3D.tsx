@@ -933,7 +933,7 @@ const CityBackground3D = () => {
 };
 
 // --- 2D Mobile Modal (Image 1 Style) ---
-const MobileFloorModal = ({ activeFloorData, onClose, onSelectFloor }: { activeFloorData: any, onClose: () => void, onSelectFloor?: (num: number) => void }) => {
+const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -989,11 +989,8 @@ const MobileFloorModal = ({ activeFloorData, onClose, onSelectFloor }: { activeF
                         <button 
                             key={idx}
                             onClick={() => {
-                                onClose();
-                                if (onSelectFloor) {
-                                    const floorNum = parseInt(sub.id.split('-')[1]) || activeFloorData.floor;
-                                    onSelectFloor(parseInt(floorNum));
-                                }
+                                // Don't call onClose() or onSelectFloor() here to avoid visual flicker.
+                                // Let the router unmount this page during navigation.
                                 navigate(`/category/${sub.id}`);
                             }}
                             className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
@@ -1133,7 +1130,6 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
                         i18nLanguage={i18n.language} 
                         categories={activeFloorData.subitems}
                         onCategoryClick={(catId) => {
-                            onClose();
                             navigate(`/category/${catId}`);
                         }}
                     />
@@ -1558,7 +1554,6 @@ export const VirtualStore3D: React.FC = () => {
                             key="mobile-modal"
                             activeFloorData={activeFloorData}
                             onClose={() => setSelectedFloor(null)}
-                            onSelectFloor={(num) => setTransitioningFloor(num)}
                         />
                     ) : (
                         <DesktopVirtualSpace
