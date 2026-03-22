@@ -18,10 +18,11 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
     const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
 
     useEffect(() => {
-        // Refined Timeline for "Slow Zoom -> Lateral Sliding Doors -> Internal Vortex"
+        // Refined Timeline for "Slow Zoom -> Doors Opening & Light Tunnel Launch"
         const zoomTimer = setTimeout(() => setStage('door'), 2000); 
-        const suckTimer = setTimeout(() => setStage('suck'), 3200); 
-        const completeTimer = setTimeout(() => onComplete(), 5500); 
+        // Launch the light tunnel (suck) almost immediately as doors start sliding (at 2.1s)
+        const suckTimer = setTimeout(() => setStage('suck'), 2100); 
+        const completeTimer = setTimeout(() => onComplete(), 4500); 
 
         return () => {
             clearTimeout(zoomTimer);
@@ -30,13 +31,13 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
         };
     }, [onComplete]);
 
-    // Particles for the vacuum effect
-    const particles = Array.from({ length: 45 }).map((_, i) => ({
+    // Particles for the Light Tunnel effect
+    const particles = Array.from({ length: 50 }).map((_, i) => ({
         id: i,
-        angle: (i / 45) * Math.PI * 2,
-        delay: Math.random() * 1.5,
-        duration: 1.0 + Math.random() * 0.5,
-        scale: 0.8 + Math.random() * 1.5,
+        angle: (i / 50) * Math.PI * 2,
+        delay: Math.random() * 1,
+        duration: 0.6 + Math.random() * 0.4, // Faster for tunnel effect
+        scale: 1 + Math.random() * 2,
     }));
 
     return (
@@ -44,7 +45,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
             initial={{ opacity: 0 }}
             animate={{ 
                 opacity: 1,
-                x: stage === 'suck' ? [0, -1, 1, -1, 1, 0] : 0 
+                x: stage === 'suck' ? [0, -2, 2, -2, 2, 0] : 0 
             }}
             exit={{ opacity: 0 }}
             transition={{ 
@@ -79,33 +80,39 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                 />
             </motion.div>
 
-            {/* 2. LAYER: Internal Vortex (Visible through sliding gap) */}
+            {/* 2. LAYER: Light Tunnel (Behind Doors, Expands through gap) */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
                 <AnimatePresence>
                     {(stage === 'suck' || stage === 'complete') && (
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                            exit={{ opacity: 1 }}
                             className="relative w-full h-full flex items-center justify-center"
                         >
+                            {/* Expanding White Core - Fills screen quickly */}
                             <motion.div
-                                initial={{ scale: 0.05, opacity: 0, border: `6px solid ${floorColor}` }}
-                                animate={{ scale: 20, opacity: [0, 1, 0] }}
-                                transition={{ duration: 2.5, ease: "easeOut" }}
+                                initial={{ scale: 0.01, opacity: 0 }}
+                                animate={{ 
+                                    scale: [0.01, 15], 
+                                    opacity: [0, 1] 
+                                }}
+                                transition={{ 
+                                    duration: 2.2, 
+                                    ease: "easeIn" 
+                                }}
+                                className="absolute w-64 h-64 rounded-full bg-white blur-[40px] shadow-[0_0_100px_#fff]"
+                            />
+
+                            {/* Shockwave Glow Expansion */}
+                            <motion.div
+                                initial={{ scale: 0.1, opacity: 0, border: `10px solid #fff` }}
+                                animate={{ scale: 25, opacity: [0, 0.8, 0] }}
+                                transition={{ duration: 1.8, ease: "easeOut" }}
                                 className="absolute w-32 h-32 rounded-full"
                             />
 
-                            <motion.div
-                                animate={{ 
-                                    scale: [1, 1.3, 1],
-                                    opacity: [0.6, 1, 0.6]
-                                }}
-                                transition={{ duration: 0.4, repeat: Infinity }}
-                                className="w-64 h-64 rounded-full blur-[80px]"
-                                style={{ backgroundColor: floorColor }}
-                            />
-
+                            {/* Light Tunnel Particles */}
                             {particles.map((p) => (
                                 <motion.div
                                     key={p.id}
@@ -127,10 +134,10 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                         repeat: Infinity,
                                         ease: "circIn"
                                     }}
-                                    className="absolute w-1 h-80 rounded-full"
+                                    className="absolute w-1.5 h-96 rounded-full z-40"
                                     style={{ 
-                                        backgroundColor: floorColor,
-                                        boxShadow: `0 0 20px ${floorColor}`,
+                                        backgroundColor: '#fff',
+                                        boxShadow: `0 0 30px #fff, 0 0 10px ${floorColor}`,
                                         rotate: `${p.angle}rad`,
                                         transformOrigin: '50% 100%'
                                     }}
@@ -143,62 +150,60 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
 
             {/* 3. LAYER: Lateral Sliding Doors (Foreground) */}
             <div className="relative w-full h-full flex items-center justify-center z-30 pointer-events-none overflow-hidden">
-                {/* Left Sliding Door */}
                 <motion.div
                     initial={{ x: 0 }}
                     animate={{ x: (stage === 'suck' || stage === 'complete') ? '-100%' : 0 }}
                     transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
-                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.8)] bg-[#121917]"
+                    className="absolute right-1/2 w-[50vw] h-full border-r-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[20px_0_100px_rgba(0,0,0,1)] bg-[#121917]"
                     style={{ 
                         backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
                     }}
                 >
-                    <div className="absolute inset-16 border-[3px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-32">
-                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
-                        <div className="w-20 h-20 border-[3px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
-                           <div className="w-8 h-8 bg-[#00FFC2]/20" />
+                    <div className="absolute inset-20 border-[2px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-40">
+                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-24 h-24 border-[2px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
+                           <div className="w-10 h-10 bg-[#00FFC2]/20" />
                         </div>
-                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
                     </div>
                 </motion.div>
 
-                {/* Right Sliding Door */}
                 <motion.div
                    initial={{ x: 0 }}
                    animate={{ x: (stage === 'suck' || stage === 'complete') ? '100%' : 0 }}
                    transition={{ duration: 1.6, ease: [0.6, 0.01, -0.05, 0.95] }}
-                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[-20px_0_50px_rgba(0,0,0,0.8)] bg-[#121917]"
+                    className="absolute left-1/2 w-[50vw] h-full border-l-[4px] border-[#00FFC2]/50 overflow-hidden shadow-[-20px_0_100px_rgba(0,0,0,1)] bg-[#121917]"
                     style={{ 
                         backgroundImage: `repeating-linear-gradient(45deg, rgba(0,255,194,0.04) 0, rgba(0,255,194,0.04) 3px, transparent 3px, transparent 12px)`
                     }}
                 >
-                    <div className="absolute inset-16 border-[3px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-32">
-                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
-                        <div className="w-20 h-20 border-[3px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
-                           <div className="w-8 h-8 bg-[#00FFC2]/20" />
+                    <div className="absolute inset-20 border-[2px] border-[#00FFC2]/15 flex flex-col items-center justify-around py-40">
+                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-24 h-24 border-[2px] border-[#00FFC2]/30 rotate-45 flex items-center justify-center">
+                           <div className="w-10 h-10 bg-[#00FFC2]/20" />
                         </div>
-                        <div className="w-12 h-12 border-[3px] border-[#00FFC2]/30 rotate-45" />
+                        <div className="w-16 h-16 border-[2px] border-[#00FFC2]/30 rotate-45" />
                     </div>
                 </motion.div>
 
-                {/* Typography Overlay */}
+                {/* Initial Typography (Fade out as doors open) */}
                 <AnimatePresence>
                     {(stage === 'zoom' || stage === 'door') && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8, y: 50 }}
                             animate={{ opacity: 1, scale: 1.2, y: 0 }}
-                            exit={{ opacity: 0, scale: 4, filter: 'blur(40px)', y: -200 }}
-                            transition={{ duration: 1.8, ease: "easeOut" }}
+                            exit={{ opacity: 0, scale: 5, filter: 'blur(60px)', y: -300 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
                             className="absolute z-40 flex flex-col items-center justify-center"
                         >
-                            <span className="text-[18rem] md:text-[24rem] font-black font-serif italic mb-6 leading-none" style={{ color: floorColor, textShadow: `0 0 70px ${floorColor}cc` }}>
+                            <span className="text-[20rem] md:text-[28rem] font-black font-serif italic mb-8 leading-none" style={{ color: floorColor, textShadow: `0 0 100px ${floorColor}aa` }}>
                                 {floorNumber}
                             </span>
-                            <div className="flex flex-col items-center -mt-12">
-                                <h2 className="text-6xl md:text-8xl font-black text-white tracking-[0.6em] uppercase mb-8">
+                            <div className="flex flex-col items-center -mt-16">
+                                <h2 className="text-7xl md:text-9xl font-black text-white tracking-[0.8em] uppercase mb-10">
                                     <AutoTranslatedText text={floorTitle} />
                                 </h2>
-                                <div className="w-64 h-[2px] bg-[#00FFC2] shadow-[0_0_20px_#00FFC2]" />
+                                <div className="w-80 h-[3px] bg-[#00FFC2] shadow-[0_0_30px_#00FFC2]" />
                             </div>
                         </motion.div>
                     )}
