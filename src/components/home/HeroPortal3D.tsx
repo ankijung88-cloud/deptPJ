@@ -70,7 +70,7 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
         const positions = points.current.geometry.attributes.position.array as Float32Array;
         const linePositions = lineRef.current.geometry.attributes.position.array as Float32Array;
         const currentVelocity = velocity.get();
-        const speedMultiplier = currentVelocity * 25;
+        const speedMultiplier = currentVelocity * 15;
 
         groupRef.current.rotation.z += delta * 0.05;
         groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
