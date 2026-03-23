@@ -190,6 +190,8 @@ export const createProduct = async (req, res) => {
       subcategory,
       toJson(description),
       toJson(long_description),
+      detail_media_url || '',
+      detail_media_type || 'image',
       image_url || '',
       thumbnail_url || '',
       side_image_url || '',
@@ -203,8 +205,6 @@ export const createProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
-      detail_media_url || '',
-      detail_media_type || 'image',
       agency_id
     ];
     await pool.query(query, params);
@@ -236,6 +236,8 @@ export const updateProduct = async (req, res) => {
     const parent_id = req.body.parent_id || req.body.parentId;
     const theme_data = req.body.theme_data;
     const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
+    const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
+    const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -271,6 +273,8 @@ export const updateProduct = async (req, res) => {
       subcategory,
       toJson(description),
       toJson(long_description),
+      detail_media_url || '',
+      detail_media_type || 'image',
       image_url || '',
       thumbnail_url || '',
       side_image_url || '',
@@ -284,8 +288,6 @@ export const updateProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
-      detail_media_url || '',
-      detail_media_type || 'image',
       agency_id || null,
       id
     ];
