@@ -408,7 +408,10 @@ const SubCategoryPage: React.FC = () => {
                                 stories={stories} 
                                 theme={theme} 
                                 lang={i18n.language} 
-                                onClick={() => setIsExplorationMode(true)}
+                                onClick={() => {
+                                    setSelectedItemId(null);
+                                    setIsExplorationMode(true);
+                                }}
                                 onItemClick={(item) => navigate(`/detail/${item.id}`)}
                             />
                         </div>
