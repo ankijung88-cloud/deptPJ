@@ -192,9 +192,9 @@ const GateWall = ({ progress }: { progress: number }) => {
             }
         }
 
-        // Mortar lines for main wall
-        ctx.strokeStyle = '#BBB7AE';
-        ctx.lineWidth = 1.0; 
+        // Mortar lines for main wall - Thickened for higher visibility on all screens
+        ctx.strokeStyle = '#9A968D'; // Slightly darker for better contrast
+        ctx.lineWidth = 2.4; // Increased from 1.0 (approx 0.6 world units)
         ctx.beginPath();
         for (let yRaw = -80; yRaw <= 120; yRaw += 10) {
             const cy = (120 - yRaw) * 4;
@@ -209,20 +209,19 @@ const GateWall = ({ progress }: { progress: number }) => {
 
         // 2. Overlay the arch rim flush with the wall
         const cxCenter = 180 * 4;
-        const cyCenter = (120 - 6) * 4; // y=6 refers to h-18
+        const cyCenter = (120 - 6) * 4; 
         const rInner = 13.5 * 4;
         const rOuter = 18.2 * 4;
 
         // Erase background lines behind the arch
         ctx.fillStyle = '#EAE8E4';
         ctx.beginPath();
-        // Semicircle arch + vertical legs
         ctx.arc(cxCenter, cyCenter, rOuter, 0, Math.PI, true);
         ctx.lineTo(cxCenter - rOuter, 800);
         ctx.lineTo(cxCenter + rOuter, 800);
         ctx.fill();
 
-        // Arch color (slightly more "granite" clean look)
+        // Arch color
         ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
         ctx.beginPath();
         ctx.arc(cxCenter, cyCenter, rOuter, 0, Math.PI, true);
@@ -230,8 +229,8 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.fill();
 
         // Radial Voussoir Joints (Wedge stones)
-        ctx.strokeStyle = '#A39F97';
-        ctx.lineWidth = 1.6;
+        ctx.strokeStyle = '#9A968D';
+        ctx.lineWidth = 3.2; // Thickened for Vercel visibility
         ctx.beginPath();
         
         // Boundaries
@@ -261,7 +260,9 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.stroke();
 
         const tex = new THREE.CanvasTexture(canvas);
-        tex.anisotropy = 8;
+        tex.minFilter = THREE.LinearFilter; // CRITICAL: Disable mipmapping for sharp lines on Vercel
+        tex.magFilter = THREE.LinearFilter;
+        tex.anisotropy = 16; // Maximize sharpness at angles
         tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
         tex.repeat.set(1 / 360, 1 / 200);
         tex.offset.set(180 / 360, 80 / 200);
