@@ -199,9 +199,9 @@ const GateWall = ({ progress }: { progress: number }) => {
             }
         }
 
-        // Mortar lines for main wall - Heavy duty thickness for Vercel
-        ctx.strokeStyle = '#8E8A81'; // Darker for definitive contrast
-        ctx.lineWidth = 1.0 * s; 
+        // Mortar lines for main wall - Refined to be thinner and subtle
+        ctx.strokeStyle = '#9D9990'; 
+        ctx.lineWidth = 0.5 * s; // Reduced from 1.0 (approx 0.125 world units)
         ctx.beginPath();
         for (let yRaw = -80; yRaw <= 120; yRaw += 10) {
             const cy = (120 - yRaw) * s;
@@ -236,8 +236,8 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.fill();
 
         // Radial Voussoir Joints
-        ctx.strokeStyle = '#8E8A81';
-        ctx.lineWidth = 1.2 * s; 
+        ctx.strokeStyle = '#949086'; // Slightly darker for clear subtle lines
+        ctx.lineWidth = 0.7 * s; // Reduced from 1.2
         ctx.beginPath();
         
         ctx.arc(cxCenter, cyCenter, rOuter, Math.PI, 0, false);
