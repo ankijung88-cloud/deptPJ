@@ -421,7 +421,7 @@ const GalleryScene = ({
     setPlaying?: (p: boolean) => void
 }) => {
     const scroll = useScroll();
-    const { camera, invalidate } = useThree();
+    const { camera, set } = useThree() as any;
     
     const exhibits = useMemo(() => {
         const combined = [...(items || []), ...(stories || [])];
@@ -432,10 +432,10 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
-    const initialOffsetSet = useRef(false);
+    const forcedScroll = useRef<{ offset: number, startTime: number } | null>(null);
 
     useEffect(() => {
-        if (!initialOffsetSet.current && exhibits.length > 0 && (window as any).initialItemId) {
+        if (exhibits.length > 0 && (window as any).initialItemId) {
             const targetId = (window as any).initialItemId;
             const targetIndex = exhibits.findIndex(ex => ex.id === targetId);
             
@@ -443,31 +443,16 @@ const GalleryScene = ({
                 const spacing = 20;
                 const totalZ = exhibits.length * spacing;
                 const targetZ = exhibits[targetIndex].zPos;
-                
-                // On desktop, the "Sweet Spot" is around camera.z - 8.
-                // scrollZ = scroll.offset * -(totalZ + 10)
-                // We want: scrollZ = targetZ + 8
-                // So: scroll.offset * -(totalZ + 10) = targetZ + 8
-                // offset = (targetZ + 8) / -(totalZ + 10)
-                
                 const targetOffset = (targetZ + 8) / -(totalZ + 10);
                 
-                if (scroll) {
-                    scroll.offset = THREE.MathUtils.clamp(targetOffset, 0, 1);
-                    
-                    // CRITICAL: ScrollControls uses a hidden DOM element for scroll tracking.
-                    // We must also update its scrollTop to prevent it from snapping back to 0 on the next frame.
-                    if (scroll.el) {
-                        scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
-                    }
-                    
-                    invalidate();
-                }
+                forcedScroll.current = { 
+                    offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
+                    startTime: Date.now()
+                };
             }
-            initialOffsetSet.current = true;
             (window as any).initialItemId = null;
         }
-    }, [exhibits, scroll, invalidate]);
+    }, [exhibits]);
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
@@ -496,9 +481,8 @@ const GalleryScene = ({
         );
     }, [isMuseum, exhibits.length]);
 
-    const { set } = useThree();
     useEffect(() => {
-        set({ exhibitsCount: exhibits.length } as any);
+        set({ exhibitsCount: exhibits.length });
     }, [exhibits.length, set]);
 
     const focusState = useRef({ index: -1, startTime: 0 });
@@ -506,6 +490,20 @@ const GalleryScene = ({
     useFrame((state) => {
         const spacing = 20;
         const totalZ = exhibits.length * spacing;
+
+        // Force scroll for the first 500ms after a jump to prevent R3F from snapping back
+        if (forcedScroll.current) {
+            const elapsed = Date.now() - forcedScroll.current.startTime;
+            if (elapsed < 500) {
+                scroll.offset = forcedScroll.current.offset;
+                if (scroll.el) {
+                    scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
+                }
+            } else {
+                forcedScroll.current = null;
+            }
+        }
+
         (state as any).scrollOffset = scroll.offset;
 
         if (isMobile) {
