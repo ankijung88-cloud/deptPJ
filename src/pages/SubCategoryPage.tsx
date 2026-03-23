@@ -282,37 +282,36 @@ const SubCategoryPage: React.FC = () => {
                             </motion.div>
                         </div>
 
-                        {/* Unified Curation Module (Action + Stats) */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="lg:w-[420px] shrink-0"
+                            className="lg:w-[380px] shrink-0"
                         >
-                            <div className="rounded-[2.5rem] p-1.5 backdrop-blur-3xl border shadow-2xl overflow-hidden group"
+                            <div className="rounded-[2rem] p-1 backdrop-blur-3xl border shadow-2xl overflow-hidden group"
                                  style={{ 
                                      backgroundColor: `${theme.color1}44`, 
                                      borderColor: `${theme.color3}33`,
                                      boxShadow: `0 20px 40px -10px ${theme.bgColor}cc`
                                  }}>
                                 
-                                <div className="p-8 md:p-10 space-y-6">
-                                    <div className="space-y-6">
+                                <div className="p-6 md:p-7 space-y-4">
+                                    <div className="space-y-4">
                                         <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                                            <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase w-fit">
+                                            <div className="text-[10px] md:text-[12px] font-black tracking-[0.4em] text-white/60 uppercase w-fit">
                                                 <AutoTranslatedText text="Collection Data" />
                                             </div>
                                             <div className="flex items-baseline gap-2">
-                                                <span className="text-2xl font-serif font-black" style={{ color: theme.highlightColor }}>
+                                                <span className="text-xl font-serif font-black" style={{ color: theme.highlightColor }}>
                                                     {items.length + stories.length}
                                                 </span>
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-white">RECORDS</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-white">RECORDS</span>
                                             </div>
                                         </div>
                                         
                                         <div className="relative flex items-center">
                                             {/* List of Titles - Limited to 5 items */}
-                                            <div className="flex-grow space-y-3 min-h-[200px]">
+                                            <div className="flex-grow space-y-2 min-h-[160px]">
                                                 {([...items, ...stories].slice(scrollIndex, scrollIndex + 5)).map((item, idx) => (
                                                     <motion.div 
                                                         key={item.id} 
