@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { BookOpen, X } from 'lucide-react';
+import { BookOpen, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
@@ -82,6 +82,7 @@ const SubCategoryPage: React.FC = () => {
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
     const [isExplorationMode, setIsExplorationMode] = useState(false);
+    const [scrollIndex, setScrollIndex] = useState(0);
     // Toggle immersive mode when in exploration mode
     useImmersiveMode(isExplorationMode);
 
@@ -296,35 +297,63 @@ const SubCategoryPage: React.FC = () => {
                                  }}>
                                 
                                 <div className="p-8 md:p-10 space-y-6">
-                                    <div className="space-y-4">
-                                        <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase border-b border-white/10 pb-2 w-fit">
-                                            <AutoTranslatedText text="Collection Data" />
+                                    <div className="space-y-6">
+                                        <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                                            <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase w-fit">
+                                                <AutoTranslatedText text="Collection Data" />
+                                            </div>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-2xl font-serif font-black" style={{ color: theme.highlightColor }}>
+                                                    {items.length + stories.length}
+                                                </span>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-white">RECORDS</span>
+                                            </div>
                                         </div>
                                         
-                                        {/* List of Titles */}
-                                        <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
-                                            {[...items, ...stories].map((item, idx) => (
-                                                <div key={item.id} className="flex items-start gap-3 group/item">
-                                                    <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(idx + 1).padStart(2, '0')}</span>
-                                                    <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
-                                                        <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                    </span>
-                                                </div>
-                                            ))}
-                                            {([...items, ...stories].length === 0) && (
-                                                <div className="text-sm text-white/20 italic">
-                                                    <AutoTranslatedText text="No items found in this collection." />
+                                        <div className="relative flex items-center">
+                                            {/* List of Titles - Limited to 5 items */}
+                                            <div className="flex-grow space-y-3 min-h-[200px]">
+                                                {([...items, ...stories].slice(scrollIndex, scrollIndex + 5)).map((item, idx) => (
+                                                    <motion.div 
+                                                        key={item.id} 
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.05 }}
+                                                        className="flex items-start gap-4 group/item"
+                                                    >
+                                                        <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(scrollIndex + idx + 1).padStart(2, '0')}</span>
+                                                        <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
+                                                            <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                        </span>
+                                                    </motion.div>
+                                                ))}
+                                                {([...items, ...stories].length === 0) && (
+                                                    <div className="text-sm text-white/20 italic">
+                                                        <AutoTranslatedText text="No items found." />
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Scroll Arrows */}
+                                            {[...items, ...stories].length > 5 && (
+                                                <div className="absolute right-0 flex flex-col gap-4">
+                                                    <button 
+                                                        disabled={scrollIndex === 0}
+                                                        onClick={() => setScrollIndex(prev => Math.max(0, prev - 1))}
+                                                        className={`p-2 rounded-full border border-white/10 transition-all ${scrollIndex === 0 ? 'opacity-20 translate-y-1' : 'hover:bg-white/10'}`}
+                                                    >
+                                                        <ChevronUp size={16} />
+                                                    </button>
+                                                    <button 
+                                                        disabled={scrollIndex + 5 >= [...items, ...stories].length}
+                                                        onClick={() => setScrollIndex(prev => Math.min([...items, ...stories].length - 5, prev + 1))}
+                                                        className={`p-2 rounded-full border border-white/10 transition-all ${scrollIndex + 5 >= [...items, ...stories].length ? 'opacity-20 -translate-y-1' : 'hover:bg-white/10'}`}
+                                                    >
+                                                        <ChevronDown size={16} />
+                                                    </button>
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-
-                                    {/* Bottom Records Count */}
-                                    <div className="pt-4 border-t border-white/5 flex items-baseline gap-2">
-                                        <span className="text-4xl font-serif font-black" style={{ color: theme.highlightColor, textShadow: `0 0 20px ${theme.glowColor}22` }}>
-                                            {items.length + stories.length}
-                                        </span>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-white">Records Total</span>
                                     </div>
                                 </div>
                             </div>
