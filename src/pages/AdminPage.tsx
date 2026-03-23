@@ -753,6 +753,17 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                         </label>
                                     </div>
                                 </div>
+                                <div className="p-4 bg-white/5 rounded-xl border border-white/10 min-h-[100px] flex items-center justify-center overflow-hidden">
+                                    {formData.detail_media_url ? (
+                                        formData.detail_media_type === 'video' ? (
+                                            <video src={formData.detail_media_url} className="max-h-[150px] w-auto" muted loop autoPlay />
+                                        ) : (
+                                            <img src={formData.detail_media_url} alt="" className="max-h-[150px] w-auto object-contain" />
+                                        )
+                                    ) : (
+                                        <span className="text-[10px] text-white/20 uppercase tracking-widest italic">미리보기 (No Preview)</span>
+                                    )}
+                                </div>
                                 <p className="text-[9px] text-white/20 px-1 italic">
                                     * 상세 페이지 하단에 표시될 미디어입니다. {formData.detail_media_type === 'video' ? 'MP4/M4V 영상 권장.' : 'JPG/PNG 이미지 권장.'}
                                 </p>

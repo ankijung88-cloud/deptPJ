@@ -97,7 +97,7 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         ),
         selected_templates: (typeof item.selected_templates === 'string' ? JSON.parse(item.selected_templates) : item.selected_templates) || [],
         agency_id: item.agency_id,
-        detail_media_url: item.detail_media_url,
+        detail_media_url: normalizeUrl(item.detail_media_url),
         detail_media_type: item.detail_media_type
     };
 };
