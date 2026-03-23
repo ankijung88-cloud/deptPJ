@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useFloors } from '../../context/FloorContext';
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { useNavigationState } from '../../context/NavigationActionContext';
-import { getFloorBySubId } from '../../utils/themeUtils';
+import { getFloorBySubId, getJoseonThemeById } from '../../utils/themeUtils';
 
 export const Breadcrumbs: React.FC = () => {
     const { action, breadcrumbTitle, breadcrumbPath } = useNavigationState();
@@ -14,6 +14,38 @@ export const Breadcrumbs: React.FC = () => {
     const pathnames = location.pathname.split('/').filter((x) => x);
     const { floors } = useFloors();
     const { i18n } = useTranslation();
+
+    // Dynamic Theme Detection (Consistent with Header)
+    const getThemeData = () => {
+        const path = location.pathname;
+        if (path.startsWith('/category/')) {
+            const subId = path.split('/')[2];
+            return { id: subId, floor: getFloorBySubId(subId) || '1' };
+        }
+        if (path.startsWith('/floor/')) {
+            const floorId = path.split('/')[2] || '1';
+            return { id: floorId, floor: floorId.charAt(0) || '1' };
+        }
+        if (path.startsWith('/detail/')) {
+            const floorItem = breadcrumbPath.find(p => p.type === 'floor');
+            if (floorItem && floorItem.id) {
+                const floorId = floorItem.id.toString();
+                const floorNum = floorId.replace('floor-', '');
+                if (!isNaN(parseInt(floorNum))) {
+                    return { id: floorId, floor: floorNum };
+                }
+            }
+            const itemId = path.split('/')[2] || '';
+            return { id: itemId, floor: 'default' };
+        }
+        return { id: '', floor: 'default' };
+    };
+
+    const theme = useMemo(() => {
+        const { id: themeId, floor: themeFloor } = getThemeData();
+        return getJoseonThemeById(themeId, themeFloor);
+    }, [location.pathname, breadcrumbPath]);
+
 
     if (location.pathname === '/' || location.pathname === '/inspiration') {
         return null; // Don't show on main landing or 3D view which has its own header
@@ -70,19 +102,19 @@ export const Breadcrumbs: React.FC = () => {
     return (
         <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar select-none z-50 py-1.5">
             <div className="flex items-center gap-1.5">
-                <span className="text-[#00FFC2]/60 font-mono text-[10px] tracking-[0.2em] font-black uppercase whitespace-nowrap">
+                <span className="font-mono text-[10px] tracking-[0.2em] font-black uppercase whitespace-nowrap" style={{ color: `${theme.accentColor}99` }}>
                     ARCHIVE //
                 </span>
             </div>
 
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest text-white/80">
-                <Link to="/" className="hover:text-[#00FFC2] transition-colors whitespace-nowrap">
+                <Link to="/" className="transition-colors whitespace-nowrap hover:brightness-125" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = theme.accentColor} onMouseLeave={e => e.currentTarget.style.color = ''}>
                     <AutoTranslatedText text="3D포털" />
                 </Link>
                 
-                <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
+                <ChevronRight className="w-3 h-3 shrink-0" style={{ color: `${theme.accentColor}80` }} />
                 
-                <Link to="/inspiration" className="hover:text-[#00FFC2] transition-colors whitespace-nowrap">
+                <Link to="/inspiration" className="transition-colors whitespace-nowrap hover:brightness-125" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = theme.accentColor} onMouseLeave={e => e.currentTarget.style.color = ''}>
                     <AutoTranslatedText text="층별안내" />
                 </Link>
 
@@ -107,14 +139,14 @@ export const Breadcrumbs: React.FC = () => {
 
                         return (
                             <React.Fragment key={index}>
-                                <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
+                                <ChevronRight className="w-3 h-3 shrink-0" style={{ color: `${theme.accentColor}80` }} />
                                 {isLast ? (
-                                    <span className="text-[#00FFC2] font-black brightness-110 drop-shadow-[0_0_8px_rgba(0,255,194,0.4)] whitespace-nowrap">
+                                    <span className="font-black brightness-110 whitespace-nowrap" style={{ color: theme.accentColor, filter: `drop-shadow(0 0 8px ${theme.accentColor}66)` }}>
                                         <AutoTranslatedText text={label} />
                                     </span>
                                 ) : (
                                     routeTo ? (
-                                        <Link to={routeTo} className="hover:text-[#00FFC2]/90 transition-colors whitespace-nowrap">
+                                        <Link to={routeTo} className="transition-colors whitespace-nowrap hover:brightness-110" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = `${theme.accentColor}e6`} onMouseLeave={e => e.currentTarget.style.color = ''}>
                                             <AutoTranslatedText text={label} />
                                         </Link>
                                     ) : (
@@ -144,13 +176,13 @@ export const Breadcrumbs: React.FC = () => {
 
                         return (
                             <React.Fragment key={routeTo}>
-                                <ChevronRight className="w-3 h-3 text-[#00FFC2]/50 shrink-0" />
+                                <ChevronRight className="w-3 h-3 shrink-0" style={{ color: `${theme.accentColor}80` }} />
                                 {isLast ? (
-                                    <span className="text-[#00FFC2] font-black brightness-110 drop-shadow-[0_0_8px_rgba(0,255,194,0.4)] whitespace-nowrap">
+                                    <span className="font-black brightness-110 whitespace-nowrap" style={{ color: theme.accentColor, filter: `drop-shadow(0 0 8px ${theme.accentColor}66)` }}>
                                         <AutoTranslatedText text={label} />
                                     </span>
                                 ) : (
-                                    <Link to={routeTo} className="hover:text-[#00FFC2]/90 transition-colors whitespace-nowrap">
+                                    <Link to={routeTo} className="transition-colors whitespace-nowrap hover:brightness-110" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = `${theme.accentColor}e6`} onMouseLeave={e => e.currentTarget.style.color = ''}>
                                         <AutoTranslatedText text={label} />
                                     </Link>
                                 )}

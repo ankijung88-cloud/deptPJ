@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, Search, Volume2, VolumeX, Shield, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +26,41 @@ interface NavItem {
 const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isImmersive } = useNavigationState();
+    const { isImmersive, breadcrumbPath } = useNavigationState();
+    
+    // Dynamic Theme Detection
+    const getThemeData = () => {
+        const path = location.pathname;
+        if (path.startsWith('/category/')) {
+            const subId = path.split('/')[2];
+            return { id: subId, floor: getFloorBySubId(subId) || '1' };
+        }
+        if (path.startsWith('/floor/')) {
+            const floorId = path.split('/')[2] || '1';
+            return { id: floorId, floor: floorId.charAt(0) || '1' };
+        }
+        if (path.startsWith('/detail/')) {
+            // Priority 1: Check breadcrumbPath for floor info
+            const floorItem = breadcrumbPath.find(p => p.type === 'floor');
+            if (floorItem && floorItem.id) {
+                const floorId = floorItem.id.toString();
+                const floorNum = floorId.replace('floor-', '');
+                if (!isNaN(parseInt(floorNum))) {
+                    return { id: floorId, floor: floorNum };
+                }
+            }
+            // Fallback: itemId as id, default floor
+            const itemId = path.split('/')[2] || '';
+            return { id: itemId, floor: 'default' };
+        }
+        return { id: '', floor: 'default' };
+    };
+
+    const theme = useMemo(() => {
+        const { id: themeId, floor: themeFloor } = getThemeData();
+        return getJoseonThemeById(themeId, themeFloor);
+    }, [location.pathname, breadcrumbPath]);
+
     const is3DStorePage = location.pathname === '/inspiration';
     const isAboutPage = location.pathname === '/about';
 
@@ -51,27 +85,6 @@ const Header: React.FC = () => {
             setIsMenuOpen(false);
         }
     };
-
-    // Dynamic Theme Detection
-    const getThemeData = () => {
-        const path = location.pathname;
-        if (path.startsWith('/category/')) {
-            const subId = path.split('/')[2];
-            return { id: subId, floor: getFloorBySubId(subId) || '1' };
-        }
-        if (path.startsWith('/floor/')) {
-            const floorId = path.split('/')[2] || '1';
-            return { id: floorId, floor: floorId.charAt(0) || '1' };
-        }
-        if (path.startsWith('/detail/')) {
-            const itemId = path.split('/')[2] || '';
-            return { id: itemId, floor: 'default' };
-        }
-        return { id: '', floor: 'default' };
-    };
-
-    const { id: themeId, floor: themeFloor } = getThemeData();
-    const theme = getJoseonThemeById(themeId, themeFloor);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const mobileSearchInputRef = useRef<HTMLInputElement>(null);
