@@ -49,6 +49,8 @@ export interface FeaturedItem {
     eventDates?: string[];
     selected_templates?: SelectedTemplate[] | string; // Can be string (JSON) from DB or array in frontend
     agency_id?: string | number;
+    detail_media_url?: string;
+    detail_media_type?: 'image' | 'video';
 }
 
 export interface FloorContent {

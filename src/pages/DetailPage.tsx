@@ -419,6 +419,34 @@ export const DetailPage: React.FC = () => {
                                 )}
                             </div>
                         </section>
+
+                        {/* Additional Detail Media (Image or Video) */}
+                        {item.detail_media_url && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="w-full rounded-[2rem] overflow-hidden border border-white/5 bg-black/20"
+                            >
+                                {item.detail_media_type === 'video' ? (
+                                    <video 
+                                        src={item.detail_media_url} 
+                                        controls 
+                                        autoPlay 
+                                        muted 
+                                        loop 
+                                        playsInline
+                                        className="w-full h-auto block"
+                                    />
+                                ) : (
+                                    <img 
+                                        src={item.detail_media_url} 
+                                        alt="" 
+                                        className="w-full h-auto block"
+                                    />
+                                )}
+                            </motion.div>
+                        )}
                     </div>
 
                     {/* Meta Sidebar */}

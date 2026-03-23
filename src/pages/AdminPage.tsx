@@ -110,7 +110,9 @@ const normalizeProductData = (product: any) => {
         video_url: '',
         long_description: { ...DEFAULT_LONG_DESCRIPTION },
         closed_days: [],
-        parent_id: ''
+        parent_id: '',
+        detail_media_url: '',
+        detail_media_type: 'image'
     };
     if (!product) return defaultData;
 
@@ -141,7 +143,9 @@ const normalizeProductData = (product: any) => {
         event_date: normalizeLocalizedString(raw_event_date),
         location: normalizeLocalizedString(product.location),
         closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : [],
-        parent_id: product.parent_id || ''
+        parent_id: product.parent_id || '',
+        detail_media_url: product.detail_media_url || product.detailMediaUrl || '',
+        detail_media_type: product.detail_media_type || product.detailMediaType || 'image'
     };
 };
 
@@ -707,6 +711,53 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
                             placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
                         />
+                    </div>
+
+                    {/* 5-3. 상세 미디어 (상세 설명 하단) */}
+                    <div>
+                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-6 rounded-2xl border border-white/5">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-bold text-white/40 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
+                                <div className="flex gap-4">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({...formData, detail_media_type: 'image'})}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' : 'bg-black/40 text-white/40 border-white/10 hover:bg-white/5'}`}
+                                    >
+                                        이미지 (Image)
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({...formData, detail_media_type: 'video'})}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' : 'bg-black/40 text-white/40 border-white/10 hover:bg-white/5'}`}
+                                    >
+                                        영상 (Video)
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-bold text-white/40 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
+                                <div className="flex gap-2">
+                                    <div className="flex-1 relative group">
+                                        <input 
+                                            type="text" 
+                                            value={formData.detail_media_url || ''} 
+                                            onChange={(e) => setFormData({...formData, detail_media_url: e.target.value})}
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-xs focus:border-[#00FFC2]/50 pr-12"
+                                            placeholder="https://..."
+                                        />
+                                        <label className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg cursor-pointer text-white/40 hover:text-[#00FFC2] transition-all">
+                                            {uploading === 'detail_media_url' ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
+                                            <input type="file" className="hidden" accept={formData.detail_media_type === 'video' ? "video/*" : "image/*"} onChange={(e) => handleFileUpload(e, 'detail_media_url')} />
+                                        </label>
+                                    </div>
+                                </div>
+                                <p className="text-[9px] text-white/20 px-1 italic">
+                                    * 상세 페이지 하단에 표시될 미디어입니다. {formData.detail_media_type === 'video' ? 'MP4/M4V 영상 권장.' : 'JPG/PNG 이미지 권장.'}
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

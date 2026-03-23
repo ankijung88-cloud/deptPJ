@@ -162,6 +162,8 @@ export const createProduct = async (req, res) => {
     const parent_id = req.body.parent_id || req.body.parentId;
     const theme_data = req.body.theme_data;
     const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
+    const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
+    const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -180,7 +182,7 @@ export const createProduct = async (req, res) => {
       agency_id = req.user.id;
     }
 
-    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, detail_media_url, detail_media_type, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const params = [
       id,
       toJson(title),
@@ -201,6 +203,8 @@ export const createProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
+      detail_media_url || '',
+      detail_media_type || 'image',
       agency_id
     ];
     await pool.query(query, params);
@@ -257,7 +261,7 @@ export const updateProduct = async (req, res) => {
 
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, detail_media_url = ?, detail_media_type = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?
       WHERE id = ?
     `;
 
@@ -280,6 +284,8 @@ export const updateProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
+      detail_media_url || '',
+      detail_media_type || 'image',
       agency_id || null,
       id
     ];
