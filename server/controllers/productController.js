@@ -101,12 +101,32 @@ export const getProductById = async (req, res) => {
 };
 
 export const searchProducts = async (req, res) => {
-  const { q } = req.query;
+  const { q, lang } = req.query;
   const user = req.user;
 
+  if (!q) return res.json([]);
+
   try {
-    let query = 'SELECT * FROM featured_items WHERE (title LIKE ? OR description LIKE ?)';
-    let params = [`%${q}%`, `%${q}%`];
+    let query = '';
+    let params = [];
+
+    // If lang is provided (e.g., 'ko', 'en'), search specifically within that language field in the JSON.
+    // Otherwise, search the entire JSON string as a fallback.
+    if (lang) {
+      // Use JSON_UNQUOTE(JSON_EXTRACT(...)) for MySQL language-specific search
+      query = `
+        SELECT * FROM featured_items 
+        WHERE (
+          JSON_UNQUOTE(JSON_EXTRACT(title, '$.${lang}')) LIKE ? 
+          OR JSON_UNQUOTE(JSON_EXTRACT(description, '$.${lang}')) LIKE ?
+          OR JSON_UNQUOTE(JSON_EXTRACT(long_description, '$.${lang}')) LIKE ?
+        )
+      `;
+      params = [`%${q}%`, `%${q}%`, `%${q}%`];
+    } else {
+      query = 'SELECT * FROM featured_items WHERE (title LIKE ? OR description LIKE ? OR long_description LIKE ?)';
+      params = [`%${q}%`, `%${q}%`, `%${q}%`];
+    }
 
     if (user && user.role === 'AGENCY') {
       query += ' AND agency_id = ?';
@@ -116,6 +136,7 @@ export const searchProducts = async (req, res) => {
     const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (error) {
+    console.error('[searchProducts] Error:', error.message);
     res.status(500).json({ message: error.message });
   }
 };

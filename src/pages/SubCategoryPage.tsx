@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { BookOpen, Compass, X } from 'lucide-react';
+import { BookOpen, X } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
@@ -81,19 +81,9 @@ const SubCategoryPage: React.FC = () => {
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
-    const location = useLocation();
-    const [isExplorationMode, setIsExplorationMode] = useState(location.state?.fromGallery || false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+    const [isExplorationMode, setIsExplorationMode] = useState(false);
     // Toggle immersive mode when in exploration mode
     useImmersiveMode(isExplorationMode);
-
-
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     const targetSubId = subId || '';
 
@@ -305,22 +295,36 @@ const SubCategoryPage: React.FC = () => {
                                      boxShadow: `0 20px 40px -10px ${theme.bgColor}cc`
                                  }}>
                                 
-                                <div className="p-8 md:p-10 space-y-8">
-                                    <div className="flex justify-between items-start">
-                                        <div className="space-y-3">
-                                            <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase border-b border-white/10 pb-2 w-fit">
-                                                <AutoTranslatedText text="Collection Data" />
-                                            </div>
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="text-6xl font-serif font-black" style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}33` }}>
-                                                    {items.length + stories.length}
-                                                </span>
-                                                <span className="text-xs font-bold uppercase tracking-widest opacity-30 text-white">Records</span>
-                                            </div>
+                                <div className="p-8 md:p-10 space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="text-[11px] md:text-[13px] font-black tracking-[0.4em] text-white/60 uppercase border-b border-white/10 pb-2 w-fit">
+                                            <AutoTranslatedText text="Collection Data" />
                                         </div>
-                                        <div className="w-14 h-14 md:w-20 md:h-20 rounded-full border border-white/20 flex items-center justify-center bg-white/5 shadow-inner">
-                                            <Compass size={isMobile ? 24 : 32} className="text-white/40 animate-[spin_10s_linear_infinite]" />
+                                        
+                                        {/* List of Titles */}
+                                        <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
+                                            {[...items, ...stories].map((item, idx) => (
+                                                <div key={item.id} className="flex items-start gap-3 group/item">
+                                                    <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(idx + 1).padStart(2, '0')}</span>
+                                                    <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
+                                                        <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                    </span>
+                                                </div>
+                                            ))}
+                                            {([...items, ...stories].length === 0) && (
+                                                <div className="text-sm text-white/20 italic">
+                                                    <AutoTranslatedText text="No items found in this collection." />
+                                                </div>
+                                            )}
                                         </div>
+                                    </div>
+
+                                    {/* Bottom Records Count */}
+                                    <div className="pt-4 border-t border-white/5 flex items-baseline gap-2">
+                                        <span className="text-4xl font-serif font-black" style={{ color: theme.highlightColor, textShadow: `0 0 20px ${theme.glowColor}22` }}>
+                                            {items.length + stories.length}
+                                        </span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-white">Records Total</span>
                                     </div>
                                 </div>
                             </div>

@@ -151,9 +151,13 @@ export const getProductById = async (id: string): Promise<FeaturedItem | null> =
     }
 };
 
-export const searchProducts = async (query: string): Promise<FeaturedItem[]> => {
+export const searchProducts = async (query: string, lang?: string): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch(`/api/products/search?q=${encodeURIComponent(query)}`, {
+        const url = lang
+            ? `/api/products/search?q=${encodeURIComponent(query)}&lang=${lang}`
+            : `/api/products/search?q=${encodeURIComponent(query)}`;
+            
+        const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
             }

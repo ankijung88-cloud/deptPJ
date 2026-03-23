@@ -29,7 +29,7 @@ const SearchPage: React.FC = () => {
             
             setLoading(true);
             try {
-                const data = await searchProducts(query);
+                const data = await searchProducts(query, i18n.language);
                 setResults(data);
             } catch (error) {
                 console.error('Search failed:', error);
