@@ -459,6 +459,30 @@ const GalleryScene = ({
         }
     }, [exhibits.length, initialItemId]);
 
+    // Listen to actual user interaction events to release the scroll lock
+    useEffect(() => {
+        const el = scroll?.el;
+        if (!el) return;
+
+        const handleInteraction = () => {
+            if (forcedScroll.current.active) {
+                forcedScroll.current.active = false;
+            }
+        };
+
+        el.addEventListener('wheel', handleInteraction, { passive: true });
+        el.addEventListener('touchstart', handleInteraction, { passive: true });
+        el.addEventListener('touchmove', handleInteraction, { passive: true });
+        el.addEventListener('keydown', handleInteraction, { passive: true });
+
+        return () => {
+            el.removeEventListener('wheel', handleInteraction);
+            el.removeEventListener('touchstart', handleInteraction);
+            el.removeEventListener('touchmove', handleInteraction);
+            el.removeEventListener('keydown', handleInteraction);
+        };
+    }, [scroll?.el]);
+
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
         const spacing = 20;
@@ -498,17 +522,9 @@ const GalleryScene = ({
 
         // Force scroll if active
         if (forcedScroll.current.active) {
-            // ScrollControls.offset changes on interaction. If it deviates from our forced offset significantly, we release.
-            const userInteractionThreshold = 0.01;
-            const isInteracting = Math.abs(scroll.offset - forcedScroll.current.offset) > userInteractionThreshold;
-
-            if (!isInteracting) {
-                scroll.offset = forcedScroll.current.offset;
-                if (scroll.el) {
-                    scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
-                }
-            } else {
-                forcedScroll.current.active = false;
+            scroll.offset = forcedScroll.current.offset;
+            if (scroll.el) {
+                scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
             }
         }
 
