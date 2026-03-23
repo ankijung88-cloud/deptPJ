@@ -22,6 +22,7 @@ import { getContrastColor } from '../../utils/themeUtils';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { useFloors } from '../../context/FloorContext';
 import { FloorCategory } from '../../types';
+import { useImmersiveMode } from '../../context/NavigationActionContext';
 import { FloorTransitionOverlay } from './FloorTransitionOverlay';
 
 // --- Theme & Configuration ---
@@ -935,6 +936,7 @@ const CityBackground3D = () => {
 
 // --- 2D Mobile Modal (Image 1 Style) ---
 const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+    useImmersiveMode(true);
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
@@ -1068,6 +1070,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
 const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+    useImmersiveMode(true);
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
