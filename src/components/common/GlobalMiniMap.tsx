@@ -65,7 +65,7 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
 
     return (
         <div
-            className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 p-4 -m-4"
+            className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 p-4 -m-4 pointer-events-auto"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -84,7 +84,7 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
                             </span>
                         </div>
 
-                        <div className="space-y-6 overflow-y-auto pr-4 custom-scrollbar">
+                        <div className="flex-1 min-h-0 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
                             {floors.map((floor) => {
                                 const isActive = currentFloor?.id === floor.id;
                                 const isCategoryActive = (sid: string) => subId === sid;
