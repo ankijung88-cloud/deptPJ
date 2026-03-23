@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -127,6 +128,7 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
 
 const VirtualMuseumPage: React.FC = () => {
     const { i18n } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
     const { id: paramId } = useParams();
@@ -159,14 +161,14 @@ const VirtualMuseumPage: React.FC = () => {
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
     const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
-    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+    const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'museum', label: '가상 전시관', type: 'template' }
+        { id: 'museum', label: <AutoTranslatedText text="가상 전시관" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -238,7 +240,8 @@ const VirtualMuseumPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
@@ -246,14 +249,16 @@ const VirtualMuseumPage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (res.ok) {
-                alert('삭제되었습니다.');
+                const successMsg = await translateAsync('삭제되었습니다.');
+                alert(successMsg);
                 fetchItems();
             } else {
                 throw new Error('Delete failed');
             }
         } catch (error) {
             console.error('Delete error:', error);
-            alert('삭제에 실패했습니다.');
+            const errorMsg = await translateAsync('삭제에 실패했습니다.');
+            alert(errorMsg);
         }
     };
 
@@ -278,7 +283,8 @@ const VirtualMuseumPage: React.FC = () => {
 
     const handleAddItem = async () => {
         if (!newTitle) {
-            alert('유물 명칭을 입력해주세요.');
+            const msg = await translateAsync('유물 명칭을 입력해주세요.');
+            alert(msg);
             return;
         }
 
@@ -302,13 +308,15 @@ const VirtualMuseumPage: React.FC = () => {
                     finalImageUrl = uploadData.url;
                 } catch (error) {
                     console.error('File upload failed:', error);
-                    alert('이미지 업로드에 실패했습니다.');
+                    const msg = await translateAsync('이미지 업로드에 실패했습니다.');
+                    alert(msg);
                     return;
                 }
             }
 
             if (!finalImageUrl) {
-                alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
+                const msg = await translateAsync('이미지 URL을 입력하거나 파일을 업로드해주세요.');
+                alert(msg);
                 return;
             }
             
@@ -338,7 +346,8 @@ const VirtualMuseumPage: React.FC = () => {
                 body: JSON.stringify(newItem)
             });
             if (res.ok) {
-                alert(isEditMode ? '수정 성공' : '등록 성공');
+                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
+                alert(successMsg);
                 await fetchItems();
                 setNewTitle('');
                 setNewImageUrl('');
@@ -348,11 +357,13 @@ const VirtualMuseumPage: React.FC = () => {
                 setEditingId(null);
             } else {
                 const errorData = await res.json();
-                alert(`처리 실패: ${errorData.message || '알 수 없는 오류'}`);
+                const failMsg = await translateAsync('처리 실패');
+                alert(`${failMsg}: ${errorData.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Save failed:', error);
-            alert('서버 연결에 실패했습니다.');
+            const msg = await translateAsync('서버 연결에 실패했습니다.');
+            alert(msg);
         } finally {
             setIsUploading(false);
         }

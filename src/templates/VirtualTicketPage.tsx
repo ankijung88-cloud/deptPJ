@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, CreditCard, Info, Plus, Image as ImageIcon, Type, UploadCloud, Check } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById } from '../api/products';
@@ -255,6 +256,7 @@ const ReservationModal: React.FC<{
 };
 const VirtualTicketPage: React.FC = () => {
     const { i18n } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
     const { id: paramId } = useParams();
@@ -274,14 +276,14 @@ const VirtualTicketPage: React.FC = () => {
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
     const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
-    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+    const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'ticket', label: '가상 티켓', type: 'template' }
+        { id: 'ticket', label: <AutoTranslatedText text="가상 티켓" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -386,7 +388,8 @@ const VirtualTicketPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
             const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
@@ -394,21 +397,25 @@ const VirtualTicketPage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (response.ok) {
-                alert('삭제되었습니다.');
+                const successMsg = await translateAsync('삭제되었습니다.');
+                alert(successMsg);
                 fetchItems();
             } else {
                 const err = await response.json();
-                alert(`삭제 실패: ${err.message || '알 수 없는 오류'}`);
+                const failMsg = await translateAsync('삭제 실패');
+                alert(`${failMsg}: ${err.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Delete failed:', error);
-            alert('연결 오류가 발생했습니다.');
+            const errorMsg = await translateAsync('연결 오류가 발생했습니다.');
+            alert(errorMsg);
         }
     };
 
     const handleAddItem = async () => {
         if (!newTitle) {
-            alert('행사 명칭을 입력해주세요.');
+            const msg = await translateAsync('행사 명칭을 입력해주세요.');
+            alert(msg);
             return;
         }
 
@@ -430,13 +437,15 @@ const VirtualTicketPage: React.FC = () => {
                     finalImageUrl = uploadData.url;
                 } catch (error) {
                     console.error('Upload failed:', error);
-                    alert('이미지 업로드에 실패했습니다.');
+                    const msg = await translateAsync('이미지 업로드에 실패했습니다.');
+                    alert(msg);
                     return;
                 }
             }
 
             if (!finalImageUrl) {
-                alert('이미지 URL을 입력하거나 파일을 업로드해주세요.');
+                const msg = await translateAsync('이미지 URL을 입력하거나 파일을 업로드해주세요.');
+                alert(msg);
                 return;
             }
 
@@ -462,7 +471,8 @@ const VirtualTicketPage: React.FC = () => {
                 body: JSON.stringify(itemData)
             });
             if (res.ok) {
-                alert(isEditMode ? '수정 성공' : '등록 성공');
+                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
+                alert(successMsg);
                 await fetchItems();
                 setIsEditMode(false);
                 setEditingItemId(null);
@@ -473,11 +483,13 @@ const VirtualTicketPage: React.FC = () => {
                 setShowAddModal(false);
             } else {
                 const errorData = await res.json();
-                alert(`요청 실패: ${errorData.message || '알 수 없는 오류'}`);
+                const failMsg = await translateAsync('요청 실패');
+                alert(`${failMsg}: ${errorData.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Operation failed:', error);
-            alert('서버 연결에 실패했습니다.');
+            const msg = await translateAsync('서버 연결에 실패했습니다.');
+            alert(msg);
         } finally {
             setIsUploading(false);
         }

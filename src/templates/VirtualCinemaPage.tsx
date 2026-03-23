@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { FeaturedItem } from '../types';
@@ -14,6 +15,7 @@ import { useAdmin } from '../hooks/useAdmin';
 
 const VirtualCinemaPage: React.FC = () => {
     const { i18n } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
     const { id: paramId } = useParams();
@@ -51,14 +53,14 @@ const VirtualCinemaPage: React.FC = () => {
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
     const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
-    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+    const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'cinema', label: '가상 시네마', type: 'template' }
+        { id: 'cinema', label: <AutoTranslatedText text="가상 시네마" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -136,7 +138,8 @@ const VirtualCinemaPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
@@ -144,14 +147,16 @@ const VirtualCinemaPage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (res.ok) {
-                alert('삭제되었습니다.');
+                const successMsg = await translateAsync('삭제되었습니다.');
+                alert(successMsg);
                 fetchItems();
             } else {
                 throw new Error('Delete failed');
             }
         } catch (error) {
             console.error('Delete error:', error);
-            alert('삭제에 실패했습니다.');
+            const errorMsg = await translateAsync('삭제에 실패했습니다.');
+            alert(errorMsg);
         }
     };
 
@@ -173,7 +178,8 @@ const VirtualCinemaPage: React.FC = () => {
 
     const handleAddItem = async () => {
         if (!newTitle) {
-            alert('영상 명칭을 입력해주세요.');
+            const msg = await translateAsync('영상 명칭을 입력해주세요.');
+            alert(msg);
             return;
         }
 
@@ -219,7 +225,8 @@ const VirtualCinemaPage: React.FC = () => {
             }
 
             if (!finalImageUrl) {
-                alert('썸네일 이미지가 필요합니다.');
+                const msg = await translateAsync('썸네일 이미지가 필요합니다.');
+                alert(msg);
                 return;
             }
 
@@ -249,7 +256,8 @@ const VirtualCinemaPage: React.FC = () => {
                 body: JSON.stringify(itemData)
             });
             if (res.ok) {
-                alert(isEditMode ? '수정 성공' : '등록 성공');
+                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
+                alert(successMsg);
                 await fetchItems();
                 setNewTitle('');
                 setNewThumbnailUrl('');
@@ -262,7 +270,8 @@ const VirtualCinemaPage: React.FC = () => {
             }
         } catch (error) {
             console.error('Save failed:', error);
-            alert('서버 연결에 실패했습니다.');
+            const msg = await translateAsync('서버 연결에 실패했습니다.');
+            alert(msg);
         } finally {
             setIsUploading(false);
         }

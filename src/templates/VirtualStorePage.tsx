@@ -9,6 +9,7 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Float, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById } from '../api/products';
@@ -132,6 +133,7 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
 
 const VirtualStorePage: React.FC = () => {
     const { i18n } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
     const { id: paramId } = useParams();
@@ -153,14 +155,14 @@ const VirtualStorePage: React.FC = () => {
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
     const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
-    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
+    const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'store', label: '가상 스토어', type: 'template' }
+        { id: 'store', label: <AutoTranslatedText text="가상 스토어" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -300,7 +302,8 @@ const VirtualStorePage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
             const res = await fetch(`/api/products/${id}`, { 
@@ -308,7 +311,8 @@ const VirtualStorePage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (res.ok) {
-                alert('삭제되었습니다.');
+                const successMsg = await translateAsync('삭제되었습니다.');
+                alert(successMsg);
                 fetchItems();
                 if (selectedItem?.id === id) setSelectedItem(null);
             } else {
@@ -316,7 +320,8 @@ const VirtualStorePage: React.FC = () => {
             }
         } catch (error) {
             console.error('Delete error:', error);
-            alert('삭제에 실패했습니다.');
+            const errorMsg = await translateAsync('삭제에 실패했습니다.');
+            alert(errorMsg);
         }
     };
 
@@ -337,7 +342,8 @@ const VirtualStorePage: React.FC = () => {
 
     const handleAddItem = async () => {
         if (!newTitle) {
-            alert('상품 명칭을 입력해주세요.');
+            const msg = await translateAsync('상품 명칭을 입력해주세요.');
+            alert(msg);
             return;
         }
 
@@ -369,7 +375,8 @@ const VirtualStorePage: React.FC = () => {
             if (backFileInputRef.current?.files?.[0]) finalBackImageUrl = await uploadFile(backFileInputRef.current.files[0]);
 
             if (!finalImageUrl) {
-                alert('기본 상품 이미지를 등록해주세요.');
+                const msg = await translateAsync('기본 상품 이미지를 등록해주세요.');
+                alert(msg);
                 return;
             }
 
@@ -403,7 +410,8 @@ const VirtualStorePage: React.FC = () => {
             });
 
             if (res.ok) {
-                alert(isEditMode ? '수정 성공' : '등록 성공');
+                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
+                alert(successMsg);
                 await fetchItems();
                 setNewTitle('');
                 setNewPrice('');
@@ -422,11 +430,13 @@ const VirtualStorePage: React.FC = () => {
                 setEditingId(null);
             } else {
                 const errorData = await res.json();
-                alert(`처리 실패: ${errorData.message || '알 수 없는 오류'}`);
+                const failMsg = await translateAsync('처리 실패');
+                alert(`${failMsg}: ${errorData.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Operation failed:', error);
-            alert('서버 연결에 실패했습니다.');
+            const errorMsg = await translateAsync('서버 연결에 실패했습니다.');
+            alert(errorMsg);
         } finally {
             setIsUploading(false);
         }
@@ -708,7 +718,7 @@ const VirtualStorePage: React.FC = () => {
                             <div className="p-10">
                                 <div className="flex justify-between items-center mb-10">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
-                                        {isEditMode ? '상품 정보 수정' : '신규 상품 등록'}
+                                        <AutoTranslatedText text={isEditMode ? '상품 정보 수정' : '신규 상품 등록'} />
                                     </h3>
                                     <button onClick={() => { setShowAddModal(false); setIsEditMode(false); }} className="p-2 hover:bg-white/5 rounded-full text-white/40"><X size={20} /></button>
                                 </div>
@@ -716,7 +726,9 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="space-y-8">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">상품 명칭</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                                <AutoTranslatedText text="상품 명칭" />
+                                            </label>
                                             <input 
                                                 type="text"
                                                 value={newTitle}
@@ -726,7 +738,9 @@ const VirtualStorePage: React.FC = () => {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">판매 금액</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                                <AutoTranslatedText text="판매 금액" />
+                                            </label>
                                             <input 
                                                 type="text"
                                                 value={newPrice}
@@ -738,7 +752,9 @@ const VirtualStorePage: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">상품 한줄 설명</label>
+                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                            <AutoTranslatedText text="상품 한줄 설명" />
+                                        </label>
                                         <input 
                                             type="text"
                                             value={newShortDescription}
@@ -749,7 +765,9 @@ const VirtualStorePage: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">세부 상세 설명</label>
+                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                            <AutoTranslatedText text="세부 상세 설명" />
+                                        </label>
                                         <textarea 
                                             value={newLongDescription}
                                             onChange={(e) => setNewLongDescription(e.target.value)}
@@ -761,7 +779,9 @@ const VirtualStorePage: React.FC = () => {
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">메인 이미지 (3D 정면)</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
+                                                <AutoTranslatedText text="메인 이미지 (3D 정면)" />
+                                            </label>
                                             <input type="file" ref={fileInputRef} onChange={(e) => handleFileChange(e, 'main')} accept="image/*" className="hidden" />
                                             {!previewUrl ? (
                                                 <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
@@ -779,7 +799,9 @@ const VirtualStorePage: React.FC = () => {
                                         </div>
 
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">측면 이미지 (3D 측면)</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
+                                                <AutoTranslatedText text="측면 이미지 (3D 측면)" />
+                                            </label>
                                             <input type="file" ref={sideFileInputRef} onChange={(e) => handleFileChange(e, 'side')} accept="image/*" className="hidden" />
                                             {!sidePreviewUrl ? (
                                                 <button onClick={() => sideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
@@ -799,7 +821,9 @@ const VirtualStorePage: React.FC = () => {
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">후면 이미지 (3D 후면)</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
+                                                <AutoTranslatedText text="후면 이미지 (3D 후면)" />
+                                            </label>
                                             <input type="file" ref={backFileInputRef} onChange={(e) => handleFileChange(e, 'back')} accept="image/*" className="hidden" />
                                             {!backPreviewUrl ? (
                                                 <button onClick={() => backFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
@@ -817,7 +841,9 @@ const VirtualStorePage: React.FC = () => {
                                         </div>
 
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">상세 정보용 이미지</label>
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
+                                                <AutoTranslatedText text="상세 정보용 이미지" />
+                                            </label>
                                             <input type="file" ref={detailFileInputRef} onChange={(e) => handleFileChange(e, 'detail')} accept="image/*" className="hidden" />
                                             {!detailPreviewUrl ? (
                                                 <button onClick={() => detailFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
@@ -898,7 +924,7 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="h-[2px] w-12 bg-orange-500/20" />
 
                                 <div className="space-y-6">
-                                     <h5 className="text-[10px] font-black uppercase tracking-widest text-white/20">상세 스토리 & 설명</h5>
+                                     <h5 className="text-[10px] font-black uppercase tracking-widest text-white/20"><AutoTranslatedText text="상세 스토리 & 설명" /></h5>
                                      <p className="text-lg text-white/60 leading-relaxed font-medium">
                                           <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || '해당 상품의 상세 설명이 등록되지 않았습니다.'} />
                                      </p>
