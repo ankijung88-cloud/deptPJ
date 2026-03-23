@@ -407,7 +407,8 @@ const GalleryScene = ({
     isMuseum = false,
     cinemaItem = null,
     playing,
-    setPlaying
+    setPlaying,
+    initialItemId = null
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -418,7 +419,8 @@ const GalleryScene = ({
     isMuseum?: boolean,
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
-    setPlaying?: (p: boolean) => void
+    setPlaying?: (p: boolean) => void,
+    initialItemId?: string | null
 }) => {
     const scroll = useScroll();
     const { camera, set } = useThree() as any;
@@ -433,11 +435,11 @@ const GalleryScene = ({
     }, [items, stories]);
 
     const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
+    const lastInitialId = useRef<string | null>(null);
 
     useEffect(() => {
-        if (exhibits.length > 0 && (window as any).initialItemId) {
-            const targetId = (window as any).initialItemId;
-            const targetIndex = exhibits.findIndex(ex => ex.id === targetId);
+        if (exhibits.length > 0 && initialItemId && initialItemId !== lastInitialId.current) {
+            const targetIndex = exhibits.findIndex(ex => ex.id === initialItemId);
             
             if (targetIndex !== -1) {
                 const spacing = 20;
@@ -450,10 +452,12 @@ const GalleryScene = ({
                     startTime: Date.now(),
                     active: true
                 };
+                lastInitialId.current = initialItemId;
             }
-            (window as any).initialItemId = null;
+        } else if (!initialItemId) {
+            lastInitialId.current = null;
         }
-    }, [exhibits.length]); // Only re-run if exhibits count changes
+    }, [exhibits.length, initialItemId]);
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
@@ -640,7 +644,6 @@ export const VirtualGallery = ({
 
     useEffect(() => {
         if (initialItemId) {
-            (window as any).initialItemId = initialItemId;
             setIsActivated(true);
         }
     }, [initialItemId]);
@@ -694,6 +697,7 @@ export const VirtualGallery = ({
                                     cinemaItem={cinemaItem}
                                     playing={playing}
                                     setPlaying={setPlaying}
+                                    initialItemId={initialItemId}
                                 />
                         </Suspense>
                     </ScrollControls>
