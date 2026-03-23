@@ -169,56 +169,63 @@ const GateWall = ({ progress }: { progress: number }) => {
     }, [w, h, r]);
 
     const wallTex = useMemo(() => {
+        if (typeof document === 'undefined') return null;
+        
+        // Use a higher resolution canvas based on DPR for perfect sharpness on Retina/Vercel
+        const dpr = typeof window !== 'undefined' ? window.devicePixelRatio : 1;
+        const scale = Math.max(dpr, 1.5) * 2; // Extra super-sampling
         const canvas = document.createElement('canvas');
-        canvas.width = 1440; // 360 * 4
-        canvas.height = 800; // 200 * 4
+        canvas.width = 1440 * scale; 
+        canvas.height = 800 * scale;
         const ctx = canvas.getContext('2d');
         if (!ctx) return null;
 
+        const s = scale * 4; // drawing scale
+
         // Base color (clean bright granite)
         ctx.fillStyle = '#EAE8E4';
-        ctx.fillRect(0, 0, 1440, 800);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Subtle stone tinting variation (Randomized block brightness for natural look)
+        // Subtle stone tinting variation
         ctx.fillStyle = 'rgba(0,0,0,0.02)';
-        const bH = 10 * 4;
-        const bW = 24 * 4;
+        const bH = 10 * s;
+        const bW = 24 * s;
         for (let yRaw = -80; yRaw <= 120; yRaw += 10) {
-            const cy = (120 - yRaw) * 4;
+            const cy = (120 - yRaw) * s;
             const stagger = (Math.round((yRaw + 80) / 10) % 2 === 0) ? bW / 2 : 0;
             for (let xRaw = -180; xRaw < 180; xRaw += 24) {
-                const cx = (xRaw + 180) * 4 + stagger;
+                const cx = (xRaw + 180) * s + stagger;
                 if (Math.random() > 0.45) ctx.fillRect(cx, cy - bH, bW, bH);
             }
         }
 
-        // Mortar lines for main wall - Thickened for higher visibility on all screens
-        ctx.strokeStyle = '#9A968D'; // Slightly darker for better contrast
-        ctx.lineWidth = 2.4; // Increased from 1.0 (approx 0.6 world units)
+        // Mortar lines for main wall - Heavy duty thickness for Vercel
+        ctx.strokeStyle = '#8E8A81'; // Darker for definitive contrast
+        ctx.lineWidth = 1.0 * s; 
         ctx.beginPath();
         for (let yRaw = -80; yRaw <= 120; yRaw += 10) {
-            const cy = (120 - yRaw) * 4;
-            ctx.moveTo(0, cy); ctx.lineTo(1440, cy);
+            const cy = (120 - yRaw) * s;
+            ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
             const stagger = (Math.round((yRaw + 80) / 10) % 2 === 0) ? bW / 2 : 0;
             for (let xRaw = -180; xRaw < 180; xRaw += 24) {
-                const cx = (xRaw + 180) * 4 + stagger;
+                const cx = (xRaw + 180) * s + stagger;
                 ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - bH);
             }
         }
         ctx.stroke();
 
         // 2. Overlay the arch rim flush with the wall
-        const cxCenter = 180 * 4;
-        const cyCenter = (120 - 6) * 4; 
-        const rInner = 13.5 * 4;
-        const rOuter = 18.2 * 4;
+        const cxCenter = 180 * s;
+        const cyCenter = (120 - 6) * s; 
+        const rInner = 13.5 * s;
+        const rOuter = 18.2 * s;
 
         // Erase background lines behind the arch
         ctx.fillStyle = '#EAE8E4';
         ctx.beginPath();
         ctx.arc(cxCenter, cyCenter, rOuter, 0, Math.PI, true);
-        ctx.lineTo(cxCenter - rOuter, 800);
-        ctx.lineTo(cxCenter + rOuter, 800);
+        ctx.lineTo(cxCenter - rOuter, canvas.height);
+        ctx.lineTo(cxCenter + rOuter, canvas.height);
         ctx.fill();
 
         // Arch color
@@ -228,20 +235,19 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.arc(cxCenter, cyCenter, rInner, Math.PI, 0, false);
         ctx.fill();
 
-        // Radial Voussoir Joints (Wedge stones)
-        ctx.strokeStyle = '#9A968D';
-        ctx.lineWidth = 3.2; // Thickened for Vercel visibility
+        // Radial Voussoir Joints
+        ctx.strokeStyle = '#8E8A81';
+        ctx.lineWidth = 1.2 * s; 
         ctx.beginPath();
         
-        // Boundaries
         ctx.arc(cxCenter, cyCenter, rOuter, Math.PI, 0, false);
         ctx.moveTo(cxCenter - rInner, cyCenter);
         ctx.arc(cxCenter, cyCenter, rInner, Math.PI, 0, false);
         
-        ctx.moveTo(cxCenter - rOuter, cyCenter); ctx.lineTo(cxCenter - rOuter, 800);
-        ctx.moveTo(cxCenter - rInner, cyCenter); ctx.lineTo(cxCenter - rInner, 800);
-        ctx.moveTo(cxCenter + rOuter, cyCenter); ctx.lineTo(cxCenter + rOuter, 800);
-        ctx.moveTo(cxCenter + rInner, cyCenter); ctx.lineTo(cxCenter + rInner, 800);
+        ctx.moveTo(cxCenter - rOuter, cyCenter); ctx.lineTo(cxCenter - rOuter, canvas.height);
+        ctx.moveTo(cxCenter - rInner, cyCenter); ctx.lineTo(cxCenter - rInner, canvas.height);
+        ctx.moveTo(cxCenter + rOuter, cyCenter); ctx.lineTo(cxCenter + rOuter, canvas.height);
+        ctx.moveTo(cxCenter + rInner, cyCenter); ctx.lineTo(cxCenter + rInner, canvas.height);
 
         const numStones = 16;
         for (let i = 1; i < numStones; i++) {
@@ -249,10 +255,9 @@ const GateWall = ({ progress }: { progress: number }) => {
             ctx.moveTo(cxCenter + Math.cos(angle) * rInner, cyCenter - Math.sin(angle) * rInner);
             ctx.lineTo(cxCenter + Math.cos(angle) * rOuter, cyCenter - Math.sin(angle) * rOuter);
         }
-        // Legs joints (horizontal)
         for (let j = 0; j < 4; j++) {
-            const yJoint = cyCenter + (j + 1) * (10.1 * 4);
-            if (yJoint <= 800) {
+            const yJoint = cyCenter + (j + 1) * (10.1 * s);
+            if (yJoint <= canvas.height) {
                 ctx.moveTo(cxCenter - rOuter, yJoint); ctx.lineTo(cxCenter - rInner, yJoint);
                 ctx.moveTo(cxCenter + rOuter, yJoint); ctx.lineTo(cxCenter + rInner, yJoint);
             }
@@ -260,12 +265,15 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.stroke();
 
         const tex = new THREE.CanvasTexture(canvas);
-        tex.minFilter = THREE.LinearFilter; // CRITICAL: Disable mipmapping for sharp lines on Vercel
+        tex.colorSpace = THREE.SRGBColorSpace; // Match production colorspace
+        tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;
-        tex.anisotropy = 16; // Maximize sharpness at angles
+        tex.generateMipmaps = false; // Physically block mipmap-induced blur
+        tex.anisotropy = 16;
         tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
         tex.repeat.set(1 / 360, 1 / 200);
         tex.offset.set(180 / 360, 80 / 200);
+        tex.needsUpdate = true;
         return tex;
     }, []);
 
