@@ -421,7 +421,7 @@ const GalleryScene = ({
     setPlaying?: (p: boolean) => void
 }) => {
     const scroll = useScroll();
-    const { camera, state } = useThree() as any;
+    const { camera, invalidate } = useThree();
     
     const exhibits = useMemo(() => {
         const combined = [...(items || []), ...(stories || [])];
@@ -453,13 +453,13 @@ const GalleryScene = ({
                 if (scroll) {
                     scroll.offset = THREE.MathUtils.clamp(targetOffset, 0, 1);
                     // Force an update
-                    state.invalidate();
+                    invalidate();
                 }
             }
             initialOffsetSet.current = true;
             (window as any).initialItemId = null; // Reset
         }
-    }, [exhibits, scroll, state]);
+    }, [exhibits, scroll, invalidate]);
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
