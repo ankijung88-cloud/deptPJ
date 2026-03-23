@@ -438,25 +438,36 @@ const GalleryScene = ({
     const lastInitialId = useRef<string | null>(null);
 
     useEffect(() => {
-        if (exhibits.length > 0 && initialItemId && initialItemId !== lastInitialId.current) {
-            const targetIndex = exhibits.findIndex(ex => ex.id === initialItemId);
-            
-            if (targetIndex !== -1) {
-                const spacing = 20;
-                const totalZ = exhibits.length * spacing;
-                const targetZ = exhibits[targetIndex].zPos;
-                const targetOffset = (targetZ + 8) / -(totalZ + 10);
-                
-                forcedScroll.current = { 
-                    offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
-                    startTime: Date.now(),
-                    active: true
-                };
-                lastInitialId.current = initialItemId;
-            }
-        } else if (!initialItemId) {
+        if (exhibits.length === 0) return;
+
+        let targetIndex = 0; // Default to first card
+
+        if (initialItemId && initialItemId !== lastInitialId.current) {
+            targetIndex = exhibits.findIndex(ex => ex.id === initialItemId);
+            if (targetIndex === -1) targetIndex = 0;
+            lastInitialId.current = initialItemId;
+        } else if (!initialItemId && lastInitialId.current !== null) {
+            // Unmounted or selection cleared naturally
             lastInitialId.current = null;
+            return;
+        } else if (!initialItemId && lastInitialId.current === null && !forcedScroll.current.active) {
+            // Initial mount with no specific item, default to 0
+            targetIndex = 0;
+            lastInitialId.current = 'default-0';
+        } else {
+            return; // No actionable state change
         }
+
+        const spacing = 20;
+        const totalZ = exhibits.length * spacing;
+        const targetZ = exhibits[targetIndex].zPos;
+        const targetOffset = (targetZ + 8) / -(totalZ + 10);
+        
+        forcedScroll.current = { 
+            offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
+            startTime: Date.now(),
+            active: true
+        };
     }, [exhibits.length, initialItemId]);
 
     // Listen to actual user interaction events to release the scroll lock

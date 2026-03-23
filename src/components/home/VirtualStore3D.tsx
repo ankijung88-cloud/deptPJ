@@ -1497,6 +1497,10 @@ export const VirtualStore3D: React.FC = () => {
             {/* Transparent Canvas overlays the background */}
             <Canvas shadows={false} gl={{ antialias: true, alpha: false }} style={{ touchAction: 'none' }}>
                 <color attach="background" args={[COLORS.paper]} />
+                {/* Upper Starry Night Background - Pushed strictly behind all buildings (Z < -200) to prevent overlapping */}
+                <group position={[0, 60, -300]} scale={[4, 0.5, 1]}>
+                    <Stars radius={80} depth={20} count={2500} factor={7} saturation={0} fade speed={1.2} />
+                </group>
                 <CityBackground3D />
 
                 <ambientLight intensity={2.5} />
