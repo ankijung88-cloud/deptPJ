@@ -24,9 +24,12 @@ const resources = {
                 "notice": "공지사항",
                 "qna": "Q&A",
                 "reviews": "후기",
-                "tickets": "티켓 예매",
-                "art": "아트 컬렉션",
-                "travel": "로컬 여행",
+                "tickets": "회사소개",
+                "art": "브랜드 스토리",
+                "travel": "브랜드 철학",
+                "membership": "멤버십 클럽",
+                "partnership": "입점/제휴 문의",
+                "offline": "오프라인 가이드",
                 "sound_on": "소리 켜기",
                 "sound_off": "소리 끄기",
                 "search": "검색",
@@ -195,7 +198,10 @@ const resources = {
                 "notice": "공지사항",
                 "faq": "자주 묻는 질문",
                 "inquiry": "1:1 문의",
-                "weekdays": "평일 10:00 - 18:00 (주말/공휴일 휴무)"
+                "weekdays": "평일 10:00 - 18:00 (주말/공휴일 휴무)",
+                "representative": "대표자: 안기정",
+                "business_id": "사업자등록번호: 123-45-67890",
+                "mail_order_id": "통신판매업신고: 2026-서울중구-1234"
             },
             "common": {
                 "view_all": "전체 보기",
@@ -342,9 +348,12 @@ const resources = {
                 "floor4": "4F | CULTURE TALK",
                 "floor5": "5F | FASHION ARCHIVE",
                 "floor6": "6F | LOCAL HERITAGE",
-                "tickets": "Tickets",
-                "art": "Art Collection",
-                "travel": "Local Travel",
+                "tickets": "About Us",
+                "art": "Brand Story",
+                "travel": "Brand Philosophy",
+                "membership": "Membership Club",
+                "partnership": "Partnership",
+                "offline": "Offline Guide",
                 "sound_on": "Sound On",
                 "sound_off": "Sound Off",
                 "search": "Search",
@@ -509,7 +518,10 @@ const resources = {
                 "notice": "Notice",
                 "faq": "FAQ",
                 "inquiry": "1:1 Inquiry",
-                "weekdays": "Weekdays 10:00 - 18:00 (Closed on weekends/holidays)"
+                "weekdays": "Weekdays 10:00 - 18:00 (Closed on weekends/holidays)",
+                "representative": "Representative: Gi-jeong An",
+                "business_id": "Business ID: 123-45-67890",
+                "mail_order_id": "Mail Order ID: 2026-SEOUL-1234"
             },
             "common": {
                 "view_all": "View All",
@@ -660,9 +672,12 @@ const resources = {
                 "reviews": "レビュー",
                 "mypage": "マイページ",
                 "login": "ログイン",
-                "tickets": "チケット予約",
-                "art": "アートコレクション",
-                "travel": "ローカル旅行",
+                "tickets": "会社紹介",
+                "art": "ブランドストーリー",
+                "travel": "ブランド哲学",
+                "membership": "メンバーシップクラブ",
+                "partnership": "出店/提携のお問い合わせ",
+                "offline": "オフラインガイド",
                 "sound_on": "音声をオンにする",
                 "sound_off": "音声をオフにする",
                 "search": "検索",
@@ -822,7 +837,10 @@ const resources = {
                 "notice": "お知らせ",
                 "faq": "よくある質問",
                 "inquiry": "1:1 お問い合わせ",
-                "weekdays": "平日 10:00 - 18:00 (週末/祝日休み)"
+                "weekdays": "平日 10:00 - 18:00 (週末/祝日休み)",
+                "representative": "代表者: 安基正",
+                "business_id": "事業者登録番号: 123-45-67890",
+                "mail_order_id": "通信販売業届出: 2026-ソウル中区-1234"
             },
             "common": {
                 "view_all": "すべて見る",
@@ -1037,7 +1055,10 @@ const resources = {
                 "notice": "公告",
                 "faq": "常见问题",
                 "inquiry": "1:1 咨询",
-                "weekdays": "平日 10:00 - 18:00 (周末/节假日休息)"
+                "weekdays": "平日 10:00 - 18:00 (周末/节假日休息)",
+                "representative": "代表人: 安基正",
+                "business_id": "工商注册号: 123-45-67890",
+                "mail_order_id": "通信贩卖业申告: 2026-首尔中区-1234"
             },
             "common": {
                 "view_all": "查看全部",

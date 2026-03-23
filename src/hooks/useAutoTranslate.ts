@@ -225,6 +225,43 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
         translate();
     }, [text, i18nInstance.language, targetLangOverride]);
 
-    return { translatedText, isLoading };
+    const translateAsync = async (textToTranslate: string): Promise<string> => {
+        if (!textToTranslate || !textToTranslate.trim()) return textToTranslate || '';
+        
+        const target = targetLangOverride || i18nInstance.language || 'ko';
+        const short = target.split('-')[0];
+        
+        if (short === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(textToTranslate)) return textToTranslate;
+        
+        const cacheKey = `${textToTranslate}_${short}`;
+        if (translationCache.has(cacheKey)) return translationCache.get(cacheKey)!;
+
+        // Try local lookup first
+        const local = findTranslationByKoreanValue(textToTranslate, short);
+        if (local) {
+            translationCache.set(cacheKey, local);
+            return local;
+        }
+
+        const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+        if (!apiKey) return textToTranslate;
+
+        try {
+            const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
+            const prompt = `Translate to ${langNames[short] || short}. Output ONLY translated text.\nText: ${textToTranslate}`;
+            const response: any = await ai.models.generateContent({
+                model: 'gemini-2.0-flash',
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            });
+            const result = response.text?.trim().replace(/^["']|["']$/g, '') || textToTranslate;
+            translationCache.set(cacheKey, result);
+            return result;
+        } catch (e) {
+            console.error('[translateAsync] failed:', e);
+            return textToTranslate;
+        }
+    };
+
+    return { translatedText, isLoading, translateAsync };
 };
 

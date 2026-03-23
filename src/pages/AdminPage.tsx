@@ -229,13 +229,17 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         }
     };
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this product?')) {
+        const confirmMsg = await translateAsync('Are you sure you want to delete this product?');
+        if (confirm(confirmMsg)) {
             try {
                 await deleteProduct(id);
                 fetchProducts();
             } catch (err) {
-                alert('Delete failed');
+                const errMsg = await translateAsync('Delete failed');
+                alert(errMsg);
             }
         }
     };
@@ -850,13 +854,17 @@ const FloorManager = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFloor, setEditingFloor] = useState<any>(null);
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this floor content?')) {
+        const confirmMsg = await translateAsync('Are you sure you want to delete this floor content?');
+        if (confirm(confirmMsg)) {
             try {
                 await deleteFloorCategory(id);
                 refreshFloors();
             } catch (err) {
-                alert('Delete failed');
+                const errMsg = await translateAsync('Delete failed');
+                alert(errMsg);
             }
         }
     };
@@ -1019,41 +1027,37 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         setFormData({ ...formData, subitems: newSubitems });
     };
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('--- Submitting Floor Data ---');
-        console.log('Target ID:', floor?.id);
-        console.log('Payload:', formData);
         
         try {
             if (isEdit) {
                 try {
                     await updateFloorCategory(floor.id, formData);
-                    console.log('Update successful');
-                    alert('Successfully updated!');
+                    const successMsg = await translateAsync('Successfully updated!');
+                    alert(successMsg);
                 } catch (updateErr: any) {
-                    console.warn('Update failed, checking if creation is needed:', updateErr.message);
-                    // If 404, it means it was fallback data and doesn't exist in DB yet. Try creating.
                     if (updateErr.message?.includes('404') || 
                         updateErr.message?.toLowerCase().includes('not found') ||
                         updateErr.message?.includes('No category found')) {
-                        console.log('Update target not found (404), attempting to create new record...');
                         await createFloorCategory(formData);
-                        console.log('Creation successful');
-                        alert('Successfully created new record for this floor!');
+                        const successMsg = await translateAsync('Successfully created new record for this floor!');
+                        alert(successMsg);
                     } else {
                         throw updateErr;
                     }
                 }
             } else {
                 await createFloorCategory(formData);
-                console.log('Creation successful');
-                alert('Successfully created!');
+                const successMsg = await translateAsync('Successfully created!');
+                alert(successMsg);
             }
             onSuccess();
         } catch (err: any) {
-            console.error('Submit Error Details:', err);
-            alert(`Operation failed: ${err.message || 'Unknown error'}`);
+            const errMsg = await translateAsync(`Operation failed: ${err.message || 'Unknown error'}`);
+            alert(errMsg);
         }
     };
 
@@ -1244,12 +1248,18 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
 
     const categories = Array.from(new Set(notices.map(n => n.category)));
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleDelete = async (id: any) => {
-        if (confirm('Delete this notice?')) {
+        const confirmMsg = await translateAsync('Delete this notice?');
+        if (confirm(confirmMsg)) {
             try {
                 await apiDeleteNotice(id);
                 fetchNotices();
-            } catch (err) { alert('Delete failed'); }
+            } catch (err) { 
+                const errMsg = await translateAsync('Delete failed');
+                alert(errMsg); 
+            }
         }
     };
 
@@ -1458,12 +1468,18 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
 
     const categories = Array.from(new Set(faqs.map(f => f.category || 'General')));
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleDelete = async (id: any) => {
-        if (confirm('Delete this FAQ?')) {
+        const confirmMsg = await translateAsync('Delete this FAQ?');
+        if (confirm(confirmMsg)) {
             try {
                 await apiDeleteFaq(id);
                 fetchFaqs();
-            } catch (err) { alert('Delete failed'); }
+            } catch (err) { 
+                const errMsg = await translateAsync('Delete failed');
+                alert(errMsg); 
+            }
         }
     };
 
@@ -1548,13 +1564,20 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
 
     const isEdit = !!faq;
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             if (isEdit) await apiUpdateFaq(faq.id, formData);
             else await apiCreateFaq(formData);
+            const successMsg = await translateAsync('Successfully saved');
+            alert(successMsg);
             onSuccess();
-        } catch (err) { alert('Operation failed'); }
+        } catch (err) { 
+            const errMsg = await translateAsync('Operation failed');
+            alert(errMsg); 
+        }
     };
 
     return (

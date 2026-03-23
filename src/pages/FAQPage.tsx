@@ -68,7 +68,7 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-deep-bg text-white pb-20">
+        <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -106,12 +106,16 @@ const FAQPage: React.FC = () => {
                 {/* FAQ List */}
                 <div className="max-w-3xl mx-auto space-y-4">
                     {loading ? (
-                        <div className="text-center py-20 text-white/20">Loading FAQs...</div>
+                        <div className="text-center py-20 text-white/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
+                            <AutoTranslatedText text="Loading FAQs..." />
+                        </div>
                     ) : faqs.filter(faq =>
                         displayLocalized(faq.question).toLowerCase().includes(searchTerm.toLowerCase()) ||
                         displayLocalized(faq.answer).toLowerCase().includes(searchTerm.toLowerCase())
                     ).length === 0 ? (
-                        <div className="text-center py-20 text-white/20">No matching questions found.</div>
+                        <div className="text-center py-20 text-white/20 italic font-light">
+                            <AutoTranslatedText text="검색 결과가 없습니다." />
+                        </div>
                     ) : faqs.filter(faq =>
                         displayLocalized(faq.question).toLowerCase().includes(searchTerm.toLowerCase()) ||
                         displayLocalized(faq.answer).toLowerCase().includes(searchTerm.toLowerCase())

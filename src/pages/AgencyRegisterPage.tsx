@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { motion } from 'framer-motion';
 import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone, MapPin } from 'lucide-react';
 import { registerAgency } from '../api/auth';
@@ -30,6 +31,8 @@ const AgencyRegisterPage: React.FC = () => {
     // No longer using Daum Postcode script for manual entry
     useEffect(() => {}, []);
 
+    const { translateAsync } = useAutoTranslate(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -40,7 +43,9 @@ const AgencyRegisterPage: React.FC = () => {
             setSuccess(true);
             setTimeout(() => navigate('/admin/login'), 3000);
         } catch (err: any) {
-            setError(err.message || 'Registration failed');
+            const rawError = err.message || 'Registration failed';
+            const translatedErr = await translateAsync(rawError);
+            setError(translatedErr);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setLoading(false);
@@ -58,13 +63,13 @@ const AgencyRegisterPage: React.FC = () => {
                     <div className="w-20 h-20 bg-[#00FFC2]/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle2 className="text-[#00FFC2] w-10 h-10" />
                     </div>
-                    <h2 className="text-3xl font-bold text-white mb-4">가입 신청 완료</h2>
+                    <h2 className="text-3xl font-bold text-white mb-4"><AutoTranslatedText text="가입 신청 완료" /></h2>
                     <p className="text-dancheong-white/60 mb-8 leading-relaxed">
-                        에이전시 등록 신청이 정상적으로 완료되었습니다.<br />
-                        관리자의 승인 후 로그인이 가능합니다.
+                        <AutoTranslatedText text="에이전시 등록 신청이 정상적으로 완료되었습니다." /><br />
+                        <AutoTranslatedText text="관리자의 승인 후 로그인이 가능합니다." />
                     </p>
                     <div className="text-sm text-[#00FFC2] animate-pulse">
-                        3초 후 로그인 페이지로 이동합니다...
+                        <AutoTranslatedText text="3초 후 로그인 페이지로 이동합니다..." />
                     </div>
                 </motion.div>
             </div>
@@ -88,7 +93,7 @@ const AgencyRegisterPage: React.FC = () => {
                     className="flex items-center gap-2 text-dancheong-white/50 hover:text-[#00FFC2] transition-colors mb-8 group"
                 >
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-sm font-medium">로그인으로 돌아가기</span>
+                    <span className="text-sm font-medium"><AutoTranslatedText text="로그인으로 돌아가기" /></span>
                 </button>
 
                 <div className="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
@@ -96,9 +101,9 @@ const AgencyRegisterPage: React.FC = () => {
                         <div className="w-16 h-16 bg-[#00FFC2]/10 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
                             <UserPlus className="text-[#00FFC2] w-8 h-8" />
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-2">에이전시 파트너 등록</h1>
+                        <h1 className="text-3xl font-bold text-white mb-2"><AutoTranslatedText text="에이전시 파트너 등록" /></h1>
                         <p className="text-dancheong-white/50 text-sm">
-                            디파트먼트의 파트너가 되어 제품을 등록하고 관리하세요.
+                            <AutoTranslatedText text="디파트먼트의 파트너가 되어 제품을 등록하고 관리하세요." />
                         </p>
                     </div>
 
@@ -115,7 +120,7 @@ const AgencyRegisterPage: React.FC = () => {
 
                         <div className="flex flex-col gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">에이전시 명</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="에이전시 명" /></label>
                                 <div className="relative group">
                                     <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -130,7 +135,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">아이디 (이메일)</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="아이디 (이메일)" /></label>
                                 <div className="relative group">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -145,7 +150,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">비밀번호</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="비밀번호" /></label>
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -160,7 +165,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">생년월일</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="생년월일" /></label>
                                 <div className="relative group">
                                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -173,7 +178,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">휴대폰 번호</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="휴대폰 번호" /></label>
                                 <div className="relative group">
                                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -187,7 +192,7 @@ const AgencyRegisterPage: React.FC = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">회사 연락처</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="회사 연락처" /></label>
                                 <div className="relative group">
                                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                     <input
@@ -203,7 +208,7 @@ const AgencyRegisterPage: React.FC = () => {
 
                         <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">회사 주소</label>
+                                    <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="회사 주소" /></label>
                                     <div className="relative group">
                                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
                                         <input
@@ -217,7 +222,7 @@ const AgencyRegisterPage: React.FC = () => {
                                 </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1">상세 주소</label>
+                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="상세 주소" /></label>
                                 <input
                                     id="addressDetail"
                                     type="text"
@@ -238,7 +243,7 @@ const AgencyRegisterPage: React.FC = () => {
                                 <Loader2 className="animate-spin" size={24} />
                             ) : (
                                 <>
-                                    <span>가입 신청하기</span>
+                                    <span><AutoTranslatedText text="가입 신청하기" /></span>
                                 </>
                             )}
                         </button>
@@ -246,9 +251,9 @@ const AgencyRegisterPage: React.FC = () => {
 
                     <div className="mt-10 text-center">
                         <p className="text-dancheong-white/40 text-sm">
-                            이미 계정이 있으신가요?{' '}
+                            <AutoTranslatedText text="이미 계정이 있으신가요?" />{' '}
                             <Link to="/admin/login" className="text-[#00FFC2] hover:underline font-medium ml-1">
-                                로그인
+                                <AutoTranslatedText text="로그인" />
                             </Link>
                         </p>
                     </div>

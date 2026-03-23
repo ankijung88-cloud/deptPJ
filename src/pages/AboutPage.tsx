@@ -364,7 +364,7 @@ const AboutPage: React.FC = () => {
                                 transition={{ delay: idx * 0.05 }}
                                 className="px-8 py-4 bg-white/5 backdrop-blur-sm rounded-full text-lg font-bold border border-white/10 hover:border-dancheong-gold hover:text-dancheong-gold hover:bg-white/10 transition-all cursor-default shadow-lg"
                             >
-                                {tool}
+                                <AutoTranslatedText text={tool} />
                             </motion.span>
                         ))}
                     </div>
@@ -573,7 +573,7 @@ const AboutPage: React.FC = () => {
             <Slide id="14" title="기대 효과 및 실무 활용성 (Expected Effects)" icon={Code2}>
                 <div className="grid md:grid-cols-2 gap-12 mt-4">
                     <FadeInContent>
-                        <h4 className="font-bold text-2xl text-dancheong-gold mb-4">기대 효과 (End-User B2C)</h4>
+                        <h4 className="font-bold text-2xl text-dancheong-gold mb-4"><AutoTranslatedText text="기대 효과 (End-User B2C)" /></h4>
                         <div className="p-10 bg-black/40 backdrop-blur-xl rounded-[2rem] border border-white/10 h-full mt-2 hover:bg-black/60 transition-colors">
                             <h4 className="font-bold text-2xl mb-6 text-white"><AutoTranslatedText text="차세대 이커머스 트렌드 선도" /></h4>
                             <p className="text-white/70 font-light text-lg leading-relaxed break-keep">
@@ -582,7 +582,7 @@ const AboutPage: React.FC = () => {
                         </div>
                     </FadeInContent>
                     <FadeInContent delay={0.2}>
-                        <h4 className="font-bold text-2xl text-dancheong-red mb-4">실무 활용성 (Agency B2B)</h4>
+                        <h4 className="font-bold text-2xl text-dancheong-red mb-4"><AutoTranslatedText text="실무 활용성 (Agency B2B)" /></h4>
                         <div className="p-10 bg-black/40 backdrop-blur-xl rounded-[2rem] border border-white/10 h-full mt-2 hover:bg-black/60 transition-colors">
                             <h4 className="font-bold text-2xl mb-6 text-white"><AutoTranslatedText text="확장형 SaaS 쇼룸 템플릿 확보" /></h4>
                             <p className="text-white/70 font-light text-lg leading-relaxed break-keep">

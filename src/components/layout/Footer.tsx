@@ -41,9 +41,12 @@ export const Footer: React.FC = () => {
                     <div className="md:col-span-2 space-y-8">
                         <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={t('footer.shop')} /></h4>
                         <ul className="space-y-4 text-xs font-light tracking-wide">
-                            <li><Link to="/floor/floor3/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.tickets')} /></Link></li>
-                            <li><Link to="/floor/floor4/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.art')} /></Link></li>
-                            <li><Link to="/floor/floor6/articles" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.travel')} /></Link></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.tickets')} /></Link></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.art')} /></Link></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.travel')} /></Link></li>
+                            <li><Link to="#" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.membership')} /></Link></li>
+                            <li><Link to="/register" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.partnership')} /></Link></li>
+                            <li><Link to="#" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.offline')} /></Link></li>
                         </ul>
                     </div>
 
@@ -72,8 +75,16 @@ export const Footer: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Business Info Bar */}
+                <div className="pt-12 border-t border-dancheong-border flex flex-col md:flex-row flex-wrap gap-x-8 gap-y-2 text-[10px] font-medium opacity-40 uppercase tracking-widest mb-8">
+                    <span><AutoTranslatedText text={t('footer.representative')} /></span>
+                    <span><AutoTranslatedText text={t('footer.business_id')} /></span>
+                    <span><AutoTranslatedText text={t('footer.mail_order_id')} /></span>
+                    <span><AutoTranslatedText text={t('footer.address')} /></span>
+                </div>
+
                 {/* Bottom Bar */}
-                <div className="pt-12 border-t border-dancheong-border flex flex-col md:flex-row justify-between items-center text-[10px] font-bold tracking-widest uppercase">
+                <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold tracking-widest uppercase">
                     <p className="opacity-30"><AutoTranslatedText text={t('footer.copyright')} /></p>
                     <div className="flex space-x-8 mt-6 md:mt-0">
                         <Link to="/terms" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.terms')} /></Link>

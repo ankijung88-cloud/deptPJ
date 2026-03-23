@@ -8,6 +8,7 @@ import { FeaturedItem } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getJoseonThemeById } from '../utils/themeUtils';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 const SearchPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -15,6 +16,7 @@ const SearchPage: React.FC = () => {
     const { i18n } = useTranslation();
     const [results, setResults] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const { translateAsync } = useAutoTranslate(null);
     
     // Use a neutral but premium theme for search results
     const theme = getJoseonThemeById('search', 'default');
@@ -29,8 +31,21 @@ const SearchPage: React.FC = () => {
             
             setLoading(true);
             try {
-                const data = await searchProducts(query, i18n.language);
-                setResults(data);
+                // To support cross-language search, translate non-Korean queries to Korean
+                let searchquery = query;
+                if (!/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(query)) {
+                    searchquery = await translateAsync(query);
+                }
+
+                const data = await searchProducts(searchquery, i18n.language);
+                
+                // If no results with translated query, try original
+                if (data.length === 0 && searchquery !== query) {
+                    const originalData = await searchProducts(query, i18n.language);
+                    setResults(originalData);
+                } else {
+                    setResults(data);
+                }
             } catch (error) {
                 console.error('Search failed:', error);
             } finally {
@@ -40,7 +55,7 @@ const SearchPage: React.FC = () => {
 
         window.scrollTo(0, 0);
         fetchResults();
-    }, [query]);
+    }, [query, i18n.language]);
 
     return (
         <div className="min-h-screen pb-20 text-white font-sans" style={theme.bgStyle}>

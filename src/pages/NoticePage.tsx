@@ -59,7 +59,7 @@ const NoticePage: React.FC = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-dancheong-deep-bg text-white pb-20">
+        <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -93,9 +93,13 @@ const NoticePage: React.FC = () => {
                 {/* Notice List */}
                 <div className="max-w-4xl mx-auto space-y-4">
                     {loading ? (
-                        <div className="text-center py-20 text-white/20">Loading notices...</div>
+                        <div className="text-center py-20 text-white/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
+                            <AutoTranslatedText text="Loading notices..." />
+                        </div>
                     ) : notices.length === 0 ? (
-                        <div className="text-center py-20 text-white/20">No notices found.</div>
+                        <div className="text-center py-20 text-white/20 italic font-light">
+                            <AutoTranslatedText text="등록된 공지사항이 없습니다." />
+                        </div>
                     ) : notices.map((notice, index) => (
                         <motion.div
                             key={notice.id}
