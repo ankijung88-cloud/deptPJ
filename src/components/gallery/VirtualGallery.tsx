@@ -421,7 +421,7 @@ const GalleryScene = ({
     setPlaying?: (p: boolean) => void
 }) => {
     const scroll = useScroll();
-    const { camera } = useThree();
+    const { camera, state } = useThree() as any;
     
     const exhibits = useMemo(() => {
         const combined = [...(items || []), ...(stories || [])];
@@ -431,6 +431,35 @@ const GalleryScene = ({
             zPos: -i * 20 - 10 
         }));
     }, [items, stories]);
+
+    const initialOffsetSet = useRef(false);
+
+    useEffect(() => {
+        if (!initialOffsetSet.current && exhibits.length > 0 && (window as any).initialItemId) {
+            const targetId = (window as any).initialItemId;
+            const targetIndex = exhibits.findIndex(ex => ex.id === targetId);
+            
+            if (targetIndex !== -1) {
+                const spacing = 20;
+                const totalZ = exhibits.length * spacing;
+                const targetZ = exhibits[targetIndex].zPos + 8;
+                
+                // Calculate scroll offset (0 to 1)
+                // scrollZ = scroll.offset * -(totalZ + 10)
+                const targetOffset = targetZ / -(totalZ + 10);
+                
+                // We need a way to set the scroll offset. 
+                // Since ScrollControls is a separate component, we'll try to set it via the scroll object if available.
+                if (scroll) {
+                    scroll.offset = THREE.MathUtils.clamp(targetOffset, 0, 1);
+                    // Force an update
+                    state.invalidate();
+                }
+            }
+            initialOffsetSet.current = true;
+            (window as any).initialItemId = null; // Reset
+        }
+    }, [exhibits, scroll, state]);
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
@@ -573,13 +602,14 @@ export const VirtualGallery = ({
     theme, 
     showUI = true, 
     lang = 'ko', 
+    playing,
+    setPlaying,
+    initialItemId,
     onItemClick,
     defaultActivated = false,
     onClick,
     isMuseum = false,
     cinemaItem = null,
-    playing,
-    setPlaying
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -592,10 +622,18 @@ export const VirtualGallery = ({
     isMuseum?: boolean,
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
-    setPlaying?: (p: boolean) => void
+    setPlaying?: (p: boolean) => void,
+    initialItemId?: string | null
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        if (initialItemId) {
+            (window as any).initialItemId = initialItemId;
+            setIsActivated(true);
+        }
+    }, [initialItemId]);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);

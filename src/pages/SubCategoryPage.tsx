@@ -83,6 +83,7 @@ const SubCategoryPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     const [scrollIndex, setScrollIndex] = useState(0);
+    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     // Toggle immersive mode when in exploration mode
     useImmersiveMode(isExplorationMode);
 
@@ -318,7 +319,11 @@ const SubCategoryPage: React.FC = () => {
                                                         initial={{ opacity: 0, x: -10 }}
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: idx * 0.05 }}
-                                                        className="flex items-start gap-4 group/item"
+                                                        className="flex items-start gap-4 group/item cursor-pointer"
+                                                        onClick={() => {
+                                                            setSelectedItemId(item.id);
+                                                            setIsExplorationMode(true);
+                                                        }}
                                                     >
                                                         <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(scrollIndex + idx + 1).padStart(2, '0')}</span>
                                                         <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
@@ -446,6 +451,7 @@ const SubCategoryPage: React.FC = () => {
                             showUI={false} 
                             lang={i18n.language} 
                             defaultActivated={true}
+                            initialItemId={selectedItemId}
                         />
                     </div>
                     
