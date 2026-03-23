@@ -454,6 +454,13 @@ const GalleryScene = ({
                 
                 if (scroll) {
                     scroll.offset = THREE.MathUtils.clamp(targetOffset, 0, 1);
+                    
+                    // CRITICAL: ScrollControls uses a hidden DOM element for scroll tracking.
+                    // We must also update its scrollTop to prevent it from snapping back to 0 on the next frame.
+                    if (scroll.el) {
+                        scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
+                    }
+                    
                     invalidate();
                 }
             }
