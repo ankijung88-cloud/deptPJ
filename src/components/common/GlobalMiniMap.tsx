@@ -9,9 +9,14 @@ import { AutoTranslatedText } from './AutoTranslatedText';
 import { getComplementaryColor } from '../../utils/themeUtils';
 
 
-export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean; hideIcon?: boolean }> = ({ 
+export const GlobalMiniMap: React.FC<{ 
+    initialExpanded?: boolean; 
+    hideIcon?: boolean;
+    className?: string;
+}> = ({ 
     initialExpanded = false,
-    hideIcon = false
+    hideIcon = false,
+    className
 }) => {
     const [isExpanded, setIsExpanded] = useState(initialExpanded);
     const [isHovered, setIsHovered] = useState(false);
@@ -68,7 +73,7 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean; hideIcon?: boo
 
     return (
         <div
-            className="fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 p-4 -m-4 pointer-events-auto"
+            className={className || "fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 pointer-events-auto"}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >

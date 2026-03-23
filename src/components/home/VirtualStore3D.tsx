@@ -1398,11 +1398,13 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
             {/* Subcategory Fragments are now rendered in 3D Background */}
             
             {/* Global Features (when toggled from inside 3D View) */}
-            {showMinimap && (
-                <div className="fixed inset-0 pointer-events-none z-[1500]">
-                    <GlobalMiniMap initialExpanded={true} hideIcon={true} />
-                </div>
-            )}
+             {showMinimap && (
+                <GlobalMiniMap 
+                    initialExpanded={true} 
+                    hideIcon={true} 
+                    className="fixed bottom-32 left-12 z-[1500] flex flex-col items-start gap-3 pointer-events-auto"
+                />
+             )}
             {showMouseTrail && <MouseTrail3D />}
         </motion.div>
     );
