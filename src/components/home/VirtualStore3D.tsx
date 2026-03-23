@@ -1459,10 +1459,12 @@ export const VirtualStore3D: React.FC = () => {
         return () => mediaQuery.removeEventListener('change', handleMediaChange);
     }, []);
 
-    const activeFloorData = useMemo(() => {
-        if (!selectedFloor) return null;
-        return floors.find(f => parseInt(f.floor) === selectedFloor);
-    }, [selectedFloor, floors]);
+    const targetFloorData = useMemo(() => {
+        // Render the virtual space behind the transition for a seamless 'pass-through' effect.
+        const floorNum = transitioningFloor || selectedFloor;
+        if (!floorNum) return null;
+        return floors.find(f => parseInt(f.floor) === floorNum);
+    }, [transitioningFloor, selectedFloor, floors]);
 
     return (
         <div
@@ -1549,25 +1551,30 @@ export const VirtualStore3D: React.FC = () => {
                         key="floor-transition"
                         floorNumber={transitioningFloor}
                         floorTitle={getLocalizedText(floors.find(f => parseInt(f.floor) === transitioningFloor)?.title || { ko: '' }, i18n.language)}
-                        floorColor={floors.find(f => parseInt(f.floor) === transitioningFloor)?.color || '#00FFC2'}
                         subcategories={floors.find(f => parseInt(f.floor) === transitioningFloor)?.subitems || []}
                         onComplete={handleTransitionComplete}
                     />
                 )}
-                {/* Floor Detail Space Overlay - Only allowed when on inspiration path */}
-                {activeFloorData && !transitioningFloor && isAtInspiration && (
+                {/* Floor Detail Space Overlay - Render during transition for seamless effect */}
+                {targetFloorData && isAtInspiration && (
 
                     isMobile ? (
                         <MobileFloorModal
                             key="mobile-modal"
-                            activeFloorData={activeFloorData}
-                            onClose={() => setSelectedFloor(null)}
+                            activeFloorData={targetFloorData}
+                            onClose={() => {
+                                setSelectedFloor(null);
+                                setTransitioningFloor(null);
+                            }}
                         />
                     ) : (
                         <DesktopVirtualSpace
                             key="desktop-space"
-                            activeFloorData={activeFloorData}
-                            onClose={() => setSelectedFloor(null)}
+                            activeFloorData={targetFloorData}
+                            onClose={() => {
+                                setSelectedFloor(null);
+                                setTransitioningFloor(null);
+                            }}
                         />
                     )
                 )}

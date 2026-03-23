@@ -1,302 +1,281 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { Canvas } from '@react-three/fiber';
+import { PerspectiveCamera } from '@react-three/drei';
+import { getLocalizedText } from '../../utils/i18nUtils';
+import { useTranslation } from 'react-i18next';
 
 interface FloorTransitionOverlayProps {
     floorNumber: number;
     floorTitle: string;
-    floorColor: string;
     subcategories?: any[];
     onComplete: () => void;
 }
 
-// Sub-component to handle individual node perspective projection
-const PerspectiveSphere = ({ node, floorColor, stage, getProjection }: any) => {
-    // Map time to a 0-1 progress over the transition duration (3.5s for suck stage)
-    // The 'suck' stage starts at 2.1s and ends at 5.6s (3.5s duration)
-    const [startTime] = useState(Date.now() + 2100); 
-    
-    // We'll use a local state or transform to drive the projection
-    const [projection, setProjection] = useState({ x: 0, y: 0, size: 0, opacity: 0 });
+const getSafeString = (text: any, language: string) => {
+    if (!text) return '';
+    if (typeof text === 'string') return text;
+    if (typeof text === 'object') {
+        const localized = getLocalizedText(text, language);
+        if (typeof localized === 'string') return localized;
+        return text.ko || text.en || '';
+    }
+    return String(text);
+};
 
-    useEffect(() => {
-        if (stage !== 'suck' && stage !== 'complete') return;
-        
-        let frameId: number;
-        const update = () => {
-            const now = Date.now();
-            const elapsed = now - startTime;
-            const progress = Math.min(1, Math.max(0, elapsed / 3500));
-            
-            // Apply ease-out to progress for "arrival" feel
-            const easedProgress = 1 - Math.pow(1 - progress, 2);
-            
-            setProjection(getProjection(node, easedProgress));
-            frameId = requestAnimationFrame(update);
-        };
-        
-        update();
-        return () => cancelAnimationFrame(frameId);
-    }, [stage, node, startTime, getProjection]);
+// --- Arched Door Panel with Integrated Text ---
+const ArchedDoorPanel = ({ side, progress, xOffset }: { 
+    side: 'left' | 'right', progress: number, xOffset: number
+}) => {
+    // Only start opening after the initial information stage (progress > 0)
+    const animVal = Math.max(0, progress);
+    const eased = 1 - Math.pow(1 - animVal, 5); // Quintic ease-out for better momentum
+    const opacity = 1 - Math.pow(Math.max(0, (animVal - 0.7) * 3.3), 2);
+    
+    const w = 13.1; const h = 24; const r = 13.1; 
+    const angle = side === 'left' ? Math.PI / 1.5 * eased : -Math.PI / 1.5 * eased;
+    
+    const doorShape = useMemo(() => {
+        const s = new THREE.Shape();
+        if (side === 'left') {
+            s.moveTo(0, 0); s.lineTo(w, 0); s.lineTo(w, h + r); 
+            s.absarc(w, h, r, Math.PI / 2, Math.PI, false); s.lineTo(0, 0);
+        } else {
+            s.moveTo(0, 0); s.lineTo(-w, 0); s.lineTo(-w, h + r); 
+            s.absarc(-w, h, r, Math.PI / 2, 0, true); s.lineTo(0, 0);
+        }
+        return s;
+    }, [w, h, r, side]);
+
+    // Gwanghwamun Iconic Studs, Knocker & Wood Grain (Stabilized version)
+    const decorations = useMemo(() => {
+        const deco = [];
+        // Procedural Wood Grain Lines (Traditional Korean Woodwork) - STABILIZED
+        const grainCount = 20;
+        for (let i = 0; i < grainCount; i++) {
+            const xPos = side === 'left' ? (i / grainCount) * w : -(i / grainCount) * w;
+            // Use bit-wise or fixed logic for 'pseudo-random' stability instead of Math.random
+            const grainWidth = 0.08 + ((i * 13) % 7) / 50; 
+            const grainShift = ((i * 7) % 11) / 10;
+            const grainH = h + r;
+            deco.push(
+                <mesh key={`grain-${i}`} position={[xPos + (side === 'left' ? grainShift : -grainShift), (grainH / 2) - 15, 1.05]}>
+                    <boxGeometry args={[grainWidth, grainH, 0.02]} />
+                    <meshStandardMaterial color="#3A0000" transparent opacity={opacity * 0.15} />
+                </mesh>
+            );
+        }
+        // Studs (Golden circles)
+        const rows = 12; const cols = 5;
+        for(let row = 0; row < rows; row++) {
+            for(let col = 0; col < cols; col++) {
+                const xPos = side === 'left' ? (col + 0.5) * (w/cols) : -(col + 0.5) * (w/cols);
+                const yPos = (row + 1) * (h/rows) - 15;
+                if (yPos < h-2) {
+                    deco.push(
+                        <mesh key={`stud-${row}-${col}`} position={[xPos, yPos, 1.1]}>
+                            <sphereGeometry args={[0.22, 16, 16]} />
+                            <meshStandardMaterial color="#D4AF37" metalness={0.8} roughness={0.2} transparent opacity={opacity} />
+                        </mesh>
+                    );
+                }
+            }
+        }
+        // Traditional Iron Ring Knocker (Mungori)
+        const knockerX = side === 'left' ? w * 0.75 : -w * 0.75;
+        deco.push(
+            <group key="knocker" position={[knockerX, 0, 1.1]}>
+                <mesh position={[0, 0, 0]} rotation={[Math.PI/2, 0, 0]}>
+                    <cylinderGeometry args={[0.8, 0.9, 0.4, 32]} />
+                    <meshStandardMaterial color="#2A2A2A" metalness={0.9} roughness={0.1} transparent opacity={opacity} />
+                </mesh>
+                <mesh position={[0,-1.2, 0.2]} rotation={[Math.PI/2, 0, 0]}>
+                    <torusGeometry args={[1.2, 0.25, 16, 64]} />
+                    <meshStandardMaterial color="#3A3A3A" metalness={0.9} roughness={0.1} transparent opacity={opacity} />
+                </mesh>
+            </group>
+        );
+        return deco;
+    }, [side, w, h, opacity, r]);
 
     return (
-        <div 
-            className="absolute flex flex-col items-center pointer-events-none"
-            style={{ 
-                left: `calc(50% + ${projection.x}px)`,
-                top: `calc(50% + ${projection.y}px)`,
-                opacity: projection.opacity,
-                transform: 'translate(-50%, -50%)'
-            }}
-        >
-            <div 
-                className="relative rounded-full flex items-center justify-center transition-all duration-75"
-                style={{ 
-                    width: projection.size + 25,
-                    height: projection.size + 25,
-                    background: `radial-gradient(circle at center, ${floorColor}cc 0%, transparent 75%)`, // Increased from aa to cc
-                    border: `1px solid ${floorColor}44`,
-                    boxShadow: `0 0 ${projection.size / 1.5}px ${floorColor}55`, // Larger bloom
-                    transform: `scale(${1 + Math.sin(Date.now() / 1000 + node.id) * 0.05})` 
-                }}
-            >
-                {/* Dotted Wireframe */}
-                <div className="absolute inset-[-10%] opacity-70">
-                    <svg viewBox="0 0 100 100" className="w-full h-full scale-[1.1]">
-                        <path 
-                            d="M50 5 L85 25 L85 75 L50 95 L15 75 L15 25 Z" 
-                            fill="none" 
-                            stroke={floorColor} 
-                            strokeWidth="1.2" 
-                            strokeDasharray="1.5 2" 
-                        />
-                        <path d="M50 5 L50 95" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M15 25 L85 25" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M15 75 L85 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M50 5 L15 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
-                        <path d="M50 5 L85 75" stroke={floorColor} strokeWidth="0.8" strokeDasharray="1 3" opacity="0.6" />
-                    </svg>
-                </div>
+        <group position={[xOffset + (side === 'left' ? -13.1 : 13.1), -18, 5]} rotation={[0, angle, 0]}>
+            <mesh position={[0, 0, 0]}>
+                <extrudeGeometry args={[doorShape, { depth: 1.0, bevelEnabled: true, bevelThickness: 0.3, bevelSize: 0.3 }]} />
+                <meshStandardMaterial color="#721111" roughness={0.4} metalness={0.2} transparent opacity={opacity} />
+            </mesh>
+            {decorations}
+        </group>
+    );
+};
 
-                {/* Label */}
-                <div className="relative z-10 text-center px-4">
-                    <span 
-                        className="text-white font-[900] tracking-tighter whitespace-nowrap drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
-                        style={{ 
-                            fontSize: `${Math.max(10, projection.size / 2.2)}px`, // Increased from /3
-                            textShadow: `0 0 25px ${floorColor}, 0 0 50px black, 0 0 10px white` 
-                        }}
-                    >
-                        <AutoTranslatedText text={node.label} />
-                    </span>
-                </div>
-            </div>
-        </div>
+// --- 3D Stone Block Wall with Depth ---
+const GateWall = ({ progress }: { progress: number }) => {
+    const animVal = Math.max(0, progress);
+    // Wall becomes more transparent earlier to reveal the space behind
+    const opacity = 1 - Math.pow(Math.max(0, (animVal - 0.3) * 1.5), 2);
+    const wallDepth = 12;
+    
+    const wallShape = useMemo(() => {
+        const s = new THREE.Shape();
+        s.moveTo(-180, -80); s.lineTo(180, -80); s.lineTo(180, 120); s.lineTo(-180, 120); s.lineTo(-180, -80);
+        const hole = new THREE.Path();
+        const w = 13.5; const h = 24; const r = 13.5; 
+        hole.moveTo(-w, -18); hole.lineTo(w, -18); hole.lineTo(w, h - 18);
+        hole.absarc(0, h - 18, r, 0, Math.PI, false); hole.lineTo(-w, -18);
+        s.holes.push(hole);
+        return s;
+    }, []);
+
+    const stones = useMemo(() => {
+        const blocks = [];
+        // Granite texture lines
+        for(let y = -80; y < 120; y += 12) {
+            const isCenterArea = y > -20 && y < 40;
+            if (!isCenterArea) {
+                blocks.push(<mesh key={`hl-${y}`} position={[0, y, wallDepth + 0.1]}><boxGeometry args={[360, 0.6, 0.1]} /><meshStandardMaterial color="#4A4540" transparent opacity={opacity * 0.3} /></mesh>);
+            } else {
+                blocks.push(<mesh key={`hl-off-${y}`} position={[-100, y, wallDepth + 0.1]}><boxGeometry args={[160, 0.6, 0.1]} /><meshStandardMaterial color="#4A4540" transparent opacity={opacity * 0.3} /></mesh>);
+                blocks.push(<mesh key={`hr-off-${y}`} position={[100, y, wallDepth + 0.1]}><boxGeometry args={[160, 0.6, 0.1]} /><meshStandardMaterial color="#4A4540" transparent opacity={opacity * 0.3} /></mesh>);
+            }
+            // Vertical cracks
+            for(let x = -150; x < 150; x += 30) {
+                if (Math.abs(x) > 20) {
+                    blocks.push(<mesh key={`v-${x}-${y}`} position={[x + (y%24===0?15:0), y+6, wallDepth + 0.1]}><boxGeometry args={[0.5, 12, 0.1]} /><meshStandardMaterial color="#3A3530" transparent opacity={opacity * 0.2} /></mesh>);
+                }
+            }
+        }
+        return blocks;
+    }, [opacity, wallDepth]);
+
+    return (
+        <group position={[0, 0, 0]}>
+            <mesh>
+                <extrudeGeometry args={[wallShape, { depth: wallDepth, bevelEnabled: true, bevelThickness: 0.5, bevelSize: 0.5 }]} />
+                <meshStandardMaterial color="#A8A59E" roughness={1.0} transparent opacity={opacity} />
+            </mesh>
+            {stones}
+        </group>
+    );
+};
+
+// Scene wrapper
+const TransitionScene = ({ progress }: any) => {
+    const animVal = Math.max(0, progress);
+    const walkStrength = Math.min(1, animVal * 1.5);
+    const camZ = 70 - (walkStrength * 75); // Smoother move-through
+    const camY = 10 + (walkStrength * 2);
+
+    return (
+        <>
+            <PerspectiveCamera makeDefault position={[0, camY, camZ]} fov={45} />
+            <group scale={[1.3, 1.3, 1.3]} position={[0, 8, 0]}>
+                <GateWall progress={progress} />
+                <ArchedDoorPanel side="left" progress={progress} xOffset={0} />
+                <ArchedDoorPanel side="right" progress={progress} xOffset={0} />
+            </group>
+            <ambientLight intensity={1.5} />
+            <pointLight position={[0, 30, 40]} intensity={25 * (1 - Math.pow(animVal, 2))} color="#FFFAF0" />
+            <directionalLight position={[10, 50, 20]} intensity={4 * (1 - Math.pow(animVal, 2))} color="#FFD700" />
+        </>
     );
 };
 
 export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
-    floorNumber,
-    floorTitle,
-    floorColor,
-    subcategories = [],
-    onComplete
+    floorNumber, floorTitle, onComplete
 }) => {
-    const [stage, setStage] = useState<'zoom' | 'door' | 'suck' | 'complete'>('zoom');
+    const { i18n } = useTranslation();
+    const [animProgress, setAnimProgress] = useState(0);
+
+    const safeTitle = getSafeString(floorTitle, i18n.language);
 
     useEffect(() => {
-        const zoomTimer = setTimeout(() => setStage('door'), 2000); 
-        const arrivalTimer = setTimeout(() => setStage('suck'), 2100); 
-        const completeTimer = setTimeout(() => {
-            setStage('complete');
-            setTimeout(() => onComplete(), 350); 
-        }, 5600); 
-
+        let raf: number;
+        // Start the transition sequence much faster to avoid "stuck" feeling
+        const timer = setTimeout(() => {
+            const start = Date.now();
+            const infoDuration = 1200; // 1.2s for static text info
+            const animDuration = 6500;  // 6.5s for door opening
+            
+            const update = () => {
+                const elapsed = Date.now() - start;
+                
+                if (elapsed < infoDuration) {
+                    // Stay at 'closed door' state (animProgress <= 0)
+                    setAnimProgress(-0.15 + (elapsed / infoDuration) * 0.15);
+                } else {
+                    // Moving state (animProgress > 0)
+                    const p = Math.min(1, (elapsed - infoDuration) / animDuration);
+                    setAnimProgress(p);
+                    // ACCELERATED HANDOVER: Quintic easing means at p=0.45, doors are 95% open!
+                    // Call onComplete now to unmount the transition layer and handover interaction instantly.
+                    if (p >= 0.45) onComplete(); 
+                }
+                
+                if (animProgress < 1) raf = requestAnimationFrame(update);
+            };
+            raf = requestAnimationFrame(update);
+        }, 200);
+        
         return () => {
-            clearTimeout(zoomTimer);
-            clearTimeout(arrivalTimer);
-            clearTimeout(completeTimer);
+            clearTimeout(timer);
+            if (raf) cancelAnimationFrame(raf);
         };
     }, [onComplete]);
 
-    const stars = useMemo(() => Array.from({ length: 800 }).map((_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: 0.5 + Math.random() * 1.5,
-    })), []);
-
-    const mappedSpheres = useMemo(() => {
-        const positions: any[] = [];
-        const radius = 48; // Expanded from 35 for better screen spread
-        const startAngle = -Math.PI * 0.95; 
-        const totalAngle = Math.PI * 0.95;  
-        
-        subcategories.forEach((sub, i) => {
-            const angle = startAngle + (totalAngle / (subcategories.length - 1 || 1)) * i;
-            const x3d = Math.cos(angle) * (radius + (i % 2 === 0 ? 15 : -10));
-            const y3d = (32 + Math.sin(i * 1.5) * 15) - 30; 
-            const z3d = (Math.sin(angle) * (radius + (i % 2 === 1 ? 8 : -15)) - 35) - 15; 
-
-            positions.push({
-                id: i,
-                label: sub.label?.ko || sub.label || '',
-                x3d, y3d, z3d,
-            });
-        });
-        return positions;
-    }, [subcategories]);
-
-    const getProjection = useMemo(() => (node: any, progress: number) => {
-        const cameraZ = 450 * (1 - progress); // Slightly shallower zoom for visibility
-        const distance = Math.max(10, cameraZ - node.z3d + 55); 
-        const scaleFactor = 1100 / distance; // Increased from 1000 for larger landing size
-        
-        return {
-            x: node.x3d * scaleFactor,
-            y: (node.y3d - 8) * scaleFactor, // More horizon tilt
-            size: 4.5 * scaleFactor * 10.5, // Increased node size factor
-            opacity: Math.min(1, progress * 4.5), 
-        };
-    }, []);
-
-    const studs = Array.from({ length: 15 }).map((_, i) => ({
-        id: i,
-        x: (i % 3) * 35 + 15,
-        y: Math.floor(i / 3) * 20 + 10,
-    }));
-
     return (
-        <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ 
-                opacity: 1,
-                x: stage === 'suck' ? [0, -1, 1, -1, 1, 0] : 0 
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ x: { duration: 0.1, repeat: stage === 'suck' ? Infinity : 0 } }}
-            className="fixed inset-0 z-[5000] flex items-center justify-center overflow-hidden bg-black [perspective:1500px]"
-        >
-            {/* Facade Layer */}
-            <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ 
-                    scale: stage === 'zoom' ? 1.2 : 4, 
-                    opacity: (stage === 'zoom' || stage === 'door') ? 1.0 : 0
-                }}
-                transition={{ 
-                    scale: { duration: stage === 'zoom' ? 2 : 4, ease: "linear" },
-                    opacity: { duration: 0.5 }
-                }}
-                className="absolute inset-0 flex items-center justify-center bg-black"
+        <AnimatePresence mode="wait">
+            <motion.div 
+                key="overlay" 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0, transition: { duration: 0 } }} // INSTANT EXIT
+                className="fixed inset-0 z-[10000] overflow-hidden select-none flex items-center justify-center pointer-events-none"
             >
-                <div 
-                    className="w-[200vw] h-[200vh] opacity-30"
-                    style={{ 
-                        backgroundImage: `linear-gradient(to right, ${floorColor}44 2.5px, transparent 2.5px), linear-gradient(to bottom, ${floorColor}44 2.5px, transparent 2.5px)`,
-                        backgroundSize: '150px 150px, 150px 150px',
-                        transform: 'translateZ(-100px)'
-                    }}
-                />
-            </motion.div>
-
-            {/* 3D Space Arrival */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-hidden">
-                <AnimatePresence>
-                    {(stage === 'suck' || stage === 'complete') && (
-                        <motion.div 
-                            initial={{ opacity: 0 }} 
-                            animate={{ opacity: 1 }} 
-                            exit={{ opacity: 1 }}
-                            transition={{ duration: 1.0 }}
-                            className="relative w-full h-full flex items-center justify-center bg-black"
-                        >
+                <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                    <motion.div 
+                        className="absolute inset-0 z-0 bg-[#0A0D17]"
+                        animate={{ 
+                            opacity: (1 - Math.min(1, animProgress * 4.0)),
+                            pointerEvents: animProgress > 0.05 ? 'none' : 'auto' // Kill blocks early
+                        }} 
+                        transition={{ duration: 0.5 }}
+                    />
+                    
+                    {/* Unified Loading & Information Layer (Overlays 3D) */}
+                    <AnimatePresence>
+                        {animProgress <= 0.05 && (
                             <motion.div 
-                                animate={{ opacity: [0.15, 0.3, 0.15], scale: [1, 1.1, 1] }}
-                                transition={{ duration: 15, repeat: Infinity }}
-                                className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(66,56,202,0.25),transparent_75%)]"
-                            />
+                                key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                className="absolute inset-0 flex flex-col items-center justify-center text-center z-20 pointer-events-none"
+                            >
+                                <div className="text-[12vw] font-black text-[#00FFC2]/20 italic leading-none">{floorNumber}F</div>
+                                <h2 className="text-5xl font-black text-white uppercase tracking-[0.2em] mb-4">
+                                    {safeTitle}
+                                </h2>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                            <div className="absolute inset-0">
-                                {stars.map(s => (
-                                    <div key={s.id} className="absolute bg-white rounded-full opacity-50 shadow-[0_0_6px_#fff]" style={{ left: `${s.x}%`, top: `${s.y}%`, width: s.size, height: s.size }} />
-                                ))}
+                    {/* 3D Scene - Rendered immediately for smoothness */}
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 z-10">
+                        <React.Suspense fallback={
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                <div className="text-[12vw] font-black text-[#00FFC2]/10 italic leading-none">{floorNumber}F</div>
+                                <h2 className="text-5xl font-black text-white uppercase tracking-[0.2em] mb-4">
+                                    {safeTitle}
+                                </h2>
+                                <p className="text-[#00FFC2] tracking-[0.3em] font-medium animate-pulse">PREPARING 3D GATE...</p>
                             </div>
-
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.1 }}
-                                animate={{ opacity: 0.45, scale: 1 }}
-                                transition={{ duration: 3.5, ease: "easeOut" }}
-                                className="absolute bottom-[-10%] w-[180vw] h-[100vh] bg-black"
-                                style={{ 
-                                    backgroundImage: `linear-gradient(to right, #00FFC2 1px, transparent 1px), linear-gradient(to bottom, #00FFC2 1px, transparent 1px)`,
-                                    backgroundSize: '80px 80px', 
-                                    transform: 'perspective(1500px) rotateX(78deg)',
-                                    border: '1px solid #00FFC2',
-                                    boxShadow: '0 0 50px rgba(0, 255, 194, 0.2)'
-                                }}
-                            />
-
-                            {mappedSpheres.map((s) => (
-                                <PerspectiveSphere key={s.id} node={s} floorColor={floorColor} stage={stage} getProjection={getProjection} />
-                            ))}
-
-                            <motion.div
-                                animate={{ opacity: [0, 0.3, 0] }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                                className="absolute w-full h-full bg-[#E91E63] blur-[200px] opacity-10 z-30"
-                            />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {/* Doors Layer */}
-            <div className="relative w-full h-full flex items-center justify-center z-30 pointer-events-none [preserve-3d]">
-                <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? -105 : 0 }}
-                    transition={{ duration: 1.8, ease: [0.45, 0.05, 0.55, 0.95] }}
-                    className="absolute right-1/2 w-[50.2vw] h-full border-r-[8px] border-[#3F1105] bg-[#7C2D12] overflow-hidden"
-                    style={{ transformOrigin: 'left center' }}
-                >
-                    {studs.map(s => (
-                        <div key={s.id} className="absolute w-10 h-10 rounded-full bg-gradient-to-br from-[#FDE68A] via-[#B45309] to-[#451A03] shadow-[4px_4px_10px_rgba(0,0,0,0.5)] border-[1px] border-[#FDE68A]/30" style={{ left: `${s.x}%`, top: `${s.y}%` }} />
-                    ))}
-                </motion.div>
-
-                <motion.div
-                    initial={{ rotateY: 0 }}
-                    animate={{ rotateY: (stage === 'suck' || stage === 'complete') ? 105 : 0 }}
-                    transition={{ duration: 1.8, ease: [0.45, 0.05, 0.55, 0.95] }}
-                    className="absolute left-1/2 w-[50.2vw] h-full border-l-[8px] border-[#3F1105] bg-[#7C2D12] overflow-hidden"
-                    style={{ transformOrigin: 'right center' }}
-                >
-                    {studs.map(s => (
-                        <div key={s.id} className="absolute w-10 h-10 rounded-full bg-gradient-to-br from-[#FDE68A] via-[#B45309] to-[#451A03] border-[1px] border-[#FDE68A]/30" style={{ left: `${100 - s.x}%`, top: `${s.y}%`, transform: 'translateX(-100%)' }} />
-                    ))}
-                </motion.div>
-
-                <AnimatePresence>
-                    {(stage === 'zoom' || stage === 'door') && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1.2 }}
-                            exit={{ opacity: 0, scale: 5, filter: 'blur(60px)', y: -300 }}
-                            transition={{ duration: 1.5 }}
-                            className="absolute z-40 flex flex-col items-center justify-center p-20 bg-black/40 backdrop-blur-sm rounded-3xl"
-                        >
-                            <span className="text-[10rem] font-black font-serif italic mb-4" style={{ color: floorColor }}>{floorNumber}F</span>
-                            <h2 className="text-4xl font-black text-white tracking-[0.8em] uppercase mb-10"><AutoTranslatedText text={floorTitle} /></h2>
-                            <div className="w-80 h-[3px] bg-[#00FFC2] shadow-[0_0_30px_#00FFC2]" />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {stage === 'complete' && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="absolute inset-0 bg-white z-[6000]" />
-            )}
-        </motion.div>
+                        }>
+                            <Canvas flat gl={{ alpha: true }}>
+                                <TransitionScene progress={animProgress} floorNumber={floorNumber} floorTitle={safeTitle} />
+                            </Canvas>
+                        </React.Suspense>
+                    </motion.div>
+                </div>
+            </motion.div>
+        </AnimatePresence>
     );
 };
