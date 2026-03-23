@@ -442,22 +442,23 @@ const GalleryScene = ({
             if (targetIndex !== -1) {
                 const spacing = 20;
                 const totalZ = exhibits.length * spacing;
-                const targetZ = exhibits[targetIndex].zPos + 8;
+                const targetZ = exhibits[targetIndex].zPos;
                 
-                // Calculate scroll offset (0 to 1)
+                // On desktop, the "Sweet Spot" is around camera.z - 8.
                 // scrollZ = scroll.offset * -(totalZ + 10)
-                const targetOffset = targetZ / -(totalZ + 10);
+                // We want: scrollZ = targetZ + 8
+                // So: scroll.offset * -(totalZ + 10) = targetZ + 8
+                // offset = (targetZ + 8) / -(totalZ + 10)
                 
-                // We need a way to set the scroll offset. 
-                // Since ScrollControls is a separate component, we'll try to set it via the scroll object if available.
+                const targetOffset = (targetZ + 8) / -(totalZ + 10);
+                
                 if (scroll) {
                     scroll.offset = THREE.MathUtils.clamp(targetOffset, 0, 1);
-                    // Force an update
                     invalidate();
                 }
             }
             initialOffsetSet.current = true;
-            (window as any).initialItemId = null; // Reset
+            (window as any).initialItemId = null;
         }
     }, [exhibits, scroll, invalidate]);
 
