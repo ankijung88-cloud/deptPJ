@@ -32,6 +32,7 @@ const Header: React.FC = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [isScrolled, setIsScrolled] = useState(false);
     const [isGlobalMuted, setIsGlobalMuted] = useState(true);
     const { isAdmin: isAdminLoggedIn, isAgency: isAgencyLoggedIn, user, logout } = useAdmin();
@@ -39,6 +40,16 @@ const Header: React.FC = () => {
     const handleLogout = () => {
         logout();
         navigate('/');
+    };
+
+    const handleSearch = (e: React.FormEvent | React.KeyboardEvent) => {
+        if ('key' in e && e.key !== 'Enter') return;
+        if (searchTerm.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+            setIsSearchOpen(false);
+            setSearchTerm('');
+            setIsMenuOpen(false);
+        }
     };
 
     // Dynamic Theme Detection
@@ -385,6 +396,9 @@ const Header: React.FC = () => {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyDown={handleSearch}
                                     placeholder={t('search.placeholder')}
                                     className={`w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
                                         }`}
@@ -468,6 +482,9 @@ const Header: React.FC = () => {
                             <input
                                 ref={mobileSearchInputRef}
                                 type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={handleSearch}
                                 placeholder={t('search.placeholder')}
                                 className="w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide"
                             />

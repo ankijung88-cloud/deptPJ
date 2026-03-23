@@ -20,6 +20,7 @@ import NoticePage from './pages/NoticePage';
 import FAQPage from './pages/FAQPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import SearchPage from './pages/SearchPage';
 import { FloorProvider } from './context/FloorContext';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                         <Route path="/category/:subId" element={<SubCategoryPage />} />
                         <Route path="/notice" element={<NoticePage />} />
                         <Route path="/faq" element={<FAQPage />} />
+                        <Route path="/search" element={<SearchPage />} />
                         <Route path="/terms" element={<TermsPage />} />
                         <Route path="/privacy" element={<PrivacyPage />} />
                         <Route path="/admin" element={<AdminPage />} />
