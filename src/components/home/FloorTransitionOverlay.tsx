@@ -223,11 +223,17 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 ))}
                             </div>
 
-                            <div 
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.1 }}
+                                animate={{ opacity: 0.45, scale: 1 }}
+                                transition={{ duration: 3.5, ease: "easeOut" }}
                                 className="absolute bottom-[-10%] w-[180vw] h-[100vh] bg-black"
                                 style={{ 
                                     backgroundImage: `linear-gradient(to right, #00FFC2 1px, transparent 1px), linear-gradient(to bottom, #00FFC2 1px, transparent 1px)`,
-                                    backgroundSize: '80px 80px', transform: 'perspective(1500px) rotateX(78deg)', opacity: 0.45
+                                    backgroundSize: '80px 80px', 
+                                    transform: 'perspective(1500px) rotateX(78deg)',
+                                    border: '1px solid #00FFC2',
+                                    boxShadow: '0 0 50px rgba(0, 255, 194, 0.2)'
                                 }}
                             />
 

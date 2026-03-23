@@ -68,9 +68,13 @@ const InfiniteGrid = () => {
     return (
         <group ref={gridRef}>
             {/* Bottom Grid */}
-            <gridHelper args={[100, 50, "#00FFC2", "#1A2420"]} position={[0, -8, 0]} rotation={[0, 0, 0]} />
+            <gridHelper args={[100, 50, "#00FFC2", "#00FFC2"]} position={[0, -8, 0]} rotation={[0, 0, 0]}>
+                <lineBasicMaterial attach="material" transparent opacity={0.15} />
+            </gridHelper>
             {/* Top Grid */}
-            <gridHelper args={[100, 50, "#00FFC2", "#1A2420"]} position={[0, 8, 0]} rotation={[Math.PI, 0, 0]} />
+            <gridHelper args={[100, 50, "#00FFC2", "#00FFC2"]} position={[0, 8, 0]} rotation={[Math.PI, 0, 0]}>
+                <lineBasicMaterial attach="material" transparent opacity={0.15} />
+            </gridHelper>
         </group>
     );
 };
