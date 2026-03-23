@@ -199,9 +199,9 @@ const GateWall = ({ progress }: { progress: number }) => {
             }
         }
 
-        // Mortar lines for main wall - Refined to be thinner and subtle
+        // Mortar lines for main wall - Ultra-thin refined style
         ctx.strokeStyle = '#9D9990'; 
-        ctx.lineWidth = 0.5 * s; // Reduced from 1.0 (approx 0.125 world units)
+        ctx.lineWidth = 0.3 * s; // Reduced from 0.5 (approx 0.075 world units)
         ctx.beginPath();
         for (let yRaw = -80; yRaw <= 120; yRaw += 10) {
             const cy = (120 - yRaw) * s;
@@ -235,9 +235,9 @@ const GateWall = ({ progress }: { progress: number }) => {
         ctx.arc(cxCenter, cyCenter, rInner, Math.PI, 0, false);
         ctx.fill();
 
-        // Radial Voussoir Joints
-        ctx.strokeStyle = '#949086'; // Slightly darker for clear subtle lines
-        ctx.lineWidth = 0.7 * s; // Reduced from 1.2
+        // Radial Voussoir Joints - Ultra-sharp
+        ctx.strokeStyle = '#949086'; 
+        ctx.lineWidth = 0.4 * s; // Reduced from 0.7
         ctx.beginPath();
         
         ctx.arc(cxCenter, cyCenter, rOuter, Math.PI, 0, false);
