@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check } from 'lucide-react';
@@ -9,15 +9,29 @@ import { getProductById } from '../api/products';
 import { FeaturedItem, SelectedTemplate } from '../types';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
-import { getJoseonThemeById } from '../utils/themeUtils';
+import { getJoseonThemeById, getJoseonTheme } from '../utils/themeUtils';
 import { useAdmin } from '../hooks/useAdmin';
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const theme = getJoseonThemeById(id || '');
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    
     const [item, setItem] = useState<FeaturedItem | null>(null);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+
+    // Derived Floor Info
+    const effectiveCategory = item?.category || parentProduct?.category;
+    const floorNum = effectiveCategory?.replace('floor-', '') || '';
+    
+    // Theme selection: Use floor-based theme if available, otherwise fallback to ID-based
+    const theme = useMemo(() => {
+        if (floorNum && !isNaN(parseInt(floorNum))) {
+            return getJoseonTheme(floorNum);
+        }
+        return getJoseonThemeById(id || '');
+    }, [id, floorNum]);
+
     const [loading, setLoading] = useState(true);
     const [showShareModal, setShowShareModal] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -26,15 +40,13 @@ export const DetailPage: React.FC = () => {
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const { floors } = useFloors();
-    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
 
     // Set Breadcrumb Path
-    const effectiveCategory = item?.category || parentProduct?.category;
     const effectiveSubcategory = item?.subcategory || parentProduct?.subcategory;
     const currentFloor = floors.find(f => f.floor.toLowerCase() === effectiveCategory?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === effectiveSubcategory);
     
-    const floorNum = effectiveCategory?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
+    // Refined floor label logic to match the new theme expectation
     const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || effectiveCategory || '');
 
     useSetBreadcrumbPath(item ? [
