@@ -9,7 +9,10 @@ import { AutoTranslatedText } from './AutoTranslatedText';
 import { getComplementaryColor } from '../../utils/themeUtils';
 
 
-export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initialExpanded = false }) => {
+export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean; hideIcon?: boolean }> = ({ 
+    initialExpanded = false,
+    hideIcon = false
+}) => {
     const [isExpanded, setIsExpanded] = useState(initialExpanded);
     const [isHovered, setIsHovered] = useState(false);
     const [items, setItems] = useState<any[]>([]);
@@ -180,29 +183,31 @@ export const GlobalMiniMap: React.FC<{ initialExpanded?: boolean }> = ({ initial
             </AnimatePresence>
 
             {/* Toggle Button */}
-            <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
-                style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
-            >
-                <Compass
-                    size={24}
-                    className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'group-hover:scale-110'}`}
-                    style={!isExpanded ? { color: compColor } : {}}
-                />
-
-                {/* Visual HUD Pulse when collapsed */}
-                {!isExpanded && (
-                    <span className="absolute inset-0 rounded-full animate-ping pointer-events-none opacity-20" style={{ backgroundColor: compColor }} />
-                )}
-
-                {currentFloor && !isExpanded && (
-                    <div
-                        className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#2D3D36] shadow-lg"
-                        style={{ backgroundColor: currentFloor.color }}
+            {!hideIcon && (
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
+                    style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
+                >
+                    <Compass
+                        size={24}
+                        className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'group-hover:scale-110'}`}
+                        style={!isExpanded ? { color: compColor } : {}}
                     />
-                )}
-            </button>
+
+                    {/* Visual HUD Pulse when collapsed */}
+                    {!isExpanded && (
+                        <span className="absolute inset-0 rounded-full animate-ping pointer-events-none opacity-20" style={{ backgroundColor: compColor }} />
+                    )}
+
+                    {currentFloor && !isExpanded && (
+                        <div
+                            className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#2D3D36] shadow-lg"
+                            style={{ backgroundColor: currentFloor.color }}
+                        />
+                    )}
+                </button>
+            )}
         </div>
     );
 };

@@ -1400,7 +1400,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
             {/* Global Features (when toggled from inside 3D View) */}
             {showMinimap && (
                 <div className="fixed inset-0 pointer-events-none z-[1500]">
-                    <GlobalMiniMap initialExpanded={true} />
+                    <GlobalMiniMap initialExpanded={true} hideIcon={true} />
                 </div>
             )}
             {showMouseTrail && <MouseTrail3D />}
