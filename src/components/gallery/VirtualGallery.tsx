@@ -432,7 +432,7 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
-    const forcedScroll = useRef<{ offset: number, startTime: number } | null>(null);
+    const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
 
     useEffect(() => {
         if (exhibits.length > 0 && (window as any).initialItemId) {
@@ -447,12 +447,13 @@ const GalleryScene = ({
                 
                 forcedScroll.current = { 
                     offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
-                    startTime: Date.now()
+                    startTime: Date.now(),
+                    active: true
                 };
             }
             (window as any).initialItemId = null;
         }
-    }, [exhibits]);
+    }, [exhibits.length]); // Only re-run if exhibits count changes
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
@@ -487,24 +488,27 @@ const GalleryScene = ({
 
     const focusState = useRef({ index: -1, startTime: 0 });
 
-    useFrame((state) => {
+    useFrame((frameState) => {
         const spacing = 20;
         const totalZ = exhibits.length * spacing;
 
-        // Force scroll for the first 500ms after a jump to prevent R3F from snapping back
-        if (forcedScroll.current) {
-            const elapsed = Date.now() - forcedScroll.current.startTime;
-            if (elapsed < 500) {
+        // Force scroll if active
+        if (forcedScroll.current.active) {
+            // ScrollControls.offset changes on interaction. If it deviates from our forced offset significantly, we release.
+            const userInteractionThreshold = 0.01;
+            const isInteracting = Math.abs(scroll.offset - forcedScroll.current.offset) > userInteractionThreshold;
+
+            if (!isInteracting) {
                 scroll.offset = forcedScroll.current.offset;
                 if (scroll.el) {
                     scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
                 }
             } else {
-                forcedScroll.current = null;
+                forcedScroll.current.active = false;
             }
         }
 
-        (state as any).scrollOffset = scroll.offset;
+        (frameState as any).scrollOffset = scroll.offset;
 
         if (isMobile) {
             camera.position.set(0, 0, 5);
@@ -519,15 +523,15 @@ const GalleryScene = ({
                 const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
                 if (distFromFront < 0.1) {
                     if (focusState.current.index !== i) {
-                        focusState.current = { index: i, startTime: state.clock.elapsedTime };
+                        focusState.current = { index: i, startTime: frameState.clock.elapsedTime };
                     }
-                    const elapsed = state.clock.elapsedTime - focusState.current.startTime;
+                    const elapsed = frameState.clock.elapsedTime - focusState.current.startTime;
                     if (elapsed < 1.0) {
                         pullBias = -distFromFront * (normalizedAngle > Math.PI ? -1 : 1);
                     }
                 }
             });
-            (state as any).scrollOffset = scroll.offset + pullBias * 0.01;
+            (frameState as any).scrollOffset = scroll.offset + pullBias * 0.01;
         } else {
             const scrollZ = scroll.offset * -(totalZ + 10);
             let pullBias = 0;
