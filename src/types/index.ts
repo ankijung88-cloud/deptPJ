@@ -29,7 +29,9 @@ export interface FeaturedItem {
     description: LocalizedString;
     imageUrl: string;
     thumbnailUrl?: string;
-    sideImageUrl?: string;
+    sideImageUrl?: string; // Legacy / Fallback
+    leftSideImageUrl?: string;
+    rightSideImageUrl?: string;
     backImageUrl?: string;
     date: LocalizedString;
     location: LocalizedString;
@@ -43,6 +45,8 @@ export interface FeaturedItem {
     video_url?: string;
     event_date?: LocalizedString;
     side_image_url?: string;
+    left_side_image_url?: string;
+    right_side_image_url?: string;
     back_image_url?: string;
     parent_id?: string;
     event_dates?: string[];

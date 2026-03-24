@@ -41,7 +41,7 @@ const DisplacementMesh: React.FC<{ imageUrl: string, scale?: number, subdivision
 };
 
 const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
-    const { imageUrl, sideImageUrl, backImageUrl } = item;
+    const { imageUrl, sideImageUrl, leftSideImageUrl, rightSideImageUrl, backImageUrl } = item;
     
     return (
         <group>
@@ -56,14 +56,14 @@ const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
                     <DisplacementMesh imageUrl={backImageUrl || imageUrl} scale={0.4} />
                 </group>
 
-                {/* 3. Side Views - use sideImageUrl or fallback to main */}
-                {sideImageUrl && (
+                {/* 3. Side Views - use separate left/right if available, fallback to sideImageUrl or main */}
+                {(leftSideImageUrl || rightSideImageUrl || sideImageUrl) && (
                     <>
                         <group position={[1.6, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-                            <DisplacementMesh imageUrl={sideImageUrl} scale={0.2} subdivisions={64} />
+                            <DisplacementMesh imageUrl={rightSideImageUrl || sideImageUrl || imageUrl} scale={0.2} subdivisions={64} />
                         </group>
                         <group position={[-1.6, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-                            <DisplacementMesh imageUrl={sideImageUrl} scale={0.2} subdivisions={64} />
+                            <DisplacementMesh imageUrl={leftSideImageUrl || sideImageUrl || imageUrl} scale={0.2} subdivisions={64} />
                         </group>
                     </>
                 )}
@@ -89,6 +89,30 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
             <AutoTranslatedText text="상품을 선택하여 3D로 확인하세요" />
         </div>
     );
+
+    // Check if we have 3D-specific assets (sides or back)
+    const has3DAssets = item.leftSideImageUrl || item.rightSideImageUrl || item.sideImageUrl || item.backImageUrl;
+
+    if (!has3DAssets) {
+        return (
+            <div className="w-full h-full flex items-center justify-center p-12 bg-black/20">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative w-full h-full flex items-center justify-center"
+                >
+                    <img 
+                        src={item.thumbnailUrl || item.imageUrl} 
+                        alt={typeof item.title === 'string' ? item.title : item.title.ko}
+                        className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
+                    />
+                    <div className="absolute top-8 right-8 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">2D Preview Mode</span>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
@@ -196,15 +220,18 @@ const VirtualStorePage: React.FC = () => {
     const [newLongDescription, setNewLongDescription] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
     const [newDetailImageUrl, setNewDetailImageUrl] = useState('');
-    const [newSideImageUrl, setNewSideImageUrl] = useState('');
+    const [newLeftSideImageUrl, setNewLeftSideImageUrl] = useState('');
+    const [newRightSideImageUrl, setNewRightSideImageUrl] = useState('');
     const [newBackImageUrl, setNewBackImageUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [detailPreviewUrl, setDetailPreviewUrl] = useState<string | null>(null);
-    const [sidePreviewUrl, setSidePreviewUrl] = useState<string | null>(null);
+    const [leftSidePreviewUrl, setLeftSidePreviewUrl] = useState<string | null>(null);
+    const [rightSidePreviewUrl, setRightSidePreviewUrl] = useState<string | null>(null);
     const [backPreviewUrl, setBackPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const detailFileInputRef = useRef<HTMLInputElement>(null);
-    const sideFileInputRef = useRef<HTMLInputElement>(null);
+    const leftSideFileInputRef = useRef<HTMLInputElement>(null);
+    const rightSideFileInputRef = useRef<HTMLInputElement>(null);
     const backFileInputRef = useRef<HTMLInputElement>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -230,6 +257,8 @@ const VirtualStorePage: React.FC = () => {
                 imageUrl: dbItem.image_url,
                 thumbnailUrl: dbItem.thumbnail_url,
                 sideImageUrl: dbItem.side_image_url,
+                leftSideImageUrl: dbItem.left_side_image_url,
+                rightSideImageUrl: dbItem.right_side_image_url,
                 backImageUrl: dbItem.back_image_url,
                 date: typeof dbItem.event_date === 'string' ? JSON.parse(dbItem.event_date) : dbItem.event_date,
                 location: typeof dbItem.location === 'string' ? JSON.parse(dbItem.location) : dbItem.location,
@@ -292,9 +321,12 @@ const VirtualStorePage: React.FC = () => {
         setDetailPreviewUrl(item.thumbnailUrl || null);
         setNewDetailImageUrl(item.thumbnailUrl || '');
         
-        setSidePreviewUrl(item.sideImageUrl || null);
-        setNewSideImageUrl(item.sideImageUrl || '');
-        
+        setLeftSidePreviewUrl(item.leftSideImageUrl || null);
+        setNewLeftSideImageUrl(item.leftSideImageUrl || '');
+
+        setRightSidePreviewUrl(item.rightSideImageUrl || null);
+        setNewRightSideImageUrl(item.rightSideImageUrl || '');
+
         setBackPreviewUrl(item.backImageUrl || null);
         setNewBackImageUrl(item.backImageUrl || '');
         
@@ -325,7 +357,7 @@ const VirtualStorePage: React.FC = () => {
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'detail' | 'side' | 'back') => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'detail' | 'back' | 'left' | 'right') => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
@@ -333,7 +365,8 @@ const VirtualStorePage: React.FC = () => {
                 const res = reader.result as string;
                 if (type === 'main') setPreviewUrl(res);
                 else if (type === 'detail') setDetailPreviewUrl(res);
-                else if (type === 'side') setSidePreviewUrl(res);
+                else if (type === 'left') setLeftSidePreviewUrl(res);
+                else if (type === 'right') setRightSidePreviewUrl(res);
                 else if (type === 'back') setBackPreviewUrl(res);
             };
             reader.readAsDataURL(file);
@@ -351,7 +384,8 @@ const VirtualStorePage: React.FC = () => {
         try {
             let finalImageUrl = newImageUrl;
             let finalDetailImageUrl = newDetailImageUrl;
-            let finalSideImageUrl = newSideImageUrl;
+            let finalLeftSideImageUrl = newLeftSideImageUrl;
+            let finalRightSideImageUrl = newRightSideImageUrl;
             let finalBackImageUrl = newBackImageUrl;
 
             const adminToken = sessionStorage.getItem('admin_token');
@@ -371,7 +405,8 @@ const VirtualStorePage: React.FC = () => {
 
             if (fileInputRef.current?.files?.[0]) finalImageUrl = await uploadFile(fileInputRef.current.files[0]);
             if (detailFileInputRef.current?.files?.[0]) finalDetailImageUrl = await uploadFile(detailFileInputRef.current.files[0]);
-            if (sideFileInputRef.current?.files?.[0]) finalSideImageUrl = await uploadFile(sideFileInputRef.current.files[0]);
+            if (leftSideFileInputRef.current?.files?.[0]) finalLeftSideImageUrl = await uploadFile(leftSideFileInputRef.current.files[0]);
+            if (rightSideFileInputRef.current?.files?.[0]) finalRightSideImageUrl = await uploadFile(rightSideFileInputRef.current.files[0]);
             if (backFileInputRef.current?.files?.[0]) finalBackImageUrl = await uploadFile(backFileInputRef.current.files[0]);
 
             if (!finalImageUrl) {
@@ -379,6 +414,8 @@ const VirtualStorePage: React.FC = () => {
                 alert(msg);
                 return;
             }
+
+            const oldItem = isEditMode ? storeItems.find(i => i.id === editingId) : null;
 
             const newItem = {
                 id: isEditMode ? editingId : `store-${Date.now()}`,
@@ -389,7 +426,9 @@ const VirtualStorePage: React.FC = () => {
                 long_description: { ko: newLongDescription || '상세 정보가 등록되지 않았습니다.', en: newLongDescription || 'No detailed info.' },
                 image_url: finalImageUrl,
                 thumbnail_url: finalDetailImageUrl || '',
-                side_image_url: finalSideImageUrl || '',
+                side_image_url: oldItem?.sideImageUrl || '',
+                left_side_image_url: finalLeftSideImageUrl || '',
+                right_side_image_url: finalRightSideImageUrl || '',
                 back_image_url: finalBackImageUrl || '',
                 event_date: { ko: 'In Stock', en: 'In Stock' },
                 location: { ko: 'Boutique', en: 'Boutique' },
@@ -419,11 +458,13 @@ const VirtualStorePage: React.FC = () => {
                 setNewLongDescription('');
                 setNewImageUrl('');
                 setNewDetailImageUrl('');
-                setNewSideImageUrl('');
+                setNewLeftSideImageUrl('');
+                setNewRightSideImageUrl('');
                 setNewBackImageUrl('');
                 setPreviewUrl(null);
                 setDetailPreviewUrl(null);
-                setSidePreviewUrl(null);
+                setLeftSidePreviewUrl(null);
+                setRightSidePreviewUrl(null);
                 setBackPreviewUrl(null);
                 setShowAddModal(false);
                 setIsEditMode(false);
@@ -800,19 +841,39 @@ const VirtualStorePage: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="측면 이미지 (3D 측면)" />
+                                                <AutoTranslatedText text="좌측 이미지 (3D 좌측)" />
                                             </label>
-                                            <input type="file" ref={sideFileInputRef} onChange={(e) => handleFileChange(e, 'side')} accept="image/*" className="hidden" />
-                                            {!sidePreviewUrl ? (
-                                                <button onClick={() => sideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
+                                            <input type="file" ref={leftSideFileInputRef} onChange={(e) => handleFileChange(e, 'left')} accept="image/*" className="hidden" />
+                                            {!leftSidePreviewUrl ? (
+                                                <button onClick={() => leftSideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Side Image</span>
+                                                    <span className="text-[10px] font-bold">Left Side Image</span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
-                                                    <img src={sidePreviewUrl} alt="Side Preview" className="w-full h-full object-cover" />
+                                                    <img src={leftSidePreviewUrl} alt="Left Side Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setLeftSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
+                                                <AutoTranslatedText text="우측 이미지 (3D 우측)" />
+                                            </label>
+                                            <input type="file" ref={rightSideFileInputRef} onChange={(e) => handleFileChange(e, 'right')} accept="image/*" className="hidden" />
+                                            {!rightSidePreviewUrl ? (
+                                                <button onClick={() => rightSideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
+                                                    <UploadCloud size={24} className="mb-2" />
+                                                    <span className="text-[10px] font-bold">Right Side Image</span>
+                                                </button>
+                                            ) : (
+                                                <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
+                                                    <img src={rightSidePreviewUrl} alt="Right Side Preview" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
+                                                        <button onClick={() => setRightSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
                                                     </div>
                                                 </div>
                                             )}
