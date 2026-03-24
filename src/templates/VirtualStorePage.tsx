@@ -433,7 +433,8 @@ const VirtualStorePage: React.FC = () => {
                 event_date: { ko: 'In Stock', en: 'In Stock' },
                 location: { ko: 'Boutique', en: 'Boutique' },
                 price: newPrice || `₩${Math.floor(Math.random() * 10 + 5)},000`,
-                parent_id: location.state?.parentId || null
+                parent_id: parentId || null,
+                agency_id: user?.id || null
             };
 
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
