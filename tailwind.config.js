@@ -19,7 +19,7 @@ export default {
                 'dancheong-vibrant-yellow': '#FFF100',
                 'dancheong-gold': '#D4AF37',
                 'dancheong-white': '#F5F5DC', // Oksun (Off-white)
-                'dancheong-deep-bg': '#2D3D36', // Deep Noirok
+                'dancheong-deep-bg': '#1A2420', // Deep Noirok (Aligned with Template)
                 'dancheong-deep-red': '#7A221E',
                 'dancheong-deep-green': '#1E2924',
                 'dancheong-border': 'rgba(212, 175, 55, 0.2)',
