@@ -112,6 +112,7 @@ export const GlobalMiniMap: React.FC<{
                             animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
                             className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4 shrink-0">
                                 <Layers size={18} className="text-white/40" />
@@ -222,7 +223,10 @@ export const GlobalMiniMap: React.FC<{
                 {/* Toggle Button */}
                 {!hideIcon && (
                     <button
-                        onClick={() => handleToggle(!isExpanded)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(!isExpanded);
+                        }}
                         className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
                         style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
                     >
