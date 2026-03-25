@@ -472,7 +472,7 @@ const GalleryScene = ({
             const targetZ = exhibits[targetIndex].zPos;
             // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
             const targetOffset = isMobile 
-                ? (targetIndex / exhibits.length) / 3.0 // Using the first rotation (K=0) for simplest mapping
+                ? THREE.MathUtils.clamp((Math.round(scroll.offset * 3.0 - (targetIndex / exhibits.length)) + (targetIndex / exhibits.length)) / 3.0, 0, 1)
                 : (targetZ + 8) / -(totalZ + 10);
             
             forcedScroll.current = { 
