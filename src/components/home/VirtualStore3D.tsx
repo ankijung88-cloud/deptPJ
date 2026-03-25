@@ -1720,7 +1720,7 @@ export const VirtualStore3D: React.FC = () => {
             {isAtInspiration && (
                 <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
                     <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
-                        <AutoTranslatedText text="[드래그하여 회전] • [층 버튼을 클릭하여 선택]" />
+                        <AutoTranslatedText text="[드래그하여 회전] • [층버튼을 클릭하여 선택]" />
                     </div>
 
                     <button
