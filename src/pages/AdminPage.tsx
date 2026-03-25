@@ -1679,7 +1679,6 @@ const AgencyManager = () => {
                             <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="ID / PW" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Contact" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Address" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Status" /></th>
                             <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
                         </tr>
@@ -1702,13 +1701,6 @@ const AgencyManager = () => {
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col text-[10px] text-white/60 space-y-0.5">
                                         <span className="flex items-center gap-1"><span className="text-white/20 italic">M:</span> {agency.phone_mobile || '-'}</span>
-                                        <span className="flex items-center gap-1"><span className="text-white/20 italic">C:</span> {agency.phone_company || '-'}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex flex-col max-w-[200px]">
-                                        <span className="text-white/60 text-[10px] line-clamp-1" title={agency.address}>{agency.address || '-'}</span>
-                                        <span className="text-white/40 text-[9px] line-clamp-1" title={agency.address_detail}>{agency.address_detail || '-'}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
@@ -1779,10 +1771,7 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
         password: '',
         agencyName: agency?.agency_name || '',
         birthDate: agency?.birth_date || '',
-        phoneMobile: agency?.phone_mobile || '',
-        phoneCompany: agency?.phone_company || '',
-        address: agency?.address || '',
-        addressDetail: agency?.address_detail || ''
+        phoneMobile: agency?.phone_mobile || ''
     });
 
     // Manual address entry enabled; no additional scripts needed.
@@ -1839,27 +1828,6 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
                                 <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
                                 <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
                             </div>
-                            <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Company)" /></label>
-                                <input type="text" value={formData.phoneCompany} onChange={e => setFormData({...formData, phoneCompany: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Company Address" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.address} 
-                                onChange={e => setFormData({...formData, address: e.target.value})}
-                                placeholder="회사 주소 입력"
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 outline-none" 
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Detailed Address" /></label>
-                            <input type="text" value={formData.addressDetail} onChange={e => setFormData({...formData, addressDetail: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
                         </div>
                     </div>
 

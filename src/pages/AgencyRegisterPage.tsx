@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone, MapPin } from 'lucide-react';
+import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone } from 'lucide-react';
 import { registerAgency } from '../api/auth';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 
@@ -19,10 +19,7 @@ const AgencyRegisterPage: React.FC = () => {
         password: '',
         agencyName: '',
         birthDate: '',
-        phoneMobile: '',
-        phoneCompany: '',
-        address: '',
-        addressDetail: ''
+        phoneMobile: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -119,119 +116,108 @@ const AgencyRegisterPage: React.FC = () => {
                         )}
 
                         <div className="flex flex-col gap-6">
+                            {/* Agency Name */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="에이전시 명" /></label>
                                 <div className="relative group">
-                                    <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
+                                    <Building className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.agencyName ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
                                     <input
                                         type="text"
                                         required
                                         placeholder="Agency Name"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
+                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
+                                            !formData.agencyName && formData.agencyName !== '' ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
+                                        }`}
                                         value={formData.agencyName}
                                         onChange={(e) => setFormData({ ...formData, agencyName: e.target.value })}
                                     />
                                 </div>
+                                <p className="text-[10px] text-dancheong-white/30 ml-1">
+                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 에이전시 정식 명칭을 입력해 주세요." />
+                                </p>
                             </div>
 
+                            {/* Email (ID) */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="아이디 (이메일)" /></label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
+                                    <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.username.includes('@') ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
                                     <input
                                         type="email"
                                         required
                                         placeholder="Email Address"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
+                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
+                                            formData.username && !formData.username.includes('@') ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
+                                        }`}
                                         value={formData.username}
                                         onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                     />
                                 </div>
+                                <p className={`text-[10px] ml-1 ${formData.username && !formData.username.includes('@') ? 'text-red-400' : 'text-dancheong-white/30'}`}>
+                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 유효한 이메일 주소를 입력해 주세요 (예: user@example.com)" />
+                                </p>
                             </div>
 
+                            {/* Password */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="비밀번호" /></label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
+                                    <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.password.length >= 8 ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
                                     <input
                                         type="password"
                                         required
                                         placeholder="Password"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
+                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
+                                            formData.password && formData.password.length < 8 ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
+                                        }`}
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     />
                                 </div>
+                                <p className={`text-[10px] ml-1 ${formData.password && formData.password.length < 8 ? 'text-red-400' : 'text-dancheong-white/30'}`}>
+                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 영문, 숫자 포함 8자 이상으로 설정해 주세요." />
+                                </p>
                             </div>
 
+                            {/* Birth Date */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="생년월일" /></label>
                                 <div className="relative group">
-                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
+                                    <Calendar className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.birthDate ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
                                     <input
                                         type="date"
+                                        required
                                         className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium appearance-none"
                                         value={formData.birthDate}
                                         onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                                     />
                                 </div>
+                                <p className="text-[10px] text-dancheong-white/30 ml-1">
+                                    <AutoTranslatedText text="* 필수 입력 사항입니다." />
+                                </p>
                             </div>
 
+                            {/* Mobile Phone */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="휴대폰 번호" /></label>
                                 <div className="relative group">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
+                                    <Phone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
                                     <input
                                         type="tel"
+                                        required
                                         placeholder="010-0000-0000"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
+                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
+                                            formData.phoneMobile && !/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
+                                        }`}
                                         value={formData.phoneMobile}
                                         onChange={(e) => setFormData({ ...formData, phoneMobile: e.target.value })}
                                     />
                                 </div>
+                                <p className={`text-[10px] ml-1 ${formData.phoneMobile && !/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'text-red-400' : 'text-dancheong-white/30'}`}>
+                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 하이픈(-)을 포함하여 입력해 주세요. (예: 010-1234-5678)" />
+                                </p>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="회사 연락처" /></label>
-                                <div className="relative group">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
-                                    <input
-                                        type="tel"
-                                        placeholder="02-000-0000"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
-                                        value={formData.phoneCompany}
-                                        onChange={(e) => setFormData({ ...formData, phoneCompany: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="회사 주소" /></label>
-                                    <div className="relative group">
-                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-white/30 group-focus-within:text-[#00FFC2] transition-colors" size={18} />
-                                        <input
-                                            type="text"
-                                            placeholder="회사 주소를 직접 입력해 주세요"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
-                                            value={formData.address}
-                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="상세 주소" /></label>
-                                <input
-                                    id="addressDetail"
-                                    type="text"
-                                    placeholder="상세 주소 입력"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium"
-                                    value={formData.addressDetail}
-                                    onChange={(e) => setFormData({ ...formData, addressDetail: e.target.value })}
-                                />
-                            </div>
                         </div>
 
                         <button
