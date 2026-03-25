@@ -108,7 +108,15 @@ const Satellites = ({ count, color, visible }: { count: number, color: string, v
 };
 
 // --- 3D Background for Modal ---
-const GlassFragment = ({ category, position, color, i18nLanguage, onClick, productCount = 0 }: { category: any, position: [number, number, number], color: string, i18nLanguage: string, onClick: () => void, productCount?: number }) => {
+const GlassFragment = ({ category, position, color, i18nLanguage, onClick, productCount = 0, onHoverChange }: { 
+    category: any, 
+    position: [number, number, number], 
+    color: string, 
+    i18nLanguage: string, 
+    onClick: () => void, 
+    productCount?: number,
+    onHoverChange?: (id: string | null) => void
+}) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
     
@@ -126,8 +134,16 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                 
                 <mesh 
                     ref={meshRef}
-                    onPointerOver={() => { document.body.style.cursor = 'pointer'; setHovered(true); }}
-                    onPointerOut={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
+                    onPointerOver={() => { 
+                        document.body.style.cursor = 'pointer'; 
+                        setHovered(true); 
+                        onHoverChange?.(category.id);
+                    }}
+                    onPointerOut={() => { 
+                        document.body.style.cursor = 'auto'; 
+                        setHovered(false); 
+                        onHoverChange?.(null);
+                    }}
                     onClick={(e) => { e.stopPropagation(); onClick(); }}
                 >
                     <icosahedronGeometry args={[4.5, 1]} />
@@ -169,6 +185,11 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     productCounts: Record<string, number>
 }) => {
     const groupRef = useRef<THREE.Group>(null);
+    const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
+
+    const hoveredCat = useMemo(() => 
+        categories?.find(c => c.id === hoveredCatId), 
+    [categories, hoveredCatId]);
     
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -226,10 +247,24 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                     <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18nLanguage)} />
                                 </span>
                             </div>
-                            <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-12 tracking-[0.2em] uppercase text-center max-w-[800px]">
+                            <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-4 tracking-[0.2em] uppercase text-center max-w-[800px]">
                                 <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
                                 <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
                             </p>
+
+                            {/* Hovered Category Sub-items (Expanding Layout) */}
+                            <div className={`overflow-hidden transition-all duration-500 flex flex-wrap justify-center gap-4 max-w-[900px] w-full ${hoveredCat ? 'max-h-[300px] opacity-100 mb-8 mt-4' : 'max-h-0 opacity-0 mb-0 mt-0'}`}>
+                                {hoveredCat?.subitems?.map((sub: any) => (
+                                    <div 
+                                        key={sub.id} 
+                                        className="px-6 py-3 border border-white/20 rounded-xl text-white font-bold tracking-widest backdrop-blur-xl bg-white/5 animate-in fade-in zoom-in duration-300"
+                                        style={{ boxShadow: `0 0 20px ${activeFloorData.color}20` }}
+                                    >
+                                        <AutoTranslatedText text={getLocalizedText(sub.label, i18nLanguage)} />
+                                    </div>
+                                ))}
+                            </div>
+
                             <button
                                 onClick={(e) => { e.stopPropagation(); onClose(); }}
                                 className="w-[500px] py-8 font-bold tracking-[0.4em] text-3xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/20"
@@ -252,6 +287,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                         i18nLanguage={i18nLanguage} 
                         onClick={() => onCategoryClick(cat.id)}
                         productCount={productCounts[cat.id] || 0}
+                        onHoverChange={setHoveredCatId}
                     />
                 ))}
             </group>
