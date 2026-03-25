@@ -183,7 +183,7 @@ export const GlobalMiniMap: React.FC<{
                                                                             }}
                                                                             className="w-full text-left text-sm text-white/80 font-bold leading-tight hover:text-white transition-colors"
                                                                         >
-                                                                            <AutoTranslatedText text={typeof item.title === 'string' ? item.title : item.title?.ko || ''} />
+                                                                            <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                                                         </button>
                                                                     ))}
                                                                 </div>
