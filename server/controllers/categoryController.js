@@ -30,15 +30,14 @@ export const createFloorCategory = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO floor_categories (id, floor, title, description, bg_image, content, subitems, color, video_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO floor_categories (id, floor, title, description, content, subitems, color, video_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await pool.query(query, [
       id, 
       floor, 
       JSON.stringify(title), 
       JSON.stringify(description), 
-      final_bg_image, 
       JSON.stringify(content), 
       JSON.stringify(subitems), 
       color, 
@@ -64,14 +63,13 @@ export const updateFloorCategory = async (req, res) => {
   try {
     const query = `
       UPDATE floor_categories 
-      SET floor = ?, title = ?, description = ?, bg_image = ?, content = ?, subitems = ?, color = ?, video_url = ?
+      SET floor = ?, title = ?, description = ?, content = ?, subitems = ?, color = ?, video_url = ?
       WHERE id = ?
     `;
     const [result] = await pool.query(query, [
       floor, 
       JSON.stringify(title), 
       JSON.stringify(description), 
-      final_bg_image, 
       JSON.stringify(content), 
       JSON.stringify(subitems), 
       color, 

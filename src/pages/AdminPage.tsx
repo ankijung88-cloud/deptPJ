@@ -948,7 +948,6 @@ const FloorManager = () => {
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Thumbnail" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Description" /></th>

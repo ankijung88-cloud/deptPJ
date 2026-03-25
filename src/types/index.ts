@@ -70,7 +70,7 @@ export interface FloorCategory {
     floor: string;
     title: LocalizedString;
     description: LocalizedString;
-    bgImage: string;
+    bgImage?: string;
     color?: string;
     videoUrl?: string;
     content?: FloorContent[];

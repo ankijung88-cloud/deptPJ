@@ -88,14 +88,7 @@ const FloorContentPage: React.FC = () => {
         <div className="pb-20 min-h-screen text-white font-sans" style={theme.bgStyle}>
             {/* Editorial Header */}
             <header className="relative w-full py-24 flex items-center justify-center overflow-hidden mb-16 border-b border-white/10">
-                <div className="absolute inset-0 z-0 opacity-20">
-                    <img
-                        src={floorData.bgImage}
-                        alt=""
-                        className="w-full h-full object-cover grayscale"
-                    />
-                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgColor}, transparent)` }} />
-                </div>
+                <div className="absolute inset-0 z-0 opacity-20 bg-gradient-to-t from-black to-transparent" />
 
                 <div className="container mx-auto px-6 relative z-10 text-left max-w-7xl">
                     <motion.div
