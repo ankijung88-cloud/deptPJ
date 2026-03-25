@@ -1905,10 +1905,12 @@ export const AdminPage: React.FC = () => {
 
     const tabs = [
         { id: 'products', label: 'Products', icon: Package },
-        ...(isAdmin ? [{ id: 'agencies', label: 'Agencies', icon: Layers }] : []),
-        { id: 'floors', label: 'Floors', icon: Layers },
-        { id: 'notices', label: 'Notices', icon: Megaphone },
-        { id: 'faqs', label: 'FAQs', icon: HelpCircle },
+        ...(isAdmin ? [
+            { id: 'agencies', label: 'Agencies', icon: Layers },
+            { id: 'floors', label: 'Floors', icon: Layers },
+            { id: 'notices', label: 'Notices', icon: Megaphone },
+            { id: 'faqs', label: 'FAQs', icon: HelpCircle }
+        ] : []),
     ];
 
     return (
