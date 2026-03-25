@@ -266,7 +266,14 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                             </div>
 
                             <button
-                                onClick={(e) => { e.stopPropagation(); onClose(); }}
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    if (hoveredCatId) {
+                                        onCategoryClick(hoveredCatId);
+                                    } else {
+                                        onClose(); 
+                                    }
+                                }}
                                 className="w-[500px] py-8 font-bold tracking-[0.4em] text-3xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/20"
                                 style={{ backgroundColor: activeFloorData.color, color: buttonTextColor }}
                             >
