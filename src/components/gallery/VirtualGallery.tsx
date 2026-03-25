@@ -2,8 +2,6 @@ import React, { useMemo, useRef, Suspense, Component, ReactNode, useState, useEf
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { 
     PerspectiveCamera, 
-    useScroll, 
-    ScrollControls,
     Image as DreiImage,
     Text as DreiText 
 } from '@react-three/drei';
@@ -237,7 +235,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const minSafeRadius = (5.5 * exhibitsCount) / (Math.PI * 2);
     const radius = isMobile ? Math.max(25, minSafeRadius) : 3.5;
     
-    const angleStep = (Math.PI * 2) / exhibitsCount;
     const verticalOffset = isMobile ? 0 : -0.5;
 
     useFrame((state) => {
@@ -246,13 +243,15 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
         const { size, viewport } = state;
         const isMobile = size.width < 768;
 
+        // Use the synchronized currentOffset passed from the scene
+        const currentOffset = (state as any).currentOffset || 0;
         let centerFactor = 0;
 
         if (isMobile) {
-            const scroll = (state as any).scrollOffset || 0;
-            const globalAngle = scroll * Math.PI * 2 * 3;
-            // Subtracting index * angleStep to bring higher index items from "below" as scroll increases
-            const cardAngle = globalAngle - (index * angleStep);
+            const angleStep = (Math.PI * 2) / exhibitsCount;
+            // Subtracting index * angleStep to bring higher index items from "below" as offset increases
+            // Adding a half-turn offset if needed, but current logic works well with 0 as center
+            const cardAngle = (currentOffset * angleStep) - (index * angleStep);
             
             const effectiveY = Math.sin(cardAngle) * radius + verticalOffset;
             const effectiveZ = Math.cos(cardAngle) * radius - radius;
@@ -281,7 +280,9 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             }
         } else {
             const sweetSpot = zPos + 8;
-            const distFromCamera = state.camera.position.z - sweetSpot;
+            const desktopOffset = currentOffset * 20; // 20 units per item on desktop
+            const cameraZ = -desktopOffset;
+            const distFromCamera = cameraZ - sweetSpot;
             const absDist = Math.abs(distFromCamera);
 
             const desktopPlateau = 2.5; 
@@ -414,11 +415,9 @@ const GalleryScene = ({
     cinemaItem = null,
     playing,
     setPlaying,
-    initialItemId = null,
-    navigateTargetId = null,
-    navigationDirection = null,
     onActiveIndexChange,
-    isActivated
+    isActivated,
+    targetIndex = 0
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -430,14 +429,11 @@ const GalleryScene = ({
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null,
-    navigateTargetId?: string | null,
-    navigationDirection?: 'up' | 'down' | null,
     onActiveIndexChange?: (index: number) => void,
-    isActivated?: boolean
+    isActivated?: boolean,
+    targetIndex?: number
 }) => {
-    const scroll = useScroll();
-    const { camera, set } = useThree() as any;
+    const { camera } = useThree() as any;
     
     const exhibits = useMemo(() => {
         const combined = [...(items || []), ...(stories || [])];
@@ -448,104 +444,14 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
-    const totalLaps = isMobile ? 5 : 1; // 5 laps for mobile buffer
-    const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
-    const lastInitialId = useRef<string | null>(null);
-    const lastNavigateId = useRef<string | null>(null);
-    const lastProcessedTargetId = useRef<string | null>(null);
+    const currentOffset = useRef(targetIndex);
+    const lastTargetIndex = useRef(targetIndex);
 
     useEffect(() => {
-        if (exhibits.length === 0) return;
-
-        let targetIndex = -1;
-        const currentTargetId = navigateTargetId || initialItemId;
-
-        if (currentTargetId && (currentTargetId !== lastProcessedTargetId.current)) {
-            targetIndex = exhibits.findIndex(ex => ex.id === currentTargetId);
-            if (targetIndex !== -1) {
-                lastProcessedTargetId.current = currentTargetId;
-                if (navigateTargetId) lastNavigateId.current = navigateTargetId;
-                else lastInitialId.current = initialItemId;
-            }
-        } else if (!currentTargetId && lastInitialId.current === null && !forcedScroll.current.active) {
-            targetIndex = 0;
-            lastInitialId.current = 'default-0';
-            lastProcessedTargetId.current = 'default-0';
+        if (targetIndex !== lastTargetIndex.current) {
+            lastTargetIndex.current = targetIndex;
         }
-
-        if (targetIndex !== -1) {
-            const spacing = 20;
-            const totalZ = exhibits.length * spacing;
-            const targetZ = exhibits[targetIndex].zPos;
-            // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
-            let targetOffset;
-            if (isMobile) {
-                const progressWithinLap = targetIndex / (exhibits.length || 1);
-                const currentOverall = scroll.offset * totalLaps;
-                const currentLap = Math.floor(currentOverall);
-                
-                let targetLap = currentLap;
-                let finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
-
-                // Absolute direction enforcement: 
-                // Down must move forward (+ offset), Up must move backward (- offset)
-                if (navigationDirection === 'down') {
-                    // If the target index's relative position is behind us, it must be in the next lap
-                    while (finalTargetOffset <= scroll.offset + 0.001 && targetLap < totalLaps - 1) {
-                        targetLap++;
-                        finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
-                    }
-                } else if (navigationDirection === 'up') {
-                    // If the target index's relative position is ahead of us, it must be in the previous lap
-                    while (finalTargetOffset >= scroll.offset - 0.001 && targetLap > 0) {
-                        targetLap--;
-                        finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
-                    }
-                } else {
-                    // Initial centering or default: start in the middle (lap 2 of 5)
-                    targetLap = Math.max(1, Math.min(3, Math.round(currentOverall - progressWithinLap)));
-                    if (initialItemId && lastInitialId.current === null) {
-                        targetLap = 2; // Mid-point anchor for newcomers
-                    }
-                    finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
-                }
-                
-                targetOffset = THREE.MathUtils.clamp(finalTargetOffset, 0, 1);
-            } else {
-                targetOffset = (targetZ + 8) / -(totalZ + 10);
-            }
-            
-            forcedScroll.current = { 
-                offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
-                startTime: Date.now(),
-                active: true
-            };
-        }
-    }, [exhibits.length, initialItemId, navigateTargetId, exhibits]);
-
-    // Listen to actual user interaction events to release the scroll lock
-    useEffect(() => {
-        const el = scroll?.el;
-        if (!el) return;
-
-        const handleInteraction = () => {
-            if (forcedScroll.current.active) {
-                forcedScroll.current.active = false;
-            }
-        };
-
-        el.addEventListener('wheel', handleInteraction, { passive: true });
-        el.addEventListener('touchstart', handleInteraction, { passive: true });
-        el.addEventListener('touchmove', handleInteraction, { passive: true });
-        el.addEventListener('keydown', handleInteraction, { passive: true });
-
-        return () => {
-            el.removeEventListener('wheel', handleInteraction);
-            el.removeEventListener('touchstart', handleInteraction);
-            el.removeEventListener('touchmove', handleInteraction);
-            el.removeEventListener('keydown', handleInteraction);
-        };
-    }, [scroll?.el]);
+    }, [targetIndex]);
 
     const museumWalls = useMemo(() => {
         if (!isMuseum) return null;
@@ -574,94 +480,33 @@ const GalleryScene = ({
         );
     }, [isMuseum, exhibits.length]);
 
-    useEffect(() => {
-        set({ exhibitsCount: exhibits.length });
-    }, [exhibits.length, set]);
-
-    const focusState = useRef({ index: -1, startTime: 0 });
-
     const lastSetIndex = useRef<number>(-1);
+    useFrame((frameState, delta) => {
+        if (!isActivated) return;
 
-    useFrame((frameState) => {
-        const spacing = 20;
-        const totalZ = exhibits.length * spacing;
+        // Smoothly interpolate currentOffset towards targetIndex
+        // For mobile infinite feel, we use a continuous targetIndex
+        const lerpSpeed = 4.5;
+        currentOffset.current = THREE.MathUtils.lerp(currentOffset.current, targetIndex, delta * lerpSpeed);
 
-        // Force scroll if active
-        if (forcedScroll.current.active) {
-            const duration = 1000;
-            const elapsed = Date.now() - forcedScroll.current.startTime;
-            const progress = THREE.MathUtils.smoothstep(elapsed / duration, 0, 1);
-            
-            scroll.offset = THREE.MathUtils.lerp(scroll.offset, forcedScroll.current.offset, progress);
-            if (scroll.el) {
-                scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
-            }
-            
-            if (progress >= 1) {
-                forcedScroll.current.active = false;
-                // Double check final alignment
-                if (scroll.el) {
-                    scroll.el.scrollTop = forcedScroll.current.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
-                }
-            }
-        }
-
-        (frameState as any).scrollOffset = scroll.offset;
+        // Pass the calculated offset to frame state for children to read
+        (frameState as any).currentOffset = currentOffset.current;
 
         if (isMobile) {
             camera.position.set(0, 0, 5);
             camera.lookAt(0, 0, 0);
-            let pullBias = 0;
-            const angleStep = (Math.PI * 2) / exhibits.length;
-            const globalAngle = (scroll.offset || 0) * Math.PI * 2 * totalLaps;
-
-            let minDistance = Infinity;
-            let closestIndex = 0;
-
-            exhibits.forEach((_, i) => {
-                const cardAngle = globalAngle + (i * angleStep);
-                const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-                const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
-                
-                if (distFromFront < minDistance) {
-                    minDistance = distFromFront;
-                    closestIndex = i;
-                }
-
-                if (distFromFront < 0.1) {
-                    if (focusState.current.index !== i) {
-                        focusState.current = { index: i, startTime: frameState.clock.elapsedTime };
-                    }
-                    const elapsed = frameState.clock.elapsedTime - focusState.current.startTime;
-                    if (elapsed < 1.0) {
-                        // Stronger pull when snapping
-                        pullBias = -distFromFront * (normalizedAngle > Math.PI ? -1 : 1);
-                    }
-                }
-            });
-
-            // Only set index if not in forced scroll AND not doing a heavy snap adjustment
-            const isHeavySnapping = Math.abs(pullBias) > 0.02;
-            if (closestIndex !== lastSetIndex.current && onActiveIndexChange && !forcedScroll.current.active && !isHeavySnapping) {
+            
+            // On mobile, the active index is simply around the currentOffset
+            const closestIndex = ((Math.round(currentOffset.current) % exhibits.length) + exhibits.length) % exhibits.length;
+            
+            if (closestIndex !== lastSetIndex.current && onActiveIndexChange) {
                 lastSetIndex.current = closestIndex;
                 onActiveIndexChange(closestIndex);
             }
-
-            // Smoother pull factor for mobile snapping
-            const finalBias = (!forcedScroll.current.active && isActivated) ? pullBias * 0.03 : 0; 
-            (frameState as any).scrollOffset = scroll.offset + finalBias;
         } else {
-            const scrollZ = scroll.offset * -(totalZ + 10);
-            let pullBias = 0;
-            exhibits.forEach((ex) => {
-                const sweetSpot = ex.zPos + 8;
-                const dist = Math.abs(scrollZ - sweetSpot);
-                if (dist < 6) {
-                    const desktopStrength = Math.pow(1 - dist / 6, 2);
-                    pullBias += (sweetSpot - scrollZ) * desktopStrength * 0.85;
-                }
-            });
-            const targetCameraZ = scrollZ + pullBias;
+            const spacing = 20;
+            const desktopOffset = currentOffset.current * spacing;
+            const targetCameraZ = -desktopOffset;
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCameraZ, 0.1);
             camera.lookAt(0, 0, camera.position.z - 20);
         }
@@ -757,35 +602,30 @@ export const VirtualGallery = ({
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const [, setActiveIndex] = useState(0);
-    const [navigateTargetId, setNavigateTargetId] = useState<string | null>(null);
-    const [navDir, setNavDir] = useState<'up' | 'down' | null>(null);
+    const [targetIndex, setTargetIndex] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const totalExhibits = (items?.length || 0) + (stories?.length || 0);
 
     const handleNavigate = (direction: 'up' | 'down') => {
         if (totalExhibits === 0) return;
         
-        setActiveIndex(prev => {
-            const nextIndex = direction === 'up' 
-                ? (prev - 1 + totalExhibits) % totalExhibits
-                : (prev + 1) % totalExhibits;
-            
-            const combined = [...(items || []), ...(stories || [])];
-            const target = combined[nextIndex];
-            if (target) {
-                setNavDir(direction);
-                setNavigateTargetId(target.id);
-            }
-            return nextIndex;
+        setTargetIndex(prev => {
+            const next = direction === 'up' ? prev - 1 : prev + 1;
+            return next;
         });
     };
 
     useEffect(() => {
-        if (initialItemId) {
-            setIsActivated(true);
+        if (initialItemId && items.length > 0) {
+            const idx = items.findIndex(item => item.id === initialItemId);
+            if (idx !== -1) {
+                setTargetIndex(idx);
+                setActiveIndex(idx);
+                setIsActivated(true);
+            }
         }
-    }, [initialItemId]);
+    }, [initialItemId, items]);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -813,37 +653,23 @@ export const VirtualGallery = ({
             }>
                 <Canvas shadows={false} dpr={[1, 2]}>
                     <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
-                    <ScrollControls 
-                        pages={!isActivated 
-                            ? 0 
-                            : (isMobile 
-                                ? Math.max(10, ((items?.length || 0) + (stories?.length || 0)) * 4.5) 
-                                : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8))} 
-                        damping={0.3} 
-                        distance={1}
-                        enabled={isActivated}
-                        style={!isActivated ? { display: 'none', visibility: 'hidden', pointerEvents: 'none' } : ({} as any)}
-                    >
-                        <Suspense fallback={null}>
-                                <GalleryScene 
-                                    items={items} 
-                                    stories={stories} 
-                                    theme={theme} 
-                                    lang={lang} 
-                                    onItemClick={onItemClick} 
-                                    isMobile={isMobile}
-                                    isMuseum={isMuseum}
-                                    cinemaItem={cinemaItem}
-                                    playing={playing}
-                                    setPlaying={setPlaying}
-                                    initialItemId={initialItemId}
-                                    navigateTargetId={navigateTargetId}
-                                    navigationDirection={navDir}
-                                    onActiveIndexChange={setActiveIndex}
-                                    isActivated={isActivated}
-                                />
-                        </Suspense>
-                    </ScrollControls>
+                    <Suspense fallback={null}>
+                            <GalleryScene 
+                                items={items} 
+                                stories={stories} 
+                                theme={theme} 
+                                lang={lang} 
+                                onItemClick={onItemClick} 
+                                isMobile={isMobile}
+                                isMuseum={isMuseum}
+                                cinemaItem={cinemaItem}
+                                playing={playing}
+                                setPlaying={setPlaying}
+                                onActiveIndexChange={setActiveIndex}
+                                isActivated={isActivated}
+                                targetIndex={targetIndex}
+                            />
+                    </Suspense>
                 </Canvas>
             </GalleryErrorBoundary>
 
@@ -873,8 +699,8 @@ export const VirtualGallery = ({
                     <div className="absolute bottom-24 md:bottom-10 left-20 md:left-10 pointer-events-none z-20">
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col">
-                                <span className="text-2xl font-black text-white leading-none">{items.length + stories.length}</span>
-                                <span className="text-[8px] font-mono tracking-widest text-white/40 uppercase"><AutoTranslatedText text="Total Exhibits" /></span>
+                                <span className="text-2xl font-black text-white leading-none">{(activeIndex % totalExhibits + totalExhibits) % totalExhibits + 1} / {totalExhibits}</span>
+                                <span className="text-[8px] font-mono tracking-widest text-white/40 uppercase"><AutoTranslatedText text="Current Exhibit" /></span>
                             </div>
                         </div>
                     </div>
