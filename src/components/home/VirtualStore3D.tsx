@@ -1171,11 +1171,13 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 };
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
-const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles }: {
+const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles, showMinimap, setShowMinimap }: {
     activeFloorData: any,
     onClose: () => void,
     productCounts: Record<string, number>,
-    productGroupedTitles: Record<string, string[]>
+    productGroupedTitles: Record<string, string[]>,
+    showMinimap: boolean,
+    setShowMinimap: (val: boolean) => void
 }) => {
     useImmersiveMode(true);
     const navigate = useNavigate();
@@ -1187,7 +1189,6 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [cameraZPos, setCameraZPos] = useState(60);
-    const [showMinimap, setShowMinimap] = useState(false);
     const [showMouseTrail, setShowMouseTrail] = useState(false);
 
     const MODAL_COLORS = {
@@ -1584,6 +1585,14 @@ export const VirtualStore3D: React.FC = () => {
 
     const [resetKey, setResetKey] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const [showMinimap, setShowMinimap] = useState(false);
+
+    // Auto-open minimap on floor hover (Desktop Only)
+    useEffect(() => {
+        if (!isMobile && hoveredFloor !== null) {
+            setShowMinimap(true);
+        }
+    }, [hoveredFloor, isMobile]);
 
     // Improved device detection using matchMedia
     React.useEffect(() => {
@@ -1719,6 +1728,8 @@ export const VirtualStore3D: React.FC = () => {
                             }}
                             productCounts={productCounts}
                             productGroupedTitles={productGroupedTitles}
+                            showMinimap={showMinimap}
+                            setShowMinimap={setShowMinimap}
                         />
                     )
                 )}
@@ -1740,6 +1751,17 @@ export const VirtualStore3D: React.FC = () => {
                         </span>
                     </button>
                 </div>
+            )}
+
+            {/* Global Minimap - Rendered at top level to be accessible from both views */}
+            {!isMobile && showMinimap && (
+                <GlobalMiniMap
+                    initialExpanded={true}
+                    hideIcon={true}
+                    className="fixed bottom-32 left-12 z-[2000] flex flex-col items-start gap-3 pointer-events-auto"
+                    targetFloor={hoveredFloor}
+                    onToggle={(expanded) => setShowMinimap(expanded)}
+                />
             )}
         </div>
     );

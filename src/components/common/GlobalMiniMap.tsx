@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useFloors } from '../../context/FloorContext';
@@ -13,15 +13,41 @@ export const GlobalMiniMap: React.FC<{
     initialExpanded?: boolean;
     hideIcon?: boolean;
     className?: string;
+    targetFloor?: number | null;
+    onToggle?: (expanded: boolean) => void;
 }> = ({
     initialExpanded = false,
     hideIcon = false,
-    className
+    className,
+    targetFloor,
+    onToggle
 }) => {
         const [isExpanded, setIsExpanded] = useState(initialExpanded);
         const [isHovered, setIsHovered] = useState(false);
         const [items, setItems] = useState<any[]>([]);
         const [stories, setStories] = useState<any[]>([]);
+        
+        const floorRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+        // Sync with initialExpanded if it changes from outside
+        useEffect(() => {
+            setIsExpanded(initialExpanded);
+        }, [initialExpanded]);
+
+        const handleToggle = (val: boolean) => {
+            setIsExpanded(val);
+            onToggle?.(val);
+        };
+
+        // Auto-scroll to target floor
+        useEffect(() => {
+            if (isExpanded && targetFloor !== null && targetFloor !== undefined) {
+                const element = floorRefs.current[targetFloor];
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }, [isExpanded, targetFloor]);
 
         const location = useLocation();
         const navigate = useNavigate();
@@ -98,13 +124,17 @@ export const GlobalMiniMap: React.FC<{
                                     const isCategoryActive = (sid: string) => subId === sid;
 
                                     return (
-                                        <div key={floor.id} className="space-y-3">
+                                        <div 
+                                            key={floor.id} 
+                                            className="space-y-3"
+                                            ref={(el) => (floorRefs.current[parseInt(floor.floor)] = el)}
+                                        >
                                             <button
                                                 onClick={() => {
                                                     if (floor.subitems && floor.subitems.length > 0) {
                                                         navigate(`/category/${floor.subitems[0].id}`);
                                                     }
-                                                    setIsExpanded(false);
+                                                    handleToggle(false);
                                                 }}
                                                 className={`w-full flex items-center justify-between group/floor transition-all ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
                                             >
@@ -131,7 +161,7 @@ export const GlobalMiniMap: React.FC<{
                                                             <button
                                                                 onClick={() => {
                                                                     navigate(`/category/${sub.id}`);
-                                                                    setIsExpanded(false);
+                                                                    handleToggle(false);
                                                                 }}
                                                                 className={`w-full text-left text-base font-black transition-all flex items-center gap-2 ${active ? 'text-white' : 'text-white/60 hover:text-white'}`}
                                                             >
@@ -146,7 +176,7 @@ export const GlobalMiniMap: React.FC<{
                                                                             key={item.id}
                                                                             onClick={() => {
                                                                                 navigate(`/category/${sub.id}`);
-                                                                                setIsExpanded(false);
+                                                                                handleToggle(false);
                                                                             }}
                                                                             className="w-full text-left text-sm text-white/80 font-bold leading-tight hover:text-white transition-colors"
                                                                         >
@@ -190,7 +220,7 @@ export const GlobalMiniMap: React.FC<{
                 {/* Toggle Button */}
                 {!hideIcon && (
                     <button
-                        onClick={() => setIsExpanded(!isExpanded)}
+                        onClick={() => handleToggle(!isExpanded)}
                         className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
                         style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
                     >
