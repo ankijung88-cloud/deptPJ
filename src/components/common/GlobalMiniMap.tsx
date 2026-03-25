@@ -10,29 +10,31 @@ import { getComplementaryColor } from '../../utils/themeUtils';
 
 
 export const GlobalMiniMap: React.FC<{
-    initialExpanded?: boolean;
+    expanded?: boolean;
     hideIcon?: boolean;
     className?: string;
     targetFloor?: number | null;
     onToggle?: (expanded: boolean) => void;
 }> = ({
-    initialExpanded = false,
+    expanded,
     hideIcon = false,
     className,
     targetFloor,
     onToggle
 }) => {
-        const [isExpanded, setIsExpanded] = useState(initialExpanded);
+        const [isExpanded, setIsExpanded] = useState(expanded || false);
         const [isHovered, setIsHovered] = useState(false);
         const [items, setItems] = useState<any[]>([]);
         const [stories, setStories] = useState<any[]>([]);
         
         const floorRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
-        // Sync with initialExpanded if it changes from outside
+        // Sync with external expanded state
         useEffect(() => {
-            setIsExpanded(initialExpanded);
-        }, [initialExpanded]);
+            if (expanded !== undefined) {
+                setIsExpanded(expanded);
+            }
+        }, [expanded]);
 
         const handleToggle = (val: boolean) => {
             setIsExpanded(val);

@@ -13,7 +13,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown, ArrowRight, Compass, MousePointer2 } from 'lucide-react';
+import { X, Play, Volume2, VolumeX, ChevronUp, ChevronDown, ArrowRight, MousePointer2 } from 'lucide-react';
 import { GlobalMiniMap } from '../common/GlobalMiniMap';
 import { MouseTrail3D } from '../common/MouseTrail3D';
 import { useTranslation } from 'react-i18next';
@@ -1171,13 +1171,11 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 };
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
-const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles, showMinimap, setShowMinimap }: {
+const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles }: {
     activeFloorData: any,
     onClose: () => void,
     productCounts: Record<string, number>,
-    productGroupedTitles: Record<string, string[]>,
-    showMinimap: boolean,
-    setShowMinimap: (val: boolean) => void
+    productGroupedTitles: Record<string, string[]>
 }) => {
     useImmersiveMode(true);
     const navigate = useNavigate();
@@ -1284,16 +1282,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                     <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
                 </button>
 
-                {/* Minimap Toggle (Bottom Left) */}
-                <div className="absolute bottom-12 left-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); setShowMinimap(!showMinimap); }}
-                        className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMinimap ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
-                    >
-                        <Compass size={24} className={showMinimap ? 'text-black' : 'text-[#00FFC2] opacity-40 group-hover:opacity-100'} />
-                    </button>
-                    <span className="text-[#00FFC2] font-mono text-[8px] tracking-[0.2em] uppercase opacity-40 group-hover:opacity-100">Minimap</span>
-                </div>
+                {/* Minimap will be handled globally in VirtualStore3D */}
 
                 {/* Mouse Trail Toggle (Bottom Right) */}
                 <div className="absolute bottom-12 right-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
@@ -1507,14 +1496,6 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
 
             {/* Subcategory Fragments are now rendered in 3D Background */}
 
-            {/* Global Features (when toggled from inside 3D View) */}
-            {showMinimap && (
-                <GlobalMiniMap
-                    initialExpanded={true}
-                    hideIcon={true}
-                    className="fixed bottom-32 left-12 z-[1500] flex flex-col items-start gap-3 pointer-events-auto"
-                />
-            )}
             {showMouseTrail && <MouseTrail3D />}
         </motion.div>
     );
@@ -1728,8 +1709,6 @@ export const VirtualStore3D: React.FC = () => {
                             }}
                             productCounts={productCounts}
                             productGroupedTitles={productGroupedTitles}
-                            showMinimap={showMinimap}
-                            setShowMinimap={setShowMinimap}
                         />
                     )
                 )}
@@ -1753,12 +1732,12 @@ export const VirtualStore3D: React.FC = () => {
                 </div>
             )}
 
-            {/* Global Minimap - Rendered at top level to be accessible from both views */}
-            {!isMobile && showMinimap && (
+            {/* Global Minimap - Always rendered to show the toggle icon, content controlled by showMinimap */}
+            {!isMobile && (
                 <GlobalMiniMap
-                    initialExpanded={true}
-                    hideIcon={true}
-                    className="fixed bottom-32 left-12 z-[2000] flex flex-col items-start gap-3 pointer-events-auto"
+                    expanded={showMinimap}
+                    hideIcon={false}
+                    className="fixed bottom-6 left-6 z-[2000] flex flex-col items-start gap-3 pointer-events-auto"
                     targetFloor={hoveredFloor}
                     onToggle={(expanded) => setShowMinimap(expanded)}
                 />
