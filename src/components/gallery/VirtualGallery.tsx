@@ -448,6 +448,7 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
+    const totalLaps = isMobile ? 5 : 1; // 5 laps for mobile buffer
     const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
     const lastInitialId = useRef<string | null>(null);
     const lastNavigateId = useRef<string | null>(null);
@@ -479,28 +480,37 @@ const GalleryScene = ({
             // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
             let targetOffset;
             if (isMobile) {
-                const totalLaps = 3;
                 const progressWithinLap = targetIndex / (exhibits.length || 1);
                 const currentOverall = scroll.offset * totalLaps;
                 const currentLap = Math.floor(currentOverall);
-                const currentProgress = currentOverall % 1;
                 
                 let targetLap = currentLap;
-                
-                // Robust lap determination to prevent erratic backtracking
+                let finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
+
+                // Absolute direction enforcement: 
+                // Down must move forward (+ offset), Up must move backward (- offset)
                 if (navigationDirection === 'down') {
-                    if (progressWithinLap <= currentProgress + 0.001) {
-                        targetLap = currentLap + 1;
+                    // If the target index's relative position is behind us, it must be in the next lap
+                    while (finalTargetOffset <= scroll.offset + 0.001 && targetLap < totalLaps - 1) {
+                        targetLap++;
+                        finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
                     }
                 } else if (navigationDirection === 'up') {
-                    if (progressWithinLap >= currentProgress - 0.001) {
-                        targetLap = currentLap - 1;
+                    // If the target index's relative position is ahead of us, it must be in the previous lap
+                    while (finalTargetOffset >= scroll.offset - 0.001 && targetLap > 0) {
+                        targetLap--;
+                        finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
                     }
                 } else {
-                    targetLap = Math.round(currentOverall - progressWithinLap);
+                    // Initial centering or default: start in the middle (lap 2 of 5)
+                    targetLap = Math.max(1, Math.min(3, Math.round(currentOverall - progressWithinLap)));
+                    if (initialItemId && lastInitialId.current === null) {
+                        targetLap = 2; // Mid-point anchor for newcomers
+                    }
+                    finalTargetOffset = (targetLap + progressWithinLap) / totalLaps;
                 }
                 
-                targetOffset = THREE.MathUtils.clamp((targetLap + progressWithinLap) / totalLaps, 0, 1);
+                targetOffset = THREE.MathUtils.clamp(finalTargetOffset, 0, 1);
             } else {
                 targetOffset = (targetZ + 8) / -(totalZ + 10);
             }
@@ -603,7 +613,7 @@ const GalleryScene = ({
             camera.lookAt(0, 0, 0);
             let pullBias = 0;
             const angleStep = (Math.PI * 2) / exhibits.length;
-            const globalAngle = (scroll.offset || 0) * Math.PI * 2 * 3;
+            const globalAngle = (scroll.offset || 0) * Math.PI * 2 * totalLaps;
 
             let minDistance = Infinity;
             let closestIndex = 0;
@@ -807,7 +817,7 @@ export const VirtualGallery = ({
                         pages={!isActivated 
                             ? 0 
                             : (isMobile 
-                                ? Math.max(6, ((items?.length || 0) + (stories?.length || 0)) * 3.5) 
+                                ? Math.max(10, ((items?.length || 0) + (stories?.length || 0)) * 4.5) 
                                 : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8))} 
                         damping={0.3} 
                         distance={1}
