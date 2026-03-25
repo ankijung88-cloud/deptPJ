@@ -435,7 +435,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                                 <p className="text-[#00FFC2] tracking-[0.3em] font-medium animate-pulse">PREPARING 3D GATE...</p>
                             </div>
                         }>
-                            <Canvas flat gl={{ alpha: true }}>
+                            <Canvas flat dpr={[1, 2]} gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}>
                                 <TransitionScene progress={animProgress} floorNumber={floorNumber} floorTitle={safeTitle} />
                             </Canvas>
                         </React.Suspense>

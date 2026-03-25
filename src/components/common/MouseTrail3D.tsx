@@ -17,7 +17,7 @@ interface TrailParticle {
     size: number;
 }
 function TrailParticles({ mousePos }: { mousePos: React.MutableRefObject<{ x: number; y: number }> }) {
-    const count = 1000;
+    const count = 500;
     const iconCount = 9;
 
     // Safe texture loading with fallback
@@ -165,7 +165,7 @@ export const MouseTrail3D: React.FC = () => {
 
     return (
         <div className="fixed inset-0 pointer-events-none z-[9999]" style={{ zIndex: 9999 }}>
-            <Canvas style={{ pointerEvents: 'none' }} camera={{ position: [0, 0, 8], fov: 60 }} gl={{ alpha: true, antialias: true }}>
+            <Canvas dpr={[1, 1.5]} style={{ pointerEvents: 'none' }} camera={{ position: [0, 0, 8], fov: 60 }} gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}>
                 <ambientLight intensity={0.6} />
                 <TrailParticles mousePos={mousePos} />
             </Canvas>

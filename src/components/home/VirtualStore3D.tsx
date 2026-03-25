@@ -1500,7 +1500,7 @@ export const VirtualStore3D: React.FC = () => {
             </div>
 
             {/* Transparent Canvas overlays the background */}
-            <Canvas shadows={false} gl={{ antialias: true, alpha: false }} style={{ touchAction: 'none' }}>
+            <Canvas shadows={false} dpr={[1, 2]} gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }} style={{ touchAction: 'none' }}>
                 <color attach="background" args={[COLORS.paper]} />
                 {/* Upper Starry Night Background - Pushed strictly behind all buildings (Z < -200) to prevent overlapping */}
                 <group position={[0, 60, -300]} scale={[4, 0.5, 1]}>

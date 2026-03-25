@@ -82,7 +82,7 @@ const InfiniteGrid = () => {
 export const ArrivalBackground3D: React.FC = () => {
     return (
         <div className="absolute inset-0 z-0 bg-[#0A0D17]">
-            <Canvas gl={{ antialias: true, alpha: true }}>
+            <Canvas dpr={[1, 2]} gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}>
                 <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={60} />
                 <ambientLight intensity={0.2} />
                 <pointLight position={[10, 10, 10]} intensity={1.5} color="#00FFC2" />

@@ -116,7 +116,7 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
 
     return (
         <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
-            <Canvas shadows gl={{ antialias: true, powerPreference: 'high-performance' }}>
+            <Canvas shadows dpr={[1, 2]} gl={{ antialias: false, powerPreference: 'high-performance' }}>
                 <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={40} />
                 <ambientLight intensity={0.4} />
                 
