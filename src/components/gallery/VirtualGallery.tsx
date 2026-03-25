@@ -218,7 +218,7 @@ const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, numbe
     );
 };
 
-const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobile }: ExhibitProps) => {
+const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobile, exhibitsCount }: ExhibitProps & { exhibitsCount: number }) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const navigate = useNavigate();
@@ -230,9 +230,6 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     
     const displayName = getLocalizedText(item.title, lang);
     const { translatedText } = useAutoTranslate(displayName, lang);
-
-    const state = useThree();
-    const exhibitsCount = (state as any).exhibitsCount || 10;
     
     // Dynamic radius on mobile: ensure enough space for cards as count grows
     // Card height is ~3.2. To avoid overlap, arc length (radius * angleStep) should be > 4.5
@@ -452,6 +449,7 @@ const GalleryScene = ({
     const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
     const lastInitialId = useRef<string | null>(null);
     const lastNavigateId = useRef<string | null>(null);
+    const lastProcessedTargetId = useRef<string | null>(null);
 
     useEffect(() => {
         if (exhibits.length === 0) return;
@@ -459,13 +457,17 @@ const GalleryScene = ({
         let targetIndex = -1;
         const currentTargetId = navigateTargetId || initialItemId;
 
-        if (currentTargetId && currentTargetId !== (navigateTargetId ? lastNavigateId.current : lastInitialId.current)) {
+        if (currentTargetId && (currentTargetId !== lastProcessedTargetId.current)) {
             targetIndex = exhibits.findIndex(ex => ex.id === currentTargetId);
-            if (navigateTargetId) lastNavigateId.current = navigateTargetId;
-            else lastInitialId.current = initialItemId;
+            if (targetIndex !== -1) {
+                lastProcessedTargetId.current = currentTargetId;
+                if (navigateTargetId) lastNavigateId.current = navigateTargetId;
+                else lastInitialId.current = initialItemId;
+            }
         } else if (!currentTargetId && lastInitialId.current === null && !forcedScroll.current.active) {
             targetIndex = 0;
             lastInitialId.current = 'default-0';
+            lastProcessedTargetId.current = 'default-0';
         }
 
         if (targetIndex !== -1) {
@@ -686,6 +688,7 @@ const GalleryScene = ({
                     lang={lang}
                     onItemClick={onItemClick}
                     isMobile={isMobile}
+                    exhibitsCount={exhibits.length}
                 />
             ))}
 
