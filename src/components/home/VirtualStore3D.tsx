@@ -779,12 +779,8 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                     onHover={setHoveredFloor}
                     onToggleModal={() => {
                         const floorNum = parseInt(floor.floor);
-                        if (isMobile) {
-                            setActiveModalFloor(activeModalFloor === floorNum ? null : floorNum);
-                        } else {
-                            // On desktop, directly enter the zone skip intermediate modal as requested
-                            setSelectedFloor(floorNum);
-                        }
+                        // Directly enter the zone skip intermediate modal as requested for both mobile and desktop
+                        setSelectedFloor(floorNum);
                     }}
                     isMobile={isMobile}
                     lang={lang}
