@@ -419,6 +419,7 @@ const GalleryScene = ({
     setPlaying,
     initialItemId = null,
     navigateTargetId = null,
+    navigationDirection = null,
     onActiveIndexChange
 }: { 
     items: FeaturedItem[], 
@@ -433,6 +434,7 @@ const GalleryScene = ({
     setPlaying?: (p: boolean) => void,
     initialItemId?: string | null,
     navigateTargetId?: string | null,
+    navigationDirection?: 'up' | 'down' | null,
     onActiveIndexChange?: (index: number) => void
 }) => {
     const scroll = useScroll();
@@ -471,9 +473,27 @@ const GalleryScene = ({
             const totalZ = exhibits.length * spacing;
             const targetZ = exhibits[targetIndex].zPos;
             // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
-            const targetOffset = isMobile 
-                ? THREE.MathUtils.clamp((Math.round(scroll.offset * 3.0 - (targetIndex / exhibits.length)) + (targetIndex / exhibits.length)) / 3.0, 0, 1)
-                : (targetZ + 8) / -(totalZ + 10);
+            let targetOffset;
+            if (isMobile) {
+                const progressWithinRotation = targetIndex / exhibits.length;
+                const currentVal = scroll.offset * 3.0 - progressWithinRotation;
+                
+                let K;
+                if (navigationDirection === 'down') {
+                    // Force forward movement: smallest K such that (K + progress) / 3 > scroll.offset
+                    // Use a small epsilon to avoid staying on the same spot
+                    K = Math.ceil(currentVal + 0.001);
+                } else if (navigationDirection === 'up') {
+                    // Force backward movement: largest K such that (K + progress) / 3 < scroll.offset
+                    K = Math.floor(currentVal - 0.001);
+                } else {
+                    K = Math.round(currentVal);
+                }
+                
+                targetOffset = THREE.MathUtils.clamp((K + progressWithinRotation) / 3.0, 0, 1);
+            } else {
+                targetOffset = (targetZ + 8) / -(totalZ + 10);
+            }
             
             forcedScroll.current = { 
                 offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
@@ -703,12 +723,14 @@ export const VirtualGallery = ({
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null
+    initialItemId?: string | null,
+    navigationDirection?: 'up' | 'down' | null
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [activeIndex, setActiveIndex] = useState(0);
     const [navigateTargetId, setNavigateTargetId] = useState<string | null>(null);
+    const [navDir, setNavDir] = useState<'up' | 'down' | null>(null);
 
     const totalExhibits = (items?.length || 0) + (stories?.length || 0);
 
@@ -725,6 +747,7 @@ export const VirtualGallery = ({
         const combined = [...(items || []), ...(stories || [])];
         const target = combined[nextIndex];
         if (target) {
+            setNavDir(direction);
             setNavigateTargetId(target.id);
             setActiveIndex(nextIndex);
         }
@@ -787,6 +810,7 @@ export const VirtualGallery = ({
                                     setPlaying={setPlaying}
                                     initialItemId={initialItemId}
                                     navigateTargetId={navigateTargetId}
+                                    navigationDirection={navDir}
                                     onActiveIndexChange={setActiveIndex}
                                 />
                         </Suspense>
