@@ -54,22 +54,22 @@ export const getProductsByCategory = async (req, res) => {
   console.log(`[getProductsByCategory] Category: ${category}, ParentID: ${parentId}, UserID: ${user?.id}, Role: ${user?.role}`);
 
   try {
-    // If category is 'store', 'museum', or 'cinema', we should match those strings
-    // as well as any floor categories that might be associated with them.
     let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
     let params = [`%${category}%`, `%${category}%`];
 
-    // Role-based filtering:
-    // Only restrict for AGENCY users. ADMIN and GUEST see all.
-    if (user && user.role === 'AGENCY') {
-      console.log(`[getProductsByCategory] Applying Agency filter: ${user.id}`);
+    // Strictly filter by parent's agency_id if parentId is provided
+    if (parentId && parentId !== 'undefined' && parentId !== 'null') {
+      // Use a subquery to find parent's agency_id and match it
+      query += ` AND (parent_id = ? AND id != ? AND (
+        agency_id = (SELECT agency_id FROM (SELECT * FROM featured_items) as p WHERE id = ?)
+        OR (agency_id IS NULL AND (SELECT agency_id FROM (SELECT * FROM featured_items) as p2 WHERE id = ?) IS NULL)
+      ))`;
+      params.push(parentId, parentId, parentId, parentId);
+    } else if (user && user.role === 'AGENCY') {
+      // If no parentId but it's an agency user, show only their products for this category
+      console.log(`[getProductsByCategory] Applying Agency filter (No ParentID): ${user.id}`);
       query += ' AND agency_id = ?';
       params.push(user.id);
-    }
-
-    if (parentId && parentId !== 'undefined' && parentId !== 'null') {
-      query += ' AND (parent_id = ? AND id != ?)';
-      params.push(parentId, parentId);
     }
 
     console.log(`[getProductsByCategory] Final Query: ${query} params: ${JSON.stringify(params)}`);

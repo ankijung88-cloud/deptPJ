@@ -321,7 +321,7 @@ const VirtualTicketPage: React.FC = () => {
                     const ticketMeta = templates.find((t: any) => t.id === 'ticket');
                     // Always load Korean for the editable fields to ensure consistency
                     setTempTitle(ticketMeta?.title?.ko || (typeof ticketMeta?.title === 'string' ? ticketMeta.title : '') || "3D 가상 티켓 부스");
-                    setTempDesc(ticketMeta?.description?.ko || (typeof ticketMeta?.description === 'string' ? ticketMeta.description : '') || "전통 문화 행사를 손쉽게 예약하세요. 가상 티켓 부스에서 실시간 잔여 좌석 확인 및 티켓 구매가 가능합니다. 오감을 자극하는 특별한 경험이 기다리고 있습니다.");
+                    setTempDesc(ticketMeta?.description?.ko || (typeof ticketMeta?.description === 'string' ? ticketMeta.description : '') || "공연과 행사의 감동을 미리 만나보세요. 디지털 티켓으로 간직하는 특별한 순간들이 당신을 기다립니다.");
                 }
             }
         };

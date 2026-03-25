@@ -221,8 +221,8 @@ const VirtualStorePage: React.FC = () => {
 
                     const storeMeta = templates.find((t: any) => t.id === 'store');
                     // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "3D 가상 스토어");
-                    setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "엄선된 프리미엄 굿즈와 전통 공예품을 만나보세요. 3D 가상 공간에서 제품의 상세한 질감과 디자인을 확인하고 바로 구매하실 수 있습니다.");
+                    setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "가상 스토어");
+                    setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "브랜드의 스토리와 제품을 혁신적인 3D 공간에서 경험하세요. 오감을 자극하는 특별한 쇼핑 여정이 시작됩니다.");
                 }
             }
         };

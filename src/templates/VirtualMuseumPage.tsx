@@ -204,7 +204,7 @@ const VirtualMuseumPage: React.FC = () => {
                     const museumMeta = templates.find((t: any) => t.id === 'museum');
                     // Always load Korean for the editable fields to ensure consistency
                     setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || "가상 박물관");
-                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || "전통과 현대가 만나는 공간, 조선의 정취를 간직한 가상 박물관에 오신 것을 환영합니다.");
+                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || "전 세계의 진귀한 유물과 예술품을 고해상도 3D로 감상하세요. 역사의 숨결을 생생하게 느낄 수 있는 디지털 전시관입니다.");
                 }
             }
         };
