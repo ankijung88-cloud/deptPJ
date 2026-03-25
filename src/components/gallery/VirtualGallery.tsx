@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { FeaturedItem } from '../../types';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
-import { Compass } from 'lucide-react';
+import { Compass, ChevronUp, ChevronDown } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
@@ -416,7 +416,9 @@ const GalleryScene = ({
     cinemaItem = null,
     playing,
     setPlaying,
-    initialItemId = null
+    initialItemId = null,
+    navigateTargetId = null,
+    onActiveIndexChange
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -428,7 +430,9 @@ const GalleryScene = ({
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null
+    initialItemId?: string | null,
+    navigateTargetId?: string | null,
+    onActiveIndexChange?: (index: number) => void
 }) => {
     const scroll = useScroll();
     const { camera, set } = useThree() as any;
@@ -444,39 +448,36 @@ const GalleryScene = ({
 
     const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
     const lastInitialId = useRef<string | null>(null);
+    const lastNavigateId = useRef<string | null>(null);
 
     useEffect(() => {
         if (exhibits.length === 0) return;
 
-        let targetIndex = 0; // Default to first card
+        let targetIndex = -1;
+        const currentTargetId = navigateTargetId || initialItemId;
 
-        if (initialItemId && initialItemId !== lastInitialId.current) {
-            targetIndex = exhibits.findIndex(ex => ex.id === initialItemId);
-            if (targetIndex === -1) targetIndex = 0;
-            lastInitialId.current = initialItemId;
-        } else if (!initialItemId && lastInitialId.current !== null) {
-            // Unmounted or selection cleared naturally
-            lastInitialId.current = null;
-            return;
-        } else if (!initialItemId && lastInitialId.current === null && !forcedScroll.current.active) {
-            // Initial mount with no specific item, default to 0
+        if (currentTargetId && currentTargetId !== (navigateTargetId ? lastNavigateId.current : lastInitialId.current)) {
+            targetIndex = exhibits.findIndex(ex => ex.id === currentTargetId);
+            if (navigateTargetId) lastNavigateId.current = navigateTargetId;
+            else lastInitialId.current = initialItemId;
+        } else if (!currentTargetId && lastInitialId.current === null && !forcedScroll.current.active) {
             targetIndex = 0;
             lastInitialId.current = 'default-0';
-        } else {
-            return; // No actionable state change
         }
 
-        const spacing = 20;
-        const totalZ = exhibits.length * spacing;
-        const targetZ = exhibits[targetIndex].zPos;
-        const targetOffset = (targetZ + 8) / -(totalZ + 10);
-        
-        forcedScroll.current = { 
-            offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
-            startTime: Date.now(),
-            active: true
-        };
-    }, [exhibits.length, initialItemId]);
+        if (targetIndex !== -1) {
+            const spacing = 20;
+            const totalZ = exhibits.length * spacing;
+            const targetZ = exhibits[targetIndex].zPos;
+            const targetOffset = (targetZ + 8) / -(totalZ + 10);
+            
+            forcedScroll.current = { 
+                offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
+                startTime: Date.now(),
+                active: true
+            };
+        }
+    }, [exhibits.length, initialItemId, navigateTargetId, exhibits]);
 
     // Listen to actual user interaction events to release the scroll lock
     useEffect(() => {
@@ -535,16 +536,24 @@ const GalleryScene = ({
 
     const focusState = useRef({ index: -1, startTime: 0 });
 
+    const lastSetIndex = useRef<number>(-1);
+
     useFrame((frameState) => {
         const spacing = 20;
         const totalZ = exhibits.length * spacing;
 
         // Force scroll if active
         if (forcedScroll.current.active) {
-            scroll.offset = forcedScroll.current.offset;
+            const duration = 1000;
+            const elapsed = Date.now() - forcedScroll.current.startTime;
+            const progress = THREE.MathUtils.smoothstep(elapsed / duration, 0, 1);
+            
+            scroll.offset = THREE.MathUtils.lerp(scroll.offset, forcedScroll.current.offset, progress);
             if (scroll.el) {
                 scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
             }
+            
+            if (progress >= 1) forcedScroll.current.active = false;
         }
 
         (frameState as any).scrollOffset = scroll.offset;
@@ -556,10 +565,19 @@ const GalleryScene = ({
             const angleStep = (Math.PI * 2) / exhibits.length;
             const globalAngle = (scroll.offset || 0) * Math.PI * 2 * 3;
 
+            let minDistance = Infinity;
+            let closestIndex = 0;
+
             exhibits.forEach((_, i) => {
                 const cardAngle = globalAngle + (i * angleStep);
                 const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
                 const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
+                
+                if (distFromFront < minDistance) {
+                    minDistance = distFromFront;
+                    closestIndex = i;
+                }
+
                 if (distFromFront < 0.1) {
                     if (focusState.current.index !== i) {
                         focusState.current = { index: i, startTime: frameState.clock.elapsedTime };
@@ -570,6 +588,12 @@ const GalleryScene = ({
                     }
                 }
             });
+
+            if (closestIndex !== lastSetIndex.current && onActiveIndexChange) {
+                lastSetIndex.current = closestIndex;
+                onActiveIndexChange(closestIndex);
+            }
+
             (frameState as any).scrollOffset = scroll.offset + pullBias * 0.01;
         } else {
             const scrollZ = scroll.offset * -(totalZ + 10);
@@ -676,6 +700,28 @@ export const VirtualGallery = ({
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [navigateTargetId, setNavigateTargetId] = useState<string | null>(null);
+
+    const totalExhibits = (items?.length || 0) + (stories?.length || 0);
+
+    const handleNavigate = (direction: 'up' | 'down') => {
+        if (totalExhibits === 0) return;
+        
+        let nextIndex;
+        if (direction === 'up') {
+            nextIndex = (activeIndex - 1 + totalExhibits) % totalExhibits;
+        } else {
+            nextIndex = (activeIndex + 1) % totalExhibits;
+        }
+        
+        const combined = [...(items || []), ...(stories || [])];
+        const target = combined[nextIndex];
+        if (target) {
+            setNavigateTargetId(target.id);
+            setActiveIndex(nextIndex);
+        }
+    };
 
     useEffect(() => {
         if (initialItemId) {
@@ -733,6 +779,8 @@ export const VirtualGallery = ({
                                     playing={playing}
                                     setPlaying={setPlaying}
                                     initialItemId={initialItemId}
+                                    navigateTargetId={navigateTargetId}
+                                    onActiveIndexChange={setActiveIndex}
                                 />
                         </Suspense>
                     </ScrollControls>
@@ -748,6 +796,23 @@ export const VirtualGallery = ({
                                 <span className="text-sm font-black tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={onClick ? "클릭하여 가상공간 진입" : "클릭하여 탐험 시작"} /></span>
                                 <span className="text-[10px] font-mono tracking-widest text-white/30 uppercase"><AutoTranslatedText text={onClick ? "Click to open fullscreen" : "Scroll disabled until click"} /></span>
                             </div>
+                        </div>
+                    )}
+                    
+                    {isMobile && isActivated && (
+                        <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}
+                                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
+                            >
+                                <ChevronUp size={24} />
+                            </button>
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); handleNavigate('down'); }}
+                                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
+                            >
+                                <ChevronDown size={24} />
+                            </button>
                         </div>
                     )}
 
