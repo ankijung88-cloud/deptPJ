@@ -417,7 +417,8 @@ const GalleryScene = ({
     initialItemId = null,
     navigateTargetId = null,
     navigationDirection = null,
-    onActiveIndexChange
+    onActiveIndexChange,
+    isActivated
 }: { 
     items: FeaturedItem[], 
     stories: any[], 
@@ -432,7 +433,8 @@ const GalleryScene = ({
     initialItemId?: string | null,
     navigateTargetId?: string | null,
     navigationDirection?: 'up' | 'down' | null,
-    onActiveIndexChange?: (index: number) => void
+    onActiveIndexChange?: (index: number) => void,
+    isActivated?: boolean
 }) => {
     const scroll = useScroll();
     const { camera, set } = useThree() as any;
@@ -485,18 +487,16 @@ const GalleryScene = ({
                 
                 let targetLap = currentLap;
                 
+                // Robust lap determination to prevent erratic backtracking
                 if (navigationDirection === 'down') {
-                    // Force forward movement: if target progress is behind current, it must be in the NEXT lap
-                    if (progressWithinLap <= currentProgress + 0.01) {
+                    if (progressWithinLap <= currentProgress + 0.001) {
                         targetLap = currentLap + 1;
                     }
                 } else if (navigationDirection === 'up') {
-                    // Force backward movement: if target progress is ahead of current, it must be in the PREVIOUS lap
-                    if (progressWithinLap >= currentProgress - 0.01) {
+                    if (progressWithinLap >= currentProgress - 0.001) {
                         targetLap = currentLap - 1;
                     }
                 } else {
-                    // Default to closest rotation
                     targetLap = Math.round(currentOverall - progressWithinLap);
                 }
                 
@@ -587,7 +587,13 @@ const GalleryScene = ({
                 scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
             }
             
-            if (progress >= 1) forcedScroll.current.active = false;
+            if (progress >= 1) {
+                forcedScroll.current.active = false;
+                // Double check final alignment
+                if (scroll.el) {
+                    scroll.el.scrollTop = forcedScroll.current.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
+                }
+            }
         }
 
         (frameState as any).scrollOffset = scroll.offset;
@@ -624,13 +630,15 @@ const GalleryScene = ({
                 }
             });
 
-            if (closestIndex !== lastSetIndex.current && onActiveIndexChange && !forcedScroll.current.active) {
+            // Only set index if not in forced scroll AND not doing a heavy snap adjustment
+            const isHeavySnapping = Math.abs(pullBias) > 0.02;
+            if (closestIndex !== lastSetIndex.current && onActiveIndexChange && !forcedScroll.current.active && !isHeavySnapping) {
                 lastSetIndex.current = closestIndex;
                 onActiveIndexChange(closestIndex);
             }
 
-            // Stronger pull factor for mobile snapping if not in forced scroll
-            const finalBias = !forcedScroll.current.active ? pullBias * 0.05 : 0; 
+            // Smoother pull factor for mobile snapping
+            const finalBias = (!forcedScroll.current.active && isActivated) ? pullBias * 0.03 : 0; 
             (frameState as any).scrollOffset = scroll.offset + finalBias;
         } else {
             const scrollZ = scroll.offset * -(totalZ + 10);
@@ -739,7 +747,7 @@ export const VirtualGallery = ({
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [, setActiveIndex] = useState(0);
     const [navigateTargetId, setNavigateTargetId] = useState<string | null>(null);
     const [navDir, setNavDir] = useState<'up' | 'down' | null>(null);
 
@@ -748,20 +756,19 @@ export const VirtualGallery = ({
     const handleNavigate = (direction: 'up' | 'down') => {
         if (totalExhibits === 0) return;
         
-        let nextIndex;
-        if (direction === 'up') {
-            nextIndex = (activeIndex - 1 + totalExhibits) % totalExhibits;
-        } else {
-            nextIndex = (activeIndex + 1) % totalExhibits;
-        }
-        
-        const combined = [...(items || []), ...(stories || [])];
-        const target = combined[nextIndex];
-        if (target) {
-            setNavDir(direction);
-            setNavigateTargetId(target.id);
-            setActiveIndex(nextIndex);
-        }
+        setActiveIndex(prev => {
+            const nextIndex = direction === 'up' 
+                ? (prev - 1 + totalExhibits) % totalExhibits
+                : (prev + 1) % totalExhibits;
+            
+            const combined = [...(items || []), ...(stories || [])];
+            const target = combined[nextIndex];
+            if (target) {
+                setNavDir(direction);
+                setNavigateTargetId(target.id);
+            }
+            return nextIndex;
+        });
     };
 
     useEffect(() => {
@@ -823,6 +830,7 @@ export const VirtualGallery = ({
                                     navigateTargetId={navigateTargetId}
                                     navigationDirection={navDir}
                                     onActiveIndexChange={setActiveIndex}
+                                    isActivated={isActivated}
                                 />
                         </Suspense>
                     </ScrollControls>
