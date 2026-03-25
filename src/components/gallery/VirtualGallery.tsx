@@ -233,9 +233,15 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
 
     const state = useThree();
     const exhibitsCount = (state as any).exhibitsCount || 10;
-    const radius = isMobile ? 25.0 : 3.5;
+    
+    // Dynamic radius on mobile: ensure enough space for cards as count grows
+    // Card height is ~3.2. To avoid overlap, arc length (radius * angleStep) should be > 4.5
+    // angleStep = 2*PI / count. So radius * (2*PI / count) > 4.5 => radius > (4.5 * count) / (2*PI)
+    const minSafeRadius = (5.5 * exhibitsCount) / (Math.PI * 2);
+    const radius = isMobile ? Math.max(25, minSafeRadius) : 3.5;
+    
     const angleStep = (Math.PI * 2) / exhibitsCount;
-    const verticalOffset = -0.5;
+    const verticalOffset = isMobile ? -0.2 : -0.5;
 
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -257,11 +263,13 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
             const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
             
-            const mobilePlateau = 0.05;
+            const mobilePlateau = Math.min(0.1, angleStep * 0.15);
+            const mobileTransitionRange = Math.min(0.4, angleStep * 0.6);
+            
             if (distFromFront <= mobilePlateau) {
                 centerFactor = 1.0;
-            } else if (distFromFront <= 0.25) {
-                centerFactor = THREE.MathUtils.smoothstep(distFromFront, 0.25, mobilePlateau);
+            } else if (distFromFront <= mobileTransitionRange) {
+                centerFactor = THREE.MathUtils.smoothstep(distFromFront, mobileTransitionRange, mobilePlateau);
             }
 
             if (groupRef.current) {
@@ -705,12 +713,12 @@ export const VirtualGallery = ({
                         pages={!isActivated 
                             ? 0 
                             : (isMobile 
-                                ? 200 
+                                ? Math.max(6, ((items?.length || 0) + (stories?.length || 0)) * 3.5) 
                                 : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8))} 
                         damping={0.3} 
                         distance={1}
                         enabled={isActivated}
-                        style={!isActivated ? { display: 'none', visibility: 'hidden', pointerEvents: 'none' } : {}}
+                        style={!isActivated ? { display: 'none', visibility: 'hidden', pointerEvents: 'none' } : ({} as any)}
                     >
                         <Suspense fallback={null}>
                                 <GalleryScene 
