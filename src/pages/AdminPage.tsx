@@ -957,15 +957,6 @@ const FloorManager = () => {
                     <tbody className="divide-y divide-white/5">
                         {floors.map(floor => (
                             <tr key={floor.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="w-12 h-12 rounded-lg bg-black/40 border border-white/10 overflow-hidden flex items-center justify-center">
-                                        {floor.bgImage ? (
-                                            <img src={floor.bgImage} alt="" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-4 h-4 rounded-full border border-white/20" />
-                                        )}
-                                    </div>
-                                </td>
                                 <td className="px-6 py-4 text-[#00FFC2] font-bold">{floor.floor}</td>
                                 <td className="px-6 py-4 text-white font-medium">{displayLocalized(floor.title)}</td>
                                 <td className="px-6 py-4 text-white/40 text-sm truncate max-w-xs">{displayLocalized(floor.description)}</td>
@@ -1010,7 +1001,6 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         floor: '',
         title: { ko: '', en: '' },
         description: { ko: '', en: '' },
-        bg_image: '',
         subitems: [],
         color: '',
         video_url: ''
@@ -1023,7 +1013,6 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                 floor: floor.floor || '',
                 title: floor.title || { ko: '', en: '' },
                 description: floor.description || { ko: '', en: '' },
-                bg_image: floor.bgImage || '',
                 subitems: floor.subitems || [],
                 color: floor.color || '',
                 video_url: floor.videoUrl || ''
@@ -1031,45 +1020,10 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         }
     }, [floor]);
 
-    const [uploading, setUploading] = useState<string | null>(null);
-
     const isEdit = !!floor;
 
-    const handleSubitemFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(`subitem-${index}`);
-        const uploadData = new FormData();
-        uploadData.append('file', file);
-
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                },
-                body: uploadData
-            });
-
-            if (!response.ok) throw new Error('Upload failed');
-
-            const data = await response.json();
-            if (data.url) {
-                console.log(`Subitem ${index} uploaded success:`, data.url);
-                const newSubitems = [...(formData.subitems || [])];
-                newSubitems[index] = { ...newSubitems[index], bgImage: data.url };
-                setFormData({ ...formData, subitems: newSubitems });
-            }
-        } catch (err: any) {
-            alert(`Upload failed: ${err.message}`);
-        } finally {
-            setUploading(null);
-        }
-    };
-
     const addSubitem = () => {
-        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' }, bgImage: '' }];
+        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' } }];
         setFormData({ ...formData, subitems: newSubitems });
     };
 
@@ -1213,38 +1167,6 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                             </div>
                                         </div>
                                         
-                                        <div>
-                                            <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Background Image</label>
-                                            <div className="flex gap-4 items-center">
-                                                <div className="w-24 h-16 bg-black/40 rounded-lg overflow-hidden border border-white/5 flex items-center justify-center relative group/img">
-                                                    {sub.bgImage ? (
-                                                        <>
-                                                            <img src={sub.bgImage} className="w-full h-full object-cover" />
-                                                            <label className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                                                                <Upload size={14} className="text-white" />
-                                                                <input type="file" className="hidden" accept="image/*" onChange={e => handleSubitemFileUpload(e, idx)} />
-                                                            </label>
-                                                        </>
-                                                    ) : (
-                                                        <label className="w-full h-full flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors">
-                                                            {uploading === `subitem-${idx}` ? (
-                                                                <div className="w-5 h-5 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" />
-                                                            ) : (
-                                                                <Upload size={18} className="text-white/20" />
-                                                            )}
-                                                            <input type="file" className="hidden" accept="image/*" onChange={e => handleSubitemFileUpload(e, idx)} />
-                                                        </label>
-                                                    )}
-                                                </div>
-                                                <input 
-                                                    type="text" 
-                                                    value={sub.bgImage || ''} 
-                                                    onChange={e => updateSubitem(idx, 'bgImage', e.target.value)}
-                                                    className="flex-1 bg-black/20 border border-white/5 rounded-xl p-3 text-white text-xs focus:border-[#00FFC2]/30"
-                                                    placeholder="Background Image URL"
-                                                />
-                                            </div>
-                                        </div>
                                     </div>
                                 ))}
                                 
