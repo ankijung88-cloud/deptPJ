@@ -477,22 +477,30 @@ const GalleryScene = ({
             // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
             let targetOffset;
             if (isMobile) {
-                const progressWithinRotation = targetIndex / exhibits.length;
-                const currentVal = scroll.offset * 3.0 - progressWithinRotation;
+                const totalLaps = 3;
+                const progressWithinLap = targetIndex / (exhibits.length || 1);
+                const currentOverall = scroll.offset * totalLaps;
+                const currentLap = Math.floor(currentOverall);
+                const currentProgress = currentOverall % 1;
                 
-                let K;
+                let targetLap = currentLap;
+                
                 if (navigationDirection === 'down') {
-                    // Force forward movement: smallest K such that (K + progress) / 3 > scroll.offset
-                    // Use a small epsilon to avoid staying on the same spot
-                    K = Math.ceil(currentVal + 0.001);
+                    // Force forward movement: if target progress is behind current, it must be in the NEXT lap
+                    if (progressWithinLap <= currentProgress + 0.01) {
+                        targetLap = currentLap + 1;
+                    }
                 } else if (navigationDirection === 'up') {
-                    // Force backward movement: largest K such that (K + progress) / 3 < scroll.offset
-                    K = Math.floor(currentVal - 0.001);
+                    // Force backward movement: if target progress is ahead of current, it must be in the PREVIOUS lap
+                    if (progressWithinLap >= currentProgress - 0.01) {
+                        targetLap = currentLap - 1;
+                    }
                 } else {
-                    K = Math.round(currentVal);
+                    // Default to closest rotation
+                    targetLap = Math.round(currentOverall - progressWithinLap);
                 }
                 
-                targetOffset = THREE.MathUtils.clamp((K + progressWithinRotation) / 3.0, 0, 1);
+                targetOffset = THREE.MathUtils.clamp((targetLap + progressWithinLap) / totalLaps, 0, 1);
             } else {
                 targetOffset = (targetZ + 8) / -(totalZ + 10);
             }
