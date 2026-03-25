@@ -175,14 +175,15 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
     );
 };
 
-const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick, productCounts }: { 
+const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick, productCounts, productGroupedTitles }: { 
     activeFloorData: any, 
     onClose: () => void, 
     buttonTextColor: string, 
     i18nLanguage: string, 
     categories: any[], 
     onCategoryClick: (catId: string) => void,
-    productCounts: Record<string, number>
+    productCounts: Record<string, number>,
+    productGroupedTitles: Record<string, string[]>
 }) => {
     const groupRef = useRef<THREE.Group>(null);
     const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
@@ -254,13 +255,13 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
 
                             {/* Hovered Category Sub-items (Expanding Layout) */}
                             <div className={`overflow-hidden transition-all duration-500 flex flex-wrap justify-center gap-4 max-w-[900px] w-full ${hoveredCat ? 'max-h-[300px] opacity-100 mb-8 mt-4' : 'max-h-0 opacity-0 mb-0 mt-0'}`}>
-                                {hoveredCat?.subitems?.map((sub: any) => (
+                                {hoveredCatId && productGroupedTitles[hoveredCatId]?.map((title: string, idx: number) => (
                                     <div 
-                                        key={sub.id} 
+                                        key={idx} 
                                         className="px-6 py-3 border border-white/20 rounded-xl text-white font-bold tracking-widest backdrop-blur-xl bg-white/5 animate-in fade-in zoom-in duration-300"
                                         style={{ boxShadow: `0 0 20px ${activeFloorData.color}20` }}
                                     >
-                                        <AutoTranslatedText text={getLocalizedText(sub.label, i18nLanguage)} />
+                                        <AutoTranslatedText text={title} />
                                     </div>
                                 ))}
                             </div>
@@ -1164,7 +1165,12 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 };
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
-const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts }: { activeFloorData: any, onClose: () => void, productCounts: Record<string, number> }) => {
+const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles }: { 
+    activeFloorData: any, 
+    onClose: () => void, 
+    productCounts: Record<string, number>,
+    productGroupedTitles: Record<string, string[]>
+}) => {
     useImmersiveMode(true);
     const navigate = useNavigate();
     const { i18n } = useTranslation();
@@ -1232,6 +1238,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts }: { acti
                             navigate(`/category/${catId}`);
                         }}
                         productCounts={productCounts}
+                        productGroupedTitles={productGroupedTitles}
                     />
                     <OrbitControls 
                         enableDamping 
@@ -1527,19 +1534,26 @@ export const VirtualStore3D: React.FC = () => {
 
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
     const [productCounts, setProductCounts] = useState<Record<string, number>>({});
+    const [productGroupedTitles, setProductGroupedTitles] = useState<Record<string, string[]>>({});
 
-    // Fetch products and calculate counts per subcategory
+    // Fetch products and calculate counts/titles per subcategory
     useEffect(() => {
         const fetchAndCountProducts = async () => {
             const products = await getFeaturedProducts();
             const counts: Record<string, number> = {};
+            const titles: Record<string, string[]> = {};
             products.forEach(p => {
                 const sub = p.subcategory;
                 if (sub) {
                     counts[sub] = (counts[sub] || 0) + 1;
+                    if (!titles[sub]) titles[sub] = [];
+                    // Use Ko title for internal tracking/display, AutoTranslatedText will handle it
+                    const pTitle = typeof p.title === 'string' ? p.title : p.title.ko;
+                    if (pTitle) titles[sub].push(pTitle);
                 }
             });
             setProductCounts(counts);
+            setProductGroupedTitles(titles);
         };
         fetchAndCountProducts();
     }, []);
@@ -1698,6 +1712,7 @@ export const VirtualStore3D: React.FC = () => {
                                 setTransitioningFloor(null);
                             }}
                             productCounts={productCounts}
+                            productGroupedTitles={productGroupedTitles}
                         />
                     )
                 )}
