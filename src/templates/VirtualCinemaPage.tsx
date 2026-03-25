@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2 } from 'lucide-react';
+import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2, Check } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -9,7 +9,7 @@ import { JOSEON_THEMES } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { FeaturedItem } from '../types';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
-import { getProductById } from '../api/products';
+import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useAdmin } from '../hooks/useAdmin';
 
@@ -46,6 +46,11 @@ const VirtualCinemaPage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+
+    // Inline Editing for Page Metadata
+    const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+    const [tempTitle, setTempTitle] = useState('');
+    const [tempDesc, setTempDesc] = useState('');
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
 
@@ -67,11 +72,22 @@ const VirtualCinemaPage: React.FC = () => {
         const fetchParent = async () => {
             if (parentId) {
                 const data = await getProductById(parentId);
-                setParentProduct(data);
+                if (data) {
+                    setParentProduct(data);
+                    
+                    // Initialize temp values from parent metadata if available
+                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                        ? JSON.parse(data.selected_templates) 
+                        : (data.selected_templates as any);
+                    
+                    const cinemaMeta = selectedTemplates?.cinema;
+                    setTempTitle(cinemaMeta?.title?.[i18n.language] || cinemaMeta?.title?.ko || "3D 가상 상영관");
+                    setTempDesc(cinemaMeta?.description?.[i18n.language] || cinemaMeta?.description?.ko || "몰입감 넘치는 가상 극장에서 고해상도 영상을 감상하세요. 역사와 예술을 담은 시네마틱 아카이브가 당신 앞에 펼쳐집니다.");
+                }
             }
         };
         fetchParent();
-    }, [parentId]);
+    }, [parentId, i18n.language]);
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -277,29 +293,100 @@ const VirtualCinemaPage: React.FC = () => {
         }
     };
 
+    const handleSaveMetadata = async () => {
+        if (!parentProduct || !parentId) return;
+        
+        try {
+            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+                ? JSON.parse(parentProduct.selected_templates) 
+                : (parentProduct.selected_templates as any) || {};
+                
+            const cinemaMeta = selectedTemplates.cinema || { title: {}, description: {} };
+            
+            const updatedCinemaMeta = {
+                ...cinemaMeta,
+                title: { 
+                    ...(typeof cinemaMeta.title === 'object' ? cinemaMeta.title : { ko: cinemaMeta.title || '' }),
+                    [i18n.language]: tempTitle 
+                },
+                description: { 
+                    ...(typeof cinemaMeta.description === 'object' ? cinemaMeta.description : { ko: cinemaMeta.description || '' }),
+                    [i18n.language]: tempDesc 
+                }
+            };
+            
+            const updatedProduct = {
+                ...parentProduct,
+                selected_templates: {
+                    ...selectedTemplates,
+                    cinema: updatedCinemaMeta
+                }
+            };
+            
+            await updateProduct(parentId, updatedProduct);
+            setParentProduct(updatedProduct as any);
+            setIsEditingMetadata(false);
+            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
+            alert(successMsg);
+        } catch (error) {
+            console.error('Failed to save metadata:', error);
+            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            alert(errorMsg);
+        }
+    };
+
     return (
         <div className="min-h-screen font-sans overflow-hidden" style={theme.bgStyle}>
             {/* Cinema Header */}
             <header className="relative w-full py-20 px-6 md:px-12 z-[50]" style={{ borderBottom: `1px solid ${theme.color3}44` }}>
                 <div className="container mx-auto relative z-10">
-                    <button 
-                        onClick={() => {
-                            if (window.history.state && window.history.state.idx > 0) {
-                                navigate(-1);
-                            } else if (parentId) {
-                                navigate(`/detail/${parentId}`);
-                            } else if (currentFloor) {
-                                navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                            } else {
-                                navigate('/inspiration');
-                            }
-                        }}
-                        className="flex items-center gap-2 mb-10 opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.3em] relative z-[60]"
-                        style={{ color: theme.highlightColor }}
-                    >
-                        <ArrowLeft size={12} />
-                        <AutoTranslatedText text="Back" />
-                    </button>
+                    <div className="flex justify-between items-center mb-10 relative z-[60]">
+                        <button 
+                            onClick={() => {
+                                if (window.history.state && window.history.state.idx > 0) {
+                                    navigate(-1);
+                                } else if (parentId) {
+                                    navigate(`/detail/${parentId}`);
+                                } else if (currentFloor) {
+                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                } else {
+                                    navigate('/inspiration');
+                                }
+                            }}
+                            className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.3em]"
+                            style={{ color: theme.highlightColor }}
+                        >
+                            <ArrowLeft size={12} />
+                            <AutoTranslatedText text="Back" />
+                        </button>
+
+                        {isManagementAllowed && (
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => {
+                                        if (isEditingMetadata) {
+                                            handleSaveMetadata();
+                                        } else {
+                                            setIsEditingMetadata(true);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
+                                    style={{ color: theme.highlightColor }}
+                                >
+                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
+                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                </button>
+                                {isEditingMetadata && (
+                                    <button 
+                                        onClick={() => setIsEditingMetadata(false)}
+                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
                         <div className="max-w-4xl">
@@ -314,14 +401,32 @@ const VirtualCinemaPage: React.FC = () => {
                                 <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Now Streaming in 4K</span>
                             </div>
                             
-                            <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
-                                style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}44` }}>
-                                <AutoTranslatedText text="3D 가상 상영관" />
-                            </h1>
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempTitle}
+                                    onChange={(e) => setTempTitle(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/30 rounded-2xl p-4 text-4xl md:text-6xl font-black mb-8 text-white focus:outline-none focus:border-white transition-all resize-none"
+                                    rows={2}
+                                />
+                            ) : (
+                                <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
+                                    style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}44` }}>
+                                    <AutoTranslatedText text={tempTitle} />
+                                </h1>
+                            )}
                             
-                            <p className="text-xl md:text-2xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
-                                <AutoTranslatedText text="몰입감 넘치는 가상 극장에서 고해상도 영상을 감상하세요. 역사와 예술을 담은 시네마틱 아카이브가 당신 앞에 펼쳐집니다." />
-                            </p>
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempDesc}
+                                    onChange={(e) => setTempDesc(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg font-serif italic text-white/80 focus:outline-none focus:border-white/50 transition-all resize-none"
+                                    rows={3}
+                                />
+                            ) : (
+                                <p className="text-xl md:text-2xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
+                                    <AutoTranslatedText text={tempDesc} />
+                                </p>
+                            )}
                         </div>
 
                         <div className="shrink-0 flex items-center gap-6">

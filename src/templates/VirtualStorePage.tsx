@@ -3,7 +3,7 @@ console.log("VirtualStorePage.tsx version 2 loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2 } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2, Edit3 } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Float, ContactShadows } from '@react-three/drei';
@@ -12,7 +12,7 @@ import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
-import { getProductById } from '../api/products';
+import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
@@ -171,6 +171,12 @@ const VirtualStorePage: React.FC = () => {
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
+
+    // Inline Editing for Page Metadata
+    const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+    const [tempTitle, setTempTitle] = useState('');
+    const [tempDesc, setTempDesc] = useState('');
+
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
@@ -193,11 +199,22 @@ const VirtualStorePage: React.FC = () => {
         const fetchParent = async () => {
             if (parentId) {
                 const data = await getProductById(parentId);
-                setParentProduct(data);
+                if (data) {
+                    setParentProduct(data);
+                    
+                    // Initialize temp values from parent metadata if available
+                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                        ? JSON.parse(data.selected_templates) 
+                        : (data.selected_templates as any);
+                    
+                    const storeMeta = selectedTemplates?.store;
+                    setTempTitle(storeMeta?.title?.[i18n.language] || storeMeta?.title?.ko || "3D 상품 리베이트");
+                    setTempDesc(storeMeta?.description?.[i18n.language] || storeMeta?.description?.ko || "");
+                }
             }
         };
         fetchParent();
-    }, [parentId]);
+    }, [parentId, i18n.language]);
 
 
     const getLoc = (val: any, lang: string): string => {
@@ -484,6 +501,48 @@ const VirtualStorePage: React.FC = () => {
         }
     };
 
+    const handleSaveMetadata = async () => {
+        if (!parentProduct || !parentId) return;
+        
+        try {
+            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+                ? JSON.parse(parentProduct.selected_templates) 
+                : (parentProduct.selected_templates as any) || {};
+                
+            const storeMeta = selectedTemplates.store || { title: {}, description: {} };
+            
+            const updatedStoreMeta = {
+                ...storeMeta,
+                title: { 
+                    ...(typeof storeMeta.title === 'object' ? storeMeta.title : { ko: storeMeta.title || '' }),
+                    [i18n.language]: tempTitle 
+                },
+                description: { 
+                    ...(typeof storeMeta.description === 'object' ? storeMeta.description : { ko: storeMeta.description || '' }),
+                    [i18n.language]: tempDesc 
+                }
+            };
+            
+            const updatedProduct = {
+                ...parentProduct,
+                selected_templates: {
+                    ...selectedTemplates,
+                    store: updatedStoreMeta
+                }
+            };
+            
+            await updateProduct(parentId, updatedProduct);
+            setParentProduct(updatedProduct as any);
+            setIsEditingMetadata(false);
+            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
+            alert(successMsg);
+        } catch (error) {
+            console.error('Failed to save metadata:', error);
+            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            alert(errorMsg);
+        }
+    };
+
     const handlePurchase = () => {
         setIsPurchasing(true);
         // Simulate payment process
@@ -509,24 +568,53 @@ const VirtualStorePage: React.FC = () => {
             {/* Store Header */}
             <header className="relative w-full py-12 px-6 md:px-12 border-b z-[50]" style={{ borderColor: `${theme.color3}22` }}>
                 <div className="container mx-auto relative z-10">
-                    <button 
-                        onClick={() => {
-                            if (window.history.state && window.history.state.idx > 0) {
-                                navigate(-1);
-                            } else if (parentId) {
-                                navigate(`/detail/${parentId}`);
-                            } else if (currentFloor) {
-                                navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                            } else {
-                                navigate('/inspiration');
-                            }
-                        }}
-                        className="flex items-center gap-2 mb-6 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
-                        style={{ color: theme.highlightColor }}
-                    >
-                        <ArrowLeft size={14} />
-                        <AutoTranslatedText text="Back" />
-                    </button>
+                    <div className="flex justify-between items-center mb-6 relative z-[60]">
+                        <button 
+                            onClick={() => {
+                                if (window.history.state && window.history.state.idx > 0) {
+                                    navigate(-1);
+                                } else if (parentId) {
+                                    navigate(`/detail/${parentId}`);
+                                } else if (currentFloor) {
+                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                } else {
+                                    navigate('/inspiration');
+                                }
+                            }}
+                            className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
+                            style={{ color: theme.highlightColor }}
+                        >
+                            <ArrowLeft size={14} />
+                            <AutoTranslatedText text="Back" />
+                        </button>
+
+                        {isManagementAllowed && (
+                            <div className="flex gap-2 relative z-[70]">
+                                <button 
+                                    onClick={() => {
+                                        if (isEditingMetadata) {
+                                            handleSaveMetadata();
+                                        } else {
+                                            setIsEditingMetadata(true);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
+                                    style={{ color: theme.highlightColor, borderColor: `${theme.highlightColor}44` }}
+                                >
+                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
+                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                </button>
+                                {isEditingMetadata && (
+                                    <button 
+                                        onClick={() => setIsEditingMetadata(false)}
+                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div className="max-w-3xl">
@@ -541,10 +629,34 @@ const VirtualStorePage: React.FC = () => {
                                 <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20">Virtual Commerce V2</span>
                             </div>
                             
-                            <h1 className="text-4xl md:text-7xl font-sans font-black mb-4 leading-tight uppercase tracking-tighter" 
-                                style={{ color: theme.highlightColor, textShadow: `0 0 40px ${theme.glowColor}22` }}>
-                                <AutoTranslatedText text="3D 상품 리베이트" />
-                            </h1>
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempTitle}
+                                    onChange={(e) => setTempTitle(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-4 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    rows={2}
+                                />
+                            ) : (
+                                <h1 className="text-4xl md:text-7xl font-sans font-black mb-4 leading-tight uppercase tracking-tighter" 
+                                    style={{ color: theme.highlightColor, textShadow: `0 0 40px ${theme.glowColor}22` }}>
+                                    <AutoTranslatedText text={tempTitle} />
+                                </h1>
+                            )}
+
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempDesc}
+                                    onChange={(e) => setTempDesc(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-sm md:text-base opacity-60 max-w-2xl leading-relaxed mb-4 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    rows={3}
+                                />
+                            ) : (
+                                tempDesc && (
+                                    <p className="text-sm md:text-base opacity-40 max-w-2xl leading-relaxed mb-4">
+                                        <AutoTranslatedText text={tempDesc} />
+                                    </p>
+                                )
+                            )}
                         </div>
                         
                         <div className="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">

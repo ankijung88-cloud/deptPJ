@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, CreditCard, Info, Plus, Image as ImageIcon, Type, UploadCloud, Check } from 'lucide-react';
+import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, CreditCard, Info, Plus, Image as ImageIcon, Type, UploadCloud, Check, Edit3 } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
-import { getProductById } from '../api/products';
+import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 
@@ -272,6 +272,14 @@ const VirtualTicketPage: React.FC = () => {
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const { floors } = useFloors();
 
+    // Inline Editing for Page Metadata
+    const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+    const [tempTitle, setTempTitle] = useState('');
+    const [tempDesc, setTempDesc] = useState('');
+
+    const isAdmin = isAdminLoggedIn; 
+    const isManagementAllowed = isAdmin; // Simple check for now, can be refined like other pages if needed
+
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
@@ -290,11 +298,22 @@ const VirtualTicketPage: React.FC = () => {
         const fetchParent = async () => {
             if (parentId) {
                 const data = await getProductById(parentId);
-                setParentProduct(data);
+                if (data) {
+                    setParentProduct(data);
+                    
+                    // Initialize temp values from parent metadata if available
+                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                        ? JSON.parse(data.selected_templates) 
+                        : (data.selected_templates as any);
+                    
+                    const ticketMeta = selectedTemplates?.ticket;
+                    setTempTitle(ticketMeta?.title?.[i18n.language] || ticketMeta?.title?.ko || "3D 가상 티켓 부스");
+                    setTempDesc(ticketMeta?.description?.[i18n.language] || ticketMeta?.description?.ko || "전통 문화 행사를 손쉽게 예약하세요. 가상 티켓 부스에서 실시간 잔여 좌석 확인 및 티켓 구매가 가능합니다. 오감을 자극하는 특별한 경험이 기다리고 있습니다.");
+                }
             }
         };
         fetchParent();
-    }, [parentId]);
+    }, [parentId, i18n.language]);
 
     useEffect(() => {
         const checkAdmin = () => {
@@ -495,42 +514,113 @@ const VirtualTicketPage: React.FC = () => {
         }
     };
 
-const handleReservation = () => {
-    setIsReserving(true);
-    // Simulate payment process
-    setTimeout(() => {
-        setIsReserving(false);
-        setReservationComplete(true);
+    const handleReservation = () => {
+        setIsReserving(true);
+        // Simulate payment process
         setTimeout(() => {
-            setReservationComplete(false);
-            setShowReservationModal(false);
+            setIsReserving(false);
+            setReservationComplete(true);
+            setTimeout(() => {
+                setReservationComplete(false);
+                setShowReservationModal(false);
+            }, 2000);
         }, 2000);
-    }, 2000);
-};
+    };
+
+    const handleSaveMetadata = async () => {
+        if (!parentProduct || !parentId) return;
+        
+        try {
+            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+                ? JSON.parse(parentProduct.selected_templates) 
+                : (parentProduct.selected_templates as any) || {};
+                
+            const ticketMeta = selectedTemplates.ticket || { title: {}, description: {} };
+            
+            const updatedTicketMeta = {
+                ...ticketMeta,
+                title: { 
+                    ...(typeof ticketMeta.title === 'object' ? ticketMeta.title : { ko: ticketMeta.title || '' }),
+                    [i18n.language]: tempTitle 
+                },
+                description: { 
+                    ...(typeof ticketMeta.description === 'object' ? ticketMeta.description : { ko: ticketMeta.description || '' }),
+                    [i18n.language]: tempDesc 
+                }
+            };
+            
+            const updatedProduct = {
+                ...parentProduct,
+                selected_templates: {
+                    ...selectedTemplates,
+                    ticket: updatedTicketMeta
+                }
+            };
+            
+            await updateProduct(parentId, updatedProduct);
+            setParentProduct(updatedProduct as any);
+            setIsEditingMetadata(false);
+            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
+            alert(successMsg);
+        } catch (error) {
+            console.error('Failed to save metadata:', error);
+            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            alert(errorMsg);
+        }
+    };
 
 return (
         <div className="min-h-screen font-sans overflow-hidden" style={theme.bgStyle}>
             {/* Ticket Header */}
             <header className="relative w-full py-16 md:py-24 px-6 md:px-12 border-b-2 z-[50]" style={{ borderColor: `${theme.accentColor}22` }}>
                 <div className="container mx-auto relative z-10">
-                    <button 
-                        onClick={() => {
-                            if (window.history.state && window.history.state.idx > 0) {
-                                navigate(-1);
-                            } else if (parentId) {
-                                navigate(`/detail/${parentId}`);
-                            } else if (currentFloor) {
-                                navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                            } else {
-                                navigate('/inspiration');
-                            }
-                        }}
-                        className="flex items-center gap-3 mb-10 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.4em] relative z-[60]"
-                        style={{ color: theme.highlightColor }}
-                    >
-                        <ArrowLeft size={16} />
-                        <AutoTranslatedText text="Back" />
-                    </button>
+                    <div className="flex justify-between items-center mb-10 relative z-[60]">
+                        <button 
+                            onClick={() => {
+                                if (window.history.state && window.history.state.idx > 0) {
+                                    navigate(-1);
+                                } else if (parentId) {
+                                    navigate(`/detail/${parentId}`);
+                                } else if (currentFloor) {
+                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                } else {
+                                    navigate('/inspiration');
+                                }
+                            }}
+                            className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.4em] relative z-[60]"
+                            style={{ color: theme.highlightColor }}
+                        >
+                            <ArrowLeft size={16} />
+                            <AutoTranslatedText text="Back" />
+                        </button>
+
+                        {isManagementAllowed && (
+                            <div className="flex gap-2 relative z-[70]">
+                                <button 
+                                    onClick={() => {
+                                        if (isEditingMetadata) {
+                                            handleSaveMetadata();
+                                        } else {
+                                            setIsEditingMetadata(true);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
+                                    style={{ color: theme.highlightColor, borderColor: `${theme.highlightColor}44` }}
+                                >
+                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
+                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                </button>
+                                {isEditingMetadata && (
+                                    <button 
+                                        onClick={() => setIsEditingMetadata(false)}
+                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
                         <div className="max-w-4xl">
@@ -544,14 +634,32 @@ return (
                                 <div className="h-[1px] w-20 bg-white/10" />
                             </div>
                             
-                            <h1 className="text-5xl md:text-9xl font-black mb-10 leading-[0.8] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
-                                style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}55` }}>
-                                <AutoTranslatedText text="3D 가상 티켓 부스" />
-                            </h1>
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempTitle}
+                                    onChange={(e) => setTempTitle(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    rows={2}
+                                />
+                            ) : (
+                                <h1 className="text-5xl md:text-9xl font-black mb-10 leading-[0.8] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
+                                    style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}55` }}>
+                                    <AutoTranslatedText text={tempTitle} />
+                                </h1>
+                            )}
                             
-                            <p className="text-xl md:text-2xl font-serif italic opacity-60 max-w-2xl leading-relaxed border-l-4 pl-8" style={{ borderColor: theme.accentColor }}>
-                                <AutoTranslatedText text="전통 문화 행사를 손쉽게 예약하세요. 가상 티켓 부스에서 실시간 잔여 좌석 확인 및 티켓 구매가 가능합니다. 오감을 자극하는 특별한 경험이 기다리고 있습니다." />
-                            </p>
+                            {isEditingMetadata ? (
+                                <textarea 
+                                    value={tempDesc}
+                                    onChange={(e) => setTempDesc(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg md:text-xl font-serif italic mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    rows={4}
+                                />
+                            ) : (
+                                <p className="text-xl md:text-2xl font-serif italic opacity-60 max-w-2xl leading-relaxed border-l-4 pl-8" style={{ borderColor: theme.accentColor }}>
+                                    <AutoTranslatedText text={tempDesc} />
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex flex-col gap-6">

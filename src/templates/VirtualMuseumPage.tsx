@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2 } from 'lucide-react';
+import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2, Check } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -12,6 +12,7 @@ import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationAct
 import { getProductById } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useAdmin } from '../hooks/useAdmin';
+import { updateProduct } from '../api/products';
 
 interface MuseumCardProps {
     item: FeaturedItem;
@@ -147,6 +148,11 @@ const VirtualMuseumPage: React.FC = () => {
     const [newImageUrl, setNewImageUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+    // Inline Editing for Page Metadata
+    const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+    const [tempTitle, setTempTitle] = useState('');
+    const [tempDesc, setTempDesc] = useState('');
+
     // Theme: Scholar Green
     const theme = JOSEON_THEMES[2]; 
 
@@ -175,11 +181,22 @@ const VirtualMuseumPage: React.FC = () => {
         const fetchParent = async () => {
             if (parentId) {
                 const data = await getProductById(parentId);
-                setParentProduct(data);
+                if (data) {
+                    setParentProduct(data);
+                    
+                    // Initialize temp values from parent metadata if available
+                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                        ? JSON.parse(data.selected_templates) 
+                        : (data.selected_templates as any);
+                    
+                    const museumMeta = selectedTemplates?.museum;
+                    setTempTitle(museumMeta?.title?.[i18n.language] || museumMeta?.title?.ko || "3D 가상 전시 박물관");
+                    setTempDesc(museumMeta?.description?.[i18n.language] || museumMeta?.description?.ko || "카드를 클릭하여 유물의 세부 모습을 확인해 보세요. 뒷면의 이미지를 다시 클릭하면 전체 화면으로 감상할 수 있습니다.");
+                }
             }
         };
         fetchParent();
-    }, [parentId]);
+    }, [parentId, i18n.language]);
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -369,6 +386,49 @@ const VirtualMuseumPage: React.FC = () => {
         }
     };
 
+    const handleSaveMetadata = async () => {
+        if (!parentProduct || !parentId) return;
+        
+        try {
+            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+                ? JSON.parse(parentProduct.selected_templates) 
+                : (parentProduct.selected_templates as any) || {};
+                
+            const museumMeta = selectedTemplates.museum || { title: {}, description: {} };
+            
+            // Update the title/desc for the current language
+            const updatedMuseumMeta = {
+                ...museumMeta,
+                title: { 
+                    ...(typeof museumMeta.title === 'object' ? museumMeta.title : { ko: museumMeta.title || '' }),
+                    [i18n.language]: tempTitle 
+                },
+                description: { 
+                    ...(typeof museumMeta.description === 'object' ? museumMeta.description : { ko: museumMeta.description || '' }),
+                    [i18n.language]: tempDesc 
+                }
+            };
+            
+            const updatedProduct = {
+                ...parentProduct,
+                selected_templates: {
+                    ...selectedTemplates,
+                    museum: updatedMuseumMeta
+                }
+            };
+            
+            await updateProduct(parentId, updatedProduct);
+            setParentProduct(updatedProduct as any);
+            setIsEditingMetadata(false);
+            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
+            alert(successMsg);
+        } catch (error) {
+            console.error('Failed to save metadata:', error);
+            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            alert(errorMsg);
+        }
+    };
+
     return (
         <div className="min-h-screen font-sans overflow-x-hidden" style={theme.bgStyle}>
             <style dangerouslySetInnerHTML={{ __html: `
@@ -400,14 +460,38 @@ const VirtualMuseumPage: React.FC = () => {
                         </button>
 
                         {isManagementAllowed && (
-                            <button 
-                                onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
-                                style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
-                            >
-                                <Plus size={14} />
-                                <AutoTranslatedText text="Add Content" />
-                            </button>
+                            <div className="flex gap-2 relative z-[70]">
+                                <button 
+                                    onClick={() => {
+                                        if (isEditingMetadata) {
+                                            handleSaveMetadata();
+                                        } else {
+                                            setIsEditingMetadata(true);
+                                        }
+                                    }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-[#00FFC2]/20 hover:bg-[#00FFC2]/10 transition-all text-[10px] font-black tracking-widest uppercase"
+                                    style={{ color: '#00FFC2', borderColor: '#00FFC2' }}
+                                >
+                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
+                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                </button>
+                                {isEditingMetadata && (
+                                    <button 
+                                        onClick={() => setIsEditingMetadata(false)}
+                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                                <button 
+                                    onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
+                                    style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
+                                >
+                                    <Plus size={14} />
+                                    <AutoTranslatedText text="Add Content" />
+                                </button>
+                            </div>
                         )}
                     </div>
                     
@@ -423,14 +507,32 @@ const VirtualMuseumPage: React.FC = () => {
                             <div className="h-[1px] w-12 bg-white/10" />
                         </div>
                         
-                        <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight whitespace-pre-wrap break-keep" 
-                            style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}22` }}>
-                            <AutoTranslatedText text="3D 가상 전시 박물관" />
-                        </h1>
+                        {isEditingMetadata ? (
+                            <textarea 
+                                value={tempTitle}
+                                onChange={(e) => setTempTitle(e.target.value)}
+                                className="w-full bg-white/5 border border-[#00FFC2]/30 rounded-2xl p-4 text-4xl md:text-5xl font-serif font-black mb-6 text-white focus:outline-none focus:border-[#00FFC2] transition-all resize-none"
+                                rows={2}
+                            />
+                        ) : (
+                            <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight whitespace-pre-wrap break-keep" 
+                                style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}22` }}>
+                                <AutoTranslatedText text={tempTitle} />
+                            </h1>
+                        )}
                         
-                        <p className="text-lg md:text-xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
-                            <AutoTranslatedText text="카드를 클릭하여 유물의 세부 모습을 확인해 보세요. 뒷면의 이미지를 다시 클릭하면 전체 화면으로 감상할 수 있습니다." />
-                        </p>
+                        {isEditingMetadata ? (
+                            <textarea 
+                                value={tempDesc}
+                                onChange={(e) => setTempDesc(e.target.value)}
+                                className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg font-serif italic text-white/80 focus:outline-none focus:border-[#00FFC2]/50 transition-all resize-none"
+                                rows={3}
+                            />
+                        ) : (
+                            <p className="text-lg md:text-xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
+                                <AutoTranslatedText text={tempDesc} />
+                            </p>
+                        )}
                     </div>
                 </div>
             </header>
