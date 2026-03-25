@@ -63,7 +63,7 @@ export const Layout: React.FC = () => {
                 {!hideHeader && <Header />}
                 {hideHeader && <LanguageSelector variant="floating" />}
                 
-                {!isImmersive && <GlobalMiniMap />}
+                {!isImmersive && !isInspirationPage && <GlobalMiniMap />}
                 
                 <div className={`flex-grow flex flex-col relative ${!hideHeader ? 'pt-20' : ''}`}>
 
