@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { BookOpen, X, ChevronUp, ChevronDown } from 'lucide-react';
+import { BookOpen, X } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
@@ -310,15 +310,28 @@ const SubCategoryPage: React.FC = () => {
                                             </div>
                                         </div>
                                         
-                                        <div className="relative flex items-center">
-                                            {/* List of Titles - Scrollable Container */}
+                                        <div className="relative">
+                                            {/* List of Titles - Pure Scrollable Container */}
                                             <div 
                                                 ref={scrollContainerRef}
-                                                className="flex-grow space-y-2 max-h-[160px] overflow-y-auto pr-8 scroll-smooth"
-                                                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                                className="flex-grow space-y-2 max-h-[160px] overflow-y-auto pr-4 scroll-smooth custom-scrollbar"
                                             >
                                                 <style>{`
-                                                    div::-webkit-scrollbar { display: none; }
+                                                    .custom-scrollbar::-webkit-scrollbar {
+                                                        width: 4px;
+                                                    }
+                                                    .custom-scrollbar::-webkit-scrollbar-track {
+                                                        background: rgba(255, 255, 255, 0.05);
+                                                        border-radius: 10px;
+                                                    }
+                                                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                                                        background: rgba(255, 255, 255, 0.2);
+                                                        border-radius: 10px;
+                                                        transition: background 0.3s;
+                                                    }
+                                                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                                        background: rgba(255, 255, 255, 0.4);
+                                                    }
                                                 `}</style>
                                                 {([...items, ...stories]).map((item, idx) => (
                                                     <motion.div 
@@ -344,24 +357,6 @@ const SubCategoryPage: React.FC = () => {
                                                     </div>
                                                 )}
                                             </div>
-
-                                            {/* Scroll Arrows */}
-                                            {[...items, ...stories].length > 4 && (
-                                                <div className="absolute right-0 flex flex-col gap-4">
-                                                    <button 
-                                                        onClick={() => scrollContainerRef.current?.scrollBy({ top: -40, behavior: 'smooth' })}
-                                                        className="p-2 rounded-full border border-white/10 transition-all hover:bg-white/10"
-                                                    >
-                                                        <ChevronUp size={16} />
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => scrollContainerRef.current?.scrollBy({ top: 40, behavior: 'smooth' })}
-                                                        className="p-2 rounded-full border border-white/10 transition-all hover:bg-white/10"
-                                                    >
-                                                        <ChevronDown size={16} />
-                                                    </button>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
