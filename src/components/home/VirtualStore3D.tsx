@@ -1645,7 +1645,7 @@ export const VirtualStore3D: React.FC = () => {
 
                 <group
                     key={resetKey}
-                    position={isMobile ? [-1.2, 0, 0] : [-4.0, 0, 0]}
+                    position={isMobile ? [-1.2, 0, 0] : [0, 0, 0]}
                     onClick={() => {
                         if (hoveredFloor) setHoveredFloor(null);
                     }}
