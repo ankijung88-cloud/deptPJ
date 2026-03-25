@@ -9,210 +9,210 @@ import { AutoTranslatedText } from './AutoTranslatedText';
 import { getComplementaryColor } from '../../utils/themeUtils';
 
 
-export const GlobalMiniMap: React.FC<{ 
-    initialExpanded?: boolean; 
+export const GlobalMiniMap: React.FC<{
+    initialExpanded?: boolean;
     hideIcon?: boolean;
     className?: string;
-}> = ({ 
+}> = ({
     initialExpanded = false,
     hideIcon = false,
     className
 }) => {
-    const [isExpanded, setIsExpanded] = useState(initialExpanded);
-    const [isHovered, setIsHovered] = useState(false);
-    const [items, setItems] = useState<any[]>([]);
-    const [stories, setStories] = useState<any[]>([]);
+        const [isExpanded, setIsExpanded] = useState(initialExpanded);
+        const [isHovered, setIsHovered] = useState(false);
+        const [items, setItems] = useState<any[]>([]);
+        const [stories, setStories] = useState<any[]>([]);
 
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { subId } = useParams<{ subId: string }>();
-    const { i18n } = useTranslation();
+        const location = useLocation();
+        const navigate = useNavigate();
+        const { subId } = useParams<{ subId: string }>();
+        const { i18n } = useTranslation();
 
-    // Fetch items when expanded
-    useEffect(() => {
-        if (isExpanded && items.length === 0) {
-            const fetchAllData = async () => {
-                try {
-                    const [itemsRes, storiesRes] = await Promise.all([
-                        fetch('/api/products'),
-                        fetch('/api/categories/nav') // Assuming nav returns stories or similar
-                    ]);
+        // Fetch items when expanded
+        useEffect(() => {
+            if (isExpanded && items.length === 0) {
+                const fetchAllData = async () => {
+                    try {
+                        const [itemsRes, storiesRes] = await Promise.all([
+                            fetch('/api/products'),
+                            fetch('/api/categories/nav') // Assuming nav returns stories or similar
+                        ]);
 
-                    if (itemsRes.ok) {
-                        const itemsData = await itemsRes.json();
-                        setItems(itemsData.map((i: any) => ({ id: i.id, title: i.title, subcategory: i.subcategory })));
+                        if (itemsRes.ok) {
+                            const itemsData = await itemsRes.json();
+                            setItems(itemsData.map((i: any) => ({ id: i.id, title: i.title, subcategory: i.subcategory })));
+                        }
+                        if (storiesRes.ok) {
+                            const storiesData = await storiesRes.json();
+                            setStories(storiesData);
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch minimap data:', error);
                     }
-                    if (storiesRes.ok) {
-                        const storiesData = await storiesRes.json();
-                        setStories(storiesData);
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch minimap data:', error);
-                }
-            };
-            fetchAllData();
-        }
-    }, [isExpanded, items.length]);
+                };
+                fetchAllData();
+            }
+        }, [isExpanded, items.length]);
 
-    const { floors } = useFloors();
+        const { floors } = useFloors();
 
-    // Identify current floor
-    const currentPath = location.pathname;
-    const currentFloor = floors.find(f =>
-        currentPath.includes(`/category/${f.floor.toLowerCase()}`) ||
-        f.subitems?.some(s => s.id === subId)
-    );
+        // Identify current floor
+        const currentPath = location.pathname;
+        const currentFloor = floors.find(f =>
+            currentPath.includes(`/category/${f.floor.toLowerCase()}`) ||
+            f.subitems?.some(s => s.id === subId)
+        );
 
-    const getItemsForSub = (sid: string) => {
-        const subItems = items.filter(i => i.subcategory === sid);
-        const subStories = stories.filter(s => s.subcategory === sid);
-        return [...subItems, ...subStories];
-    };
+        const getItemsForSub = (sid: string) => {
+            const subItems = items.filter(i => i.subcategory === sid);
+            const subStories = stories.filter(s => s.subcategory === sid);
+            return [...subItems, ...subStories];
+        };
 
-    const compColor = (currentFloor && currentFloor.color) ? getComplementaryColor(currentFloor.color) : '#FFFFFF';
+        const compColor = (currentFloor && currentFloor.color) ? getComplementaryColor(currentFloor.color) : '#FFFFFF';
 
-    return (
-        <div
-            className={className || "fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 pointer-events-auto"}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            <AnimatePresence>
-                {isExpanded && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
-                        className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
-                    >
-                        <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4 shrink-0">
-                            <Layers size={18} className="text-white/40" />
-                            <span className="text-xs font-black tracking-[0.4em] uppercase text-white">
-                                <AutoTranslatedText text="SiteMap Directory" />
-                            </span>
-                        </div>
+        return (
+            <div
+                className={className || "fixed bottom-6 left-6 z-[60] flex flex-col items-start gap-3 pointer-events-auto"}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <AnimatePresence>
+                    {isExpanded && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
+                            className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
+                        >
+                            <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4 shrink-0">
+                                <Layers size={18} className="text-white/40" />
+                                <span className="text-xs font-black tracking-[0.4em] uppercase text-white">
+                                    <AutoTranslatedText text="SiteMap Directory" />
+                                </span>
+                            </div>
 
-                        <div className="flex-1 min-h-0 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
-                            {floors.map((floor) => {
-                                const isActive = currentFloor?.id === floor.id;
-                                const isCategoryActive = (sid: string) => subId === sid;
+                            <div className="flex-1 min-h-0 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
+                                {floors.map((floor) => {
+                                    const isActive = currentFloor?.id === floor.id;
+                                    const isCategoryActive = (sid: string) => subId === sid;
 
-                                return (
-                                    <div key={floor.id} className="space-y-3">
-                                        <button
-                                            onClick={() => {
-                                                if (floor.subitems && floor.subitems.length > 0) {
-                                                    navigate(`/category/${floor.subitems[0].id}`);
-                                                }
-                                                setIsExpanded(false);
-                                            }}
-                                            className={`w-full flex items-center justify-between group/floor transition-all ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-base font-mono font-bold w-10">{floor.floor}</span>
-                                                <span className="text-lg font-black tracking-wider uppercase"><AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} /></span>
+                                    return (
+                                        <div key={floor.id} className="space-y-3">
+                                            <button
+                                                onClick={() => {
+                                                    if (floor.subitems && floor.subitems.length > 0) {
+                                                        navigate(`/category/${floor.subitems[0].id}`);
+                                                    }
+                                                    setIsExpanded(false);
+                                                }}
+                                                className={`w-full flex items-center justify-between group/floor transition-all ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-base font-mono font-bold w-10">{floor.floor}</span>
+                                                    <span className="text-lg font-black tracking-wider uppercase"><AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} /></span>
+                                                </div>
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="activeIndicator"
+                                                        className="w-1.5 h-1.5 rounded-full"
+                                                        style={{ backgroundColor: floor.color }}
+                                                    />
+                                                )}
+                                            </button>
+
+                                            <div className="pl-9 space-y-4 border-l border-white/10 ml-3">
+                                                {floor.subitems?.map((sub) => {
+                                                    const subItems = getItemsForSub(sub.id);
+                                                    const active = isCategoryActive(sub.id);
+
+                                                    return (
+                                                        <div key={sub.id} className="space-y-2">
+                                                            <button
+                                                                onClick={() => {
+                                                                    navigate(`/category/${sub.id}`);
+                                                                    setIsExpanded(false);
+                                                                }}
+                                                                className={`w-full text-left text-base font-black transition-all flex items-center gap-2 ${active ? 'text-white' : 'text-white/60 hover:text-white'}`}
+                                                            >
+                                                                {active && <ChevronRight size={14} style={{ color: floor.color }} />}
+                                                                <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                                            </button>
+
+                                                            {subItems.length > 0 && (
+                                                                <div className="pl-4 space-y-1.5 opacity-60">
+                                                                    {subItems.map((item) => (
+                                                                        <button
+                                                                            key={item.id}
+                                                                            onClick={() => {
+                                                                                navigate(`/category/${sub.id}`);
+                                                                                setIsExpanded(false);
+                                                                            }}
+                                                                            className="w-full text-left text-sm text-white/80 font-bold leading-tight hover:text-white transition-colors"
+                                                                        >
+                                                                            <AutoTranslatedText text={typeof item.title === 'string' ? item.title : item.title?.ko || ''} />
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
-                                            {isActive && (
-                                                <motion.div
-                                                    layoutId="activeIndicator"
-                                                    className="w-1.5 h-1.5 rounded-full"
-                                                    style={{ backgroundColor: floor.color }}
-                                                />
-                                            )}
-                                        </button>
-
-                                        <div className="pl-9 space-y-4 border-l border-white/10 ml-3">
-                                            {floor.subitems?.map((sub) => {
-                                                const subItems = getItemsForSub(sub.id);
-                                                const active = isCategoryActive(sub.id);
-
-                                                return (
-                                                    <div key={sub.id} className="space-y-2">
-                                                        <button
-                                                            onClick={() => {
-                                                                navigate(`/category/${sub.id}`);
-                                                                setIsExpanded(false);
-                                                            }}
-                                                            className={`w-full text-left text-base font-black transition-all flex items-center gap-2 ${active ? 'text-white' : 'text-white/60 hover:text-white'}`}
-                                                        >
-                                                            {active && <ChevronRight size={14} style={{ color: floor.color }} />}
-                                                            <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                                        </button>
-
-                                                        {subItems.length > 0 && (
-                                                            <div className="pl-4 space-y-1.5 opacity-60">
-                                                                {subItems.map((item) => (
-                                                                    <button
-                                                                        key={item.id}
-                                                                        onClick={() => {
-                                                                            navigate(`/category/${sub.id}`);
-                                                                            setIsExpanded(false);
-                                                                        }}
-                                                                        className="w-full text-left text-sm text-white/80 font-bold leading-tight hover:text-white transition-colors"
-                                                                    >
-                                                                        <AutoTranslatedText text={typeof item.title === 'string' ? item.title : item.title?.ko || ''} />
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })}
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                    );
+                                })}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-            <AnimatePresence>
-                {!isExpanded && isHovered && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-black/60 backdrop-blur-xl border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
-                        style={{ borderColor: `${compColor}44` }}
+                <AnimatePresence>
+                    {!isExpanded && isHovered && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-black/60 backdrop-blur-xl border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
+                            style={{ borderColor: `${compColor}44` }}
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className="font-black tracking-[0.2em] uppercase" style={{ color: compColor }}>
+                                    <AutoTranslatedText text="층별 안내" />
+                                </span>
+                            </div>
+                            {/* Speech Bubble Arrow */}
+                            <div className="absolute left-6 -bottom-1 w-2 h-2 bg-black/60 border-r border-b border-white/20 rotate-45 backdrop-blur-md" style={{ borderColor: `${compColor}44` }} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Toggle Button */}
+                {!hideIcon && (
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
+                        style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
                     >
-                        <div className="flex items-center gap-2">
-                            <span className="font-black tracking-[0.2em] uppercase" style={{ color: compColor }}>
-                                <AutoTranslatedText text="전체 공간 안내" />
-                            </span>
-                        </div>
-                        {/* Speech Bubble Arrow */}
-                        <div className="absolute left-6 -bottom-1 w-2 h-2 bg-black/60 border-r border-b border-white/20 rotate-45 backdrop-blur-md" style={{ borderColor: `${compColor}44` }} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Toggle Button */}
-            {!hideIcon && (
-                <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
-                    style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
-                >
-                    <Compass
-                        size={24}
-                        className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'group-hover:scale-110'}`}
-                        style={!isExpanded ? { color: compColor } : {}}
-                    />
-
-                    {/* Visual HUD Pulse when collapsed */}
-                    {!isExpanded && (
-                        <span className="absolute inset-0 rounded-full animate-ping pointer-events-none opacity-20" style={{ backgroundColor: compColor }} />
-                    )}
-
-                    {currentFloor && !isExpanded && (
-                        <div
-                            className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#2D3D36] shadow-lg"
-                            style={{ backgroundColor: currentFloor.color }}
+                        <Compass
+                            size={24}
+                            className={`transition-all duration-700 ${isExpanded ? 'text-black rotate-180 scale-110' : 'group-hover:scale-110'}`}
+                            style={!isExpanded ? { color: compColor } : {}}
                         />
-                    )}
-                </button>
-            )}
-        </div>
-    );
-};
+
+                        {/* Visual HUD Pulse when collapsed */}
+                        {!isExpanded && (
+                            <span className="absolute inset-0 rounded-full animate-ping pointer-events-none opacity-20" style={{ backgroundColor: compColor }} />
+                        )}
+
+                        {currentFloor && !isExpanded && (
+                            <div
+                                className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#2D3D36] shadow-lg"
+                                style={{ backgroundColor: currentFloor.color }}
+                            />
+                        )}
+                    </button>
+                )}
+            </div>
+        );
+    };
