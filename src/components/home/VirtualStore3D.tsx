@@ -142,7 +142,6 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                     onPointerOut={() => { 
                         document.body.style.cursor = 'auto'; 
                         setHovered(false); 
-                        onHoverChange?.(null);
                     }}
                     onClick={(e) => { e.stopPropagation(); onClick(); }}
                 >
