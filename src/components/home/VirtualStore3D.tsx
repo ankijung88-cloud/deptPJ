@@ -94,11 +94,11 @@ const Satellites = ({ count, color, visible }: { count: number, color: string, v
             {satelliteData.map((data, i) => (
                 <mesh key={i}>
                     <sphereGeometry args={[data.size, 8, 8]} />
-                    <meshStandardMaterial 
-                        color={color} 
-                        emissive={color} 
-                        emissiveIntensity={2} 
-                        transparent 
+                    <meshStandardMaterial
+                        color={color}
+                        emissive={color}
+                        emissiveIntensity={2}
+                        transparent
                         opacity={0.8}
                     />
                 </mesh>
@@ -108,18 +108,18 @@ const Satellites = ({ count, color, visible }: { count: number, color: string, v
 };
 
 // --- 3D Background for Modal ---
-const GlassFragment = ({ category, position, color, i18nLanguage, onClick, productCount = 0, onHoverChange }: { 
-    category: any, 
-    position: [number, number, number], 
-    color: string, 
-    i18nLanguage: string, 
-    onClick: () => void, 
+const GlassFragment = ({ category, position, color, i18nLanguage, onClick, productCount = 0, onHoverChange }: {
+    category: any,
+    position: [number, number, number],
+    color: string,
+    i18nLanguage: string,
+    onClick: () => void,
     productCount?: number,
     onHoverChange?: (id: string | null) => void
 }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
-    
+
     useFrame(() => {
         if (!meshRef.current) return;
         meshRef.current.rotation.x += 0.005;
@@ -131,27 +131,27 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
             <group position={position}>
                 {/* Orbiting Satellites */}
                 <Satellites count={productCount} color={color} visible={hovered} />
-                
-                <mesh 
+
+                <mesh
                     ref={meshRef}
-                    onPointerOver={() => { 
-                        document.body.style.cursor = 'pointer'; 
-                        setHovered(true); 
+                    onPointerOver={() => {
+                        document.body.style.cursor = 'pointer';
+                        setHovered(true);
                         onHoverChange?.(category.id);
                     }}
-                    onPointerOut={() => { 
-                        document.body.style.cursor = 'auto'; 
-                        setHovered(false); 
+                    onPointerOut={() => {
+                        document.body.style.cursor = 'auto';
+                        setHovered(false);
                     }}
                     onClick={(e) => { e.stopPropagation(); onClick(); }}
                 >
                     <icosahedronGeometry args={[4.5, 1]} />
-                    <meshPhysicalMaterial 
-                        transparent 
-                        opacity={hovered ? 0.4 : 0.18} 
-                        transmission={0.9} 
-                        thickness={1} 
-                        roughness={0.05} 
+                    <meshPhysicalMaterial
+                        transparent
+                        opacity={hovered ? 0.4 : 0.18}
+                        transmission={0.9}
+                        thickness={1}
+                        roughness={0.05}
                         metalness={0.4}
                         color={color}
                     />
@@ -160,11 +160,11 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                 <Html transform distanceFactor={28} position={[0, 0, 0]} pointerEvents="none">
                     <div className="flex flex-col items-center justify-center p-4 w-[280px] pointer-events-none select-none">
                         <span className="text-2xl font-black tracking-widest text-white text-center leading-tight transition-all duration-300"
-                              style={{ 
-                                  textShadow: hovered ? `0 0 35px ${color}, 0 0 70px ${color}` : `0 0 20px ${color}, 0 0 40px ${color}80`,
-                                  color: 'white',
-                                  transform: hovered ? 'scale(1.1)' : 'scale(1)'
-                              }}>
+                            style={{
+                                textShadow: hovered ? `0 0 35px ${color}, 0 0 70px ${color}` : `0 0 20px ${color}, 0 0 40px ${color}80`,
+                                color: 'white',
+                                transform: hovered ? 'scale(1.1)' : 'scale(1)'
+                            }}>
                             <AutoTranslatedText text={getLocalizedText(category.label, i18nLanguage)} />
                         </span>
                     </div>
@@ -174,12 +174,12 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
     );
 };
 
-const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick, productCounts, productGroupedTitles }: { 
-    activeFloorData: any, 
-    onClose: () => void, 
-    buttonTextColor: string, 
-    i18nLanguage: string, 
-    categories: any[], 
+const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick, productCounts, productGroupedTitles }: {
+    activeFloorData: any,
+    onClose: () => void,
+    buttonTextColor: string,
+    i18nLanguage: string,
+    categories: any[],
     onCategoryClick: (catId: string) => void,
     productCounts: Record<string, number>,
     productGroupedTitles: Record<string, string[]>
@@ -187,10 +187,10 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     const groupRef = useRef<THREE.Group>(null);
     const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
 
-    const hoveredCat = useMemo(() => 
-        categories?.find(c => c.id === hoveredCatId), 
-    [categories, hoveredCatId]);
-    
+    const hoveredCat = useMemo(() =>
+        categories?.find(c => c.id === hoveredCatId),
+        [categories, hoveredCatId]);
+
     useFrame((state) => {
         if (!groupRef.current) return;
         const { x, y } = state.mouse;
@@ -203,16 +203,16 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     const fragmentPositions = useMemo(() => {
         if (!categories) return [];
         const positions: [number, number, number][] = [];
-        const radius = 35; 
+        const radius = 35;
         const startAngle = -Math.PI * 0.9; // Shifted Left/Center
         const totalAngle = Math.PI * 0.9;  // Avoid right side (video frame)
-        
+
         categories.forEach((_, i) => {
             const angle = startAngle + (totalAngle / (categories.length - 1 || 1)) * i;
             // High sky - avoiding center-ground and right-video areas
             const x = Math.cos(angle) * (radius + (i % 2 === 0 ? 12 : -8));
             const z = Math.sin(angle) * (radius + (i % 2 === 1 ? 6 : -12)) - 35; // Further back
-            const y = 32 + Math.sin(i * 1.5) * 15; 
+            const y = 32 + Math.sin(i * 1.5) * 15;
             positions.push([x, y, z]);
         });
         return positions;
@@ -222,13 +222,13 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
         <group ref={groupRef}>
             {/* Stars in the upper background */}
             <Stars radius={150} depth={60} count={6000} factor={5} saturation={0} fade speed={1} />
-            
+
             {/* 3D Land at the bottom */}
             <group position={[0, -15, -15]}>
                 <gridHelper args={[300, 60, COLORS.line, COLORS.line]} rotation={[0, 0, 0]}>
                     <lineBasicMaterial attach="material" transparent opacity={0.12} color={COLORS.line} />
                 </gridHelper>
-                
+
                 {/* Ground plane for depth */}
                 <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
                     <planeGeometry args={[300, 300]} />
@@ -255,8 +255,8 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                             {/* Hovered Category Sub-items (Expanding Layout) */}
                             <div className={`overflow-hidden transition-all duration-500 flex flex-wrap justify-center gap-4 max-w-[900px] w-full ${hoveredCat ? 'max-h-[300px] opacity-100 mb-8 mt-4' : 'max-h-0 opacity-0 mb-0 mt-0'}`}>
                                 {hoveredCatId && productGroupedTitles[hoveredCatId]?.map((title: string, idx: number) => (
-                                    <div 
-                                        key={idx} 
+                                    <div
+                                        key={idx}
                                         className="px-6 py-3 border border-white/20 rounded-xl text-white font-bold tracking-widest backdrop-blur-xl bg-white/5 animate-in fade-in zoom-in duration-300"
                                         style={{ boxShadow: `0 0 20px ${activeFloorData.color}20` }}
                                     >
@@ -279,19 +279,19 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
 
                 {/* 3D Glass Category Shards */}
                 {categories && categories.map((cat, idx) => (
-                    <GlassFragment 
-                        key={idx} 
-                        category={cat} 
-                        position={fragmentPositions[idx]} 
-                        color={activeFloorData.color} 
-                        i18nLanguage={i18nLanguage} 
+                    <GlassFragment
+                        key={idx}
+                        category={cat}
+                        position={fragmentPositions[idx]}
+                        color={activeFloorData.color}
+                        i18nLanguage={i18nLanguage}
                         onClick={() => onCategoryClick(cat.id)}
                         productCount={productCounts[cat.id] || 0}
                         onHoverChange={setHoveredCatId}
                     />
                 ))}
             </group>
-            
+
             <ambientLight intensity={1.5} />
             <pointLight position={[30, 30, 30]} intensity={2.5} color={COLORS.line} />
         </group>
@@ -314,16 +314,16 @@ const TraditionalRoof = ({ width, depth, color }: { width: number, depth: number
                 <meshStandardMaterial color={"#1a1a1a"} transparent opacity={0.95} />
                 <Edges color={color || COLORS.line} threshold={20} />
             </mesh>
-            
+
             {/* Tile lines (Ribs) - consistent with image */}
-            <group position={[0, h/2, 0]}>
+            <group position={[0, h / 2, 0]}>
                 {Array.from({ length: 16 }).map((_, i) => {
                     const angle = (i / 16) * Math.PI * 2;
                     if (i % 4 === 0) return null; // Skip corners
                     const x = Math.cos(angle) * (roofW / 2.5);
                     const z = Math.sin(angle) * (roofD / 2.5);
                     return (
-                        <mesh key={i} position={[x, 0, z]} rotation={[0, -angle, Math.atan2(h, roofW/2)]}>
+                        <mesh key={i} position={[x, 0, z]} rotation={[0, -angle, Math.atan2(h, roofW / 2)]}>
                             <boxGeometry args={[0.01, h * 1.5, 0.01]} />
                             <meshBasicMaterial color={COLORS.line} transparent opacity={0.1} />
                         </mesh>
@@ -342,7 +342,7 @@ const TraditionalRoof = ({ width, depth, color }: { width: number, depth: number
             {[
                 [1, 1], [1, -1], [-1, -1], [-1, 1]
             ].map(([x, z], i) => (
-                <group key={i} position={[x * roofW / 2, 0.05, z * roofD / 2]} rotation={[0, Math.atan2(-z, -x) + Math.PI/4, 0]}>
+                <group key={i} position={[x * roofW / 2, 0.05, z * roofD / 2]} rotation={[0, Math.atan2(-z, -x) + Math.PI / 4, 0]}>
                     <mesh position={[0.3, 0.1, 0.3]} rotation={[0, 0, 0.4]}>
                         <boxGeometry args={[0.5, 0.05, 0.05]} />
                         <meshBasicMaterial color={color || COLORS.line} />
@@ -431,7 +431,7 @@ const PagodaCore = ({ height, width, depth }: { height: number, width: number, d
             <SolidMaterial color={COLORS.fill} transparent opacity={0.5} />
             <Edges color={COLORS.line} threshold={15} />
         </mesh>
-        
+
         {/* High-detail Latticed Frames (Increased prominence) */}
         {[-width * 0.4, width * 0.4].map((z, i) => (
             <group key={i} position={[0, 0, z]}>
@@ -457,7 +457,7 @@ const PagodaCore = ({ height, width, depth }: { height: number, width: number, d
 const Columns = ({ width, depth, height }: { width: number, depth: number, height: number }) => {
     const bays = METRICS.bays;
     const positions: [number, number][] = [];
-    
+
     for (let i = 0; i < bays; i++) {
         for (let j = 0; j < bays; j++) {
             if (i === 0 || i === bays - 1 || j === 0 || j === bays - 1) {
@@ -556,7 +556,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
 
     const floorScale = 1 - (parseInt(floor.floor) - 1) * METRICS.taperFactor;
     const isFirstFloor = floor.floor === "1";
-    
+
     // Significantly more prominent first floor (Higher and Wider)
     const currentHeight = isFirstFloor ? METRICS.floorHeight * 1.5 : METRICS.floorHeight;
     const currentW = METRICS.width * floorScale * (isFirstFloor ? 1.4 : 1);
@@ -603,17 +603,17 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
             {!isSelectedAnything && (
                 <Html
                     position={[
-                        METRICS.width / 2 + (isMobile ? 6.0 : 5.5), 
-                        METRICS.floorHeight / 2, 
+                        METRICS.width / 2 + (isMobile ? 6.0 : 5.5),
+                        METRICS.floorHeight / 2,
                         METRICS.depth / 2
                     ]}
                     center
                     zIndexRange={[50, 100]}
                 >
-                    <div 
-                        style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
                             pointerEvents: 'auto',
                             transition: 'all 0.3s ease',
                             zIndex: 50
@@ -630,7 +630,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                         {/* Relative container to anchor label and placeholder */}
                         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px', gap: isMobile ? '8px' : '15px' }}>
                             {/* Existing Button */}
-                            <div 
+                            <div
                                 onPointerEnter={(e) => { e.stopPropagation(); setIsMainButtonHovered(true); onHover(parseInt(floor.floor)); document.body.style.cursor = 'pointer'; }}
                                 onPointerLeave={() => { setIsMainButtonHovered(false); onHover(null); document.body.style.cursor = 'auto'; }}
                                 onClick={(e) => {
@@ -648,8 +648,8 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     cursor: 'pointer',
-                                    boxShadow: (isHovered || isMainButtonHovered) 
-                                        ? `0 0 20px ${floor.color}44, inset 0 0 10px ${floor.color}33` 
+                                    boxShadow: (isHovered || isMainButtonHovered)
+                                        ? `0 0 20px ${floor.color}44, inset 0 0 10px ${floor.color}33`
                                         : '0 4px 15px rgba(0,0,0,0.3)',
                                     transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
                                     transform: (isHovered || isMainButtonHovered) ? 'scale(1.1)' : 'scale(1)',
@@ -657,9 +657,9 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     zIndex: (isHovered || isMainButtonHovered) ? 10 : 1
                                 }}
                             >
-                                <span style={{ 
-                                    fontSize: isMobile ? '16px' : '24px', 
-                                    fontWeight: '900', 
+                                <span style={{
+                                    fontSize: isMobile ? '16px' : '24px',
+                                    fontWeight: '900',
                                     color: (isHovered || isMainButtonHovered) ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
                                     lineHeight: 1,
                                     fontFamily: 'serif',
@@ -667,7 +667,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                 }}>
                                     {floor.floor}
                                 </span>
-                                
+
                                 {/* Inner Ring Detail */}
                                 <div style={{
                                     position: 'absolute',
@@ -680,7 +680,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                             </div>
 
                             {/* Expansion Placeholder Button (Same Design) */}
-                            <div 
+                            <div
                                 onPointerEnter={(e) => { e.stopPropagation(); setIsPlaceholderHovered(true); document.body.style.cursor = 'pointer'; }}
                                 onPointerLeave={() => { setIsPlaceholderHovered(false); document.body.style.cursor = 'auto'; }}
                                 style={{
@@ -700,9 +700,9 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     zIndex: isPlaceholderHovered ? 10 : 1
                                 }}
                             >
-                                <span style={{ 
-                                    fontSize: isMobile ? '14px' : '20px', 
-                                    fontWeight: '400', 
+                                <span style={{
+                                    fontSize: isMobile ? '14px' : '20px',
+                                    fontWeight: '400',
                                     color: isPlaceholderHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.5)',
                                     lineHeight: 1
                                 }}>+</span>
@@ -722,8 +722,8 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
     const totalHeight = floors.length * METRICS.floorHeight;
 
     return (
-        <group 
-            position={[0, -(totalHeight * 0.5) + (isMobile ? 1.8 : 6.5), 0]} 
+        <group
+            position={[0, -(totalHeight * 0.5) + (isMobile ? 1.8 : 6.5), 0]}
             scale={isMobile ? [0.55, 0.75, 0.55] : [0.9, 0.55, 0.9]}
             onClick={(e) => {
                 e.stopPropagation();
@@ -820,11 +820,11 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <div 
+                                <div
                                     className="flex items-center gap-4 mb-6"
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <div 
+                                    <div
                                         className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -842,12 +842,12 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                             <h4 style={{ color: '#fff', fontSize: isMobile ? '16px' : '22px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.2 }}>
                                                 <AutoTranslatedText text={getLocalizedText(activeFloorData.title, lang)} />
                                             </h4>
-                                            
+
                                             {/* Watch Video Link - Repositioned below title */}
                                             <motion.div
                                                 whileHover={{ scale: 1.02, opacity: 1 }}
                                                 className="flex items-center gap-2 transition-all whitespace-nowrap opacity-70 mt-1"
-                                                style={{ 
+                                                style={{
                                                     color: activeFloorData.color,
                                                     fontSize: isMobile ? '10px' : '12px',
                                                     fontWeight: '700',
@@ -893,7 +893,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                     ))}
                                 </div>
 
-                                <div 
+                                <div
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setActiveModalFloor(null);
@@ -1035,7 +1035,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
-    
+
     // Keyboard support for closing video modal
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -1044,7 +1044,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
         if (isVideoExpanded) window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isVideoExpanded]);
-    
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -1053,7 +1053,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
             className="fixed inset-0 z-[1000] flex lg:hidden items-center justify-center p-6 bg-black/80 backdrop-blur-md"
             onClick={onClose}
         >
-            <motion.div 
+            <motion.div
                 className="relative w-full max-w-sm bg-[#1A2420] border-2 border-[#00FFC2] p-8 flex flex-col gap-8 shadow-[0_0_50px_rgba(0,255,194,0.2)]"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -1070,9 +1070,9 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                             </h2>
                         </div>
                     </div>
-                    
+
                     {/* Video Link */}
-                    <button 
+                    <button
                         onClick={() => setIsVideoExpanded(true)}
                         className="flex items-center gap-2 text-[#00FFC2] hover:text-[#00FFC2]/80 transition-colors mt-2"
                     >
@@ -1084,7 +1084,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                 {/* Subcategories List */}
                 <div className="flex flex-col gap-6 py-4">
                     {activeFloorData.subitems?.map((sub: any, idx: number) => (
-                        <button 
+                        <button
                             key={idx}
                             onClick={() => {
                                 // Don't call onClose() or onSelectFloor() here to avoid visual flicker.
@@ -1107,8 +1107,8 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                         <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase">Structural Fragment</span>
                         <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
                     </div>
-                    
-                    <button 
+
+                    <button
                         onClick={onClose}
                         className="flex items-center gap-3 text-[#00FFC2] group"
                     >
@@ -1164,9 +1164,9 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 };
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
-const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles }: { 
-    activeFloorData: any, 
-    onClose: () => void, 
+const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productGroupedTitles }: {
+    activeFloorData: any,
+    onClose: () => void,
     productCounts: Record<string, number>,
     productGroupedTitles: Record<string, string[]>
 }) => {
@@ -1213,10 +1213,10 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
         >
             {/* Logo (Top Left) */}
             <div className="absolute top-8 left-8 md:top-12 md:left-12 z-[1100] pointer-events-none">
-                <img 
-                    src="/K로고.png" 
-                    alt="Logo" 
-                    className="h-16 md:h-20 w-auto drop-shadow-[0_0_15px_rgba(0,255,194,0.3)] opacity-80" 
+                <img
+                    src="/K로고.png"
+                    alt="Logo"
+                    className="h-16 md:h-20 w-auto drop-shadow-[0_0_15px_rgba(0,255,194,0.3)] opacity-80"
                 />
             </div>
 
@@ -1227,11 +1227,11 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             {/* 3D Background Space - Enabled Pointer Events for OrbitControls */}
             <div className="absolute inset-0 z-0 pointer-events-auto">
                 <Canvas camera={{ position: [0, 15, cameraZPos], fov: 50 }}>
-                    <ModalBackground3D 
-                        activeFloorData={activeFloorData} 
-                        onClose={onClose} 
-                        buttonTextColor={buttonTextColor} 
-                        i18nLanguage={i18n.language} 
+                    <ModalBackground3D
+                        activeFloorData={activeFloorData}
+                        onClose={onClose}
+                        buttonTextColor={buttonTextColor}
+                        i18nLanguage={i18n.language}
                         categories={activeFloorData.subitems}
                         onCategoryClick={(catId) => {
                             navigate(`/category/${catId}`);
@@ -1239,9 +1239,9 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                         productCounts={productCounts}
                         productGroupedTitles={productGroupedTitles}
                     />
-                    <OrbitControls 
-                        enableDamping 
-                        dampingFactor={0.06} 
+                    <OrbitControls
+                        enableDamping
+                        dampingFactor={0.06}
                         rotateSpeed={-0.8} // Slightly faster for responsiveness
                         enableZoom={true}
                         maxPolarAngle={Math.PI / 1.3} // Increased significantly to allow sky view
@@ -1253,10 +1253,10 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             {/* Navigation Overlay (Arrows and Click Areas) */}
             <div className="absolute inset-0 pointer-events-none z-[1100]">
                 {/* Move Forward (Top) */}
-                <button 
-                    onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setCameraZPos(prev => Math.max(25, prev - 10)); 
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setCameraZPos(prev => Math.max(25, prev - 10));
                     }}
                     className="absolute top-12 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
                 >
@@ -1265,10 +1265,10 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                 </button>
 
                 {/* Move Backward (Bottom) */}
-                <button 
-                    onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setCameraZPos(prev => Math.min(100, prev + 10)); 
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setCameraZPos(prev => Math.min(100, prev + 10));
                     }}
                     className="absolute bottom-32 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
                 >
@@ -1278,7 +1278,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
 
                 {/* Minimap Toggle (Bottom Left) */}
                 <div className="absolute bottom-12 left-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
-                    <button 
+                    <button
                         onClick={(e) => { e.stopPropagation(); setShowMinimap(!showMinimap); }}
                         className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMinimap ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
                     >
@@ -1289,7 +1289,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
 
                 {/* Mouse Trail Toggle (Bottom Right) */}
                 <div className="absolute bottom-12 right-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
-                    <button 
+                    <button
                         onClick={(e) => { e.stopPropagation(); setShowMouseTrail(!showMouseTrail); }}
                         className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMouseTrail ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
                     >
@@ -1311,12 +1311,12 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             {/* Decorative geometrical blocks removed */}
 
             {/* 3D Background Space Handles Fragments */}
-            
+
             <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 100 }}
-                animate={{ 
-                    opacity: 1, 
-                    scale: 1, 
+                animate={{
+                    opacity: 1,
+                    scale: 1,
                     x: 0,
                     boxShadow: [
                         "0 0 50px rgba(255, 140, 0, 0.4), 0 0 100px rgba(255, 140, 0, 0.2)",
@@ -1324,13 +1324,13 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                         "0 0 50px rgba(255, 140, 0, 0.4), 0 0 100px rgba(255, 140, 0, 0.2)"
                     ]
                 }}
-                transition={{ 
+                transition={{
                     opacity: { duration: 0.8, delay: 0.2 },
                     scale: { duration: 0.8, delay: 0.2 },
                     x: { duration: 0.8, delay: 0.2 },
-                    boxShadow: { 
-                        duration: 3, 
-                        repeat: Infinity, 
+                    boxShadow: {
+                        duration: 3,
+                        repeat: Infinity,
                         ease: "easeInOut"
                     }
                 }}
@@ -1371,12 +1371,12 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                     <svg className="absolute inset-[-100px] w-[500px] h-[500px] pointer-events-none overflow-visible">
                         {/* Core Neon ring */}
                         <circle cx="250" cy="250" r="170" fill="none" stroke="#FF8C00" strokeWidth="2" opacity="0.8" />
-                        
+
                         {/* Spreading Glow Layers */}
                         <circle cx="250" cy="250" r="175" fill="none" stroke="#FF8C00" strokeWidth="8" opacity="0.2" filter="blur(4px)" className="animate-pulse" />
                         <circle cx="250" cy="250" r="190" fill="none" stroke="#FFD700" strokeWidth="20" opacity="0.1" filter="blur(15px)" />
                         <circle cx="250" cy="250" r="220" fill="none" stroke="#FFA500" strokeWidth="40" opacity="0.05" filter="blur(40px)" />
-                        
+
                         {/* Static subtle floor accent */}
                         <circle cx="250" cy="250" r="165" fill="none" stroke={activeFloorData.color} strokeWidth="2" opacity="0.3" />
                     </svg>
@@ -1480,7 +1480,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                             )}
 
                         </motion.div>
-                        
+
                         {/* Mute/Unmute UI moved outside video frame to bottom-right of the screen */}
                         <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-[2100] flex items-center gap-4">
                             <button
@@ -1498,15 +1498,15 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             </AnimatePresence>
 
             {/* Subcategory Fragments are now rendered in 3D Background */}
-            
+
             {/* Global Features (when toggled from inside 3D View) */}
-             {showMinimap && (
-                <GlobalMiniMap 
-                    initialExpanded={true} 
-                    hideIcon={true} 
+            {showMinimap && (
+                <GlobalMiniMap
+                    initialExpanded={true}
+                    hideIcon={true}
                     className="fixed bottom-32 left-12 z-[1500] flex flex-col items-start gap-3 pointer-events-auto"
                 />
-             )}
+            )}
             {showMouseTrail && <MouseTrail3D />}
         </motion.div>
     );
@@ -1519,12 +1519,12 @@ export const VirtualStore3D: React.FC = () => {
     const location = useLocation();
     const isAtInspiration = location.pathname === '/inspiration';
 
-    
+
     // Initialize selectedFloor from URL query param if present
     const initialFloorNum = useMemo(() => {
         const floorParam = searchParams.get('floor');
         if (!floorParam) return null;
-        
+
         // Handle both simple "5" and "floor-5" formats
         const num = floorParam.toLowerCase().replace('floor-', '');
         const parsed = parseInt(num, 10);
@@ -1577,14 +1577,14 @@ export const VirtualStore3D: React.FC = () => {
 
     const [resetKey, setResetKey] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
-    
+
     // Improved device detection using matchMedia
     React.useEffect(() => {
         const mediaQuery = window.matchMedia("(max-width: 1023px)"); // Desktop starts at 1024
         const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
             setIsMobile(e.matches);
         };
-        
+
         handleMediaChange(mediaQuery);
         mediaQuery.addEventListener('change', handleMediaChange);
         return () => mediaQuery.removeEventListener('change', handleMediaChange);
@@ -1607,10 +1607,10 @@ export const VirtualStore3D: React.FC = () => {
             <div className="absolute top-12 md:top-24 left-8 md:left-16 pointer-events-none z-10">
                 {/* Front-aligned Logo above title */}
                 <div className="-mb-2 opacity-80">
-                    <img 
-                        src="/K로고.png" 
-                        alt="Logo" 
-                        className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]" 
+                    <img
+                        src="/K로고.png"
+                        alt="Logo"
+                        className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]"
                     />
                 </div>
 
@@ -1646,8 +1646,8 @@ export const VirtualStore3D: React.FC = () => {
                     onUpdate={(c) => c.lookAt(0, isMobile ? 0.0 : 1.2, 0)}
                 />
 
-                <group 
-                    key={resetKey} 
+                <group
+                    key={resetKey}
                     position={isMobile ? [-1.2, 0, 0] : [-4.0, 0, 0]}
                     onClick={() => {
                         if (hoveredFloor) setHoveredFloor(null);
@@ -1720,10 +1720,10 @@ export const VirtualStore3D: React.FC = () => {
             {isAtInspiration && (
                 <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
                     <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
-                        <AutoTranslatedText text="[Drag to Rotate] • [Click Floor Button to Select]" />
+                        <AutoTranslatedText text="[Drag to Rotate] • [Click Button to Select]" />
                     </div>
-                    
-                    <button 
+
+                    <button
                         onClick={() => setResetKey(prev => prev + 1)}
                         className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300 backdrop-blur-md"
                     >
