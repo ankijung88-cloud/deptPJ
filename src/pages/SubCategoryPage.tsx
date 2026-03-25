@@ -82,7 +82,7 @@ const SubCategoryPage: React.FC = () => {
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
     const [isExplorationMode, setIsExplorationMode] = useState(false);
-    const [scrollIndex, setScrollIndex] = useState(0);
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     // Toggle immersive mode when in exploration mode
     useImmersiveMode(isExplorationMode);
@@ -311,21 +311,28 @@ const SubCategoryPage: React.FC = () => {
                                         </div>
                                         
                                         <div className="relative flex items-center">
-                                            {/* List of Titles - Limited to 5 items */}
-                                            <div className="flex-grow space-y-2 min-h-[160px]">
-                                                {([...items, ...stories].slice(scrollIndex, scrollIndex + 5)).map((item, idx) => (
+                                            {/* List of Titles - Scrollable Container */}
+                                            <div 
+                                                ref={scrollContainerRef}
+                                                className="flex-grow space-y-2 max-h-[160px] overflow-y-auto pr-8 scroll-smooth"
+                                                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                            >
+                                                <style>{`
+                                                    div::-webkit-scrollbar { display: none; }
+                                                `}</style>
+                                                {([...items, ...stories]).map((item, idx) => (
                                                     <motion.div 
                                                         key={item.id} 
                                                         initial={{ opacity: 0, x: -10 }}
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: idx * 0.05 }}
-                                                        className="flex items-start gap-4 group/item cursor-pointer"
+                                                        className="flex items-start gap-4 group/item cursor-pointer mb-2"
                                                         onClick={() => {
                                                             setSelectedItemId(item.id);
                                                             setIsExplorationMode(true);
                                                         }}
                                                     >
-                                                        <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(scrollIndex + idx + 1).padStart(2, '0')}</span>
+                                                        <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(idx + 1).padStart(2, '0')}</span>
                                                         <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
                                                             <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                                         </span>
@@ -339,19 +346,17 @@ const SubCategoryPage: React.FC = () => {
                                             </div>
 
                                             {/* Scroll Arrows */}
-                                            {[...items, ...stories].length > 5 && (
+                                            {[...items, ...stories].length > 4 && (
                                                 <div className="absolute right-0 flex flex-col gap-4">
                                                     <button 
-                                                        disabled={scrollIndex === 0}
-                                                        onClick={() => setScrollIndex(prev => Math.max(0, prev - 1))}
-                                                        className={`p-2 rounded-full border border-white/10 transition-all ${scrollIndex === 0 ? 'opacity-20 translate-y-1' : 'hover:bg-white/10'}`}
+                                                        onClick={() => scrollContainerRef.current?.scrollBy({ top: -40, behavior: 'smooth' })}
+                                                        className="p-2 rounded-full border border-white/10 transition-all hover:bg-white/10"
                                                     >
                                                         <ChevronUp size={16} />
                                                     </button>
                                                     <button 
-                                                        disabled={scrollIndex + 5 >= [...items, ...stories].length}
-                                                        onClick={() => setScrollIndex(prev => Math.min([...items, ...stories].length - 5, prev + 1))}
-                                                        className={`p-2 rounded-full border border-white/10 transition-all ${scrollIndex + 5 >= [...items, ...stories].length ? 'opacity-20 -translate-y-1' : 'hover:bg-white/10'}`}
+                                                        onClick={() => scrollContainerRef.current?.scrollBy({ top: 40, behavior: 'smooth' })}
+                                                        className="p-2 rounded-full border border-white/10 transition-all hover:bg-white/10"
                                                     >
                                                         <ChevronDown size={16} />
                                                     </button>

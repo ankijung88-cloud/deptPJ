@@ -158,115 +158,19 @@ const resources = {
                 "business_id": "사업자등록번호: 123-45-67890",
                 "mail_order_id": "통신판매업신고: 2026-서울중구-1234"
             },
+            "faq": {
+                "search_placeholder": "궁금하신 내용을 검색해보세요..."
+            },
             "common": {
-                "view_all": "전체 보기",
-                "view_details": "상세 내역",
-                "date": "일정",
-                "location": "장소",
-                "price": "금액",
-                "loading": "로딩 중...",
-                "error": "오류가 발생했습니다.",
-                "no_content": "콘텐츠가 없습니다.",
+                "not_found": "페이지를 찾을 수 없습니다.",
+                "not_found_desc": "요청하신 정보를 찾을 수 없거나 삭제되었을 수 있습니다.",
+                "item_not_found": "아이템을 찾을 수 없습니다.",
+                "go_inspiration": "인스피레이션으로 돌아가기",
+                "no_info": "정보 없음",
                 "back_home": "홈으로 돌아가기",
                 "back": "뒤로",
-                "duration": "소요 시간",
-                "duration_value": "약 90분",
-                "detail_intro": "상세 소개",
-                "product": "상품명",
-                "select_date": "날짜 선택",
-                "download": "상품 다운로드",
-                "delete": "삭제",
-
-                "share_modal": {
-                    "title": "공유하기",
-                    "copy_link": "링크 복사",
-                    "copied": "링크가 복사되었습니다.",
-                    "sns": {
-                        "kakao": "카카오톡",
-                        "facebook": "페이스북",
-                        "twitter": "트위터",
-                        "more": "더보기"
-                    }
-                },
-                "admin": {
-                    "sidebar": {
-                        "title": "관리자 시스템",
-                        "products": "상품 관리",
-                        "users": "회원 관리",
-                        "bookings": "프로그램 기록",
-                        "logout": "로그아웃"
-                    },
-                    "product": {
-                        "title": "상품 관리",
-                        "add": "상품 등록",
-                        "edit": "상품 수정",
-                        "delete_confirm": "정말로 이 상품을 삭제하시겠습니까?",
-                        "search_placeholder": "상품명으로 검색...",
-                        "table": {
-                            "image": "이미지",
-                            "title": "상품명",
-                            "category": "카테고리",
-                            "price": "가격",
-                            "actions": "관리"
-                        },
-                        "form": {
-                            "basic_info": "기본 정보",
-                            "content_details": "상세 내용",
-                            "image_label": "상품 이미지",
-                            "video_label": "YouTube 영상 URL (선택)",
-                            "main_category": "메인 카테고리 (층)",
-                            "sub_category": "서브 카테고리",
-                            "manage_closed": "휴무일 관리",
-                            "closed_description": "달력에서 날짜를 클릭하여 휴무일을 설정하세요. (빨간색: 휴무)",
-                            "selected_closed": "선택된 휴무일",
-                            "no_closed": "선택된 휴무일이 없습니다.",
-                            "save": "저장하기",
-                            "saving": "저장 중...",
-                            "upload_image": "이미지 업로드",
-                            "uploading": "업로드 중...",
-                            "replace_image": "이미지 교체",
-                            "closed_day": "휴무일",
-                            "open_day": "영업일"
-                        }
-                    },
-                    "user": {
-                        "title": "회원 관리",
-                        "subtitle": "전체 회원 관리 및 권한 설정",
-                        "search_placeholder": "이름 또는 이메일 검색",
-                        "table": {
-                            "user": "사용자",
-                            "email": "이메일",
-                            "role": "권한",
-                            "actions": "관리"
-                        },
-                        "promote": "승격",
-                        "demote": "강등",
-                        "delete": "삭제",
-                        "no_users": "검색된 회원이 없습니다."
-                    },
-                    "booking": {
-                        "title": "프로그램 기록 관리",
-                        "filter": {
-                            "status": "상태",
-                            "payment": "유형",
-                            "search": "검색 (내용)",
-                            "from": "시작일",
-                            "to": "종료일",
-                            "all_status": "전체 상태",
-                            "all_methods": "전체 유형"
-                        },
-                        "table": {
-                            "date": "일시",
-                            "user": "사용자",
-                            "product": "프로그램 / 카테고리",
-                            "payment": "유형",
-                            "amount": "수량 / 참여",
-                            "settlement": "기록 요약",
-                            "status": "상태",
-                            "actions": "관리"
-                        }
-                    }
-                }
+                "price": "금액",
+                "loading_content": "콘텐츠를 불러오는 중입니다..."
             }
         }
     }
