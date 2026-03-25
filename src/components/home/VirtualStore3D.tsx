@@ -24,6 +24,7 @@ import { useFloors } from '../../context/FloorContext';
 import { FloorCategory } from '../../types';
 import { useImmersiveMode } from '../../context/NavigationActionContext';
 import { FloorTransitionOverlay } from './FloorTransitionOverlay';
+import { getFeaturedProducts } from '../../api/products';
 
 // --- Theme & Configuration ---
 const COLORS = {
@@ -60,8 +61,54 @@ const SolidMaterial = ({ color = COLORS.fill, transparent = false, opacity = 1 }
     />
 );
 
+// --- Satellite Spheres for Product Counts ---
+const Satellites = ({ count, color, visible }: { count: number, color: string, visible: boolean }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const satelliteData = useMemo(() => {
+        return Array.from({ length: Math.min(count, 15) }).map(() => ({
+            radius: 6 + Math.random() * 4,
+            speed: 0.5 + Math.random() * 1.5,
+            offset: Math.random() * Math.PI * 2,
+            size: 0.2 + Math.random() * 0.3,
+            axis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize()
+        }));
+    }, [count]);
+
+    useFrame((state) => {
+        if (!groupRef.current || !visible) return;
+        const time = state.clock.getElapsedTime();
+        groupRef.current.children.forEach((child, i) => {
+            const data = satelliteData[i];
+            if (!data) return;
+            const angle = time * data.speed + data.offset;
+            const x = Math.cos(angle) * data.radius;
+            const z = Math.sin(angle) * data.radius;
+            child.position.set(x, Math.sin(angle * 0.5) * 3, z);
+        });
+    });
+
+    if (!visible || count === 0) return null;
+
+    return (
+        <group ref={groupRef}>
+            {satelliteData.map((data, i) => (
+                <mesh key={i}>
+                    <sphereGeometry args={[data.size, 8, 8]} />
+                    <meshStandardMaterial 
+                        color={color} 
+                        emissive={color} 
+                        emissiveIntensity={2} 
+                        transparent 
+                        opacity={0.8}
+                    />
+                </mesh>
+            ))}
+        </group>
+    );
+};
+
 // --- 3D Background for Modal ---
-const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { category: any, position: [number, number, number], color: string, i18nLanguage: string, onClick: () => void }) => {
+const GlassFragment = ({ category, position, color, i18nLanguage, onClick, productCount = 0 }: { category: any, position: [number, number, number], color: string, i18nLanguage: string, onClick: () => void, productCount?: number }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
     
@@ -74,6 +121,9 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { c
     return (
         <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
             <group position={position}>
+                {/* Orbiting Satellites */}
+                <Satellites count={productCount} color={color} visible={hovered} />
+                
                 <mesh 
                     ref={meshRef}
                     onPointerOver={() => { document.body.style.cursor = 'pointer'; setHovered(true); }}
@@ -109,7 +159,15 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick }: { c
     );
 };
 
-const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick }: { activeFloorData: any, onClose: () => void, buttonTextColor: string, i18nLanguage: string, categories: any[], onCategoryClick: (catId: string) => void }) => {
+const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLanguage, categories, onCategoryClick, productCounts }: { 
+    activeFloorData: any, 
+    onClose: () => void, 
+    buttonTextColor: string, 
+    i18nLanguage: string, 
+    categories: any[], 
+    onCategoryClick: (catId: string) => void,
+    productCounts: Record<string, number>
+}) => {
     const groupRef = useRef<THREE.Group>(null);
     
     useFrame((state) => {
@@ -193,6 +251,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                         color={activeFloorData.color} 
                         i18nLanguage={i18nLanguage} 
                         onClick={() => onCategoryClick(cat.id)}
+                        productCount={productCounts[cat.id] || 0}
                     />
                 ))}
             </group>
@@ -1069,7 +1128,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
 };
 
 // --- 3D Desktop Virtual Space (Image 2 Style) ---
-const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: any, onClose: () => void }) => {
+const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts }: { activeFloorData: any, onClose: () => void, productCounts: Record<string, number> }) => {
     useImmersiveMode(true);
     const navigate = useNavigate();
     const { i18n } = useTranslation();
@@ -1136,6 +1195,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose }: { activeFloorData: an
                         onCategoryClick={(catId) => {
                             navigate(`/category/${catId}`);
                         }}
+                        productCounts={productCounts}
                     />
                     <OrbitControls 
                         enableDamping 
@@ -1430,6 +1490,23 @@ export const VirtualStore3D: React.FC = () => {
     }, [searchParams]);
 
     const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
+    const [productCounts, setProductCounts] = useState<Record<string, number>>({});
+
+    // Fetch products and calculate counts per subcategory
+    useEffect(() => {
+        const fetchAndCountProducts = async () => {
+            const products = await getFeaturedProducts();
+            const counts: Record<string, number> = {};
+            products.forEach(p => {
+                const sub = p.subcategory;
+                if (sub) {
+                    counts[sub] = (counts[sub] || 0) + 1;
+                }
+            });
+            setProductCounts(counts);
+        };
+        fetchAndCountProducts();
+    }, []);
 
     // Sync selectedFloor with URL parameter once data is loaded
     useEffect(() => {
@@ -1584,6 +1661,7 @@ export const VirtualStore3D: React.FC = () => {
                                 setSelectedFloor(null);
                                 setTransitioningFloor(null);
                             }}
+                            productCounts={productCounts}
                         />
                     )
                 )}
