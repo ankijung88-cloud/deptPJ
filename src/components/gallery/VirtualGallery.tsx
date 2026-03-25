@@ -2,6 +2,8 @@ import React, { useMemo, useRef, Suspense, Component, ReactNode, useState, useEf
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { 
     PerspectiveCamera, 
+    useScroll,
+    ScrollControls,
     Image as DreiImage,
     Text as DreiText 
 } from '@react-three/drei';
@@ -433,6 +435,9 @@ const GalleryScene = ({
     isActivated?: boolean,
     targetIndex?: number
 }) => {
+    // We only call useScroll if we are NOT on mobile, 
+    // because on mobile we are not wrapped in ScrollControls
+    const scroll = !isMobile ? useScroll() : null;
     const { camera } = useThree() as any;
     
     const exhibits = useMemo(() => {
@@ -444,8 +449,25 @@ const GalleryScene = ({
         }));
     }, [items, stories]);
 
+    const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
     const currentOffset = useRef(targetIndex);
     const lastTargetIndex = useRef(targetIndex);
+
+    useEffect(() => {
+        if (!isMobile && scroll && exhibits.length > 0) {
+            // Find target index's scroll offset for desktop
+            const spacing = 20;
+            const totalZ = exhibits.length * spacing;
+            const targetZ = exhibits[targetIndex]?.zPos || 0;
+            const targetOffset = (targetZ + 8) / -(totalZ + 10);
+            
+            forcedScroll.current = {
+                offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
+                startTime: Date.now(),
+                active: true
+            };
+        }
+    }, [targetIndex, isMobile, exhibits]);
 
     useEffect(() => {
         if (targetIndex !== lastTargetIndex.current) {
@@ -484,31 +506,64 @@ const GalleryScene = ({
     useFrame((frameState, delta) => {
         if (!isActivated) return;
 
-        // Smoothly interpolate currentOffset towards targetIndex
-        // For mobile infinite feel, we use a continuous targetIndex
-        const lerpSpeed = 4.5;
-        currentOffset.current = THREE.MathUtils.lerp(currentOffset.current, targetIndex, delta * lerpSpeed);
-
-        // Pass the calculated offset to frame state for children to read
-        (frameState as any).currentOffset = currentOffset.current;
-
         if (isMobile) {
+            // Mobile: State-driven discrete navigation
+            const lerpSpeed = 4.5;
+            currentOffset.current = THREE.MathUtils.lerp(currentOffset.current, targetIndex, delta * lerpSpeed);
+            (frameState as any).currentOffset = currentOffset.current;
+
             camera.position.set(0, 0, 5);
             camera.lookAt(0, 0, 0);
             
-            // On mobile, the active index is simply around the currentOffset
             const closestIndex = ((Math.round(currentOffset.current) % exhibits.length) + exhibits.length) % exhibits.length;
-            
             if (closestIndex !== lastSetIndex.current && onActiveIndexChange) {
                 lastSetIndex.current = closestIndex;
                 onActiveIndexChange(closestIndex);
             }
-        } else {
-            const spacing = 20;
-            const desktopOffset = currentOffset.current * spacing;
-            const targetCameraZ = -desktopOffset;
+        } else if (scroll) {
+            // Desktop: Scroll-driven navigation
+            if (forcedScroll.current.active) {
+                const duration = 1000;
+                const elapsed = Date.now() - forcedScroll.current.startTime;
+                const progress = THREE.MathUtils.smoothstep(elapsed / duration, 0, 1);
+                scroll.offset = THREE.MathUtils.lerp(scroll.offset, forcedScroll.current.offset, progress);
+                if (scroll.el) {
+                    scroll.el.scrollTop = scroll.offset * (scroll.el.scrollHeight - scroll.el.clientHeight);
+                }
+                if (progress >= 1) forcedScroll.current.active = false;
+            }
+
+            const totalZ = exhibits.length * 20;
+            const scrollZ = scroll.offset * -(totalZ + 10);
+            
+            // Auto-snapping bias for Desktop
+            let pullBias = 0;
+            exhibits.forEach((ex) => {
+                const sweetSpot = ex.zPos + 8;
+                const dist = Math.abs(scrollZ - sweetSpot);
+                if (dist < 6) {
+                    const desktopStrength = Math.pow(1 - dist / 6, 2);
+                    pullBias += (sweetSpot - scrollZ) * desktopStrength * 0.85;
+                }
+            });
+
+            const targetCameraZ = scrollZ + pullBias;
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCameraZ, 0.1);
             camera.lookAt(0, 0, camera.position.z - 20);
+
+            // Sync index back to parent
+            const itemsInView = exhibits.map((ex, i) => ({
+                index: i,
+                dist: Math.abs((camera.position.z - 8) - ex.zPos)
+            }));
+            const closest = itemsInView.sort((a, b) => a.dist - b.dist)[0];
+            if (closest && closest.index !== lastSetIndex.current && onActiveIndexChange && !forcedScroll.current.active) {
+                lastSetIndex.current = closest.index;
+                onActiveIndexChange(closest.index);
+            }
+
+            // Also pass offset to cards (though desktop cards use cameraZ relative positioning mostly)
+            (frameState as any).currentOffset = (camera.position.z / -20);
         }
     });
 
@@ -597,8 +652,7 @@ export const VirtualGallery = ({
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null,
-    navigationDirection?: 'up' | 'down' | null
+    initialItemId?: string | null
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -654,6 +708,7 @@ export const VirtualGallery = ({
                 <Canvas shadows={false} dpr={[1, 2]}>
                     <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
                     <Suspense fallback={null}>
+                        {isMobile ? (
                             <GalleryScene 
                                 items={items} 
                                 stories={stories} 
@@ -669,6 +724,32 @@ export const VirtualGallery = ({
                                 isActivated={isActivated}
                                 targetIndex={targetIndex}
                             />
+                        ) : (
+                            <ScrollControls 
+                                pages={!isActivated 
+                                    ? 0 
+                                    : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8)} 
+                                damping={0.3} 
+                                distance={1}
+                                enabled={isActivated}
+                            >
+                                <GalleryScene 
+                                    items={items} 
+                                    stories={stories} 
+                                    theme={theme} 
+                                    lang={lang} 
+                                    onItemClick={onItemClick} 
+                                    isMobile={isMobile}
+                                    isMuseum={isMuseum}
+                                    cinemaItem={cinemaItem}
+                                    playing={playing}
+                                    setPlaying={setPlaying}
+                                    onActiveIndexChange={setActiveIndex}
+                                    isActivated={isActivated}
+                                    targetIndex={targetIndex}
+                                />
+                            </ScrollControls>
+                        )}
                     </Suspense>
                 </Canvas>
             </GalleryErrorBoundary>
