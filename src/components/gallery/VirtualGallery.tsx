@@ -594,7 +594,7 @@ const GalleryScene = ({
                 }
             });
 
-            if (closestIndex !== lastSetIndex.current && onActiveIndexChange) {
+            if (closestIndex !== lastSetIndex.current && onActiveIndexChange && !forcedScroll.current.active) {
                 lastSetIndex.current = closestIndex;
                 onActiveIndexChange(closestIndex);
             }
