@@ -799,23 +799,6 @@ export const VirtualGallery = ({
                         </div>
                     )}
                     
-                    {isMobile && isActivated && (
-                        <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
-                            <button 
-                                onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}
-                                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
-                            >
-                                <ChevronUp size={24} />
-                            </button>
-                            <button 
-                                onClick={(e) => { e.stopPropagation(); handleNavigate('down'); }}
-                                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
-                            >
-                                <ChevronDown size={24} />
-                            </button>
-                        </div>
-                    )}
-
                     <div className="absolute top-10 right-10 pointer-events-none z-20 text-right">
                         <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
                         <div className="text-xl font-serif italic text-white/60">
@@ -836,6 +819,23 @@ export const VirtualGallery = ({
                         </div>
                     </div>
                 </>
+            )}
+
+            {isMobile && isActivated && (
+                <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}
+                        className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
+                    >
+                        <ChevronUp size={24} />
+                    </button>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); handleNavigate('down'); }}
+                        className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
+                    >
+                        <ChevronDown size={24} />
+                    </button>
+                </div>
             )}
         </div>
     );
