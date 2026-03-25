@@ -235,15 +235,16 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     // Card height is ~3.2. To avoid overlap, arc length (radius * angleStep) should be > 4.5
     // angleStep = 2*PI / count. So radius * (2*PI / count) > 4.5 => radius > (4.5 * count) / (2*PI)
     const minSafeRadius = (5.5 * exhibitsCount) / (Math.PI * 2);
-    const radius = isMobile ? Math.max(25, minSafeRadius) : 3.5;
+    // Standardize mobile radius: 20 is a safe minimum for visual clarity, otherwise expand with item count
+    const radius = isMobile ? Math.max(20, minSafeRadius) : 3.5;
     
     const verticalOffset = isMobile ? 0 : -0.5;
 
     useFrame((state) => {
         if (!groupRef.current) return;
         
-        const { size, viewport } = state;
-        const isMobile = size.width < 768;
+        const { viewport } = state;
+        // isMobile prop is passed down and should be used consistently to avoid mid-frame discordance
 
         // Use the synchronized currentOffset passed from the scene
         const currentOffset = (state as any).currentOffset || 0;
@@ -296,7 +297,8 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                 centerFactor = THREE.MathUtils.smoothstep(absDist, transitionRange, desktopPlateau);
             }
 
-            const baseSideDisplacement = Math.min(viewport.width * 0.45, 6.0);
+            // Fixed side displacement ensures the "road width" is consistent across all pages
+            const baseSideDisplacement = 5.5; 
             const passingFactor = distFromCamera < -desktopPlateau 
                 ? THREE.MathUtils.mapLinear(Math.min(absDist, 10), desktopPlateau, 10, 1, 2.2)
                 : 1;
