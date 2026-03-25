@@ -241,7 +241,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const radius = isMobile ? Math.max(25, minSafeRadius) : 3.5;
     
     const angleStep = (Math.PI * 2) / exhibitsCount;
-    const verticalOffset = isMobile ? -0.2 : -0.5;
+    const verticalOffset = isMobile ? 0 : -0.5;
 
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -254,7 +254,8 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
         if (isMobile) {
             const scroll = (state as any).scrollOffset || 0;
             const globalAngle = scroll * Math.PI * 2 * 3;
-            const cardAngle = globalAngle + (index * angleStep);
+            // Subtracting index * angleStep to bring higher index items from "below" as scroll increases
+            const cardAngle = globalAngle - (index * angleStep);
             
             const effectiveY = Math.sin(cardAngle) * radius + verticalOffset;
             const effectiveZ = Math.cos(cardAngle) * radius - radius;
@@ -469,7 +470,10 @@ const GalleryScene = ({
             const spacing = 20;
             const totalZ = exhibits.length * spacing;
             const targetZ = exhibits[targetIndex].zPos;
-            const targetOffset = (targetZ + 8) / -(totalZ + 10);
+            // Precise target offset for mobile circular layout (mod 3 because mobile completes 3 rotations over full scroll)
+            const targetOffset = isMobile 
+                ? (targetIndex / exhibits.length) / 3.0 // Using the first rotation (K=0) for simplest mapping
+                : (targetZ + 8) / -(totalZ + 10);
             
             forcedScroll.current = { 
                 offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
@@ -584,6 +588,7 @@ const GalleryScene = ({
                     }
                     const elapsed = frameState.clock.elapsedTime - focusState.current.startTime;
                     if (elapsed < 1.0) {
+                        // Stronger pull when snapping
                         pullBias = -distFromFront * (normalizedAngle > Math.PI ? -1 : 1);
                     }
                 }
@@ -594,7 +599,9 @@ const GalleryScene = ({
                 onActiveIndexChange(closestIndex);
             }
 
-            (frameState as any).scrollOffset = scroll.offset + pullBias * 0.01;
+            // Stronger pull factor for mobile snapping if not in forced scroll
+            const finalBias = !forcedScroll.current.active ? pullBias * 0.05 : 0; 
+            (frameState as any).scrollOffset = scroll.offset + finalBias;
         } else {
             const scrollZ = scroll.offset * -(totalZ + 10);
             let pullBias = 0;
