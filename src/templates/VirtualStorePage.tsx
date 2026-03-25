@@ -203,13 +203,26 @@ const VirtualStorePage: React.FC = () => {
                     setParentProduct(data);
                     
                     // Initialize temp values from parent metadata if available
-                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
                         ? JSON.parse(data.selected_templates) 
                         : (data.selected_templates as any);
                     
-                    const storeMeta = selectedTemplates?.store;
-                    setTempTitle(storeMeta?.title?.[i18n.language] || storeMeta?.title?.ko || "3D 상품 리베이트");
-                    setTempDesc(storeMeta?.description?.[i18n.language] || storeMeta?.description?.ko || "");
+                    // Standardize as array
+                    const templates = Array.isArray(selectedTemplatesRaw) 
+                        ? selectedTemplatesRaw 
+                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                id,
+                                status: val.status || 'visible',
+                                title: val.title,
+                                description: val.description
+                            }))
+                            : []);
+
+                    const storeMeta = templates.find((t: any) => t.id === 'store');
+                    // Always load Korean for the editable fields to ensure consistency
+                    setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "3D 가상 스토어");
+                    setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "엄선된 프리미엄 굿즈와 전통 공예품을 만나보세요. 3D 가상 공간에서 제품의 상세한 질감과 디자인을 확인하고 바로 구매하실 수 있습니다.");
                 }
             }
         };
@@ -505,30 +518,41 @@ const VirtualStorePage: React.FC = () => {
         if (!parentProduct || !parentId) return;
         
         try {
-            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
                 ? JSON.parse(parentProduct.selected_templates) 
-                : (parentProduct.selected_templates as any) || {};
+                : (parentProduct.selected_templates as any) || [];
                 
-            const storeMeta = selectedTemplates.store || { title: {}, description: {} };
+            // Standardize as array
+            let templates = Array.isArray(selectedTemplatesRaw) 
+                ? selectedTemplatesRaw 
+                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                        id,
+                        status: val.status || 'visible',
+                        title: val.title,
+                        description: val.description
+                    }))
+                    : []);
+
+            // Check if store template already exists in the selection
+            const hasStore = templates.some((t: any) => t.id === 'store');
             
-            const updatedStoreMeta = {
-                ...storeMeta,
-                title: { 
-                    ...(typeof storeMeta.title === 'object' ? storeMeta.title : { ko: storeMeta.title || '' }),
-                    [i18n.language]: tempTitle 
-                },
-                description: { 
-                    ...(typeof storeMeta.description === 'object' ? storeMeta.description : { ko: storeMeta.description || '' }),
-                    [i18n.language]: tempDesc 
-                }
-            };
+            const updatedTemplates = hasStore 
+                ? templates.map((t: any) => t.id === 'store' ? {
+                    ...t,
+                    title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
+                    description: { ...(typeof t.description === 'object' ? t.description : {}), ko: tempDesc }
+                } : t)
+                : [...templates, {
+                    id: 'store',
+                    status: 'visible',
+                    title: { ko: tempTitle },
+                    description: { ko: tempDesc }
+                }];
             
             const updatedProduct = {
                 ...parentProduct,
-                selected_templates: {
-                    ...selectedTemplates,
-                    store: updatedStoreMeta
-                }
+                selected_templates: updatedTemplates
             };
             
             await updateProduct(parentId, updatedProduct);

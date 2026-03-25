@@ -19,6 +19,8 @@ export interface NavItem {
 export interface SelectedTemplate {
     id: string; // cinema, museum, store, ticket
     status: 'visible' | 'hidden';
+    title?: LocalizedString;
+    description?: LocalizedString;
 }
 
 export interface FeaturedItem {

@@ -302,13 +302,26 @@ const VirtualTicketPage: React.FC = () => {
                     setParentProduct(data);
                     
                     // Initialize temp values from parent metadata if available
-                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
                         ? JSON.parse(data.selected_templates) 
                         : (data.selected_templates as any);
                     
-                    const ticketMeta = selectedTemplates?.ticket;
-                    setTempTitle(ticketMeta?.title?.[i18n.language] || ticketMeta?.title?.ko || "3D 가상 티켓 부스");
-                    setTempDesc(ticketMeta?.description?.[i18n.language] || ticketMeta?.description?.ko || "전통 문화 행사를 손쉽게 예약하세요. 가상 티켓 부스에서 실시간 잔여 좌석 확인 및 티켓 구매가 가능합니다. 오감을 자극하는 특별한 경험이 기다리고 있습니다.");
+                    // Standardize as array
+                    const templates = Array.isArray(selectedTemplatesRaw) 
+                        ? selectedTemplatesRaw 
+                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                id,
+                                status: val.status || 'visible',
+                                title: val.title,
+                                description: val.description
+                            }))
+                            : []);
+
+                    const ticketMeta = templates.find((t: any) => t.id === 'ticket');
+                    // Always load Korean for the editable fields to ensure consistency
+                    setTempTitle(ticketMeta?.title?.ko || (typeof ticketMeta?.title === 'string' ? ticketMeta.title : '') || "3D 가상 티켓 부스");
+                    setTempDesc(ticketMeta?.description?.ko || (typeof ticketMeta?.description === 'string' ? ticketMeta.description : '') || "전통 문화 행사를 손쉽게 예약하세요. 가상 티켓 부스에서 실시간 잔여 좌석 확인 및 티켓 구매가 가능합니다. 오감을 자극하는 특별한 경험이 기다리고 있습니다.");
                 }
             }
         };
@@ -531,30 +544,41 @@ const VirtualTicketPage: React.FC = () => {
         if (!parentProduct || !parentId) return;
         
         try {
-            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
                 ? JSON.parse(parentProduct.selected_templates) 
-                : (parentProduct.selected_templates as any) || {};
-                
-            const ticketMeta = selectedTemplates.ticket || { title: {}, description: {} };
+                : (parentProduct.selected_templates as any) || [];
             
-            const updatedTicketMeta = {
-                ...ticketMeta,
-                title: { 
-                    ...(typeof ticketMeta.title === 'object' ? ticketMeta.title : { ko: ticketMeta.title || '' }),
-                    [i18n.language]: tempTitle 
-                },
-                description: { 
-                    ...(typeof ticketMeta.description === 'object' ? ticketMeta.description : { ko: ticketMeta.description || '' }),
-                    [i18n.language]: tempDesc 
-                }
-            };
+            // Standardize as array
+            let templates = Array.isArray(selectedTemplatesRaw) 
+                ? selectedTemplatesRaw 
+                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                        id,
+                        status: val.status || 'visible',
+                        title: val.title,
+                        description: val.description
+                    }))
+                    : []);
+
+            // Check if ticket template already exists in the selection
+            const hasTicket = templates.some((t: any) => t.id === 'ticket');
+            
+            const updatedTemplates = hasTicket 
+                ? templates.map((t: any) => t.id === 'ticket' ? {
+                    ...t,
+                    title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
+                    description: { ...(typeof t.description === 'object' ? t.description : {}), ko: tempDesc }
+                } : t)
+                : [...templates, {
+                    id: 'ticket',
+                    status: 'visible',
+                    title: { ko: tempTitle },
+                    description: { ko: tempDesc }
+                }];
             
             const updatedProduct = {
                 ...parentProduct,
-                selected_templates: {
-                    ...selectedTemplates,
-                    ticket: updatedTicketMeta
-                }
+                selected_templates: updatedTemplates
             };
             
             await updateProduct(parentId, updatedProduct);

@@ -76,13 +76,26 @@ const VirtualCinemaPage: React.FC = () => {
                     setParentProduct(data);
                     
                     // Initialize temp values from parent metadata if available
-                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
                         ? JSON.parse(data.selected_templates) 
                         : (data.selected_templates as any);
                     
-                    const cinemaMeta = selectedTemplates?.cinema;
-                    setTempTitle(cinemaMeta?.title?.[i18n.language] || cinemaMeta?.title?.ko || "3D 가상 상영관");
-                    setTempDesc(cinemaMeta?.description?.[i18n.language] || cinemaMeta?.description?.ko || "몰입감 넘치는 가상 극장에서 고해상도 영상을 감상하세요. 역사와 예술을 담은 시네마틱 아카이브가 당신 앞에 펼쳐집니다.");
+                    // Standardize as array
+                    const templates = Array.isArray(selectedTemplatesRaw) 
+                        ? selectedTemplatesRaw 
+                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                id,
+                                status: val.status || 'visible',
+                                title: val.title,
+                                description: val.description
+                            }))
+                            : []);
+
+                    const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
+                    // Always load Korean for the editable fields to ensure consistency
+                    setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "3D 가상 시네마");
+                    setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 3D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
                 }
             }
         };
@@ -297,30 +310,41 @@ const VirtualCinemaPage: React.FC = () => {
         if (!parentProduct || !parentId) return;
         
         try {
-            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
                 ? JSON.parse(parentProduct.selected_templates) 
-                : (parentProduct.selected_templates as any) || {};
-                
-            const cinemaMeta = selectedTemplates.cinema || { title: {}, description: {} };
+                : (parentProduct.selected_templates as any) || [];
             
-            const updatedCinemaMeta = {
-                ...cinemaMeta,
-                title: { 
-                    ...(typeof cinemaMeta.title === 'object' ? cinemaMeta.title : { ko: cinemaMeta.title || '' }),
-                    [i18n.language]: tempTitle 
-                },
-                description: { 
-                    ...(typeof cinemaMeta.description === 'object' ? cinemaMeta.description : { ko: cinemaMeta.description || '' }),
-                    [i18n.language]: tempDesc 
-                }
-            };
+            // Standardize as array
+            let templates = Array.isArray(selectedTemplatesRaw) 
+                ? selectedTemplatesRaw 
+                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                        id,
+                        status: val.status || 'visible',
+                        title: val.title,
+                        description: val.description
+                    }))
+                    : []);
+
+            // Check if cinema template already exists in the selection
+            const hasCinema = templates.some((t: any) => t.id === 'cinema');
+            
+            const updatedTemplates = hasCinema 
+                ? templates.map((t: any) => t.id === 'cinema' ? {
+                    ...t,
+                    title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
+                    description: { ...(typeof t.description === 'object' ? t.description : {}), ko: tempDesc }
+                } : t)
+                : [...templates, {
+                    id: 'cinema',
+                    status: 'visible',
+                    title: { ko: tempTitle },
+                    description: { ko: tempDesc }
+                }];
             
             const updatedProduct = {
                 ...parentProduct,
-                selected_templates: {
-                    ...selectedTemplates,
-                    cinema: updatedCinemaMeta
-                }
+                selected_templates: updatedTemplates
             };
             
             await updateProduct(parentId, updatedProduct);

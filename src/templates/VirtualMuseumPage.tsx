@@ -185,13 +185,26 @@ const VirtualMuseumPage: React.FC = () => {
                     setParentProduct(data);
                     
                     // Initialize temp values from parent metadata if available
-                    const selectedTemplates = typeof data.selected_templates === 'string' 
+                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
                         ? JSON.parse(data.selected_templates) 
                         : (data.selected_templates as any);
                     
-                    const museumMeta = selectedTemplates?.museum;
-                    setTempTitle(museumMeta?.title?.[i18n.language] || museumMeta?.title?.ko || "3D 가상 전시 박물관");
-                    setTempDesc(museumMeta?.description?.[i18n.language] || museumMeta?.description?.ko || "카드를 클릭하여 유물의 세부 모습을 확인해 보세요. 뒷면의 이미지를 다시 클릭하면 전체 화면으로 감상할 수 있습니다.");
+                    // Standardize as array
+                    const templates = Array.isArray(selectedTemplatesRaw) 
+                        ? selectedTemplatesRaw 
+                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                id,
+                                status: val.status || 'visible',
+                                title: val.title,
+                                description: val.description
+                            }))
+                            : []);
+
+                    const museumMeta = templates.find((t: any) => t.id === 'museum');
+                    // Always load Korean for the editable fields to ensure consistency
+                    setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || "가상 박물관");
+                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || "전통과 현대가 만나는 공간, 조선의 정취를 간직한 가상 박물관에 오신 것을 환영합니다.");
                 }
             }
         };
@@ -390,31 +403,41 @@ const VirtualMuseumPage: React.FC = () => {
         if (!parentProduct || !parentId) return;
         
         try {
-            const selectedTemplates = typeof parentProduct.selected_templates === 'string' 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
                 ? JSON.parse(parentProduct.selected_templates) 
-                : (parentProduct.selected_templates as any) || {};
+                : (parentProduct.selected_templates as any) || [];
                 
-            const museumMeta = selectedTemplates.museum || { title: {}, description: {} };
+            // Standardize as array
+            let templates = Array.isArray(selectedTemplatesRaw) 
+                ? selectedTemplatesRaw 
+                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                        id,
+                        status: val.status || 'visible',
+                        title: val.title,
+                        description: val.description
+                    }))
+                    : []);
+
+            // Check if museum template already exists in the selection
+            const hasMuseum = templates.some((t: any) => t.id === 'museum');
             
-            // Update the title/desc for the current language
-            const updatedMuseumMeta = {
-                ...museumMeta,
-                title: { 
-                    ...(typeof museumMeta.title === 'object' ? museumMeta.title : { ko: museumMeta.title || '' }),
-                    [i18n.language]: tempTitle 
-                },
-                description: { 
-                    ...(typeof museumMeta.description === 'object' ? museumMeta.description : { ko: museumMeta.description || '' }),
-                    [i18n.language]: tempDesc 
-                }
-            };
+            const updatedTemplates = hasMuseum 
+                ? templates.map((t: any) => t.id === 'museum' ? {
+                    ...t,
+                    title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
+                    description: { ...(typeof t.description === 'object' ? t.description : {}), ko: tempDesc }
+                } : t)
+                : [...templates, {
+                    id: 'museum',
+                    status: 'visible',
+                    title: { ko: tempTitle },
+                    description: { ko: tempDesc }
+                }];
             
             const updatedProduct = {
                 ...parentProduct,
-                selected_templates: {
-                    ...selectedTemplates,
-                    museum: updatedMuseumMeta
-                }
+                selected_templates: updatedTemplates
             };
             
             await updateProduct(parentId, updatedProduct);
