@@ -429,11 +429,12 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedSubcategory('');
                             setSelectedProductType('');
                             setSelectedTemplate('');
+                            setCurrentPage(1);
                         }}
-                        className="p-2 bg-white/5 hover:bg-white/10 rounded-2xl text-white/60 transition-colors border border-white/10"
-                        title="Reset Filters"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-2xl text-white font-bold transition-all border border-white/20 hover:scale-105 active:scale-95"
                     >
-                        <RotateCcw size={20} />
+                        <RotateCcw size={18} />
+                        <span className="text-sm"><AutoTranslatedText text="Reset Filters" /></span>
                     </button>
                 </div>
             </div>
