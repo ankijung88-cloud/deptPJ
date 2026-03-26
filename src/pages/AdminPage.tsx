@@ -251,31 +251,42 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         }
     };
 
-    const filteredProducts = products.filter(p => {
-        const matchesSearch = 
-            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.category.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        // 1. Agency
+    // 1. Base search & primary filters
+    const baseFiltered = products.filter(p => {
+        const matchesSearch = !searchTerm || 
+            p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase());
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
+        return matchesSearch && matchesAgency;
+    });
 
-        // 2 & 3. Floor & Category (Merged)
-        const matchesFloor = !selectedFloor || p.category === selectedFloor;
-        const floorObj = floors.find(f => f.id === p.category);
+    // 2. Options for Floor & Category dropdown (Filtered by Agency)
+    const floorOptions = floors.filter(f => baseFiltered.some(p => p.category === f.id));
+    
+    // 3. Filtered for Subcategory dropdown
+    const floorFiltered = baseFiltered.filter(p => !selectedFloor || p.category === selectedFloor);
+    const subcategoryOptions = (selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems || [])
+        .filter(s => floorFiltered.some(p => p.subcategory === s.id));
 
-        // 4. Subcategory (Floor specific)
-        const matchesSubId = !selectedSubcategory || p.subcategory === selectedSubcategory;
+    // 4. Filtered for Product Title dropdown
+    const subFiltered = floorFiltered.filter(p => !selectedSubcategory || p.subcategory === selectedSubcategory);
+    const productTitleOptions = Array.from(new Set(subFiltered.map(p => displayLocalized(p.title)).filter(Boolean))).sort();
 
-        // 5. Product Title (Based on user request to use titles in "Product Type" filter)
-        const matchesType = !selectedProductType || displayLocalized(p.title) === selectedProductType;
+    // 5. Filtered for Template dropdown
+    const typeFiltered = subFiltered.filter(p => !selectedProductType || displayLocalized(p.title) === selectedProductType);
+    const templateOptions = Array.from(new Set(typeFiltered.map(p => {
+        if (TEMPLATE_CATEGORIES.includes(p.category)) return p.category;
+        const isFloor = floors.some(f => f.id === p.category);
+        if (!isFloor) return 'uncategorized';
+        return null;
+    }).filter((cat): cat is string => !!cat))).sort();
 
-        // 6. Template & Uncategorized
-        const isTemplate = TEMPLATE_CATEGORIES.includes(p.category);
-        const isUncategorized = !floorObj && !isTemplate;
+    // 6. Final filtered list for the table
+    const filteredProducts = typeFiltered.filter(p => {
+        const isUncategorized = !floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category);
         const matchesTemplate = !selectedTemplate || 
             (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
-        
-        return matchesSearch && matchesAgency && matchesFloor && matchesSubId && matchesType && matchesTemplate;
+        return matchesTemplate;
     });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -333,7 +344,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
                     >
                         <option value="">{allFloorsLabel}</option>
-                        {floors.map(f => (
+                        {floorOptions.map(f => (
                             <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
                         ))}
                     </select>
@@ -346,7 +357,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         disabled={!selectedFloor}
                     >
                         <option value="">{allSubCatsLabel}</option>
-                        {selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
+                        {subcategoryOptions.map(s => (
                             <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
                         ))}
                     </select>
@@ -354,11 +365,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     {/* 5. Product Type (Showing Titles as requested) */}
                     <select 
                         value={selectedProductType}
-                        onChange={(e) => setSelectedProductType(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedProductType(e.target.value);
+                            setSelectedTemplate('');
+                        }}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
                     >
                         <option value="">{allProductTypesLabel}</option>
-                        {Array.from(new Set(products.map(p => displayLocalized(p.title)).filter(Boolean))).sort().map(title => (
+                        {productTitleOptions.map(title => (
                             <option key={title} value={title}>{title}</option>
                         ))}
                     </select>
@@ -366,22 +380,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     {/* 6. Template & Uncategorized */}
                     <select 
                         value={selectedTemplate}
-                        onChange={(e) => {
-                            setSelectedTemplate(e.target.value);
-                            if (e.target.value) {
-                                setSelectedFloor('');
-                                setSelectedSubcategory('');
-                            }
-                        }}
+                        onChange={(e) => setSelectedTemplate(e.target.value)}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[180px]"
                     >
                         <option value="">{allTemplatesLabel}</option>
-                        <optgroup label="Templates">
-                            {TEMPLATE_CATEGORIES.map(t => (
-                                <option key={t} value={t}>{t.toUpperCase()}</option>
-                            ))}
-                        </optgroup>
-                        <option value="uncategorized">기타 미분류 (Uncategorized)</option>
+                        {templateOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt.toUpperCase()}</option>
+                        ))}
                     </select>
                 </div>
             </div>
