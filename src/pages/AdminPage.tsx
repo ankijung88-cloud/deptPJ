@@ -322,7 +322,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                 </button>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 relative z-10">
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                     <input 
@@ -345,7 +345,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                                 setSelectedTemplate('');
                             }}
-                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[140px] font-bold"
+                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
                         >
                             <option value="">{allAgenciesLabel}</option>
                             {agencies.map(a => (
@@ -362,7 +362,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedSubcategory('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allFloorsLabel}</option>
                         {floorOptions.map(f => (
@@ -378,7 +378,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[150px]"
                         disabled={!selectedFloor}
                     >
                         <option value="">{allSubCatsLabel}</option>
@@ -394,7 +394,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType(e.target.value);
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allProductTypesLabel}</option>
                         {productTitleOptions.map(title => (
@@ -413,7 +413,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                             }
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[180px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[180px]"
                     >
                         <option value="">{allTemplatesLabel}</option>
                         {templateOptions.map(opt => (
