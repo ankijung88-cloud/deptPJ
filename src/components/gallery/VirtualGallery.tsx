@@ -166,8 +166,8 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
                         <ringGeometry args={[0.79, 0.81, 64]} />
                         <meshBasicMaterial color="white" transparent opacity={0.15} />
                     </mesh>
-                    {/* Play Triangle - Right facing - Offset by radius/4 for visual centering */}
-                    <mesh position={[0.085, 0, 0.01]} rotation={[0, 0, 0]}>
+                    {/* Play Triangle - Right facing - Perfectly centered by bounding box margins */}
+                    <mesh position={[-0.085, 0, 0.01]} rotation={[0, 0, 0]}>
                         <circleGeometry args={[0.35, 3]} />
                         <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
                     </mesh>
