@@ -301,10 +301,17 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         currentPage * ITEMS_PER_PAGE
     );
 
+    const filteredCountText = `${filteredProducts.length} items`;
+
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Product Management" /></h2>
+                <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Product Management" /></h2>
+                    <span className="bg-white/10 text-white/60 px-3 py-1 rounded-full text-sm font-bold">
+                        {filteredCountText}
+                    </span>
+                </div>
                 <button 
                     onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
                     className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
@@ -329,7 +336,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     {isAdmin && (
                         <select 
                             value={selectedAgency}
-                            onChange={(e) => setSelectedAgency(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedAgency(e.target.value);
+                                setSelectedFloor('');
+                                setSelectedSubcategory('');
+                                setSelectedProductType('');
+                                setSelectedTemplate('');
+                            }}
                             className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[140px] font-bold"
                         >
                             <option value="">{allAgenciesLabel}</option>
@@ -358,7 +371,11 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     {/* 4. Subcategory (Floor Areas) */}
                     <select 
                         value={selectedSubcategory}
-                        onChange={(e) => setSelectedSubcategory(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedSubcategory(e.target.value);
+                            setSelectedProductType('');
+                            setSelectedTemplate('');
+                        }}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                         disabled={!selectedFloor}
                     >
@@ -386,7 +403,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     {/* 6. Template & Uncategorized */}
                     <select 
                         value={selectedTemplate}
-                        onChange={(e) => setSelectedTemplate(e.target.value)}
+                        onChange={(e) => {
+                            setSelectedTemplate(e.target.value);
+                            if (e.target.value) {
+                                setSelectedFloor('');
+                                setSelectedSubcategory('');
+                                setSelectedProductType('');
+                            }
+                        }}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[180px]"
                     >
                         <option value="">{allTemplatesLabel}</option>
@@ -394,6 +418,21 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             <option key={opt} value={opt}>{opt.toUpperCase()}</option>
                         ))}
                     </select>
+
+                    <button 
+                        onClick={() => {
+                            setSearchTerm('');
+                            setSelectedAgency('');
+                            setSelectedFloor('');
+                            setSelectedSubcategory('');
+                            setSelectedProductType('');
+                            setSelectedTemplate('');
+                        }}
+                        className="p-2 bg-white/5 hover:bg-white/10 rounded-2xl text-white/60 transition-colors border border-white/10"
+                        title="Reset Filters"
+                    >
+                        <RotateCcw size={20} />
+                    </button>
                 </div>
             </div>
 
