@@ -119,8 +119,18 @@ interface ExhibitProps {
     isMuseum?: boolean;
 }
 
-const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+// Helper to normalize video paths (fail-safe for legacy strings)
+const normalizeVideoUrl = (url: string): string => {
+    if (!url) return url;
+    // Replace old /assets/videos/ path with new /uploads/ path if detected
+    return url.replace('/assets/videos/', '/uploads/');
+};
+
+const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
     const [videoReady, setVideoReady] = useState(false);
+    
+    // Apply normalization to videoUrl
+    const videoUrl = normalizeVideoUrl(rawVideoUrl);
 
     // Check if the URL is actually a video
     const isVideo = useMemo(() => {
@@ -642,7 +652,7 @@ const GalleryScene = ({
             {cinemaItem && (
                 <group position={[0, 0, camera.position.z - 15]}>
                     <VideoScreen
-                        videoUrl={cinemaItem.videoUrl || (cinemaItem as any).video_url}
+                        videoUrl={normalizeVideoUrl(cinemaItem.videoUrl || (cinemaItem as any).video_url)}
                         imageUrl={cinemaItem.imageUrl || (cinemaItem as any).image_url}
                         scale={isMobile ? [6, 3.4] : [14, 8]}
                         hovered={false}
