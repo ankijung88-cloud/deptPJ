@@ -100,7 +100,7 @@ const FloorContentPage: React.FC = () => {
                         {/* Front-aligned Logo above title - Increased size & reduced gap */}
                         <div className="mb-6">
                             <img 
-                                src="/assets/images/K로고.png" 
+                                src="/assets/images/DEPT_Logo.png" 
                                 alt="Logo" 
                                 className="h-32 w-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
                             />

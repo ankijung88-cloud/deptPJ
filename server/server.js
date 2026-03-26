@@ -33,18 +33,17 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Serve static files
-const videoPath = path.join(__dirname, '../public/videos');
-const fallbackVideoPath = path.join(__dirname, '../public/video');
-
-app.use('/assets/videos', express.static(videoPath));
-app.use('/assets/videos', express.static(fallbackVideoPath));
-app.use('/assets/video', express.static(videoPath));
-app.use('/assets/video', express.static(fallbackVideoPath));
+// Serve static files (Public Assets)
+app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
 // Serve uploads (SSD first, then DB fallback)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
 app.use('/uploads', uploadRoutes);
+
+// Fallback for direct video paths (backward compatibility)
+app.use('/videos', express.static(path.join(__dirname, '../public/assets/videos')));
+app.use('/video', express.static(path.join(__dirname, '../public/assets/videos')));
 
 // Routes
 app.use('/api/products', productRoutes);

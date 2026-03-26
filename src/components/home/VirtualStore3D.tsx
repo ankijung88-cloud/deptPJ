@@ -1216,7 +1216,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             {/* Logo (Top Left) */}
             <div className="absolute top-8 left-8 md:top-12 md:left-12 z-[1100] pointer-events-none">
                 <img
-                    src="/assets/images/K로고.png"
+                    src="/assets/images/DEPT_Logo.png"
                     alt="Logo"
                     className="h-16 md:h-20 w-auto drop-shadow-[0_0_15px_rgba(0,255,194,0.3)] opacity-80"
                 />
@@ -1614,7 +1614,7 @@ export const VirtualStore3D: React.FC = () => {
                 {/* Front-aligned Logo above title */}
                 <div className="-mb-2 opacity-80">
                     <img
-                        src="/assets/images/K로고.png"
+                        src="/assets/images/DEPT_Logo.png"
                         alt="Logo"
                         className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]"
                     />
