@@ -266,12 +266,12 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                             </div>
 
                             <button
-                                onClick={(e) => { 
-                                    e.stopPropagation(); 
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     if (hoveredCatId) {
                                         onCategoryClick(hoveredCatId);
                                     } else {
-                                        onClose(); 
+                                        onClose();
                                     }
                                 }}
                                 className="w-[500px] py-8 font-bold tracking-[0.4em] text-3xl transition-all hover:scale-105 active:scale-95 flex justify-center items-center gap-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/20"
@@ -1614,7 +1614,7 @@ export const VirtualStore3D: React.FC = () => {
                 {/* Front-aligned Logo above title */}
                 <div className="-mb-2 opacity-80">
                     <img
-                        src="/assets/images/DEPT_Logo.png"
+                        src="/DEPT_Logo.png"
                         alt="Logo"
                         className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]"
                     />
