@@ -56,6 +56,12 @@ export const GlobalMiniMap: React.FC<{
         const { subId } = useParams<{ subId: string }>();
         const { i18n } = useTranslation();
 
+        // Auto-close on navigation
+        useEffect(() => {
+            setIsExpanded(false);
+            onToggle?.(false);
+        }, [location.pathname]);
+
         // Fetch items when expanded
         useEffect(() => {
             if (isExpanded && items.length === 0) {
