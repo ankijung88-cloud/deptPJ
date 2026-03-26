@@ -1281,7 +1281,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                 {/* Minimap will be handled globally in VirtualStore3D */}
 
                 {/* Mouse Trail Toggle (Bottom Right) */}
-                <div className="absolute bottom-12 right-12 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
+                <div className="absolute bottom-6 right-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300 z-[1200]">
                     <button
                         onClick={(e) => { e.stopPropagation(); setShowMouseTrail(!showMouseTrail); }}
                         className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all ${showMouseTrail ? 'bg-[#00FFC2] border-[#00FFC2]' : 'bg-black/40 border-white/20 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5'}`}
@@ -1568,7 +1568,14 @@ export const VirtualStore3D: React.FC = () => {
     useEffect(() => {
         setShowMinimap(false);
         setHoveredFloor(null);
-    }, [location.pathname]);
+    }, [location.key]);
+
+    // Close minimap when entering a floor
+    useEffect(() => {
+        if (selectedFloor !== null) {
+            setShowMinimap(false);
+        }
+    }, [selectedFloor]);
 
     // Auto-open minimap on floor hover (Desktop Only)
     useEffect(() => {
