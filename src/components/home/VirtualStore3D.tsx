@@ -1498,6 +1498,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
 };
 
 export const VirtualStore3D: React.FC = () => {
+    const navigate = useNavigate();
     const { floors, loading } = useFloors();
     const { i18n } = useTranslation();
     const [searchParams] = useSearchParams();
@@ -1611,8 +1612,11 @@ export const VirtualStore3D: React.FC = () => {
 
             {/* Blueprint Header */}
             <div className="absolute top-12 md:top-24 left-8 md:left-16 pointer-events-none z-10">
-                {/* Front-aligned Logo above title */}
-                <div className="-mb-2 opacity-80">
+                {/* Front-aligned Logo above title - Clickable navigation */}
+                <div 
+                    className="-mb-2 opacity-80 cursor-pointer pointer-events-auto hover:scale-105 active:scale-95 transition-all duration-300"
+                    onClick={() => navigate('/')}
+                >
                     <img
                         src="/DEPT_Logo.png"
                         alt="Logo"
