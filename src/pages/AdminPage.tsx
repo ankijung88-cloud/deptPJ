@@ -189,8 +189,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedAgency, setSelectedAgency] = useState('');
-    const [selectedFloorLevel, setSelectedFloorLevel] = useState(''); // e.g. 1F, 2F
-    const [selectedFloorId, setSelectedFloorId] = useState(''); // e.g. floor-1
+    const [selectedFloor, setSelectedFloor] = useState(''); // e.g. floor-1
     const [selectedSubcategory, setSelectedSubcategory] = useState(''); // floor subitem id
     const [selectedProductType, setSelectedProductType] = useState(''); // free subcategory value
     const [selectedTemplate, setSelectedTemplate] = useState(''); // cinema, museum, etc. or 'uncategorized'
@@ -199,7 +198,6 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
 
     const { translatedText: searchPlaceholder } = useAutoTranslate("Search products...");
     const { translatedText: allFloorsLabel } = useAutoTranslate("모든 층");
-    const { translatedText: allFloorCatsLabel } = useAutoTranslate("모든 층별카테고리");
     const { translatedText: allSubCatsLabel } = useAutoTranslate("모든 서브카테고리");
     const { translatedText: allProductTypesLabel } = useAutoTranslate("모든 제품종류");
     const { translatedText: allTemplatesLabel } = useAutoTranslate("템플릿 및 기타 미분류");
@@ -214,7 +212,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedFloorLevel, selectedFloorId, selectedSubcategory, selectedProductType, selectedTemplate, selectedAgency]);
+    }, [searchTerm, selectedFloor, selectedSubcategory, selectedProductType, selectedTemplate, selectedAgency]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -235,6 +233,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const getSubcategoryLabel = (subId: string) => {
+        for (const f of floors) {
+            const item = f.subitems?.find(s => s.id === subId);
+            if (item) return displayLocalized(item.label);
+        }
+        return subId.toUpperCase();
     };
 
     const { translateAsync } = useAutoTranslate(null);
@@ -260,12 +266,9 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         // 1. Agency
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
 
-        // 2. Floor Level (1F, 2F...)
+        // 2 & 3. Floor & Category (Merged)
+        const matchesFloor = !selectedFloor || p.category === selectedFloor;
         const floorObj = floors.find(f => f.id === p.category);
-        const matchesFloorLevel = !selectedFloorLevel || floorObj?.floor === selectedFloorLevel;
-
-        // 3. Floor Category (Title)
-        const matchesFloorId = !selectedFloorId || p.category === selectedFloorId;
 
         // 4. Subcategory (Floor specific)
         const matchesSubId = !selectedSubcategory || p.subcategory === selectedSubcategory;
@@ -279,7 +282,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         const matchesTemplate = !selectedTemplate || 
             (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
         
-        return matchesSearch && matchesAgency && matchesFloorLevel && matchesFloorId && matchesSubId && matchesType && matchesTemplate;
+        return matchesSearch && matchesAgency && matchesFloor && matchesSubId && matchesType && matchesTemplate;
     });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -326,38 +329,19 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         </select>
                     )}
 
-                    {/* 2. Floor Level */}
+                    {/* 2 & 3. Merged Floor & Category */}
                     <select 
-                        value={selectedFloorLevel}
+                        value={selectedFloor}
                         onChange={(e) => {
-                            setSelectedFloorLevel(e.target.value);
-                            setSelectedFloorId('');
+                            setSelectedFloor(e.target.value);
                             setSelectedSubcategory('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[100px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
                     >
                         <option value="">{allFloorsLabel}</option>
-                        {Array.from(new Set(floors.map(f => f.floor))).map(lvl => (
-                            <option key={lvl} value={lvl}>{lvl}</option>
-                        ))}
-                    </select>
-
-                    {/* 3. Floor Category */}
-                    <select 
-                        value={selectedFloorId}
-                        onChange={(e) => {
-                            setSelectedFloorId(e.target.value);
-                            setSelectedSubcategory('');
-                            setSelectedTemplate('');
-                            const floor = floors.find(f => f.id === e.target.value);
-                            if (floor) setSelectedFloorLevel(floor.floor);
-                        }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
-                    >
-                        <option value="">{allFloorCatsLabel}</option>
-                        {floors.filter(f => !selectedFloorLevel || f.floor === selectedFloorLevel).map(f => (
-                            <option key={f.id} value={f.id}>{displayLocalized(f.title)}</option>
+                        {floors.map(f => (
+                            <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
                         ))}
                     </select>
 
@@ -366,10 +350,10 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         value={selectedSubcategory}
                         onChange={(e) => setSelectedSubcategory(e.target.value)}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
-                        disabled={!selectedFloorId}
+                        disabled={!selectedFloor}
                     >
                         <option value="">{allSubCatsLabel}</option>
-                        {selectedFloorId && floors.find(f => f.id === selectedFloorId)?.subitems?.map(s => (
+                        {selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
                             <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
                         ))}
                     </select>
@@ -382,7 +366,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     >
                         <option value="">{allProductTypesLabel}</option>
                         {Array.from(new Set(products.map(p => p.subcategory).filter((s): s is string => !!s))).sort().map(type => (
-                            <option key={type} value={type}>{type.toUpperCase()}</option>
+                            <option key={type} value={type}>{getSubcategoryLabel(type)}</option>
                         ))}
                     </select>
 
@@ -392,8 +376,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         onChange={(e) => {
                             setSelectedTemplate(e.target.value);
                             if (e.target.value) {
-                                setSelectedFloorLevel('');
-                                setSelectedFloorId('');
+                                setSelectedFloor('');
                                 setSelectedSubcategory('');
                             }
                         }}
