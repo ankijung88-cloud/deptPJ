@@ -133,14 +133,26 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
     const video = useMemo(() => {
         if (!isVideo) return null;
         const v = document.createElement('video');
+        v.crossOrigin = "anonymous"; // Set before src
         v.src = videoUrl;
-        v.crossOrigin = "Anonymous";
         v.loop = true;
-        v.muted = false;
+        v.muted = true; // Start muted for autoplay compatibility
         v.playsInline = true;
         
-        const handleCanPlay = () => setVideoReady(true);
+        const handleCanPlay = () => {
+            console.log("Video can play:", videoUrl);
+            setVideoReady(true);
+        };
+        const handleError = (e: any) => {
+            console.error("Video element error:", e);
+        };
+        
         v.addEventListener('canplay', handleCanPlay);
+        v.addEventListener('error', handleError);
+        
+        // Force load
+        v.load();
+        
         return v;
     }, [videoUrl, isVideo]);
 
