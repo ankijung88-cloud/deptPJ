@@ -6,7 +6,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '6F',
         title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
-        videoUrl: '/assets/videos/festival.mp4',
+        videoUrl: '/uploads/festival.mp4',
         color: '#00A8FF', // 6F - Vibrant Blue (Heritage)
         content: [],
         subitems: [
@@ -22,7 +22,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '5F',
         title: { ko: '패션 아카이브', en: 'FASHION ARCHIVE' },
         description: { ko: '도심 속에서 진정한 휴식과 건강을 찾는 공간입니다. 자연에서 온 소재들로 꾸며진 웰니스 존입니다.', en: 'A space for true relaxation and health in the city, themed with natural materials.' },
-        videoUrl: '/assets/videos/modern_tradition.mp4',
+        videoUrl: '/uploads/modern_tradition.mp4',
         color: '#00D2FF', // 5F - Bright Cyan (Fashion/White-adjacent)
         content: [],
         subitems: [
@@ -38,7 +38,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '4F',
         title: { ko: '컬처 토크', en: 'CULTURE TALK' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
-        videoUrl: '/assets/videos/travel.mp4',
+        videoUrl: '/uploads/travel.mp4',
         color: '#FF4757', // 4F - Vibrant Red (Culture)
         content: [],
         subitems: [
@@ -54,7 +54,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '3F',
         title: { ko: '라이프스타일 큐레이션', en: 'LIFESTYLE CURATION' },
         description: { ko: '예술과 사람이 만나는 곳. 다양한 워크숍과 전시를 통해 새로운 커뮤니티가 형성됩니다.', en: 'Where art meets people. New communities are formed through various workshops and exhibitions.' },
-        videoUrl: '/assets/videos/active.mp4',
+        videoUrl: '/uploads/active.mp4',
         color: '#2ECC71', // 3F - Emerald Green (Lifestyle)
         content: [],
         subitems: [
@@ -70,7 +70,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '2F',
         title: { ko: '미디어 룸', en: 'MEDIA ROOM' },
         description: { ko: '가장 트렌디한 K-라이프스타일을 제안합니다. 현대적인 감각의 로컬 브랜드들을 소개합니다.', en: 'Suggesting the trendiest K-lifestyle and introducing modern local brands.' },
-        videoUrl: '/assets/videos/trend.mp4',
+        videoUrl: '/uploads/trend.mp4',
         color: '#F39C12', // 2F - Vibrant Orange/Marigold (Media)
         content: [],
         subitems: [
@@ -86,7 +86,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         floor: '1F',
         title: { ko: 'K-컬처 트렌드', en: 'K-CULTURE TRENDS' },
         description: { ko: '한국의 아름다운 전통과 현대 예술이 조화를 이루는 프리미엄 갤러리입니다.', en: 'A premium gallery where beautiful Korean tradition harmonizes with modern art.' },
-        videoUrl: '/assets/videos/k-culture.mp4',
+        videoUrl: '/uploads/k-culture.mp4',
         color: '#FFD32A', // 1F - Sunny Yellow (Trends)
         content: [],
         subitems: [

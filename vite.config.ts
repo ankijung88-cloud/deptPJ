@@ -28,6 +28,10 @@ export default defineConfig({
             '/assets/videos': {
                 target: 'http://localhost:3000',
                 changeOrigin: true,
+            },
+            '/videos': {
+                target: 'http://localhost:3000',
+                changeOrigin: true,
             }
         }
     },

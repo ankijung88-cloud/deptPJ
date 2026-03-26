@@ -37,7 +37,7 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
 // Serve uploads (SSD first, then DB fallback)
-const uploadsPath = path.join(__dirname, 'uploads');
+const uploadsPath = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 app.use('/uploads', uploadRoutes);
 
