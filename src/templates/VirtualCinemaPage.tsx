@@ -454,8 +454,8 @@ const VirtualCinemaPage: React.FC = () => {
                         </div>
 
                         <div className="shrink-0 flex items-center gap-6">
-                             <div className="w-20 h-20 rounded-full flex items-center justify-center bg-white/5 border border-white/10 group cursor-pointer hover:bg-white/10 transition-all">
-                                 <Play size={32} className="text-white fill-white ml-1 opacity-40 group-hover:opacity-100" />
+                             <div className="w-24 h-24 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-md border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl">
+                                 <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
                              </div>
                         </div>
                     </div>
