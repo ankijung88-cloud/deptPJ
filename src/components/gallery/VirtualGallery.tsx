@@ -1,11 +1,11 @@
 import React, { useMemo, useRef, Suspense, Component, ReactNode, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { 
-    PerspectiveCamera, 
+import {
+    PerspectiveCamera,
     useScroll,
     ScrollControls,
     Image as DreiImage,
-    Text as DreiText 
+    Text as DreiText
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { FeaturedItem } from '../../types';
@@ -49,7 +49,7 @@ class GalleryErrorBoundary extends React.Component<{ children: React.ReactNode, 
 
 const CanvasText = ({ text, color = "white", width = 4, height = 1 }: { text: string, color?: string, width?: number, height?: number }) => {
     const textureRef = useRef<THREE.CanvasTexture>(null);
-    
+
     const canvas = useMemo(() => {
         const c = document.createElement('canvas');
         c.width = 2048;
@@ -93,7 +93,7 @@ const CanvasText = ({ text, color = "white", width = 4, height = 1 }: { text: st
         if (textureRef.current) {
             textureRef.current.needsUpdate = true;
         }
-        
+
         return c;
     }, [text, color]);
 
@@ -146,7 +146,7 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
                 <boxGeometry args={[scale[0] + 0.4, scale[1] + 0.4, 0.2]} />
                 <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
             </mesh>
-            
+
             {/* The actual screen */}
             <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
                 <planeGeometry args={scale} />
@@ -168,7 +168,7 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
                     </mesh>
                     {/* Play Triangle - Centered by matching pivot points with the circle */}
                     <mesh position={[0, 0, 0.01]} rotation={[0, 0, 0]}>
-                        <circleGeometry args={[0.45, 3]} />
+                        <circleGeometry args={[0.38, 3]} />
                         <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
                     </mesh>
                 </group>
@@ -208,10 +208,10 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
 
 const SafeImage = ({ url, scale, hovered }: { url: string, scale: [number, number], hovered: boolean }) => {
     return (
-        <DreiImage 
-            url={url} 
-            scale={scale} 
-            transparent 
+        <DreiImage
+            url={url}
+            scale={scale}
+            transparent
             opacity={hovered ? 1 : 0.9}
             position={[0, 0, 0.01]}
         />
@@ -223,26 +223,26 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     const meshRef = useRef<THREE.Mesh>(null);
     const navigate = useNavigate();
     const [hovered, setHovered] = React.useState(false);
-    
+
     const isProduct = item.id?.includes('item-') || item.id?.startsWith('p') || item.price || item.location;
-    const isStory = !isProduct; 
+    const isStory = !isProduct;
     const imageUrl = item.imageUrl || item.image_url;
-    
+
     const displayName = getLocalizedText(item.title, lang);
     const { translatedText } = useAutoTranslate(displayName, lang);
-    
+
     // Dynamic radius on mobile: ensure enough space for cards as count grows
     // Card height is ~3.2. To avoid overlap, arc length (radius * angleStep) should be > 4.5
     // angleStep = 2*PI / count. So radius * (2*PI / count) > 4.5 => radius > (4.5 * count) / (2*PI)
     const minSafeRadius = (5.5 * exhibitsCount) / (Math.PI * 2);
     // Standardize mobile radius: 20 is a safe minimum for visual clarity, otherwise expand with item count
     const radius = isMobile ? Math.max(20, minSafeRadius) : 3.5;
-    
+
     const verticalOffset = isMobile ? 0 : -0.5;
 
     useFrame((state) => {
         if (!groupRef.current) return;
-        
+
         const { viewport } = state;
         // isMobile prop is passed down and should be used consistently to avoid mid-frame discordance
 
@@ -255,17 +255,17 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             // Subtracting index * angleStep to bring higher index items from "below" as offset increases
             // Adding a half-turn offset if needed, but current logic works well with 0 as center
             const cardAngle = (currentOffset * angleStep) - (index * angleStep);
-            
+
             const effectiveY = Math.sin(cardAngle) * radius + verticalOffset;
             const effectiveZ = Math.cos(cardAngle) * radius - radius;
             const effectiveRotationX = -cardAngle;
 
             const normalizedAngle = ((cardAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
             const distFromFront = Math.min(normalizedAngle, Math.PI * 2 - normalizedAngle);
-            
+
             const mobilePlateau = Math.min(0.1, angleStep * 0.15);
             const mobileTransitionRange = Math.min(0.4, angleStep * 0.6);
-            
+
             if (distFromFront <= mobilePlateau) {
                 centerFactor = 1.0;
             } else if (distFromFront <= mobileTransitionRange) {
@@ -276,7 +276,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                 groupRef.current.parent!.position.y = effectiveY;
                 groupRef.current.parent!.position.z = effectiveZ;
                 groupRef.current.parent!.rotation.x = effectiveRotationX;
-                groupRef.current.position.x = 0; 
+                groupRef.current.position.x = 0;
                 groupRef.current.position.y = 0;
                 groupRef.current.rotation.y = 0;
                 groupRef.current.scale.setScalar(THREE.MathUtils.lerp(viewport.width * 0.45 / 4, viewport.width * 0.8 / 4, centerFactor) * (hovered ? 1.05 : 1));
@@ -288,18 +288,18 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             const distFromCamera = cameraZ - sweetSpot;
             const absDist = Math.abs(distFromCamera);
 
-            const desktopPlateau = 2.5; 
-            const transitionRange = 12; 
-            
-            if (absDist <= desktopPlateau) { 
+            const desktopPlateau = 2.5;
+            const transitionRange = 12;
+
+            if (absDist <= desktopPlateau) {
                 centerFactor = 1.0;
-            } else if (absDist <= transitionRange) { 
+            } else if (absDist <= transitionRange) {
                 centerFactor = THREE.MathUtils.smoothstep(absDist, transitionRange, desktopPlateau);
             }
 
             // Fixed side displacement ensures the "road width" is consistent across all pages
-            const baseSideDisplacement = 5.5; 
-            const passingFactor = distFromCamera < -desktopPlateau 
+            const baseSideDisplacement = 5.5;
+            const passingFactor = distFromCamera < -desktopPlateau
                 ? THREE.MathUtils.mapLinear(Math.min(absDist, 10), desktopPlateau, 10, 1, 2.2)
                 : 1;
 
@@ -308,7 +308,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             const targetRotationY = THREE.MathUtils.lerp(side * -Math.PI / 10, 0, centerFactor);
             const focusScale = THREE.MathUtils.lerp(0.85, 1.25, centerFactor);
             const finalScale = focusScale * (hovered ? 1.05 : 1);
-            
+
             if (groupRef.current) {
                 groupRef.current.position.x = targetX;
                 groupRef.current.rotation.y = targetRotationY;
@@ -328,7 +328,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
             </Suspense>
 
             <group ref={groupRef}>
-                <mesh 
+                <mesh
                     ref={meshRef}
                     onClick={(e) => {
                         e.stopPropagation();
@@ -343,8 +343,8 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                 >
                     <mesh position={[0, 0, -0.05]}>
                         <boxGeometry args={[4.2, 3.2, 0.1]} />
-                        <meshStandardMaterial 
-                            color={theme.color1} 
+                        <meshStandardMaterial
+                            color={theme.color1}
                             emissive={theme.accentColor}
                             emissiveIntensity={hovered ? 1.5 : 0.2}
                             metalness={0.8}
@@ -368,9 +368,9 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                                     <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
                                 </mesh>
                             }>
-                                <SafeImage 
-                                    url={imageUrl} 
-                                    scale={[4, 3]} 
+                                <SafeImage
+                                    url={imageUrl}
+                                    scale={[4, 3]}
                                     hovered={hovered}
                                 />
                             </Suspense>
@@ -396,11 +396,11 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                         <planeGeometry args={[4, 0.8]} />
                         <meshBasicMaterial color="black" transparent opacity={0.6} />
                     </mesh>
-                    <CanvasText 
-                        text={translatedText || displayName || "Loading..."} 
-                        color="white" 
-                        width={4} 
-                        height={0.8} 
+                    <CanvasText
+                        text={translatedText || displayName || "Loading..."}
+                        color="white"
+                        width={4}
+                        height={0.8}
                     />
                 </group>
             </group>
@@ -408,11 +408,11 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
     );
 };
 
-const GalleryScene = ({ 
-    items, 
-    stories, 
-    theme, 
-    lang, 
+const GalleryScene = ({
+    items,
+    stories,
+    theme,
+    lang,
     onItemClick,
     isMobile,
     isMuseum = false,
@@ -422,11 +422,11 @@ const GalleryScene = ({
     onActiveIndexChange,
     isActivated,
     targetIndex = 0
-}: { 
-    items: FeaturedItem[], 
-    stories: any[], 
+}: {
+    items: FeaturedItem[],
+    stories: any[],
     theme: any,
-    lang: string, 
+    lang: string,
     onItemClick?: (item: any) => void,
     isMobile: boolean,
     isMuseum?: boolean,
@@ -441,13 +441,13 @@ const GalleryScene = ({
     // because on mobile we are not wrapped in ScrollControls
     const scroll = !isMobile ? useScroll() : null;
     const { camera } = useThree() as any;
-    
+
     const exhibits = useMemo(() => {
         const combined = [...(items || []), ...(stories || [])];
         return combined.map((ex, i) => ({
             ...ex,
             side: i % 2 === 0 ? -1 : 1,
-            zPos: -i * 20 - 10 
+            zPos: -i * 20 - 10
         }));
     }, [items, stories]);
 
@@ -462,7 +462,7 @@ const GalleryScene = ({
             const totalZ = exhibits.length * spacing;
             const targetZ = exhibits[targetIndex]?.zPos || 0;
             const targetOffset = (targetZ + 8) / -(totalZ + 10);
-            
+
             forcedScroll.current = {
                 offset: THREE.MathUtils.clamp(targetOffset, 0, 1),
                 startTime: Date.now(),
@@ -481,7 +481,7 @@ const GalleryScene = ({
         if (!isMuseum) return null;
         const spacing = 20;
         const length = (exhibits.length * spacing) + 100;
-        
+
         return (
             <group>
                 <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, -length / 2 + 50]}>
@@ -516,7 +516,7 @@ const GalleryScene = ({
 
             camera.position.set(0, 0, 5);
             camera.lookAt(0, 0, 0);
-            
+
             const closestIndex = ((Math.round(currentOffset.current) % exhibits.length) + exhibits.length) % exhibits.length;
             if (closestIndex !== lastSetIndex.current && onActiveIndexChange) {
                 lastSetIndex.current = closestIndex;
@@ -537,7 +537,7 @@ const GalleryScene = ({
 
             const totalZ = exhibits.length * 20;
             const scrollZ = scroll.offset * -(totalZ + 10);
-            
+
             // Auto-snapping bias for Desktop
             let pullBias = 0;
             exhibits.forEach((ex) => {
@@ -594,11 +594,11 @@ const GalleryScene = ({
 
             {cinemaItem && (
                 <group position={[0, 0, camera.position.z - 15]}>
-                    <VideoScreen 
-                        url={cinemaItem.videoUrl || (cinemaItem as any).video_url || cinemaItem.imageUrl || (cinemaItem as any).image_url} 
-                        scale={isMobile ? [6, 3.4] : [14, 8]} 
-                        hovered={false} 
-                        theme={theme} 
+                    <VideoScreen
+                        url={cinemaItem.videoUrl || (cinemaItem as any).video_url || cinemaItem.imageUrl || (cinemaItem as any).image_url}
+                        scale={isMobile ? [6, 3.4] : [14, 8]}
+                        hovered={false}
+                        theme={theme}
                         playing={!!playing}
                         setPlaying={(p) => setPlaying?.(p)}
                     />
@@ -606,9 +606,9 @@ const GalleryScene = ({
             )}
 
             {!cinemaItem && exhibits.map((ex: any, i: number) => (
-                <ExhibitCard 
-                    key={`${i}-${lang}`} 
-                    item={ex} 
+                <ExhibitCard
+                    key={`${i}-${lang}`}
+                    item={ex}
                     side={ex.side}
                     zPos={ex.zPos}
                     theme={theme}
@@ -627,12 +627,12 @@ const GalleryScene = ({
     );
 };
 
-export const VirtualGallery = ({ 
-    items, 
-    stories, 
-    theme, 
-    showUI = true, 
-    lang = 'ko', 
+export const VirtualGallery = ({
+    items,
+    stories,
+    theme,
+    showUI = true,
+    lang = 'ko',
     playing,
     setPlaying,
     initialItemId,
@@ -641,12 +641,12 @@ export const VirtualGallery = ({
     onClick,
     isMuseum = false,
     cinemaItem = null,
-}: { 
-    items: FeaturedItem[], 
-    stories: any[], 
-    theme: any, 
-    showUI?: boolean, 
-    lang?: string, 
+}: {
+    items: FeaturedItem[],
+    stories: any[],
+    theme: any,
+    showUI?: boolean,
+    lang?: string,
     onItemClick?: (item: any) => void,
     defaultActivated?: boolean,
     onClick?: () => void,
@@ -665,7 +665,7 @@ export const VirtualGallery = ({
 
     const handleNavigate = (direction: 'up' | 'down') => {
         if (totalExhibits === 0) return;
-        
+
         setTargetIndex(prev => {
             const next = direction === 'up' ? prev - 1 : prev + 1;
             return next;
@@ -690,14 +690,15 @@ export const VirtualGallery = ({
     }, []);
 
     return (
-        <div 
+        <div
             className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${!isActivated ? 'hide-3d-scrollbar' : ''}`}
             onClick={() => {
                 if (!onClick && !isActivated) setIsActivated(true);
                 if (onClick) onClick();
             }}
         >
-            <style dangerouslySetInnerHTML={{ __html: `
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
                 .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow: hidden !important; }
             `}} />
@@ -711,12 +712,12 @@ export const VirtualGallery = ({
                     <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
                     <Suspense fallback={null}>
                         {isMobile ? (
-                            <GalleryScene 
-                                items={items} 
-                                stories={stories} 
-                                theme={theme} 
-                                lang={lang} 
-                                onItemClick={onItemClick} 
+                            <GalleryScene
+                                items={items}
+                                stories={stories}
+                                theme={theme}
+                                lang={lang}
+                                onItemClick={onItemClick}
                                 isMobile={isMobile}
                                 isMuseum={isMuseum}
                                 cinemaItem={cinemaItem}
@@ -727,20 +728,20 @@ export const VirtualGallery = ({
                                 targetIndex={targetIndex}
                             />
                         ) : (
-                            <ScrollControls 
-                                pages={!isActivated 
-                                    ? 0 
-                                    : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8)} 
-                                damping={0.3} 
+                            <ScrollControls
+                                pages={!isActivated
+                                    ? 0
+                                    : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8)}
+                                damping={0.3}
                                 distance={1}
                                 enabled={isActivated}
                             >
-                                <GalleryScene 
-                                    items={items} 
-                                    stories={stories} 
-                                    theme={theme} 
-                                    lang={lang} 
-                                    onItemClick={onItemClick} 
+                                <GalleryScene
+                                    items={items}
+                                    stories={stories}
+                                    theme={theme}
+                                    lang={lang}
+                                    onItemClick={onItemClick}
                                     isMobile={isMobile}
                                     isMuseum={isMuseum}
                                     cinemaItem={cinemaItem}
@@ -767,7 +768,7 @@ export const VirtualGallery = ({
                             </div>
                         </div>
                     )}
-                    
+
                     <div className="absolute top-10 right-10 pointer-events-none z-20 text-right">
                         <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
                         <div className="text-xl font-serif italic text-white/60">
@@ -792,13 +793,13 @@ export const VirtualGallery = ({
 
             {isMobile && isActivated && (
                 <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
-                    <button 
+                    <button
                         onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}
                         className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
                     >
                         <ChevronUp size={24} />
                     </button>
-                    <button 
+                    <button
                         onClick={(e) => { e.stopPropagation(); handleNavigate('down'); }}
                         className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
                     >
