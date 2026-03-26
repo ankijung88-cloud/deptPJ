@@ -60,7 +60,7 @@ export const GlobalMiniMap: React.FC<{
         useEffect(() => {
             setIsExpanded(false);
             onToggle?.(false);
-        }, [location.pathname]);
+        }, [location.key]);
 
         // Fetch items when expanded
         useEffect(() => {

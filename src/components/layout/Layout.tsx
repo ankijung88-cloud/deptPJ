@@ -19,8 +19,8 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive } = useNavigationState();
     const normalizedPath = location.pathname.replace(/\/$/, '');
-    const isLandingPage = normalizedPath === '' || normalizedPath === '/';
-    const isInspirationPage = normalizedPath === '/inspiration';
+    const isLandingPage = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
+    const isInspirationPage = normalizedPath === '/inspiration' || normalizedPath.endsWith('/inspiration');
     const hideHeader = isLandingPage || isInspirationPage || isImmersive;
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
@@ -64,7 +64,7 @@ export const Layout: React.FC = () => {
                 {!hideHeader && <Header />}
                 {hideHeader && <LanguageSelector variant="floating" />}
                 
-                {!isImmersive && !isInspirationPage && <GlobalMiniMap key={location.pathname} />}
+                {!isImmersive && !isInspirationPage && <GlobalMiniMap key={location.key} />}
                 
                 <div className={`flex-grow flex flex-col relative ${!hideHeader ? 'pt-20' : ''}`}>
 
