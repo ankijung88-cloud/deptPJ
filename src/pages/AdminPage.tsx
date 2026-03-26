@@ -188,14 +188,21 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedFloor, setSelectedFloor] = useState('');
-    const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [selectedAgency, setSelectedAgency] = useState('');
+    const [selectedFloorLevel, setSelectedFloorLevel] = useState(''); // e.g. 1F, 2F
+    const [selectedFloorId, setSelectedFloorId] = useState(''); // e.g. floor-1
+    const [selectedSubcategory, setSelectedSubcategory] = useState(''); // floor subitem id
+    const [selectedProductType, setSelectedProductType] = useState(''); // free subcategory value
+    const [selectedTemplate, setSelectedTemplate] = useState(''); // cinema, museum, etc. or 'uncategorized'
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
+
     const { translatedText: searchPlaceholder } = useAutoTranslate("Search products...");
     const { translatedText: allFloorsLabel } = useAutoTranslate("모든 층");
-    const { translatedText: allCategoriesLabel } = useAutoTranslate("모든 카테고리");
+    const { translatedText: allFloorCatsLabel } = useAutoTranslate("모든 층별카테고리");
+    const { translatedText: allSubCatsLabel } = useAutoTranslate("모든 서브카테고리");
+    const { translatedText: allProductTypesLabel } = useAutoTranslate("모든 제품종류");
+    const { translatedText: allTemplatesLabel } = useAutoTranslate("템플릿 및 기타 미분류");
     const { translatedText: allAgenciesLabel } = useAutoTranslate("모든 에이전시");
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
@@ -207,7 +214,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedFloor, selectedSubcategory, selectedAgency]);
+    }, [searchTerm, selectedFloorLevel, selectedFloorId, selectedSubcategory, selectedProductType, selectedTemplate, selectedAgency]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -250,20 +257,29 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
             displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.category.toLowerCase().includes(searchTerm.toLowerCase());
         
-        const matchesFloor = !selectedFloor || 
-            (selectedFloor === 'templates'
-                ? TEMPLATE_CATEGORIES.includes(p.category)
-                : (selectedFloor === 'uncategorized' 
-                    ? !floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category)
-                    : p.category === selectedFloor
-                )
-            );
-        const matchesSub = !selectedSubcategory || p.subcategory === selectedSubcategory;
-        
-        // Agency filter for Admin
+        // 1. Agency
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
+
+        // 2. Floor Level (1F, 2F...)
+        const floorObj = floors.find(f => f.id === p.category);
+        const matchesFloorLevel = !selectedFloorLevel || floorObj?.floor === selectedFloorLevel;
+
+        // 3. Floor Category (Title)
+        const matchesFloorId = !selectedFloorId || p.category === selectedFloorId;
+
+        // 4. Subcategory (Floor specific)
+        const matchesSubId = !selectedSubcategory || p.subcategory === selectedSubcategory;
+
+        // 5. Product Type (Generic subcategory)
+        const matchesType = !selectedProductType || p.subcategory === selectedProductType;
+
+        // 6. Template & Uncategorized
+        const isTemplate = TEMPLATE_CATEGORIES.includes(p.category);
+        const isUncategorized = !floorObj && !isTemplate;
+        const matchesTemplate = !selectedTemplate || 
+            (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
         
-        return matchesSearch && matchesFloor && matchesSub && matchesAgency;
+        return matchesSearch && matchesAgency && matchesFloorLevel && matchesFloorId && matchesSubId && matchesType && matchesTemplate;
     });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -301,7 +317,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         <select 
                             value={selectedAgency}
                             onChange={(e) => setSelectedAgency(e.target.value)}
-                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px] font-bold"
+                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[140px] font-bold"
                         >
                             <option value="">{allAgenciesLabel}</option>
                             {agencies.map(a => (
@@ -310,35 +326,86 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         </select>
                     )}
 
+                    {/* 2. Floor Level */}
                     <select 
-                        value={selectedFloor}
+                        value={selectedFloorLevel}
                         onChange={(e) => {
-                            setSelectedFloor(e.target.value);
+                            setSelectedFloorLevel(e.target.value);
+                            setSelectedFloorId('');
                             setSelectedSubcategory('');
+                            setSelectedTemplate('');
+                        }}
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[100px]"
+                    >
+                        <option value="">{allFloorsLabel}</option>
+                        {Array.from(new Set(floors.map(f => f.floor))).map(lvl => (
+                            <option key={lvl} value={lvl}>{lvl}</option>
+                        ))}
+                    </select>
+
+                    {/* 3. Floor Category */}
+                    <select 
+                        value={selectedFloorId}
+                        onChange={(e) => {
+                            setSelectedFloorId(e.target.value);
+                            setSelectedSubcategory('');
+                            setSelectedTemplate('');
+                            const floor = floors.find(f => f.id === e.target.value);
+                            if (floor) setSelectedFloorLevel(floor.floor);
                         }}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                     >
-                        <option value="">{allFloorsLabel}</option>
-                        {floors.map(f => (
-                            <option key={f.id} value={f.id}>{f.floor} - {displayLocalized(f.title)}</option>
+                        <option value="">{allFloorCatsLabel}</option>
+                        {floors.filter(f => !selectedFloorLevel || f.floor === selectedFloorLevel).map(f => (
+                            <option key={f.id} value={f.id}>{displayLocalized(f.title)}</option>
                         ))}
-                        <option value="templates">템플릿 (Templates)</option>
-                        <option value="uncategorized">기타/미분류 (Other/Uncategorized)</option>
                     </select>
 
+                    {/* 4. Subcategory (Floor Areas) */}
                     <select 
                         value={selectedSubcategory}
                         onChange={(e) => setSelectedSubcategory(e.target.value)}
                         className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
-                        disabled={!selectedFloor}
+                        disabled={!selectedFloorId}
                     >
-                        <option value="">{allCategoriesLabel}</option>
-                        {selectedFloor === 'templates' && TEMPLATE_CATEGORIES.map(t => (
-                            <option key={t} value={t}>{t.toUpperCase()}</option>
-                        ))}
-                        {selectedFloor && selectedFloor !== 'templates' && floors.find(f => f.id === selectedFloor)?.subitems?.map(s => (
+                        <option value="">{allSubCatsLabel}</option>
+                        {selectedFloorId && floors.find(f => f.id === selectedFloorId)?.subitems?.map(s => (
                             <option key={s.id} value={s.id}>{displayLocalized(s.label)}</option>
                         ))}
+                    </select>
+
+                    {/* 5. Product Type */}
+                    <select 
+                        value={selectedProductType}
+                        onChange={(e) => setSelectedProductType(e.target.value)}
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    >
+                        <option value="">{allProductTypesLabel}</option>
+                        {Array.from(new Set(products.map(p => p.subcategory).filter((s): s is string => !!s))).sort().map(type => (
+                            <option key={type} value={type}>{type.toUpperCase()}</option>
+                        ))}
+                    </select>
+
+                    {/* 6. Template & Uncategorized */}
+                    <select 
+                        value={selectedTemplate}
+                        onChange={(e) => {
+                            setSelectedTemplate(e.target.value);
+                            if (e.target.value) {
+                                setSelectedFloorLevel('');
+                                setSelectedFloorId('');
+                                setSelectedSubcategory('');
+                            }
+                        }}
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[180px]"
+                    >
+                        <option value="">{allTemplatesLabel}</option>
+                        <optgroup label="Templates">
+                            {TEMPLATE_CATEGORIES.map(t => (
+                                <option key={t} value={t}>{t.toUpperCase()}</option>
+                            ))}
+                        </optgroup>
+                        <option value="uncategorized">기타 미분류 (Uncategorized)</option>
                     </select>
                 </div>
             </div>
