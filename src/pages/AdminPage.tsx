@@ -255,7 +255,9 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const baseFiltered = products.filter(p => {
         const matchesSearch = !searchTerm || 
             p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase());
+            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (p.subcategory && p.subcategory.toLowerCase().includes(searchTerm.toLowerCase()));
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
         return matchesSearch && matchesAgency;
     });
@@ -283,13 +285,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const templateOptions = Array.from(new Set(typeFiltered.map(p => {
         if (TEMPLATE_CATEGORIES.includes(p.category)) return p.category;
         const isFloor = floors.some(f => f.id === p.category);
-        if (!isFloor) return 'uncategorized';
+        if (!isFloor || !p.category) return 'uncategorized';
         return null;
     }).filter((cat): cat is string => !!cat))).sort();
 
     // 6. Final filtered list for the table
     const filteredProducts = typeFiltered.filter(p => {
-        const isUncategorized = !floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category);
+        const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
         const matchesTemplate = !selectedTemplate || 
             (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
         return matchesTemplate;
