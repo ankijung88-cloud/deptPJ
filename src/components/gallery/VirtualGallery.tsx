@@ -119,17 +119,28 @@ interface ExhibitProps {
     isMuseum?: boolean;
 }
 
-const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+    // Check if the URL is actually a video
+    const isVideo = useMemo(() => {
+        if (!videoUrl) return false;
+        const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
+        const lowerUrl = videoUrl.toLowerCase();
+        return videoExtensions.some(ext => lowerUrl.endsWith(ext) || lowerUrl.includes(ext + '?'));
+    }, [videoUrl]);
+
     const video = useMemo(() => {
+        if (!isVideo) return null;
         const v = document.createElement('video');
-        v.src = url;
+        v.src = videoUrl;
         v.crossOrigin = "Anonymous";
         v.loop = true;
-        v.muted = false; // User clicks Play, so we can unmute
+        v.muted = false;
+        v.playsInline = true;
         return v;
-    }, [url]);
+    }, [videoUrl, isVideo]);
 
     useEffect(() => {
+        if (!video) return;
         if (playing) {
             video.play().catch(err => console.error("Video play failed:", err));
         } else {
@@ -137,7 +148,14 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
         }
     }, [playing, video]);
 
-    const videoTexture = useMemo(() => new THREE.VideoTexture(video), [video]);
+    const videoTexture = useMemo(() => video ? new THREE.VideoTexture(video) : null, [video]);
+    
+    // We use Drei's loader for the image to ensure it's handled properly within the R3F lifecycle
+    const imageTexture = useMemo(() => {
+        if (!imageUrl) return null;
+        const loader = new THREE.TextureLoader();
+        return loader.load(imageUrl);
+    }, [imageUrl]);
 
     return (
         <group>
@@ -147,10 +165,14 @@ const VideoScreen = ({ url, scale, theme, hovered, playing, setPlaying }: { url:
                 <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
             </mesh>
 
-            {/* The actual screen */}
+            {/* The actual screen - shows image/poster if not playing or no video */}
             <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
                 <planeGeometry args={scale} />
-                <meshBasicMaterial map={videoTexture} toneMapped={false} />
+                {playing && videoTexture ? (
+                    <meshBasicMaterial map={videoTexture} toneMapped={false} />
+                ) : (
+                    <meshBasicMaterial map={imageTexture} transparent opacity={1} toneMapped={false} />
+                )}
             </mesh>
 
             {/* Play/Pause Overlay in 3D (Text or Icons as planes) */}
@@ -595,7 +617,8 @@ const GalleryScene = ({
             {cinemaItem && (
                 <group position={[0, 0, camera.position.z - 15]}>
                     <VideoScreen
-                        url={cinemaItem.videoUrl || (cinemaItem as any).video_url || cinemaItem.imageUrl || (cinemaItem as any).image_url}
+                        videoUrl={cinemaItem.videoUrl || (cinemaItem as any).video_url}
+                        imageUrl={cinemaItem.imageUrl || (cinemaItem as any).image_url}
                         scale={isMobile ? [6, 3.4] : [14, 8]}
                         hovered={false}
                         theme={theme}
