@@ -150,13 +150,6 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
 
     const videoTexture = useMemo(() => video ? new THREE.VideoTexture(video) : null, [video]);
     
-    // We use Drei's loader for the image to ensure it's handled properly within the R3F lifecycle
-    const imageTexture = useMemo(() => {
-        if (!imageUrl) return null;
-        const loader = new THREE.TextureLoader();
-        return loader.load(imageUrl);
-    }, [imageUrl]);
-
     return (
         <group>
             {/* Screen Frame */}
@@ -165,65 +158,76 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
                 <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
             </mesh>
 
-            {/* The actual screen - shows image/poster if not playing or no video */}
+            {/* The actual screen - shows video if playing, otherwise shows nothing (DreiImage handles poster) */}
             <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
                 <planeGeometry args={scale} />
                 {playing && videoTexture ? (
                     <meshBasicMaterial map={videoTexture} toneMapped={false} />
                 ) : (
-                    <meshBasicMaterial map={imageTexture} transparent opacity={1} toneMapped={false} />
+                    <meshBasicMaterial transparent opacity={0} />
                 )}
             </mesh>
 
-            {/* Play/Pause Overlay in 3D (Text or Icons as planes) */}
+            {/* Poster Image (Visible when not playing) */}
+            {(!playing || !videoTexture) && imageUrl && (
+                <Suspense fallback={null}>
+                    <DreiImage
+                        url={imageUrl}
+                        scale={scale}
+                        transparent
+                        opacity={1}
+                        position={[0, 0, 0.06]}
+                        onClick={(e) => { e.stopPropagation(); setPlaying(true); }}
+                    />
+                </Suspense>
+            )}
+
+            {/* Play/Pause Overlay in 3D */}
             {!playing && (
-                <group position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
+                <group position={[0, 0, 0.25]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
                     {/* Subtle Semi-transparent Dark Circle */}
                     <mesh>
                         <circleGeometry args={[0.8, 32]} />
-                        <meshBasicMaterial color="#050505" transparent opacity={0.6} />
+                        <meshBasicMaterial color="#000000" transparent opacity={0.6} />
                     </mesh>
                     {/* Thin Border */}
                     <mesh>
                         <ringGeometry args={[0.79, 0.81, 64]} />
-                        <meshBasicMaterial color="white" transparent opacity={0.15} />
+                        <meshBasicMaterial color="white" transparent opacity={0.3} />
                     </mesh>
-                    {/* Play Triangle - Centered by matching pivot points with the circle */}
-                    <mesh position={[0, 0, 0.01]} rotation={[0, 0, 0]}>
-                        <circleGeometry args={[0.38, 3]} />
+                    {/* Play Triangle */}
+                    <mesh position={[0.05, 0, 0.01]} rotation={[0, 0, 0]}>
+                        <circleGeometry args={[0.3, 3]} />
                         <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
                     </mesh>
                 </group>
             )}
 
             {playing && hovered && (
-                <group position={[0, 0, 0.2]} onClick={(e) => { e.stopPropagation(); setPlaying(false); }}>
-                    {/* Subtle Semi-transparent Dark Circle */}
+                <group position={[0, 0, 0.25]} onClick={(e) => { e.stopPropagation(); setPlaying(false); }}>
                     <mesh>
                         <circleGeometry args={[0.8, 32]} />
-                        <meshBasicMaterial color="#050505" transparent opacity={0.4} />
+                        <meshBasicMaterial color="#000000" transparent opacity={0.4} />
                     </mesh>
-                    {/* Thin Border */}
                     <mesh>
                         <ringGeometry args={[0.79, 0.81, 64]} />
-                        <meshBasicMaterial color="white" transparent opacity={0.1} />
+                        <meshBasicMaterial color="white" transparent opacity={0.2} />
                     </mesh>
-                    {/* Pause Bars */}
                     <group position={[-0.15, 0, 0.01]}>
                         <mesh position={[0, 0, 0]}>
                             <planeGeometry args={[0.12, 0.45]} />
-                            <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
+                            <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
                         </mesh>
                         <mesh position={[0.3, 0, 0]}>
                             <planeGeometry args={[0.12, 0.45]} />
-                            <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
+                            <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
                         </mesh>
                     </group>
                 </group>
             )}
 
             {/* Screen Glow */}
-            <pointLight position={[0, 0, 2]} intensity={(hovered || !playing) ? 4 : 2} color={theme.accentColor} distance={10} />
+            <pointLight position={[0, 0, 2]} intensity={(hovered || !playing) ? 6 : 2} color={theme.accentColor} distance={15} />
         </group>
     );
 };
