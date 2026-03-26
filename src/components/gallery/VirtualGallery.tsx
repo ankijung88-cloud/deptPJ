@@ -120,6 +120,8 @@ interface ExhibitProps {
 }
 
 const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+    const [videoReady, setVideoReady] = useState(false);
+
     // Check if the URL is actually a video
     const isVideo = useMemo(() => {
         if (!videoUrl) return false;
@@ -136,13 +138,23 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
         v.loop = true;
         v.muted = false;
         v.playsInline = true;
+        
+        const handleCanPlay = () => setVideoReady(true);
+        v.addEventListener('canplay', handleCanPlay);
         return v;
     }, [videoUrl, isVideo]);
 
     useEffect(() => {
         if (!video) return;
         if (playing) {
-            video.play().catch(err => console.error("Video play failed:", err));
+            video.play().catch(err => {
+                console.error("Video play failed:", err);
+                // If play fails (e.g. need interaction for sound), try muted
+                if (err.name === 'NotAllowedError') {
+                    video.muted = true;
+                    video.play().catch(e => console.error("Muted play also failed:", e));
+                }
+            });
         } else {
             video.pause();
         }
@@ -158,19 +170,19 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
                 <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
             </mesh>
 
-            {/* The actual screen - shows video if playing, otherwise shows nothing (DreiImage handles poster) */}
+            {/* The actual screen - shows video only if playing AND ready */}
             <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
                 <planeGeometry args={scale} />
-                {playing && videoTexture ? (
+                {playing && videoReady && videoTexture ? (
                     <meshBasicMaterial map={videoTexture} toneMapped={false} />
                 ) : (
                     <meshBasicMaterial transparent opacity={0} />
                 )}
             </mesh>
 
-            {/* Poster Image (Visible when not playing) */}
-            {(!playing || !videoTexture) && imageUrl && (
-                <Suspense fallback={null}>
+            {/* Poster Image (Visible when not playing OR video not ready) */}
+            {(!playing || !videoReady || !videoTexture) && imageUrl && (
+                <Suspense fallback={<meshBasicMaterial color="#050505" />}>
                     <DreiImage
                         url={imageUrl}
                         scale={scale}
@@ -185,17 +197,14 @@ const VideoScreen = ({ videoUrl, imageUrl, scale, theme, hovered, playing, setPl
             {/* Play/Pause Overlay in 3D */}
             {!playing && (
                 <group position={[0, 0, 0.25]} onClick={(e) => { e.stopPropagation(); setPlaying(true); }}>
-                    {/* Subtle Semi-transparent Dark Circle */}
                     <mesh>
                         <circleGeometry args={[0.8, 32]} />
                         <meshBasicMaterial color="#000000" transparent opacity={0.6} />
                     </mesh>
-                    {/* Thin Border */}
                     <mesh>
                         <ringGeometry args={[0.79, 0.81, 64]} />
                         <meshBasicMaterial color="white" transparent opacity={0.3} />
                     </mesh>
-                    {/* Play Triangle */}
                     <mesh position={[0.05, 0, 0.01]} rotation={[0, 0, 0]}>
                         <circleGeometry args={[0.3, 3]} />
                         <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
