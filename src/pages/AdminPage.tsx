@@ -265,7 +265,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     
     // 3. Filtered for Subcategory dropdown
     const floorFiltered = baseFiltered.filter(p => !selectedFloor || p.category === selectedFloor);
-    const subcategoryOptions = (selectedFloor && floors.find(f => f.id === selectedFloor)?.subitems || [])
+    
+    // Aggregated subcategories from all floors if none selected, or from selected floor
+    const allRelevantSubitems = selectedFloor 
+        ? floors.find(f => f.id === selectedFloor)?.subitems || []
+        : floors.flatMap(f => f.subitems || []);
+        
+    const subcategoryOptions = Array.from(new Map(allRelevantSubitems.map(s => [s.id, s])).values())
         .filter(s => floorFiltered.some(p => p.subcategory === s.id));
 
     // 4. Filtered for Product Title dropdown
