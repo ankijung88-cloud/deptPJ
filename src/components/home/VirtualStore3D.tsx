@@ -1737,6 +1737,7 @@ export const VirtualStore3D: React.FC = () => {
             {/* Global Minimap - Always rendered to show the toggle icon, content controlled by showMinimap */}
             {!isMobile && (
                 <GlobalMiniMap
+                    key={location.pathname}
                     expanded={showMinimap}
                     hideIcon={false}
                     className="fixed bottom-6 left-6 z-[2000] flex flex-col items-start gap-3 pointer-events-auto"
