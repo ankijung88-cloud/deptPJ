@@ -203,6 +203,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const { translatedText: allTemplatesLabel } = useAutoTranslate("템플릿 및 기타 미분류");
     const { translatedText: allAgenciesLabel } = useAutoTranslate("모든 에이전시");
     const [currentPage, setCurrentPage] = useState(1);
+    const [isBypassFilters, setIsBypassFilters] = useState(false);
     const ITEMS_PER_PAGE = 20;
 
     useEffect(() => {
@@ -290,12 +291,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     }).filter((cat): cat is string => !!cat))).sort();
 
     // 6. Final filtered list for the table
-    const filteredProducts = typeFiltered.filter(p => {
-        const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
-        const matchesTemplate = !selectedTemplate || 
-            (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
-        return matchesTemplate;
-    });
+    const filteredProducts = isBypassFilters 
+        ? baseFiltered 
+        : typeFiltered.filter(p => {
+            const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
+            const matchesTemplate = !selectedTemplate || 
+                (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
+            return matchesTemplate;
+        });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
     const paginatedProducts = filteredProducts.slice(
@@ -332,6 +335,19 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
                     />
+                </div>
+
+                <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
+                    <input 
+                        type="checkbox" 
+                        id="bypass-filters"
+                        checked={isBypassFilters}
+                        onChange={(e) => setIsBypassFilters(e.target.checked)}
+                        className="w-4 h-4 accent-[#00FFC2] cursor-pointer"
+                    />
+                    <label htmlFor="bypass-filters" className="text-xs text-white/50 cursor-pointer select-none whitespace-nowrap">
+                        <AutoTranslatedText text="Show All (Bypass)" />
+                    </label>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
