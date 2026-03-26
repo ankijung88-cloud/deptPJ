@@ -115,7 +115,7 @@ const SearchPage: React.FC = () => {
                                 >
                                     <div className="aspect-[16/10] overflow-hidden relative">
                                         <img
-                                            src={item.imageUrl || '/placeholder-product.jpg'}
+                                            src={item.imageUrl || '/assets/images/placeholder-product.jpg'}
                                             alt={getLocalizedText(item.title, i18n.language)}
                                             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                                         />

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../hooks/useAdmin';
@@ -22,7 +24,6 @@ import {
     LogOut,
     Menu
 } from 'lucide-react';
-import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useFloors } from '../context/FloorContext';
 import { getFeaturedProducts, deleteProduct, createProduct, updateProduct } from '../api/products';
 import { 
@@ -196,12 +197,12 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
 
-    const { translatedText: searchPlaceholder } = useAutoTranslate("Search products...");
-    const { translatedText: allFloorsLabel } = useAutoTranslate("모든 층");
-    const { translatedText: allSubCatsLabel } = useAutoTranslate("모든 서브카테고리");
-    const { translatedText: allProductTypesLabel } = useAutoTranslate("모든 제품종류");
-    const { translatedText: allTemplatesLabel } = useAutoTranslate("템플릿 및 기타 미분류");
-    const { translatedText: allAgenciesLabel } = useAutoTranslate("모든 에이전시");
+    const searchPlaceholder = "Search products...";
+    const allFloorsLabel = "모든 층";
+    const allSubCatsLabel = "모든 서브카테고리";
+    const allProductTypesLabel = "모든 제품종류";
+    const allTemplatesLabel = "템플릿 및 기타 미분류";
+    const allAgenciesLabel = "모든 에이전시";
     const [currentPage, setCurrentPage] = useState(1);
     const [isBypassFilters, setIsBypassFilters] = useState(false);
     const ITEMS_PER_PAGE = 20;
@@ -221,14 +222,6 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
             // Updated API call to support role-based filtering on server side if needed, 
             // but here we get all for simpler filtering if it's admin.
             // Actually, best to pass agencyId if admin selected one.
-            const queryParams: any = {};
-            if (isAdmin && selectedAgency) {
-                queryParams.agencyId = selectedAgency;
-            }
-            
-            // Note: getFeaturedProducts would need to be updated to accept params if we want server-side filtering.
-            // For now, I'll rely on client-side filtering since the data size is manageable, 
-            // but I'll update the fetch call to include the token.
             const data = await getFeaturedProducts();
             setProducts(data);
         } finally {
@@ -312,7 +305,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Product Management" /></h2>
+                    <h2 className="text-2xl font-serif font-bold text-white">Product Management</h2>
                     <span className="bg-white/10 text-white/60 px-3 py-1 rounded-full text-sm font-bold">
                         {filteredCountText}
                     </span>
@@ -321,7 +314,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
                     className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
-                    <Plus size={18} /> <AutoTranslatedText text="Add Product" />
+                    <Plus size={18} /> Add Product
                 </button>
             </div>
 
@@ -346,7 +339,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         className="w-4 h-4 accent-[#00FFC2] cursor-pointer"
                     />
                     <label htmlFor="bypass-filters" className="text-xs text-white/50 cursor-pointer select-none whitespace-nowrap">
-                        <AutoTranslatedText text="Show All (Bypass)" />
+                        Show All (Bypass)
                     </label>
                 </div>
                 
@@ -450,7 +443,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-2xl text-white font-bold transition-all border border-white/20 hover:scale-105 active:scale-95"
                     >
                         <RotateCcw size={18} />
-                        <span className="text-sm"><AutoTranslatedText text="Reset Filters" /></span>
+                        <span className="text-sm">Reset Filters</span>
                     </button>
                 </div>
             </div>
@@ -459,12 +452,12 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Image" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
-                            {isAdmin && <th className="px-6 py-4 text-[#00FFC2]"><AutoTranslatedText text="Agency" /></th>}
-                            <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
-                            <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
-                            <th className="px-6 py-4 text-right"><AutoTranslatedText text="Actions" /></th>
+                            <th className="px-6 py-4">Image</th>
+                            <th className="px-6 py-4">Title</th>
+                            {isAdmin && <th className="px-6 py-4 text-[#00FFC2]">Agency</th>}
+                            <th className="px-6 py-4">Floor</th>
+                            <th className="px-6 py-4">Category</th>
+                            <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -530,7 +523,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     </tbody>
                 </table>
                 {loading && (
-                    <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading products..." /></div>
+                    <div className="py-20 text-center text-white/20">Loading products...</div>
                 )}
             </div>
 
@@ -538,7 +531,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
             {totalPages > 1 && (
                 <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-2xl px-6 py-4">
                     <div className="text-white/40 text-sm">
-                        <AutoTranslatedText text="Showing" /> <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> <AutoTranslatedText text="to" /> <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> <AutoTranslatedText text="of" /> <span className="text-white font-medium">{filteredProducts.length}</span> <AutoTranslatedText text="results" />
+                        Showing <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-white font-medium">{filteredProducts.length}</span> results
                     </div>
                     <div className="flex gap-2">
                         <button 
@@ -546,7 +539,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             disabled={currentPage === 1}
                             className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
                         >
-                            <AutoTranslatedText text="Previous" />
+                            Previous
                         </button>
                         <div className="flex flex-wrap gap-1 justify-center max-w-[300px] md:max-w-none">
                             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -568,7 +561,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             disabled={currentPage === totalPages}
                             className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
                         >
-                            <AutoTranslatedText text="Next" />
+                            Next
                         </button>
                     </div>
                 </div>
@@ -682,7 +675,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
             >
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
                     <h3 className="text-xl font-serif font-bold text-white">
-                        <AutoTranslatedText text={isEdit ? 'Edit Product' : 'Add New Product'} />
+                        {isEdit ? 'Edit Product' : 'Add New Product'}
                     </h3>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40"><X size={20} /></button>
                 </div>
@@ -693,7 +686,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <div className="space-y-4">
                             {!isEdit && (
                                 <div>
-                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="1. Unique ID" /></label>
+                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
                                     <input 
                                         type="text" required
                                         value={formData.id} onChange={(e) => setFormData({...formData, id: e.target.value})}
@@ -1118,7 +1111,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         setFormData({ ...formData, subitems: newSubitems });
     };
 
-    const { translateAsync } = useAutoTranslate(null);
+    const translateAsync = async (t: string) => t;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -1162,7 +1155,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
             >
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
                     <h3 className="text-xl font-serif font-bold text-white">
-                        <AutoTranslatedText text={isEdit ? 'Edit Floor Content' : 'Add Floor Content'} />
+                        {isEdit ? 'Edit Floor Content' : 'Add Floor Content'}
                     </h3>
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40 border-none bg-transparent cursor-pointer"><X size={20} /></button>
                 </div>
@@ -1170,21 +1163,21 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                     <div className="flex flex-col gap-8 flex-1 overflow-y-auto pr-2 custom-scrollbar p-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Floor Level (e.g. 6F)" /></label>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Floor Level (e.g. 6F)</label>
                                 <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="ID (Unique)" /></label>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">ID (Unique)</label>
                                 <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" disabled={isEdit} required />
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block">제목</label>
                             <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Theme Color (HEX)" /></label>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Theme Color (HEX)</label>
                                 <div className="flex gap-2">
                                     <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
                                     <div className="w-14 h-14 rounded-xl border border-white/10" style={{ backgroundColor: formData.color || '#000' }} />
@@ -1984,11 +1977,11 @@ export const AdminPage: React.FC = () => {
                             <LayoutDashboard className="text-[#00FFC2]" />
                         </div>
                         <h1 className="text-xl font-serif font-bold text-white tracking-tight">
-                            <AutoTranslatedText text="Admin Console" />
+                            Admin Console
                         </h1>
                     </div>
                     <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-bold">
-                        <AutoTranslatedText text="Dept. Management v1.0" />
+                        Dept. Management v1.0
                     </p>
                 </div>
 
@@ -2007,7 +2000,7 @@ export const AdminPage: React.FC = () => {
                             }`}
                         >
                             <tab.icon size={20} />
-                            <span><AutoTranslatedText text={tab.label} /></span>
+                            <span>{tab.label}</span>
                             {activeTab === tab.id && <ChevronRight className="ml-auto" size={16} />}
                         </button>
                     ))}
@@ -2019,7 +2012,7 @@ export const AdminPage: React.FC = () => {
                         className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all font-bold"
                     >
                         <LogOut size={20} />
-                        <span><AutoTranslatedText text="Logout" /></span>
+                        <span>Logout</span>
                     </button>
                 </div>
             </aside>
@@ -2036,10 +2029,10 @@ export const AdminPage: React.FC = () => {
                         </button>
                         <div>
                             <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-1">
-                                <AutoTranslatedText text="Overview" />
+                                Overview
                             </h2>
                             <h3 className="text-xl md:text-2xl font-serif font-bold text-white">
-                                <AutoTranslatedText text={tabs.find(t => t.id === activeTab)?.label || ''} />
+                                {tabs.find(t => t.id === activeTab)?.label || ''}
                             </h3>
                         </div>
                     </div>

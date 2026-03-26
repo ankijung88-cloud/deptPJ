@@ -246,7 +246,7 @@ const AgencyRegisterPage: React.FC = () => {
                 </div>
 
                 <div className="mt-12 text-center opacity-30">
-                    <img src="/K로고.png" alt="Logo" className="h-10 mx-auto grayscale brightness-200" />
+                    <img src="/assets/images/K로고.png" alt="Logo" className="h-10 mx-auto grayscale brightness-200" />
                 </div>
             </motion.div>
         </div>

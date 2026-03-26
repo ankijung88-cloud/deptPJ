@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User, ArrowRight } from 'lucide-react';
-import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAdmin } from '../hooks/useAdmin';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+
 
 export const AdminLoginPage: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -76,17 +77,17 @@ export const AdminLoginPage: React.FC = () => {
                         <Lock className="text-[#00FFC2]" size={32} />
                     </div>
                     <h1 className="text-3xl font-serif font-bold text-white mb-2">
-                        <AutoTranslatedText text="Admin Access" />
+                        Admin Access
                     </h1>
                     <p className="text-white/40 text-sm">
-                        <AutoTranslatedText text="Please enter your credentials to manage products." />
+                        Please enter your credentials to manage products.
                     </p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
                         <label className="block text-white/60 text-xs font-bold uppercase tracking-widest mb-2 ml-1">
-                            <AutoTranslatedText text="Username" />
+                            Username
                         </label>
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
@@ -103,7 +104,7 @@ export const AdminLoginPage: React.FC = () => {
 
                     <div>
                         <label className="block text-white/60 text-xs font-bold uppercase tracking-widest mb-2 ml-1">
-                            <AutoTranslatedText text="Password" />
+                            Password
                         </label>
                         <div className="relative">
                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
@@ -143,7 +144,7 @@ export const AdminLoginPage: React.FC = () => {
                             <div className="w-6 h-6 border-2 border-[#0A0D17]/30 border-t-[#0A0D17] rounded-full animate-spin" />
                         ) : (
                             <>
-                                <AutoTranslatedText text="Login" />
+                                Login
                                 <ArrowRight size={18} />
                             </>
                         )}
@@ -164,7 +165,7 @@ export const AdminLoginPage: React.FC = () => {
                         onClick={() => navigate('/')}
                         className="text-white/30 hover:text-white/60 text-sm transition-colors"
                     >
-                        <AutoTranslatedText text="Back to Home" />
+                        Back to Home
                     </button>
                 </div>
             </motion.div>
