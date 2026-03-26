@@ -235,13 +235,6 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         }
     };
 
-    const getSubcategoryLabel = (subId: string) => {
-        for (const f of floors) {
-            const item = f.subitems?.find(s => s.id === subId);
-            if (item) return displayLocalized(item.label);
-        }
-        return subId.toUpperCase();
-    };
 
     const { translateAsync } = useAutoTranslate(null);
 
@@ -273,8 +266,8 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         // 4. Subcategory (Floor specific)
         const matchesSubId = !selectedSubcategory || p.subcategory === selectedSubcategory;
 
-        // 5. Product Type (Generic subcategory)
-        const matchesType = !selectedProductType || p.subcategory === selectedProductType;
+        // 5. Product Title (Based on user request to use titles in "Product Type" filter)
+        const matchesType = !selectedProductType || displayLocalized(p.title) === selectedProductType;
 
         // 6. Template & Uncategorized
         const isTemplate = TEMPLATE_CATEGORIES.includes(p.category);
@@ -358,15 +351,15 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         ))}
                     </select>
 
-                    {/* 5. Product Type */}
+                    {/* 5. Product Type (Showing Titles as requested) */}
                     <select 
                         value={selectedProductType}
                         onChange={(e) => setSelectedProductType(e.target.value)}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[200px]"
                     >
                         <option value="">{allProductTypesLabel}</option>
-                        {Array.from(new Set(products.map(p => p.subcategory).filter((s): s is string => !!s))).sort().map(type => (
-                            <option key={type} value={type}>{getSubcategoryLabel(type)}</option>
+                        {Array.from(new Set(products.map(p => displayLocalized(p.title)).filter(Boolean))).sort().map(title => (
+                            <option key={title} value={title}>{title}</option>
                         ))}
                     </select>
 
