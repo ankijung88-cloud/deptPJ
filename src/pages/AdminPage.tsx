@@ -103,7 +103,6 @@ const normalizeProductData = (product: any) => {
         subcategory: '',
         description: { ko: '', en: '' },
         image_url: '',
-        thumbnail_url: '',
         event_date: { ko: '', en: '' },
         location: { ko: '', en: '' },
         price: '',
@@ -118,7 +117,6 @@ const normalizeProductData = (product: any) => {
 
     // FeaturedItem 타입(camelCase)과 DB 원본(snake_case) 모두 지원
     const image_url = product.image_url || product.imageUrl || '';
-    const thumbnail_url = product.thumbnail_url || product.thumbnailUrl || '';
     const video_url = product.video_url || product.videoUrl || '';
     // event_date: FeaturedItem에서는 'date' 필드에 매핑됨
     const raw_event_date = product.event_date || product.date || '';
@@ -135,7 +133,6 @@ const normalizeProductData = (product: any) => {
         ...defaultData,
         ...product,
         image_url,
-        thumbnail_url,
         video_url,
         title: normalizeLocalizedString(product.title),
         description: normalizeLocalizedString(product.description),
@@ -801,39 +798,6 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 <input 
                                     type="text" placeholder="https://..."
                                     value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-sm focus:border-[#00FFC2]/50"
-                                />
-                            </div>
-                        </div>
-
-                        {/* 7. Thumbnail Image */}
-                        <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="7. Thumbnail Image" /></label>
-                            <div className="space-y-4">
-                                <div className="relative group w-32 aspect-square bg-black/40 border border-white/10 rounded-2xl overflow-hidden flex items-center justify-center">
-                                    {formData.thumbnail_url ? (
-                                        <>
-                                            <img src={formData.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label className="cursor-pointer p-2 bg-[#00FFC2] text-[#0A0D17] rounded-lg transition-all">
-                                                    <Upload size={16} />
-                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'thumbnail_url')} />
-                                                </label>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-white/20 hover:text-[#00FFC2] transition-colors">
-                                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
-                                                {uploading === 'thumbnail_url' ? <div className="w-6 h-6 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={24} />}
-                                            </div>
-                                            <span className="text-[10px] font-bold uppercase"><AutoTranslatedText text="Upload" /></span>
-                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'thumbnail_url')} />
-                                        </label>
-                                    )}
-                                </div>
-                                <input 
-                                    type="text" placeholder="Thumbnail URL"
-                                    value={formData.thumbnail_url} onChange={(e) => setFormData({...formData, thumbnail_url: e.target.value})}
                                     className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-sm focus:border-[#00FFC2]/50"
                                 />
                             </div>
