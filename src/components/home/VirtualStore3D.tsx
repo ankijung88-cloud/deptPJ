@@ -1564,6 +1564,12 @@ export const VirtualStore3D: React.FC = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [showMinimap, setShowMinimap] = useState(false);
 
+    // Ensure minimap is closed on mount or when navigating to/from this page
+    useEffect(() => {
+        setShowMinimap(false);
+        setHoveredFloor(null);
+    }, [location.pathname]);
+
     // Auto-open minimap on floor hover (Desktop Only)
     useEffect(() => {
         if (!isMobile && hoveredFloor !== null) {

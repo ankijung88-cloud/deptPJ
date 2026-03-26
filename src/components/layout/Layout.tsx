@@ -18,8 +18,9 @@ export const Layout: React.FC = () => {
     const isRTL = ['ar', 'fa', 'he'].includes(i18n.language);
     const location = useLocation();
     const { isImmersive } = useNavigationState();
-    const isLandingPage = location.pathname === '/';
-    const isInspirationPage = location.pathname === '/inspiration';
+    const normalizedPath = location.pathname.replace(/\/$/, '');
+    const isLandingPage = normalizedPath === '' || normalizedPath === '/';
+    const isInspirationPage = normalizedPath === '/inspiration';
     const hideHeader = isLandingPage || isInspirationPage || isImmersive;
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
