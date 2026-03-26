@@ -63,7 +63,9 @@ app.use((err, req, res, next) => {
     console.error('Failed to write to error log:', logErr);
   }
   console.error('[Global Error Handler]:', err);
-  res.status(500).json({ 
+  res.status(500).json({
+// Triggering restart...
+ 
     message: err.message || 'Internal Server Error'
   });
 });

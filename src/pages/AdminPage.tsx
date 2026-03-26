@@ -292,7 +292,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
 
     // 6. Final filtered list for the table
     const filteredProducts = isBypassFilters 
-        ? products.filter(p => !searchTerm || p.id.toLowerCase().includes(searchTerm.toLowerCase()) || displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()))
+        ? baseFiltered 
         : typeFiltered.filter(p => {
             const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
             const matchesTemplate = !selectedTemplate || 
@@ -338,21 +338,16 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                 </div>
 
                 <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
-                    <div className="flex flex-col items-start gap-1">
-                        <div className="flex items-center gap-2">
-                            <input 
-                                type="checkbox" 
-                                id="bypass-filters"
-                                checked={isBypassFilters}
-                                onChange={(e) => setIsBypassFilters(e.target.checked)}
-                                className="w-4 h-4 accent-[#00FFC2] cursor-pointer"
-                            />
-                            <label htmlFor="bypass-filters" className="text-xs text-white font-bold cursor-pointer select-none whitespace-nowrap">
-                                <AutoTranslatedText text="Super Search (Bypass All)" />
-                            </label>
-                        </div>
-                        <span className="text-[10px] text-white/30 italic px-6"><AutoTranslatedText text="Ignores Agency/Category" /></span>
-                    </div>
+                    <input 
+                        type="checkbox" 
+                        id="bypass-filters"
+                        checked={isBypassFilters}
+                        onChange={(e) => setIsBypassFilters(e.target.checked)}
+                        className="w-4 h-4 accent-[#00FFC2] cursor-pointer"
+                    />
+                    <label htmlFor="bypass-filters" className="text-xs text-white/50 cursor-pointer select-none whitespace-nowrap">
+                        <AutoTranslatedText text="Show All (Bypass)" />
+                    </label>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
