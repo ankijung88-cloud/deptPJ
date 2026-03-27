@@ -6,7 +6,10 @@ export const getFaqs = async (): Promise<FAQ[]> => {
         const headers: any = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch('/api/faqs', { headers });
+        let response = await fetch('/api/faqs', { headers });
+        if ((response.status === 401 || response.status === 403) && token) {
+            response = await fetch('/api/faqs');
+        }
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || `API Error: ${response.status}`);

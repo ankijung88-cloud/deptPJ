@@ -6,7 +6,10 @@ export const getNotices = async (): Promise<Notice[]> => {
         const headers: any = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch('/api/notices', { headers });
+        let response = await fetch('/api/notices', { headers });
+        if ((response.status === 401 || response.status === 403) && token) {
+            response = await fetch('/api/notices');
+        }
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || `API Error: ${response.status}`);
