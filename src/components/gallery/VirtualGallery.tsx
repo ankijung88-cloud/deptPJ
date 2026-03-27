@@ -564,10 +564,9 @@ const GalleryScene = ({
                     <planeGeometry args={[10, length]} />
                     <meshStandardMaterial 
                         color={theme.accentColor} 
-                        transparent 
-                        opacity={0.08} 
-                        metalness={0.2} 
-                        roughness={0.5} 
+                        transparent={false} 
+                        metalness={0.1} 
+                        roughness={0.9} 
                     />
                 </mesh>
                 <mesh position={[-15, 0, -length / 2 + 50]} rotation={[0, Math.PI / 2, 0]}>
@@ -668,10 +667,10 @@ const GalleryScene = ({
                         <planeGeometry args={[10, 2000]} />
                         <meshStandardMaterial 
                             color={theme.accentColor} 
-                            transparent 
-                            opacity={0.12} 
-                            metalness={0.4} 
-                            roughness={0.3} 
+                            transparent={false} 
+                            opacity={1} 
+                            metalness={0.2} 
+                            roughness={0.8} 
                         />
                     </mesh>
 
