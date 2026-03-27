@@ -127,8 +127,9 @@ const normalizeVideoUrl = (url: string): string => {
     return url.replace('/assets/videos/', '/uploads/');
 };
 
-const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
     const [videoReady, setVideoReady] = useState(false);
+    const [aspectRatio, setAspectRatio] = useState(baseScale[0] / baseScale[1]);
     
     // Apply normalization to videoUrl
     const videoUrl = normalizeVideoUrl(rawVideoUrl);
@@ -152,8 +153,13 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
         const savedMuted = localStorage.getItem('isGlobalMuted');
         v.muted = savedMuted === null ? true : savedMuted === 'true';
         v.dataset.hasSound = "true";
-        
         v.playsInline = true;
+        
+        v.onloadedmetadata = () => {
+            if (v.videoWidth && v.videoHeight) {
+                setAspectRatio(v.videoWidth / v.videoHeight);
+            }
+        };
         
         const handleCanPlay = () => {
             console.log("Video can play:", videoUrl);
@@ -199,17 +205,31 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
 
     const videoTexture = useMemo(() => video ? new THREE.VideoTexture(video) : null, [video]);
     
+    const currentScale = useMemo(() => {
+        const maxWidth = baseScale[0];
+        const maxHeight = baseScale[1];
+        const boxRatio = maxWidth / maxHeight;
+        
+        if (aspectRatio > boxRatio) {
+            // Video is wider than the box
+            return [maxWidth, maxWidth / aspectRatio] as [number, number];
+        } else {
+            // Video is taller than the box
+            return [maxHeight * aspectRatio, maxHeight] as [number, number];
+        }
+    }, [aspectRatio, baseScale]);
+
     return (
         <group>
             {/* Screen Frame */}
             <mesh position={[0, 0, -0.1]}>
-                <boxGeometry args={[scale[0] + 0.4, scale[1] + 0.4, 0.2]} />
+                <boxGeometry args={[currentScale[0] + 0.4, currentScale[1] + 0.4, 0.2]} />
                 <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
             </mesh>
 
             {/* The actual screen - shows video only if playing AND ready */}
             <mesh position={[0, 0, 0.05]} onClick={(e) => { e.stopPropagation(); setPlaying(!playing); }}>
-                <planeGeometry args={scale} />
+                <planeGeometry args={currentScale} />
                 {playing && videoReady && videoTexture ? (
                     <meshBasicMaterial map={videoTexture} toneMapped={false} />
                 ) : (
@@ -222,7 +242,7 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
                 <Suspense fallback={<meshBasicMaterial color="#050505" />}>
                     <DreiImage
                         url={imageUrl}
-                        scale={scale}
+                        scale={currentScale}
                         transparent
                         opacity={1}
                         position={[0, 0, 0.06]}
