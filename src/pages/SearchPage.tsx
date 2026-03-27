@@ -60,7 +60,7 @@ const SearchPage: React.FC = () => {
                     }
                 }
 
-                // 2. Parallel fetching from APIs (with error isolation)
+                // 2. Parallel fetching from APIs (Public access restored)
                 const [productData, noticeData, faqData] = await Promise.all([
                     searchProducts(searchquery, i18n.language).catch(() => []),
                     getNotices().catch(() => []),

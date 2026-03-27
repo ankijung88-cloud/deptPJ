@@ -15,7 +15,7 @@ const router = express.Router();
 router.get('/', optionalAuthenticate, getAllProducts);
 router.post('/', authenticateAdmin, createProduct);
 router.get('/category/:category', optionalAuthenticate, getProductsByCategory);
-router.get('/search', authenticateAdmin, searchProducts);
+router.get('/search', optionalAuthenticate, searchProducts);
 router.get('/:id', optionalAuthenticate, getProductById);
 router.put('/:id', authenticateAdmin, updateProduct);
 router.delete('/:id', authenticateAdmin, deleteProduct);
