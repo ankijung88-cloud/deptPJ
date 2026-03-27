@@ -88,13 +88,13 @@ const CinemaSeats = ({ isPlaying }: { isPlaying: boolean }) => {
             const x = startX + i * spacing;
             seats.push(
                 <group key={i} position={[x, rowY, rowZ]} scale={rowScale}>
-                    {/* Bottom Cushion - Muted Dark Red for visibility against gray floor toggle */}
+                    {/* Bottom Cushion - Dark Red contrast */}
                     <mesh position={[0, 0.5, 0]}>
                         <boxGeometry args={[3.8, 0.8, 3]} />
                         <meshStandardMaterial color="#6a1b1b" roughness={0.8} />
                     </mesh>
-                    {/* Backrest - Muted Dark Red */}
-                    <mesh position={[0, 2.5, -1.2]} rotation={[0.1, 0, 0]}>
+                    {/* Backrest - Positioned at +1.2 to face the screen at -Z */}
+                    <mesh position={[0, 2.5, 1.2]} rotation={[-0.1, 0, 0]}>
                         <boxGeometry args={[3.8, 4, 0.6]} />
                         <meshStandardMaterial color="#5a1616" roughness={0.9} />
                     </mesh>
@@ -204,16 +204,16 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
     const ceilingColor = isPlaying ? "#08080a" : "#1a1a1e";
     const trimColor = isPlaying ? "#050505" : "#121214";
 
-    // Reduced rotation for sidewalls to fix architectural distortion
-    // Changed from PI/3 (60 deg) to PI/8 (22.5 deg) for a more rectangular feel
-    const sideWallRotation = Math.PI / 8;
-    const sideWallX = 35; // Moved slightly inward to compensate for less angle
+    // EXTREMELY minimal rotation for sidewalls to fix "wedge" overlap distortion
+    // Use almost parallel walls (0.05) to ensure screen is visible and room feels rectangular
+    const sideWallRotation = 0.05; 
+    const sideWallX = 35; // Move walls out further to keep the screen area open
 
     return (
         <group>
             {/* 1. Realistic Carpet Floor */}
             <mesh rotation={[-Math.PI / 2.1, 0, 0]} position={[0, -6, 0]}>
-                <planeGeometry args={[120, 100]} />
+                <planeGeometry args={[140, 120]} />
                 <meshStandardMaterial 
                     color={floorColor}
                     map={carpetTexture}
@@ -230,7 +230,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
 
             {/* 2. Ceiling */}
             <mesh rotation={[Math.PI / 2.1, 0, 0]} position={[0, 20, 0]}>
-                <planeGeometry args={[120, 100]} />
+                <planeGeometry args={[140, 120]} />
                 <meshStandardMaterial 
                     color={ceilingColor} 
                     roughness={0.8} 
@@ -238,14 +238,14 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 />
             </mesh>
 
-            {/* 3. Left Wall - Reduced taper to fix distortion */}
+            {/* 3. Left Wall - Minimal rotation ensures it doesn't cross the center line at distance */}
             <group position={[-sideWallX, 5, 0]} rotation={[0, sideWallRotation, 0]}>
                 <mesh>
-                    <planeGeometry args={[100, 100]} />
+                    <planeGeometry args={[120, 100]} />
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
                 </mesh>
                 {/* Visual Panel Divisions */}
-                {[ -30, -10, 10, 30 ].map((x, i) => (
+                {[ -40, -20, 0, 20, 40 ].map((x, i) => (
                     <mesh key={i} position={[x, 0, 0.15]}>
                         <boxGeometry args={[2, 100, 0.2]} />
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
@@ -256,14 +256,14 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
-            {/* 4. Right Wall - Reduced taper to fix distortion */}
+            {/* 4. Right Wall - Minimal rotation ensures it doesn't cross the center line at distance */}
             <group position={[sideWallX, 5, 0]} rotation={[0, -sideWallRotation, 0]}>
                 <mesh>
-                    <planeGeometry args={[100, 100]} />
+                    <planeGeometry args={[120, 100]} />
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
                 </mesh>
                 {/* Visual Panel Divisions */}
-                {[ -30, -10, 10, 30 ].map((x, i) => (
+                {[ -40, -20, 0, 20, 40 ].map((x, i) => (
                     <mesh key={i} position={[x, 0, 0.15]}>
                         <boxGeometry args={[2, 100, 0.2]} />
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
@@ -274,13 +274,13 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
-            {/* 5. Back Wall */}
-            <mesh position={[0, 5, -28]}>
-                <planeGeometry args={[100, 60]} />
+            {/* 5. Back Wall - Make it wide enough to fill the gap at the end of side walls */}
+            <mesh position={[0, 7.5, -35]}>
+                <planeGeometry args={[100, 80]} />
                 <meshStandardMaterial color={isPlaying ? "#050505" : "#222226"} roughness={0.9} />
             </mesh>
 
-            {/* Screen Glow Halo */}
+            {/* Screen Glow Halo - Keep strictly at the back */}
             <mesh ref={glowRef} position={[0, 5, -25.8]} rotation={[0, Math.PI, 0]}>
                 <planeGeometry args={[55, 32]} />
                 <meshBasicMaterial 
@@ -305,7 +305,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             {!isPlaying && (
                 <>
                     <pointLight 
-                        position={[0, 5, 10]} 
+                        position={[0, 5, 0]} 
                         intensity={15} 
                         color="#ffffff" 
                         distance={100} 
