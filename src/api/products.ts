@@ -104,11 +104,11 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
 
 export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch('/api/products', {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch('/api/products', { headers });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
@@ -120,11 +120,11 @@ export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
 
 export const getProductsByCategory = async (category: string): Promise<FeaturedItem[]> => {
     try {
-        const response = await fetch(`/api/products/category/${encodeURIComponent(category)}`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(`/api/products/category/${encodeURIComponent(category)}`, { headers });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
@@ -136,11 +136,11 @@ export const getProductsByCategory = async (category: string): Promise<FeaturedI
 
 export const getProductById = async (id: string): Promise<FeaturedItem | null> => {
     try {
-        const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(`/api/products/${encodeURIComponent(id)}`, { headers });
         if (!response.ok) {
             if (response.status === 404) return null;
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -159,11 +159,11 @@ export const searchProducts = async (query: string, lang?: string): Promise<Feat
             ? `/api/products/search?q=${encodeURIComponent(query)}&lang=${lang}`
             : `/api/products/search?q=${encodeURIComponent(query)}`;
             
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(url, { headers });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
@@ -176,11 +176,11 @@ export const searchProducts = async (query: string, lang?: string): Promise<Feat
 export const getProductsByUser = async (userId: string): Promise<FeaturedItem[]> => {
     // Note: User-specific fetching might need Auth later
     try {
-        const response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`, {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`, { headers });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);

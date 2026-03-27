@@ -2,11 +2,11 @@ import { FAQ } from '../types';
 
 export const getFaqs = async (): Promise<FAQ[]> => {
     try {
-        const response = await fetch('/api/faqs', {
-            headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-            }
-        });
+        const token = sessionStorage.getItem('admin_token');
+        const headers: any = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch('/api/faqs', { headers });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || `API Error: ${response.status}`);
