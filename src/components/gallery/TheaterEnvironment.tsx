@@ -74,6 +74,68 @@ const WallSconce = ({ position, rotation, accentColor, isPlaying }: { position: 
     );
 };
 
+// Sub-component for Cinema Seats
+const CinemaSeats = ({ isPlaying }: { isPlaying: boolean }) => {
+    if (isPlaying) return null; // Only visible when paused/waiting
+
+    // Create a row of seats
+    const renderSeatRow = (rowZ: number, rowY: number, rowScale: number, count: number) => {
+        const seats = [];
+        const spacing = 4.5 * rowScale;
+        const startX = -((count - 1) * spacing) / 2;
+
+        for (let i = 0; i < count; i++) {
+            const x = startX + i * spacing;
+            seats.push(
+                <group key={i} position={[x, rowY, rowZ]} scale={rowScale}>
+                    {/* Bottom Cushion */}
+                    <mesh position={[0, 0.5, 0]}>
+                        <boxGeometry args={[3.8, 0.8, 3]} />
+                        <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
+                    </mesh>
+                    {/* Backrest */}
+                    <mesh position={[0, 2.5, -1.2]} rotation={[0.1, 0, 0]}>
+                        <boxGeometry args={[3.8, 4, 0.6]} />
+                        <meshStandardMaterial color="#222" roughness={0.9} />
+                    </mesh>
+                    {/* Armrests */}
+                    <mesh position={[-2, 1.8, 0.5]}>
+                        <boxGeometry args={[0.4, 0.3, 2.5]} />
+                        <meshStandardMaterial color="#111" />
+                    </mesh>
+                    <mesh position={[2, 1.8, 0.5]}>
+                        <boxGeometry args={[0.4, 0.3, 2.5]} />
+                        <meshStandardMaterial color="#111" />
+                    </mesh>
+                    {/* Base/Support */}
+                    <mesh position={[0, -0.4, 0]}>
+                        <boxGeometry args={[0.5, 1, 0.5]} />
+                        <meshStandardMaterial color="#111" metalness={0.8} />
+                    </mesh>
+                </group>
+            );
+        }
+        return seats;
+    };
+
+    return (
+        <group>
+            {/* Row 1: Back row, slightly higher */}
+            <group position={[0, 0, 0]}>
+                {renderSeatRow(5, -5.8, 0.8, 12)}
+            </group>
+            {/* Row 2: Middle row */}
+            <group position={[0, 0, 0]}>
+                {renderSeatRow(12, -6.0, 1.0, 10)}
+            </group>
+            {/* Row 3: Front row, slightly lower/closer */}
+            <group position={[0, 0, 0]}>
+                {renderSeatRow(20, -6.1, 1.2, 8)}
+            </group>
+        </group>
+    );
+};
+
 // Sub-component for Projector Beam
 const ProjectorBeam = ({ accentColor, isPlaying }: { accentColor: string, isPlaying: boolean }) => {
     const beamRef = useRef<THREE.Mesh>(null);
@@ -111,14 +173,14 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
         const ctx = canvas.getContext('2d');
         if (ctx) {
             // Dark base
-            ctx.fillStyle = '#0a0a0c';
+            ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, 512, 512);
             // Sparse noise for carpet feel
             for (let i = 0; i < 5000; i++) {
                 const x = Math.random() * 512;
                 const y = Math.random() * 512;
                 const size = Math.random() * 1.5;
-                ctx.fillStyle = Math.random() > 0.5 ? '#111' : '#080808';
+                ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#080808';
                 ctx.fillRect(x, y, size, size);
             }
         }
@@ -155,6 +217,9 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                     metalness={0.05}
                 />
             </mesh>
+
+            {/* Cinema Seats - Only visible when paused */}
+            <CinemaSeats isPlaying={isPlaying} />
 
             {/* Aisle Lights for floor definition */}
             <AisleLights accentColor={accentColor} isPlaying={isPlaying} />

@@ -630,13 +630,16 @@ const GalleryScene = ({
         if (!isActivated) return;
 
         if (isTheater) {
-            // Theater Perspective - Move closer and level for "Screen Focus"
-            const targetZ = isMobile ? 12 : 22;
-            const targetY = isMobile ? 3 : 5; // Align closer to screen center Y
-            camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 2);
-            camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * 2);
+            // Birds-eye view (looking down at seats) when paused; immersive level view when playing
+            const targetZ = playing ? (isMobile ? 12 : 22) : (isMobile ? 20 : 32);
+            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 15);
+            const lerpSpeed = playing ? 1.5 : 2.5; // Slightly faster transition when pausing
+            
+            camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * lerpSpeed);
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * lerpSpeed);
             camera.position.x = 0;
-            // Upright look exactly at screen center (at [0, 5, -25])
+            
+            // Focus on screen at all times
             camera.lookAt(0, 5, -25);
             return;
         }
