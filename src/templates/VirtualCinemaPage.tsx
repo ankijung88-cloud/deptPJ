@@ -528,12 +528,12 @@ const VirtualCinemaPage: React.FC = () => {
 
                     {/* Fullscreen Toggle Button */}
                     {!isLoading && cinemaItems.length > 0 && (
-                        <div className="absolute top-8 right-12 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4">
                             <button 
                                 onClick={() => setIsExplorationMode(true)}
-                                className="flex items-center gap-3 px-6 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/30 transition-all shadow-2xl"
+                                className="flex items-center gap-3 px-8 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
                             >
-                                <Monitor size={16} className="opacity-60" />
+                                <Monitor size={16} className="opacity-60 group-hover/btn:scale-110 transition-transform" />
                                 <span className="text-[10px] font-black tracking-[0.2em] uppercase whitespace-nowrap"><AutoTranslatedText text="전체화면으로 보기" /></span>
                             </button>
                         </div>
