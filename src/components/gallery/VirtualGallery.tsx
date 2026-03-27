@@ -559,6 +559,17 @@ const GalleryScene = ({
                     <planeGeometry args={[100, length]} />
                     <meshStandardMaterial color="#2a1a0a" metalness={0.1} roughness={0.8} />
                 </mesh>
+                {/* Central Path for Museum */}
+                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.98, -length / 2 + 50]}>
+                    <planeGeometry args={[10, length]} />
+                    <meshStandardMaterial 
+                        color={theme.accentColor} 
+                        transparent 
+                        opacity={0.08} 
+                        metalness={0.2} 
+                        roughness={0.5} 
+                    />
+                </mesh>
                 <mesh position={[-15, 0, -length / 2 + 50]} rotation={[0, Math.PI / 2, 0]}>
                     <planeGeometry args={[length, 20]} />
                     <meshStandardMaterial color="#f5f5f5" metalness={0.05} roughness={0.9} />
@@ -651,6 +662,19 @@ const GalleryScene = ({
                 <>
                     <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, -5, -500]} />
                     <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, 5, -500]} />
+                    
+                    {/* Central Path Visualization for corridor effect */}
+                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.98, -500]}>
+                        <planeGeometry args={[10, 2000]} />
+                        <meshStandardMaterial 
+                            color={theme.accentColor} 
+                            transparent 
+                            opacity={0.12} 
+                            metalness={0.4} 
+                            roughness={0.3} 
+                        />
+                    </mesh>
+
                     <mesh position={[-5.1, -4.95, -100]}>
                         <boxGeometry args={[0.2, 0.01, 2000]} />
                         <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
