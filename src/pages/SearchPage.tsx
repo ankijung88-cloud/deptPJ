@@ -11,6 +11,7 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS } from '../data/fallbackData';
 
 type SearchResultType = 'product' | 'notice' | 'faq';
 
@@ -45,25 +46,25 @@ const SearchPage: React.FC = () => {
             
             setLoading(true);
             try {
-                // Determine search queries (Original + Translated)
+                // 1. Determine search queries (Original + Translated)
                 let searchquery = query;
                 const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(query);
                 if (!isKorean) {
-                    searchquery = await translateAsync(query);
+                    try {
+                        searchquery = await translateAsync(query);
+                    } catch (e) {
+                        console.warn('Translation failed, using original query');
+                    }
                 }
 
-                // Parallel fetching
+                // 2. Parallel fetching from APIs
                 const [productData, noticeData, faqData] = await Promise.all([
-                    searchProducts(searchquery, i18n.language).then(res => 
-                        res.length === 0 && searchquery !== query ? searchProducts(query, i18n.language) : res
-                    ),
-                    getNotices(),
-                    getFaqs()
+                    searchProducts(searchquery, i18n.language).catch(() => []),
+                    getNotices().catch(() => []),
+                    getFaqs().catch(() => [])
                 ]);
 
-                setProducts(productData);
-                
-                // Client-side filtering for Notices and FAQs
+                // 3. Filtering logic (Shared for API results and Fallbacks)
                 const lowerQuery = query.toLowerCase();
                 const lowerTrans = searchquery.toLowerCase();
                 
@@ -72,11 +73,24 @@ const SearchPage: React.FC = () => {
                     return val.includes(lowerQuery) || val.includes(lowerTrans);
                 };
 
-                setNotices(noticeData.filter(n => filterText(n.title) || filterText(n.content)));
-                setFaqs(faqData.filter(f => filterText(f.question) || filterText(f.answer)));
+                // 4. Consolidate results with fallbacks
+                // Products: If API returns empty, search fallback products
+                let finalProducts = productData;
+                if (finalProducts.length === 0) {
+                    finalProducts = FALLBACK_PRODUCTS.filter(p => filterText(p.title) || filterText(p.description));
+                }
+                setProducts(finalProducts);
+
+                // Notices: Combine API and Fallback, then filter
+                const combinedNotices = noticeData.length > 0 ? noticeData : FALLBACK_NOTICES;
+                setNotices(combinedNotices.filter(n => filterText(n.title) || filterText(n.content)));
+
+                // FAQs: Combine API and Fallback, then filter
+                const combinedFaqs = faqData.length > 0 ? faqData : FALLBACK_FAQS;
+                setFaqs(combinedFaqs.filter(f => filterText(f.question) || filterText(f.answer)));
 
             } catch (error) {
-                console.error('Search failed:', error);
+                console.error('Search internal error:', error);
             } finally {
                 setLoading(false);
             }
@@ -86,11 +100,10 @@ const SearchPage: React.FC = () => {
         fetchAll();
     }, [query, i18n.language]);
 
-    // Consolidate all results into a single list
+    // Consolidate all results into a single list for UI display
     const allResults = useMemo(() => {
         const results: UnifiedSearchResult[] = [];
 
-        // Map Products
         products.forEach(p => {
             results.push({
                 id: p.id,
@@ -104,7 +117,6 @@ const SearchPage: React.FC = () => {
             });
         });
 
-        // Map Notices
         notices.forEach(n => {
             results.push({
                 id: n.id,
@@ -117,7 +129,6 @@ const SearchPage: React.FC = () => {
             });
         });
 
-        // Map FAQs
         faqs.forEach(f => {
             results.push({
                 id: f.id,

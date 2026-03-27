@@ -1,4 +1,4 @@
-import { FloorCategory, NavItem } from '../types';
+import { FloorCategory, NavItem, Notice, FAQ } from '../types';
 
 export const FALLBACK_FLOORS: FloorCategory[] = [
     {
@@ -165,4 +165,59 @@ export const FALLBACK_STORIES: any[] = [
     { id: 's3-1', subcategory: 'performance', title: '무대의 확장', content: '공연이 끝난 후에도 남는 여운, 그 이상의 감동을 가공공간에서 이어갑니다.', image_url: 'https://images.unsplash.com/photo-1514525253361-bee243870eb2?q=80&w=2000' },
     { id: 's2-1', subcategory: 'sync', title: '초연결의 일상', content: '기술과 사람이 만나는 접점에서 발생하는 새로운 시너지를 탐구합니다.', image_url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2000' },
     { id: 's1-1', subcategory: 'global', title: 'K-웨이브의 근원', content: '한국 문화가 전 세계를 매료시킨 이유, 그 저변의 트렌드를 분석합니다.', image_url: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=2000' }
+];
+
+export const FALLBACK_NOTICES: Notice[] = [
+    {
+        id: '1',
+        title: { ko: '문화상점 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
+        category: '공지',
+        date: '2024-03-01',
+        content: { ko: '문화상점이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.', en: 'The Culture Store is officially open. We offer various benefits for membership sign-ups.' },
+        is_important: true
+    },
+    {
+        id: '2',
+        title: { ko: '봄 시즌 한정 예술품 입고 안내', en: 'Spring Season Limited Art Collection' },
+        category: '전시',
+        date: '2024-03-10',
+        content: { ko: '따스한 봄을 맞아 엄선된 예술가들의 작품이 새롭게 입고되었습니다.', en: 'Selected artists\' works have been newly stocked in time for the warm spring.' },
+        is_important: false
+    },
+    {
+        id: '3',
+        title: { ko: '지하 주차장 보수 공사 일정 안내', en: 'Parking Lot Maintenance Schedule' },
+        category: '공지',
+        date: '2024-03-15',
+        content: { ko: '3월 25일부터 27일까지 주차장 일부 구역의 보수 공사가 진행됩니다.', en: 'Maintenance work will take place in some areas of the parking lot from March 25th to 27th.' },
+        is_important: false
+    }
+];
+
+export const FALLBACK_FAQS: FAQ[] = [
+    {
+        id: '1',
+        question: { ko: '문화상점의 운영 시간은 어떻게 되나요?', en: 'What are the operating hours of the Culture Store?' },
+        answer: { ko: '저희 문화상점은 연중무휴로 오전 10시 30분부터 오후 8시까지 운영됩니다. 다만, 특별 행사가 있는 경우 운영 시간이 조정될 수 있으니 공지사항을 확인해 주시기 바랍니다.', en: 'The Culture Store is open year-round from 10:30 AM to 8:00 PM. However, please check the notices as hours may change for special events.' }
+    },
+    {
+        id: '2',
+        question: { ko: '주차는 가능한가요?', en: 'Is parking available?' },
+        answer: { ko: '네, 상점 건물 지하 1층부터 3층까지 넓은 주차 공간이 마련되어 있습니다. 상품 구매 고객께는 구매 금액에 따라 최대 4시간까지 무료 주차권을 제공해 드립니다.', en: 'Yes, a large parking space is available from the 1st to 3rd basement levels. Customers will receive a free parking ticket for up to 4 hours depending on the purchase amount.' }
+    },
+    {
+        id: '3',
+        question: { ko: '멤버십 혜택은 무엇인가요?', en: 'What are the membership benefits?' },
+        answer: { ko: '문화상점 멤버십 회원이 되시면 모든 상품 구매 시 3% 포인트 적립, 생일 당일 10% 할인 쿠폰 발급, 그리고 시즌별 한정품 우선 구매권 등의 혜택을 누리실 수 있습니다.', en: 'Culture Store membership offers 3% point accumulation on all purchases, a 10% birthday discount coupon, and priority purchase rights for seasonal limited items.' }
+    },
+    {
+        id: '4',
+        question: { ko: '상품권 사용이 가능한가요?', en: 'Can I use gift certificates?' },
+        answer: { ko: '네, 문화상품권, 백화점 상품권(신세계/롯데/현대) 및 문화상점 전용 디지털 기프트카드를 모두 사용하실 수 있습니다.', en: 'Yes, Culture Gift Certificates, Department Store Gift Certificates (Shinsegae/Lotte/Hyundai), and Culture Store-exclusive digital gift cards are all accepted.' }
+    },
+    {
+        id: '5',
+        question: { ko: '환불 및 교환 규정은 어떻게 되나요?', en: 'What is the refund and exchange policy?' },
+        answer: { ko: '구매 후 7일 이내에 영수증과 미개봉 상태의 상품을 지참하시면 환불 및 교환이 가능합니다. 단, 일부 신선 제품이나 한정판 예술품의 경우 규정이 다를 수 있습니다.', en: 'Refunds and exchanges are possible within 7 days of purchase if you bring your receipt and unopened products. However, policies may differ for fresh products or limited-edition artworks.' }
+    }
 ];
