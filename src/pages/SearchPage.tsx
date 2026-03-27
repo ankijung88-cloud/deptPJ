@@ -140,8 +140,8 @@ const SearchPage: React.FC = () => {
                 type: 'floor',
                 title: `${f.floor} ${getLocalizedText(f.title, i18n.language)}`,
                 description: getLocalizedText(f.description, i18n.language),
-                category: 'Information',
-                link: `/detail/${f.id}`,
+                category: 'Floor Info',
+                link: `/floor/${f.id}/articles`,
             });
         });
 
@@ -168,7 +168,7 @@ const SearchPage: React.FC = () => {
                 description: getLocalizedText(n.content, i18n.language),
                 date: n.date,
                 category: n.category,
-                link: '/notice'
+                link: `/notice#notice-${n.id}`
             });
         });
 
@@ -180,7 +180,7 @@ const SearchPage: React.FC = () => {
                 title: getLocalizedText(f.question, i18n.language),
                 description: getLocalizedText(f.answer, i18n.language),
                 category: f.category || 'FAQ',
-                link: '/faq'
+                link: `/faq#faq-${f.id}`
             });
         });
 

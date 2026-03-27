@@ -61,6 +61,21 @@ const FAQPage: React.FC = () => {
         fetchFaqs();
     }, []);
 
+    useEffect(() => {
+        if (!loading && window.location.hash) {
+            const hashId = window.location.hash.replace('#', '');
+            const actualId = hashId.replace('faq-', '');
+            const element = document.getElementById(hashId);
+            
+            if (element) {
+                setOpenId(actualId);
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 500);
+            }
+        }
+    }, [loading]);
+
     const displayLocalized = (text: any) => {
         if (!text) return '';
         if (typeof text === 'string') return text;
@@ -120,7 +135,7 @@ const FAQPage: React.FC = () => {
                         displayLocalized(faq.question).toLowerCase().includes(searchTerm.toLowerCase()) ||
                         displayLocalized(faq.answer).toLowerCase().includes(searchTerm.toLowerCase())
                     ).map((faq) => (
-                        <div key={faq.id} className="relative overflow-hidden group">
+                        <div key={faq.id} id={`faq-${faq.id}`} className="relative overflow-hidden group">
                             <button
                                 onClick={() => setOpenId(openId === String(faq.id) ? null : String(faq.id))}
                                 className={`w-full text-left p-6 flex items-center justify-between transition-all relative z-10 ${openId === String(faq.id) ? 'bg-white/10 shadow-2xl' : 'bg-white/5 hover:bg-white/8'

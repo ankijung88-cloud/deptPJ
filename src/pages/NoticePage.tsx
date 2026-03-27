@@ -58,6 +58,18 @@ const NoticePage: React.FC = () => {
         fetchNotices();
     }, []);
 
+    useEffect(() => {
+        if (!loading && window.location.hash) {
+            const id = window.location.hash.replace('#', '');
+            const element = document.getElementById(id);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 500);
+            }
+        }
+    }, [loading]);
+
     return (
         <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
             <div className="lossless-layout">
@@ -103,6 +115,7 @@ const NoticePage: React.FC = () => {
                     ) : notices.map((notice, index) => (
                         <motion.div
                             key={notice.id}
+                            id={`notice-${notice.id}`}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * index }}
