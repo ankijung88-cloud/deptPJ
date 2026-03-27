@@ -752,7 +752,7 @@ const GalleryScene = ({
                 </group>
             )}
 
-            {!cinemaItem && exhibits.map((ex: any, i: number) => (
+            {!isTheater && !cinemaItem && exhibits.map((ex: any, i: number) => (
                 <ExhibitCard
                     key={`${i}-${lang}`}
                     item={ex}

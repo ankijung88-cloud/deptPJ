@@ -461,7 +461,10 @@ const VirtualCinemaPage: React.FC = () => {
                         </div>
 
                         <div className="shrink-0 flex items-center gap-6">
-                             <div className="w-24 h-24 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-md border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl">
+                             <div 
+                                onClick={() => setIsVideoPlaying(true)}
+                                className="w-24 h-24 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-md border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl"
+                             >
                                  <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
                              </div>
                         </div>
@@ -518,6 +521,7 @@ const VirtualCinemaPage: React.FC = () => {
                             cinemaItem={selectedCinemaItem}
                             playing={isVideoPlaying}
                             setPlaying={setIsVideoPlaying}
+                            defaultActivated={true}
                         />
                     )}
 
@@ -538,7 +542,10 @@ const VirtualCinemaPage: React.FC = () => {
                                     key={item.id}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    onClick={() => setSelectedCinemaItem(item)}
+                                    onClick={() => {
+                                        setSelectedCinemaItem(item);
+                                        setIsVideoPlaying(false);
+                                    }}
                                     className={`relative shrink-0 w-64 h-40 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-500 group ${selectedCinemaItem?.id === item.id ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]' : 'border-white/10 grayscale-[0.6] hover:grayscale-0'}`}
                                 >
                                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
