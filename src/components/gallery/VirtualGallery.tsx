@@ -745,7 +745,6 @@ const GalleryScene = ({
             {isTheater && (
                 <TheaterEnvironment 
                     accentColor={theme.accentColor} 
-                    isMobile={isMobile} 
                     isPlaying={playing || false}
                 />
             )}
