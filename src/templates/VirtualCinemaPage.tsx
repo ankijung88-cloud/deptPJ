@@ -526,6 +526,19 @@ const VirtualCinemaPage: React.FC = () => {
                         />
                     )}
 
+                    {/* Fullscreen Toggle Button */}
+                    {!isLoading && cinemaItems.length > 0 && (
+                        <div className="absolute top-8 right-12 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                            <button 
+                                onClick={() => setIsExplorationMode(true)}
+                                className="flex items-center gap-3 px-6 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/30 transition-all shadow-2xl"
+                            >
+                                <Monitor size={16} className="opacity-60" />
+                                <span className="text-[10px] font-black tracking-[0.2em] uppercase whitespace-nowrap"><AutoTranslatedText text="전체화면으로 보기" /></span>
+                            </button>
+                        </div>
+                    )}
+
                     {/* Overlay Vignette for Cinema feel */}
                     <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(0,0,0,0.9)] z-10" />
                 </div>
