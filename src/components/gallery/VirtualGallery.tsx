@@ -739,7 +739,11 @@ const GalleryScene = ({
             ) : null}
 
             {isTheater && (
-                <TheaterEnvironment accentColor={theme.accentColor} isMobile={isMobile} />
+                <TheaterEnvironment 
+                    accentColor={theme.accentColor} 
+                    isMobile={isMobile} 
+                    isPlaying={playing || false}
+                />
             )}
 
             {activeCinemaItem && (

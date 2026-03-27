@@ -5,6 +5,7 @@ import * as THREE from 'three';
 interface TheaterEnvironmentProps {
     accentColor: string;
     isMobile: boolean;
+    isPlaying: boolean;
 }
 
 // Sub-component for Aisle Lights (glowing strips on the floor)
@@ -90,7 +91,7 @@ const ProjectorBeam = ({ accentColor }: { accentColor: string }) => {
     );
 };
 
-const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, isMobile }) => {
+const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, isMobile, isPlaying }) => {
     const glowRef = useRef<THREE.Mesh>(null);
     
     // Create a subtle carpet texture using a canvas pattern
@@ -213,15 +214,20 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             <rectAreaLight
                 width={50}
                 height={30}
-                intensity={12}
+                intensity={isPlaying ? 15 : 6} // Brighter glow when playing to simulate screen reflection
                 color={accentColor}
                 position={[0, 5, -24.8]}
                 rotation={[0, Math.PI, 0]} 
             />
 
-            {/* Subtle atmosphere lights */}
-            <ambientLight intensity={0.1} />
-            <pointLight position={[0, 15, -10]} intensity={1.5} color={accentColor} distance={50} />
+            {/* Dynamic atmosphere lights */}
+            <ambientLight intensity={isPlaying ? 0.05 : 0.4} /> {/* Brighten room when paused */}
+            <pointLight 
+                position={[0, 15, -10]} 
+                intensity={isPlaying ? 1 : 4} 
+                color={accentColor} 
+                distance={50} 
+            />
         </group>
     );
 };
