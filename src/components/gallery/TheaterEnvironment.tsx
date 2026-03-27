@@ -88,15 +88,15 @@ const CinemaSeats = ({ isPlaying }: { isPlaying: boolean }) => {
             const x = startX + i * spacing;
             seats.push(
                 <group key={i} position={[x, rowY, rowZ]} scale={rowScale}>
-                    {/* Bottom Cushion */}
+                    {/* Bottom Cushion - Muted Dark Red for visibility against gray floor toggle */}
                     <mesh position={[0, 0.5, 0]}>
                         <boxGeometry args={[3.8, 0.8, 3]} />
-                        <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
+                        <meshStandardMaterial color="#6a1b1b" roughness={0.8} />
                     </mesh>
-                    {/* Backrest */}
+                    {/* Backrest - Muted Dark Red */}
                     <mesh position={[0, 2.5, -1.2]} rotation={[0.1, 0, 0]}>
                         <boxGeometry args={[3.8, 4, 0.6]} />
-                        <meshStandardMaterial color="#222" roughness={0.9} />
+                        <meshStandardMaterial color="#5a1616" roughness={0.9} />
                     </mesh>
                     {/* Armrests */}
                     <mesh position={[-2, 1.8, 0.5]}>
@@ -110,7 +110,7 @@ const CinemaSeats = ({ isPlaying }: { isPlaying: boolean }) => {
                     {/* Base/Support */}
                     <mesh position={[0, -0.4, 0]}>
                         <boxGeometry args={[0.5, 1, 0.5]} />
-                        <meshStandardMaterial color="#111" metalness={0.8} />
+                        <meshStandardMaterial color="#111" metalness={0.8} roughness={0.2} />
                     </mesh>
                 </group>
             );
@@ -172,15 +172,15 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            // Dark base
+            // Base
             ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, 512, 512);
-            // Sparse noise for carpet feel
-            for (let i = 0; i < 5000; i++) {
+            // Noise for carpet texture
+            for (let i = 0; i < 6000; i++) {
                 const x = Math.random() * 512;
                 const y = Math.random() * 512;
                 const size = Math.random() * 1.5;
-                ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#080808';
+                ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#0a0a0a';
                 ctx.fillRect(x, y, size, size);
             }
         }
@@ -198,12 +198,16 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
         }
     });
 
-    // Dynamic colors based on play state - SIGNIFICANTLY BRIGHTER when paused
-    // Using grey tones for clarity as requested
-    const wallColor = isPlaying ? "#0d0d0f" : "#4a4a4f"; 
-    const floorColor = isPlaying ? "#0a0a0a" : "#3a3a3f";
-    const ceilingColor = isPlaying ? "#08080a" : "#2a2a2f";
-    const trimColor = isPlaying ? "#050505" : "#18181a";
+    // Color palette: Differentiating floor and walls for visibility
+    const wallColor = isPlaying ? "#0d0d0f" : "#44444a"; 
+    const floorColor = isPlaying ? "#0a0a0a" : "#2a2a2f"; // Lighter floor than seats
+    const ceilingColor = isPlaying ? "#08080a" : "#1a1a1e";
+    const trimColor = isPlaying ? "#050505" : "#121214";
+
+    // Reduced rotation for sidewalls to fix architectural distortion
+    // Changed from PI/3 (60 deg) to PI/8 (22.5 deg) for a more rectangular feel
+    const sideWallRotation = Math.PI / 8;
+    const sideWallX = 35; // Moved slightly inward to compensate for less angle
 
     return (
         <group>
@@ -218,13 +222,13 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 />
             </mesh>
 
-            {/* Cinema Seats - Only visible when paused */}
+            {/* Cinema Seats - Visible when paused, with Muted Red contrast */}
             <CinemaSeats isPlaying={isPlaying} />
 
-            {/* Aisle Lights for floor definition */}
+            {/* Aisle Lights */}
             <AisleLights accentColor={accentColor} isPlaying={isPlaying} />
 
-            {/* 2. Textured Ceiling (Panels) */}
+            {/* 2. Ceiling */}
             <mesh rotation={[Math.PI / 2.1, 0, 0]} position={[0, 20, 0]}>
                 <planeGeometry args={[120, 100]} />
                 <meshStandardMaterial 
@@ -234,8 +238,8 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 />
             </mesh>
 
-            {/* 3. Left Wall with Acoustic Panels */}
-            <group position={[-40, 5, 0]} rotation={[0, Math.PI / 3, 0]}>
+            {/* 3. Left Wall - Reduced taper to fix distortion */}
+            <group position={[-sideWallX, 5, 0]} rotation={[0, sideWallRotation, 0]}>
                 <mesh>
                     <planeGeometry args={[100, 100]} />
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
@@ -247,13 +251,13 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces - only bright when paused */}
+                {/* Wall Sconces */}
                 <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
                 <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
-            {/* 4. Right Wall with Acoustic Panels */}
-            <group position={[40, 5, 0]} rotation={[0, -Math.PI / 3, 0]}>
+            {/* 4. Right Wall - Reduced taper to fix distortion */}
+            <group position={[sideWallX, 5, 0]} rotation={[0, -sideWallRotation, 0]}>
                 <mesh>
                     <planeGeometry args={[100, 100]} />
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
@@ -265,15 +269,15 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces - only bright when paused */}
+                {/* Wall Sconces */}
                 <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
                 <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
-            {/* 5. Back Wall (behind projector) */}
+            {/* 5. Back Wall */}
             <mesh position={[0, 5, -28]}>
                 <planeGeometry args={[100, 60]} />
-                <meshStandardMaterial color={isPlaying ? "#050505" : "#333338"} roughness={0.9} />
+                <meshStandardMaterial color={isPlaying ? "#050505" : "#222226"} roughness={0.9} />
             </mesh>
 
             {/* Screen Glow Halo */}
@@ -287,10 +291,10 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 />
             </mesh>
 
-            {/* Projector light beam - only when playing */}
+            {/* Projector light beam */}
             {!isMobile && <ProjectorBeam accentColor={accentColor} isPlaying={isPlaying} />}
 
-            {/* Dynamic atmosphere lights - DRASTICALLY BRIGHTER when paused to reveal architecture */}
+            {/* atmosphere lights */}
             <ambientLight intensity={isPlaying ? 0.05 : 1.5} /> 
             <pointLight 
                 position={[0, 15, -10]} 
@@ -300,19 +304,16 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             />
             {!isPlaying && (
                 <>
-                    {/* Fill light coming from the "entrance/back" */}
                     <pointLight 
                         position={[0, 5, 10]} 
-                        intensity={12} 
+                        intensity={15} 
                         color="#ffffff" 
                         distance={100} 
                     />
-                    {/* Top highlights to distinguish ceiling and walls */}
-                    <pointLight position={[0, 18, -10]} intensity={10} color="#ffffff" distance={60} />
+                    <pointLight position={[0, 18, -10]} intensity={12} color="#ffffff" distance={60} />
                 </>
             )}
             
-            {/* Lighting - Substantial Screen Glow (Bounce) - Stronger when playing */}
             <rectAreaLight
                 width={50}
                 height={30}

@@ -631,8 +631,9 @@ const GalleryScene = ({
 
         if (isTheater) {
             // Birds-eye view (looking down at seats) when paused; immersive level view when playing
-            const targetZ = playing ? (isMobile ? 12 : 22) : (isMobile ? 20 : 32);
-            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 15);
+            // Adjusted distances back to compensate for narrower FOV (50) and reduce distortion
+            const targetZ = playing ? (isMobile ? 16 : 26) : (isMobile ? 24 : 38);
+            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 10 : 18);
             const lerpSpeed = playing ? 1.5 : 2.5; // Slightly faster transition when pausing
             
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * lerpSpeed);
