@@ -755,6 +755,25 @@ export const VirtualGallery = ({
         }
     }, [initialItemId, items]);
 
+    // Image Preloading Logic to prevent delay in 3D gallery
+    useEffect(() => {
+        const imageUrls = [
+            ...items.map(item => item.imageUrl || (item as any).image_url),
+            ...stories.map(story => story.imageUrl || (story as any).image_url),
+            cinemaItem?.imageUrl || (cinemaItem as any)?.image_url
+        ].filter(Boolean);
+
+        // Preload icons/UI if needed
+        const uniqueUrls = Array.from(new Set(imageUrls));
+        
+        uniqueUrls.forEach(url => {
+            const img = new Image();
+            img.src = url as string;
+        });
+
+        console.log(`Preloading ${uniqueUrls.length} images for 3D gallery...`);
+    }, [items, stories, cinemaItem]);
+
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
