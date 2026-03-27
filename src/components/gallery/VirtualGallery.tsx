@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Compass, ChevronUp, ChevronDown } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import TheaterEnvironment from './TheaterEnvironment';
 
 // Local error boundary for individual cards
 class CardErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }, { hasError: boolean }> {
@@ -616,11 +617,24 @@ const GalleryScene = ({
                 </mesh>
             </group>
         );
-    }, [isMuseum, exhibits.length]);
+    }, [isMuseum, exhibits.length, theme.accentColor]);
+
+    const isTheater = !!cinemaItem && !isMuseum;
 
     const lastSetIndex = useRef<number>(-1);
     useFrame((frameState, delta) => {
         if (!isActivated) return;
+
+        if (isTheater) {
+            // Theater Perspective
+            const targetZ = isMobile ? 8 : 18;
+            const targetY = isMobile ? -1 : 0;
+            camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 2);
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * 2);
+            camera.position.x = 0;
+            camera.lookAt(0, isMobile ? 1 : 2, -30);
+            return;
+        }
 
         if (isMobile) {
             // Mobile: State-driven discrete navigation
@@ -690,7 +704,7 @@ const GalleryScene = ({
                     {museumWalls}
                     <fog attach="fog" args={["#000", 1, 80]} />
                 </>
-            ) : (
+            ) : !isTheater ? (
                 <>
                     <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, -5, -500]} />
                     <gridHelper args={[1000, 100, theme.accentColor, theme.color3.substring(0, 7)]} rotation={[0, 0, 0]} position={[0, 5, -500]} />
@@ -717,14 +731,18 @@ const GalleryScene = ({
                     </mesh>
                     <fog attach="fog" args={[theme.bgColor, 10, 60]} />
                 </>
+            ) : null}
+
+            {isTheater && (
+                <TheaterEnvironment accentColor={theme.accentColor} isMobile={isMobile} />
             )}
 
             {cinemaItem && (
-                <group position={[0, 0, camera.position.z - 15]}>
+                <group position={[0, isMobile ? 1 : 2, -25]}>
                     <VideoScreen
                         videoUrl={normalizeVideoUrl(cinemaItem.videoUrl || (cinemaItem as any).video_url)}
                         imageUrl={cinemaItem.imageUrl || (cinemaItem as any).image_url}
-                        scale={isMobile ? [6, 3.4] : [14, 8]}
+                        scale={isMobile ? [12, 6.8] : [32, 18]}
                         hovered={false}
                         theme={theme}
                         playing={!!playing}

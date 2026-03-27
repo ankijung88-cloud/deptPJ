@@ -142,6 +142,13 @@ const VirtualCinemaPage: React.FC = () => {
         fetchItems();
     }, []);
 
+    // Set default selection if none exists
+    useEffect(() => {
+        if (!isLoading && cinemaItems.length > 0 && !selectedCinemaItem && !location.state?.initialId) {
+            setSelectedCinemaItem(cinemaItems[0]);
+        }
+    }, [isLoading, cinemaItems, selectedCinemaItem, location.state]);
+
     // Handle initial item selection if passed via navigation state
     useEffect(() => {
         if (!isLoading && cinemaItems.length > 0 && location.state?.initialId) {
