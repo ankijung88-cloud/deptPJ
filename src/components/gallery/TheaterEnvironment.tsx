@@ -220,14 +220,23 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 rotation={[0, Math.PI, 0]} 
             />
 
-            {/* Dynamic atmosphere lights */}
-            <ambientLight intensity={isPlaying ? 0.05 : 0.4} /> {/* Brighten room when paused */}
+            {/* Dynamic atmosphere lights - Significantly brighter when paused to show interior */}
+            <ambientLight intensity={isPlaying ? 0.05 : 1.2} /> 
             <pointLight 
                 position={[0, 15, -10]} 
-                intensity={isPlaying ? 1 : 4} 
+                intensity={isPlaying ? 1 : 12} 
                 color={accentColor} 
-                distance={50} 
+                distance={60} 
             />
+            {!isPlaying && (
+                <pointLight 
+                    position={[0, 5, 10]} 
+                    intensity={8} 
+                    color="#ffffff" 
+                    distance={80} 
+                    decay={1.5}
+                />
+            )}
         </group>
     );
 };
