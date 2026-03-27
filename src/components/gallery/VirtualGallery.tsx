@@ -626,13 +626,14 @@ const GalleryScene = ({
         if (!isActivated) return;
 
         if (isTheater) {
-            // Theater Perspective
-            const targetZ = isMobile ? 8 : 18;
-            const targetY = isMobile ? -1 : 0;
+            // Theater Perspective - Move closer and tilt for "Screen Focus"
+            const targetZ = isMobile ? 12 : 22;
+            const targetY = isMobile ? 1 : 2;
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 2);
             camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * 2);
             camera.position.x = 0;
-            camera.lookAt(0, isMobile ? 1 : 2, -30);
+            // Look exactly at the screen center (which is at Y=4 or Y=6 depending on scale)
+            camera.lookAt(0, isMobile ? 3 : 5, -25);
             return;
         }
 
@@ -738,11 +739,11 @@ const GalleryScene = ({
             )}
 
             {cinemaItem && (
-                <group position={[0, isMobile ? 1 : 2, -25]}>
+                <group position={[0, isMobile ? 3 : 5, -25]}>
                     <VideoScreen
                         videoUrl={normalizeVideoUrl(cinemaItem.videoUrl || (cinemaItem as any).video_url)}
                         imageUrl={cinemaItem.imageUrl || (cinemaItem as any).image_url}
-                        scale={isMobile ? [12, 6.8] : [32, 18]}
+                        scale={isMobile ? [18, 10] : [45, 25.3]} // Increased scale for 4/5 view
                         hovered={false}
                         theme={theme}
                         playing={!!playing}
