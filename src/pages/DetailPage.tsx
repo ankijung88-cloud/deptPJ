@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, Download, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -35,7 +35,6 @@ export const DetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showShareModal, setShowShareModal] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
-    const [downloading, setDownloading] = useState(false);
     const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
@@ -167,32 +166,7 @@ export const DetailPage: React.FC = () => {
         }
     };
 
-    const handleDownload = async () => {
-        if (!item) return;
-        const url = item.videoUrl || item.imageUrl;
-        if (!url) return;
 
-        try {
-            setDownloading(true);
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            const urlParts = url.split('/');
-            const filename = urlParts[urlParts.length - 1].split('?')[0] || `download-${item.id}`;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-            console.error('Download failed:', error);
-            window.open(url, '_blank');
-        } finally {
-            setDownloading(false);
-        }
-    };
 
     const prepareDataForBackend = (baseItem: FeaturedItem, overrides: Partial<any> = {}) => {
         return {
@@ -481,12 +455,11 @@ export const DetailPage: React.FC = () => {
                                 <div className="space-y-4">
                                     {item.videoUrl && (
                                         <button 
-                                            onClick={handleDownload}
-                                            disabled={downloading}
-                                            className="w-full py-4 bg-[#00FFC2] text-black rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50"
+                                            onClick={() => window.open(item.videoUrl || item.image_url || '/#', '_blank')}
+                                            className="w-full py-4 bg-[#00FFC2] text-black rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
                                         >
-                                            {downloading ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
-                                            <AutoTranslatedText text="Resource Asset Download" />
+                                            <ExternalLink size={20} />
+                                            <AutoTranslatedText text="SITE LINK" />
                                         </button>
                                     )}
                                     {selectedTemplates

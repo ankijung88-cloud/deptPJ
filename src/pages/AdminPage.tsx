@@ -958,7 +958,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. Video URL" /></label>
+                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
                             <input 
                                 type="text" 
                                 value={formData.video_url || ''} onChange={(e) => setFormData({...formData, video_url: e.target.value})}
@@ -1184,7 +1184,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Video URL (m4v/mp4)" /></label>
+                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="사이트 URL" /></label>
                                 <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" placeholder="https://..." />
                             </div>
                         </div>
