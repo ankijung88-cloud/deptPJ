@@ -652,15 +652,31 @@ const VirtualCinemaPage: React.FC = () => {
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[1000] bg-black"
                     >
-                        <div className="absolute top-10 left-10 z-[1010]">
+                        <motion.div 
+                            className="absolute left-10 z-[1010]"
+                            animate={{ 
+                                top: isZoomed ? '1rem' : '2.5rem',
+                                opacity: isZoomed ? 0 : 1,
+                                height: isZoomed ? 0 : 'auto',
+                                pointerEvents: isZoomed ? 'none' : 'auto'
+                            }}
+                            transition={{ duration: 0.5 }}
+                        >
                             <div className="text-[10px] font-black tracking-[0.5em] text-white/30 uppercase mb-2">Theater Immersion</div>
                             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Cinematic Space</h2>
-                        </div>
+                        </motion.div>
 
-                        <div className="absolute top-10 right-10 z-[1010] flex gap-4">
+                        <motion.div 
+                            className="absolute z-[1010] flex gap-4"
+                            animate={{ 
+                                top: isZoomed ? '1rem' : '2.5rem',
+                                right: isZoomed ? '1rem' : '2.5rem'
+                            }}
+                            transition={{ duration: 0.5 }}
+                        >
                             <button 
                                 onClick={() => setIsZoomed(!isZoomed)}
-                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl"
+                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl active:scale-95"
                                 title={isZoomed ? "Exit Zoom" : "Zoom to Screen"}
                             >
                                 {isZoomed ? <Minimize size={24} /> : <Maximize size={24} />}
@@ -671,11 +687,11 @@ const VirtualCinemaPage: React.FC = () => {
                                     setIsExplorationMode(false);
                                     setIsZoomed(false);
                                 }}
-                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500"
+                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 active:scale-95"
                             >
                                 <X size={24} />
                             </button>
-                        </div>
+                        </motion.div>
 
                         <div className="w-full h-full">
                             <VirtualGallery 
