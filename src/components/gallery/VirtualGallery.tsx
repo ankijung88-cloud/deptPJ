@@ -631,9 +631,9 @@ const GalleryScene = ({
 
         if (isTheater) {
             // Birds-eye view (looking down at seats) when paused; immersive level view when playing
-            // Adjusted distances back to compensate for narrower FOV (50) and reduce distortion
-            const targetZ = playing ? (isMobile ? 16 : 26) : (isMobile ? 24 : 38);
-            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 10 : 18);
+            // Reduced FOV (40) and height (12) to minimize perspective "keystone" distortion on vertical lines
+            const targetZ = playing ? (isMobile ? 18 : 32) : (isMobile ? 32 : 55); 
+            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 12);
             const lerpSpeed = playing ? 1.5 : 2.5; // Slightly faster transition when pausing
             
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * lerpSpeed);
@@ -880,7 +880,7 @@ export const VirtualGallery = ({
 
     return (
         <div
-            className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${!isActivated ? 'hide-3d-scrollbar' : ''}`}
+            className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${(!isActivated || isTheaterMode) ? 'hide-3d-scrollbar' : ''}`}
             onClick={() => {
                 if (!onClick && !isActivated) setIsActivated(true);
                 if (onClick) onClick();
@@ -889,7 +889,7 @@ export const VirtualGallery = ({
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-                .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; overflow: hidden !important; }
+                .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
             `}} />
             <GalleryErrorBoundary fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center text-white/20 p-12 text-center">
@@ -898,7 +898,7 @@ export const VirtualGallery = ({
                 </div>
             }>
                 <Canvas shadows={false} dpr={[1, 2]}>
-                    <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
+                    <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={40} />
                     <Suspense fallback={null}>
                         {isMobile ? (
                             <GalleryScene
