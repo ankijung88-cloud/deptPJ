@@ -1177,7 +1177,11 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
     const navigate = useNavigate();
     const { i18n } = useTranslation();
     const [isVideoExpanded, setIsVideoExpanded] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(() => {
+        const saved = localStorage.getItem('isGlobalMuted');
+        return saved === null ? true : saved === 'true';
+    });
+
     const [videoError, setVideoError] = useState(false);
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
@@ -1203,6 +1207,15 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
         }
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isVideoExpanded]);
+
+    React.useEffect(() => {
+        const handleGlobalMute = (e: any) => {
+            setIsMuted(e.detail);
+        };
+        window.addEventListener('globalMuteChange', handleGlobalMute);
+        return () => window.removeEventListener('globalMuteChange', handleGlobalMute);
+    }, []);
+
 
     return (
         <motion.div
@@ -1446,6 +1459,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                                 autoPlay
                                 loop
                                 muted={isMuted}
+                                data-has-sound="true"
                                 playsInline
                                 src={activeFloorData.videoUrl}
                                 onError={() => {
@@ -1479,8 +1493,12 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setIsMuted(!isMuted);
+                                    const nextMuted = !isMuted;
+                                    setIsMuted(nextMuted);
+                                    localStorage.setItem('isGlobalMuted', String(nextMuted));
+                                    window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: nextMuted }));
                                 }}
+
                                 className="p-4 md:p-5 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 text-white hover:bg-white/20 transition-all shadow-2xl active:scale-90"
                             >
                                 {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}

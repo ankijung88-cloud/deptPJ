@@ -40,6 +40,11 @@ export const DetailPage: React.FC = () => {
     const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const { floors } = useFloors();
+    const [isMuted, setIsMuted] = useState(() => {
+        const saved = localStorage.getItem('isGlobalMuted');
+        return saved === null ? true : saved === 'true';
+    });
+
 
     // Set Breadcrumb Path
     const effectiveSubcategory = item?.subcategory || parentProduct?.subcategory;
@@ -109,6 +114,16 @@ export const DetailPage: React.FC = () => {
             setSelectedTemplates([]);
         }
     }, [item]);
+
+    useEffect(() => {
+        const handleGlobalMute = (e: any) => {
+            setIsMuted(e.detail);
+        };
+        window.addEventListener('globalMuteChange', handleGlobalMute);
+        return () => window.removeEventListener('globalMuteChange', handleGlobalMute);
+    }, []);
+
+
 
     const handleBack = () => {
         // Simple heuristic to check if we can go back in history
@@ -433,12 +448,14 @@ export const DetailPage: React.FC = () => {
                                         src={item.detail_media_url} 
                                         controls 
                                         autoPlay 
-                                        muted 
+                                        muted={isMuted} 
+                                        data-has-sound="true"
                                         loop 
                                         playsInline
                                         className="w-full h-auto block"
                                     />
                                 ) : (
+
                                     <img 
                                         src={item.detail_media_url} 
                                         alt="" 

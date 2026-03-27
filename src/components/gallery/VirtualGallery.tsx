@@ -146,7 +146,12 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
         v.crossOrigin = "anonymous"; // Set before src
         v.src = videoUrl;
         v.loop = true;
-        v.muted = true; // Start muted for autoplay compatibility
+        
+        // Match global mute state
+        const savedMuted = localStorage.getItem('isGlobalMuted');
+        v.muted = savedMuted === null ? true : savedMuted === 'true';
+        v.dataset.hasSound = "true";
+        
         v.playsInline = true;
         
         const handleCanPlay = () => {
@@ -167,6 +172,14 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
     }, [videoUrl, isVideo]);
 
     useEffect(() => {
+        const handleGlobalMute = (e: any) => {
+            if (video) video.muted = e.detail;
+        };
+        window.addEventListener('globalMuteChange', handleGlobalMute);
+        return () => window.removeEventListener('globalMuteChange', handleGlobalMute);
+    }, [video]);
+
+    useEffect(() => {
         if (!video) return;
         if (playing) {
             video.play().catch(err => {
@@ -181,6 +194,7 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale, theme, hovered, p
             video.pause();
         }
     }, [playing, video]);
+
 
     const videoTexture = useMemo(() => video ? new THREE.VideoTexture(video) : null, [video]);
     

@@ -68,7 +68,11 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isGlobalMuted, setIsGlobalMuted] = useState(true);
+    const [isGlobalMuted, setIsGlobalMuted] = useState(() => {
+        const saved = localStorage.getItem('isGlobalMuted');
+        return saved === null ? true : saved === 'true';
+    });
+
     const { isAdmin: isAdminLoggedIn, isAgency: isAgencyLoggedIn, user, logout } = useAdmin();
 
     const handleLogout = () => {
@@ -126,12 +130,27 @@ const Header: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const videos = document.querySelectorAll('video');
-        videos.forEach(video => {
-            if (video.dataset.hasSound === 'true') {
-                video.muted = isGlobalMuted;
-            }
+        const syncVideos = () => {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                if (video.dataset.hasSound === 'true') {
+                    video.muted = isGlobalMuted;
+                }
+            });
+        };
+
+        syncVideos();
+
+        // MutationObserver to handle dynamic videos (e.g., modals, lazy-loaded components)
+        const observer = new MutationObserver(syncVideos);
+        observer.observe(document.body, { 
+            childList: true, 
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['data-has-sound']
         });
+
+        return () => observer.disconnect();
     }, [isGlobalMuted]);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -380,7 +399,12 @@ const Header: React.FC = () => {
 
                         <div className="flex items-center space-x-6">
                             <button
-                                onClick={() => setIsGlobalMuted(!isGlobalMuted)}
+                                onClick={() => {
+                                    const next = !isGlobalMuted;
+                                    setIsGlobalMuted(next);
+                                    localStorage.setItem('isGlobalMuted', String(next));
+                                    window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
+                                }}
                             className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
                             onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
                             onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
@@ -478,7 +502,12 @@ const Header: React.FC = () => {
                 {!isAboutPage && (
                     <div className="flex items-center space-x-4 lg:hidden relative">
                         <button
-                            onClick={() => setIsGlobalMuted(!isGlobalMuted)}
+                            onClick={() => {
+                                const next = !isGlobalMuted;
+                                setIsGlobalMuted(next);
+                                localStorage.setItem('isGlobalMuted', String(next));
+                                window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
+                            }}
                             className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
                             onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
                             onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
