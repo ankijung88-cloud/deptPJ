@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Play, Film, ArrowLeft, Monitor, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2, Check } from 'lucide-react';
+import { X, Play, Film, ArrowLeft, Monitor, Maximize, Minimize, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2, Check } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -42,6 +42,7 @@ const VirtualCinemaPage: React.FC = () => {
     const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
+    const [isZoomed, setIsZoomed] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
@@ -656,12 +657,25 @@ const VirtualCinemaPage: React.FC = () => {
                             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Cinematic Space</h2>
                         </div>
 
-                        <button 
-                            onClick={() => setIsExplorationMode(false)}
-                            className="absolute top-10 right-10 z-[1010] p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500"
-                        >
-                            <X size={24} />
-                        </button>
+                        <div className="absolute top-10 right-10 z-[1010] flex gap-4">
+                            <button 
+                                onClick={() => setIsZoomed(!isZoomed)}
+                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl"
+                                title={isZoomed ? "Exit Zoom" : "Zoom to Screen"}
+                            >
+                                {isZoomed ? <Minimize size={24} /> : <Maximize size={24} />}
+                            </button>
+
+                            <button 
+                                onClick={() => {
+                                    setIsExplorationMode(false);
+                                    setIsZoomed(false);
+                                }}
+                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
 
                         <div className="w-full h-full">
                             <VirtualGallery 
@@ -675,6 +689,7 @@ const VirtualCinemaPage: React.FC = () => {
                                 playing={isVideoPlaying}
                                 setPlaying={setIsVideoPlaying}
                                 isTheaterMode={true}
+                                isZoomed={isZoomed}
                             />
                         </div>
 

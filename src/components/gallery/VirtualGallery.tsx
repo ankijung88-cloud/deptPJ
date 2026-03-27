@@ -9,7 +9,7 @@ import {
     useTexture
 } from '@react-three/drei';
 import * as THREE from 'three';
-import { FeaturedItem } from '../../types';
+import type { FeaturedItem } from '../../types';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
 import { Compass, ChevronUp, ChevronDown } from 'lucide-react';
@@ -527,7 +527,8 @@ const GalleryScene = ({
     onActiveIndexChange,
     isActivated,
     targetIndex = 0,
-    isTheaterMode = false
+    isTheaterMode = false,
+    isZoomed = false
 }: {
     items: FeaturedItem[],
     stories: any[],
@@ -542,7 +543,8 @@ const GalleryScene = ({
     onActiveIndexChange?: (index: number) => void,
     isActivated?: boolean,
     targetIndex?: number,
-    isTheaterMode?: boolean
+    isTheaterMode?: boolean,
+    isZoomed?: boolean
 }) => {
     // We only call useScroll if we are NOT on mobile, 
     // because on mobile we are not wrapped in ScrollControls
@@ -632,9 +634,17 @@ const GalleryScene = ({
         if (isTheater) {
             // Birds-eye view (looking down at seats) when paused; immersive level view when playing
             // Reduced FOV (40) and height (12) to minimize perspective "keystone" distortion on vertical lines
-            const targetZ = playing ? (isMobile ? 18 : 32) : (isMobile ? 32 : 55); 
-            const targetY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 12);
-            const lerpSpeed = playing ? 1.5 : 2.5; // Slightly faster transition when pausing
+            // isZoomed: Zoom directly into the screen plane for 1:1 video focus
+            const theaterZ = playing ? (isMobile ? 18 : 32) : (isMobile ? 32 : 55);
+            const theaterY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 12);
+            
+            const zoomZ = isMobile ? 0 : 9; // Calibrated for FOV 40 to fill roughly 90% of screen
+            const zoomY = isMobile ? 3 : 5; // Center of screen
+
+            const targetZ = isZoomed ? zoomZ : theaterZ;
+            const targetY = isZoomed ? zoomY : theaterY;
+
+            const lerpSpeed = isZoomed ? 3.5 : (playing ? 1.5 : 2.5);
             
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * lerpSpeed);
             camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * lerpSpeed);
@@ -793,13 +803,14 @@ export const VirtualGallery = ({
     lang = 'ko',
     playing,
     setPlaying,
-    initialItemId,
+    initialItemId = null,
     onItemClick,
     defaultActivated = false,
     onClick,
+    isTheaterMode = false,
     isMuseum = false,
     cinemaItem = null,
-    isTheaterMode = false,
+    isZoomed = false,
 }: {
     items: FeaturedItem[],
     stories: any[],
@@ -807,14 +818,15 @@ export const VirtualGallery = ({
     showUI?: boolean,
     lang?: string,
     onItemClick?: (item: any) => void,
-    defaultActivated?: boolean,
-    onClick?: () => void,
-    isMuseum?: boolean,
-    cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
     initialItemId?: string | null,
-    isTheaterMode?: boolean
+    defaultActivated?: boolean,
+    onClick?: () => void,
+    isTheaterMode?: boolean,
+    isMuseum?: boolean,
+    isZoomed?: boolean,
+    cinemaItem?: FeaturedItem | null
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -916,6 +928,7 @@ export const VirtualGallery = ({
                                 isActivated={isActivated}
                                 targetIndex={targetIndex}
                                 isTheaterMode={isTheaterMode}
+                                isZoomed={isZoomed}
                             />
                         ) : (
                             <ScrollControls
@@ -937,10 +950,10 @@ export const VirtualGallery = ({
                                     cinemaItem={cinemaItem}
                                     playing={playing}
                                     setPlaying={setPlaying}
-                                    onActiveIndexChange={setActiveIndex}
                                     isActivated={isActivated}
                                     targetIndex={targetIndex}
                                     isTheaterMode={isTheaterMode}
+                                    isZoomed={isZoomed}
                                 />
                             </ScrollControls>
                         )}
