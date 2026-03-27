@@ -12,16 +12,18 @@ export const getFaqs = async (): Promise<FAQ[]> => {
                 sessionStorage.removeItem('admin_token');
                 sessionStorage.removeItem('admin_user');
                 response = await fetch('/api/faqs');
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data || []).map((item: any) => ({
+                        ...item,
+                        question: typeof item.question === 'string' ? JSON.parse(item.question) : item.question,
+                        answer: typeof item.answer === 'string' ? JSON.parse(item.answer) : item.answer,
+                    }));
+                }
             }
-            if (!response.ok) {
-                console.warn(`FAQ API access restricted (${response.status}). Using local fallbacks.`);
-                return [];
-            }
+            return [];
         }
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `API Error: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map((item: any) => ({
             ...item,
@@ -29,8 +31,8 @@ export const getFaqs = async (): Promise<FAQ[]> => {
             answer: typeof item.answer === 'string' ? JSON.parse(item.answer) : item.answer,
         }));
     } catch (error: any) {
-        console.error('Error fetching faqs:', error);
-        throw error;
+        console.warn('FAQ API fallback active:', error);
+        return [];
     }
 };
 

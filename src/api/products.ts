@@ -194,22 +194,28 @@ export const searchProducts = async (query: string, lang?: string): Promise<Feat
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch(url, { headers });
+        
+        // 401/403: Silent auto-healing for guest users or expired tokens
         if (response.status === 401 || response.status === 403) {
             if (token) {
                 sessionStorage.removeItem('admin_token');
                 sessionStorage.removeItem('admin_user');
                 response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data || []).map(mapToFeaturedItem);
+                }
             }
-            if (!response.ok) {
-                console.warn(`Search API access restricted (${response.status}). Using local fallbacks.`);
-                return [];
-            }
+            // Silent fallback for guests or if second try fails
+            return [];
         }
+
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map(mapToFeaturedItem);
     } catch (error) {
-        console.error('Error searching products:', error);
+        // Keep as warning only, not red error
+        console.warn('Product search API fallback active:', error);
         return [];
     }
 };

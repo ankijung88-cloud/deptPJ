@@ -229,5 +229,5 @@ export const FALLBACK_PAGES = [
     { id: 'page-faq', title: { ko: '자주 묻는 질문', en: 'FAQ' }, description: { ko: '이용 방법, 주차, 멤버십 등 고객님들이 자주 궁금해하시는 질문들에 대한 답변입니다.', en: 'Answers to frequently asked questions about usage, parking, membership, etc.' }, url: '/faq' },
     { id: 'page-terms', title: { ko: '이용약관', en: 'Terms' }, description: { ko: '문화상점 서비스 이용을 위한 법적 권리와 의무 사항을 규정합니다.', en: 'Regulating legal rights and obligations for using the Culture Store service.' }, url: '/terms' },
     { id: 'page-privacy', title: { ko: '개인정보처리방침', en: 'Privacy' }, description: { ko: '고객님의 소중한 개인정보를 어떻게 보호하고 관리하는지 명시합니다.', en: 'Specifying how your valuable personal information is protected and managed.' }, url: '/privacy' },
-    { id: 'page-inspiration', title: { ko: '영감의 공간', en: 'Inspiration' }, description: { ko: '1F부터 6F까지 각 층별 테마와 디지털 콘텐츠를 한눈에 둘러볼 수 있는 페이지입니다.', en: 'A page where you can browse the themes and digital content of each floor from 1F to 6F.' }, url: '/inspiration' },
+    { id: 'page-inspiration', title: { ko: '영감의 공간 (트랜드)', en: 'Inspiration (Trend)' }, description: { ko: '1F부터 6F까지 각 층별 최신 트랜드 테마와 디지털 콘텐츠를 한눈에 둘러볼 수 있는 페이지입니다.', en: 'A page where you can browse the latest trend themes and digital content of each floor from 1F to 6F.' }, url: '/inspiration' },
 ];

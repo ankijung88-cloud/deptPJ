@@ -12,16 +12,19 @@ export const getNotices = async (): Promise<Notice[]> => {
                 sessionStorage.removeItem('admin_token');
                 sessionStorage.removeItem('admin_user');
                 response = await fetch('/api/notices');
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data || []).map((item: any) => ({
+                        ...item,
+                        title: typeof item.title === 'string' ? JSON.parse(item.title) : item.title,
+                        content: typeof item.content === 'string' ? JSON.parse(item.content) : item.content,
+                        is_important: !!item.is_important
+                    }));
+                }
             }
-            if (!response.ok) {
-                console.warn(`Notice API access restricted (${response.status}). Using local fallbacks.`);
-                return [];
-            }
+            return [];
         }
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `API Error: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return (data || []).map((item: any) => ({
             ...item,
@@ -30,8 +33,8 @@ export const getNotices = async (): Promise<Notice[]> => {
             is_important: !!item.is_important
         }));
     } catch (error: any) {
-        console.error('Error fetching notices:', error);
-        throw error;
+        console.warn('Notice API fallback active:', error);
+        return [];
     }
 };
 

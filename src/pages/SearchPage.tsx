@@ -119,7 +119,7 @@ const SearchPage: React.FC = () => {
                 ));
 
             } catch (error) {
-                console.error('Search internal error:', error);
+                console.warn('Search internal process warning:', error);
             } finally {
                 setLoading(false);
             }
