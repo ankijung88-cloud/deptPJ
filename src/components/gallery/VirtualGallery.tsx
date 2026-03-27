@@ -5,7 +5,8 @@ import {
     useScroll,
     ScrollControls,
     Image as DreiImage,
-    Text as DreiText
+    Text as DreiText,
+    useTexture
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { FeaturedItem } from '../../types';
@@ -412,6 +413,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
                 >
+                    {/* 1. Card Base */}
                     <mesh position={[0, 0, -0.05]}>
                         <boxGeometry args={[4.2, 3.2, 0.1]} />
                         <meshStandardMaterial
@@ -423,11 +425,22 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                         />
                     </mesh>
 
+                    {/* 2. Background Title (Visible during loading) */}
+                    <group position={[0, 0, -0.01]}>
+                        <DreiText position={[0, 0, 0]} fontSize={0.25} color="white" fillOpacity={0.4} maxWidth={3.5} textAlign="center">
+                            {displayName}
+                        </DreiText>
+                        <DreiText position={[0, -0.6, 0]} fontSize={0.12} color={theme.accentColor} fillOpacity={0.3}>
+                            LOADING EXHIBIT...
+                        </DreiText>
+                    </group>
+
+                    {/* 3. Image Layer */}
                     {imageUrl ? (
                         <CardErrorBoundary fallback={
                             <mesh position={[0, 0, 0.01]}>
                                 <planeGeometry args={[4, 3]} />
-                                <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
+                                <meshStandardMaterial color={theme.color2} transparent opacity={0.1} />
                                 <DreiText position={[0, 0, 0.1]} fontSize={0.5} color={theme.accentColor} fillOpacity={0.2}>
                                     ◈
                                 </DreiText>
@@ -436,7 +449,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                             <Suspense fallback={
                                 <mesh position={[0, 0, 0.01]}>
                                     <planeGeometry args={[4, 3]} />
-                                    <meshStandardMaterial color={theme.color2} transparent opacity={0.3} />
+                                    <meshStandardMaterial color={theme.color2} transparent opacity={0.05} />
                                 </mesh>
                             }>
                                 <SafeImage
@@ -784,17 +797,27 @@ export const VirtualGallery = ({
             ...items.map(item => item.imageUrl || (item as any).image_url),
             ...stories.map(story => story.imageUrl || (story as any).image_url),
             cinemaItem?.imageUrl || (cinemaItem as any)?.image_url
-        ].filter(Boolean);
+        ].filter(Boolean) as string[];
 
         // Preload icons/UI if needed
         const uniqueUrls = Array.from(new Set(imageUrls));
         
+        // 1. Browser Cache Preload (Initial fetch)
         uniqueUrls.forEach(url => {
             const img = new Image();
-            img.src = url as string;
+            img.src = url;
         });
 
-        console.log(`Preloading ${uniqueUrls.length} images for 3D gallery...`);
+        // 2. R3F Texture Preload (Warm GPU cache)
+        if (typeof useTexture !== 'undefined') {
+            uniqueUrls.forEach(url => {
+                try {
+                    useTexture.preload(url);
+                } catch (e) {}
+            });
+        }
+
+        console.log(`🚀 Preloading ${uniqueUrls.length} images (800px) Optimized for 3D gallery...`);
     }, [items, stories, cinemaItem]);
 
     useEffect(() => {
