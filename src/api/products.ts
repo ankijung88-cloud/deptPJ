@@ -109,8 +109,16 @@ export const getFeaturedProducts = async (): Promise<FeaturedItem[]> => {
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch('/api/products', { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch('/api/products');
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch('/api/products');
+            }
+            if (!response.ok) {
+                console.warn(`API access restricted (${response.status}). Using local fallbacks.`);
+                return [];
+            }
         }
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
@@ -128,8 +136,16 @@ export const getProductsByCategory = async (category: string): Promise<FeaturedI
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch(`/api/products/category/${encodeURIComponent(category)}`, { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch(`/api/products/category/${encodeURIComponent(category)}`);
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch(`/api/products/category/${encodeURIComponent(category)}`);
+            }
+            if (!response.ok) {
+                console.warn(`Category API access restricted (${response.status}).`);
+                return [];
+            }
         }
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
@@ -147,8 +163,13 @@ export const getProductById = async (id: string): Promise<FeaturedItem | null> =
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch(`/api/products/${encodeURIComponent(id)}`, { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+            }
+            if (!response.ok) return null;
         }
         if (!response.ok) {
             if (response.status === 404) return null;
@@ -173,8 +194,16 @@ export const searchProducts = async (query: string, lang?: string): Promise<Feat
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch(url, { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch(url);
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch(url);
+            }
+            if (!response.ok) {
+                console.warn(`Search API access restricted (${response.status}). Using local fallbacks.`);
+                return [];
+            }
         }
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
@@ -193,8 +222,13 @@ export const getProductsByUser = async (userId: string): Promise<FeaturedItem[]>
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`, { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`);
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch(`/api/products/user/${encodeURIComponent(userId)}`);
+            }
+            if (!response.ok) return [];
         }
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();

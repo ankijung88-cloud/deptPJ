@@ -6,14 +6,14 @@ import { Search, Tag, Calendar, ChevronRight } from 'lucide-react';
 import { searchProducts } from '../api/products';
 import { getNotices } from '../api/notices';
 import { getFaqs } from '../api/faqs';
-import { FeaturedItem, Notice, FAQ, FloorCategory } from '../types';
+import { FeaturedItem, Notice, FAQ, FloorCategory, StaticPage } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_FLOORS } from '../data/fallbackData';
+import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_FLOORS, FALLBACK_PAGES } from '../data/fallbackData';
 
-type SearchResultType = 'product' | 'notice' | 'faq' | 'floor';
+type SearchResultType = 'product' | 'notice' | 'faq' | 'floor' | 'page';
 
 interface UnifiedSearchResult {
     id: string | number;
@@ -24,6 +24,7 @@ interface UnifiedSearchResult {
     category?: string;
     link: string;
     imageUrl?: string;
+    url?: string; // For static pages
 }
 
 const SearchPage: React.FC = () => {
@@ -34,6 +35,7 @@ const SearchPage: React.FC = () => {
     const [notices, setNotices] = useState<Notice[]>([]);
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [floors, setFloors] = useState<FloorCategory[]>([]);
+    const [pages, setPages] = useState<StaticPage[]>([]); // New state for static pages
     const [loading, setLoading] = useState(true);
     const { translateAsync } = useAutoTranslate(null);
     const theme = getJoseonThemeById('search', 'default');
@@ -110,6 +112,12 @@ const SearchPage: React.FC = () => {
                     f.floor.toLowerCase().includes(lowerQuery)
                 ));
 
+                // 8. Static Pages: Search title, description
+                setPages(FALLBACK_PAGES.filter(p => 
+                    filterText(p.title) || 
+                    filterText(p.description)
+                ));
+
             } catch (error) {
                 console.error('Search internal error:', error);
             } finally {
@@ -176,8 +184,21 @@ const SearchPage: React.FC = () => {
             });
         });
 
+        // Static Pages
+        pages.forEach(p => {
+            results.push({
+                id: p.id,
+                type: 'page',
+                title: getLocalizedText(p.title, i18n.language),
+                description: getLocalizedText(p.description, i18n.language),
+                category: 'Page',
+                link: p.url,
+                url: p.url
+            });
+        });
+
         return results;
-    }, [products, notices, faqs, floors, i18n.language]);
+    }, [products, notices, faqs, floors, pages, i18n.language]);
 
     return (
         <div className="min-h-screen pb-20 text-white font-sans" style={theme.bgStyle}>
@@ -193,7 +214,7 @@ const SearchPage: React.FC = () => {
                             <AutoTranslatedText text="통합 검색 결과" />
                         </h1>
                         <p className="text-sm text-white/40 font-light tracking-[0.3em] uppercase">
-                             ARCHIVE • NOTICE • FAQ • INFO
+                             ARCHIVE • NOTICE • FAQ • INFO • PAGES
                         </p>
                         <div className="mt-8 inline-block px-8 py-2 rounded-full bg-white/5 border border-white/10 text-dancheong-gold font-serif italic text-xl">
                             "{query}"
@@ -216,6 +237,7 @@ const SearchPage: React.FC = () => {
                         <span className={products.length > 0 ? 'text-dancheong-gold' : ''}>Archive ({products.length})</span>
                         <span className={notices.length > 0 ? 'text-dancheong-red' : ''}>Notice ({notices.length})</span>
                         <span className={faqs.length > 0 ? 'text-blue-400' : ''}>FAQ ({faqs.length})</span>
+                        <span className={pages.length > 0 ? 'text-purple-400' : ''}>Pages ({pages.length})</span>
                     </div>
                 </div>
 
@@ -235,7 +257,7 @@ const SearchPage: React.FC = () => {
                                     transition={{ duration: 0.4, delay: index * 0.03 }}
                                 >
                                     <Link
-                                        to={result.link}
+                                        to={result.type === 'page' ? result.url || '/' : result.link}
                                         className="group relative flex flex-col md:flex-row items-stretch bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden hover:bg-white/[0.04] hover:border-white/20 transition-all duration-500"
                                     >
                                         {/* Type Indicator */}
@@ -243,7 +265,8 @@ const SearchPage: React.FC = () => {
                                             className={`w-1.5 shrink-0 ${
                                                 result.type === 'product' ? 'bg-dancheong-gold/40' : 
                                                 result.type === 'notice' ? 'bg-dancheong-red/40' : 
-                                                result.type === 'floor' ? 'bg-green-400/40' : 'bg-blue-400/40'
+                                                result.type === 'floor' ? 'bg-green-400/40' : 
+                                                result.type === 'page' ? 'bg-purple-400/40' : 'bg-blue-400/40'
                                             }`} 
                                         />
 
@@ -253,7 +276,8 @@ const SearchPage: React.FC = () => {
                                                 <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded border ${
                                                     result.type === 'product' ? 'border-dancheong-gold/20 text-dancheong-gold/60' : 
                                                     result.type === 'notice' ? 'border-dancheong-red/20 text-dancheong-red/60' : 
-                                                    result.type === 'floor' ? 'border-green-400/20 text-green-400/60' : 'border-blue-400/20 text-blue-400/60'
+                                                    result.type === 'floor' ? 'border-green-400/20 text-green-400/60' : 
+                                                    result.type === 'page' ? 'border-purple-400/20 text-purple-400/60' : 'border-blue-400/20 text-blue-400/60'
                                                 }`}>
                                                     <AutoTranslatedText text={result.type} />
                                                 </span>

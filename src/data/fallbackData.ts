@@ -221,3 +221,13 @@ export const FALLBACK_FAQS: FAQ[] = [
         answer: { ko: '구매 후 7일 이내에 영수증과 미개봉 상태의 상품을 지참하시면 환불 및 교환이 가능합니다. 단, 일부 신선 제품이나 한정판 예술품의 경우 규정이 다를 수 있습니다.', en: 'Refunds and exchanges are possible within 7 days of purchase if you bring your receipt and unopened products. However, policies may differ for fresh products or limited-edition artworks.' }
     }
 ];
+
+export const FALLBACK_PAGES = [
+    { id: 'page-home', title: { ko: '홈', en: 'Home' }, description: { ko: '문화와 예술이 만나는 디지털 아카이브, 문화상점의 메인 페이지입니다.', en: 'The main page of Culture Store, a digital archive where culture and art meet.' }, url: '/' },
+    { id: 'page-about', title: { ko: '소개', en: 'About' }, description: { ko: '문화상점의 가치와 비전, 그리고 우리가 만들어가는 문화 생태계에 대해 소개합니다.', en: 'Introducing the values, vision, and cultural ecosystem of the Culture Store.' }, url: '/about' },
+    { id: 'page-notice', title: { ko: '공지사항', en: 'Notice' }, description: { ko: '문화상점의 새로운 소식과 주요 안내사항을 확인하실 수 있습니다.', en: 'Check out the new news and major announcements from the Culture Store.' }, url: '/notice' },
+    { id: 'page-faq', title: { ko: '자주 묻는 질문', en: 'FAQ' }, description: { ko: '이용 방법, 주차, 멤버십 등 고객님들이 자주 궁금해하시는 질문들에 대한 답변입니다.', en: 'Answers to frequently asked questions about usage, parking, membership, etc.' }, url: '/faq' },
+    { id: 'page-terms', title: { ko: '이용약관', en: 'Terms' }, description: { ko: '문화상점 서비스 이용을 위한 법적 권리와 의무 사항을 규정합니다.', en: 'Regulating legal rights and obligations for using the Culture Store service.' }, url: '/terms' },
+    { id: 'page-privacy', title: { ko: '개인정보처리방침', en: 'Privacy' }, description: { ko: '고객님의 소중한 개인정보를 어떻게 보호하고 관리하는지 명시합니다.', en: 'Specifying how your valuable personal information is protected and managed.' }, url: '/privacy' },
+    { id: 'page-inspiration', title: { ko: '영감의 공간', en: 'Inspiration' }, description: { ko: '1F부터 6F까지 각 층별 테마와 디지털 콘텐츠를 한눈에 둘러볼 수 있는 페이지입니다.', en: 'A page where you can browse the themes and digital content of each floor from 1F to 6F.' }, url: '/inspiration' },
+];

@@ -126,3 +126,10 @@ export interface FAQ {
     display_order?: number;
     agency_id?: string | number;
 }
+
+export interface StaticPage {
+    id: string;
+    title: LocalizedString;
+    description: LocalizedString;
+    url: string;
+}

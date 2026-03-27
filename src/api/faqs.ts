@@ -7,8 +7,16 @@ export const getFaqs = async (): Promise<FAQ[]> => {
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch('/api/faqs', { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch('/api/faqs');
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch('/api/faqs');
+            }
+            if (!response.ok) {
+                console.warn(`FAQ API access restricted (${response.status}). Using local fallbacks.`);
+                return [];
+            }
         }
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));

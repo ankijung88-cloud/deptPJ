@@ -7,8 +7,16 @@ export const getNotices = async (): Promise<Notice[]> => {
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         let response = await fetch('/api/notices', { headers });
-        if ((response.status === 401 || response.status === 403) && token) {
-            response = await fetch('/api/notices');
+        if (response.status === 401 || response.status === 403) {
+            if (token) {
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_user');
+                response = await fetch('/api/notices');
+            }
+            if (!response.ok) {
+                console.warn(`Notice API access restricted (${response.status}). Using local fallbacks.`);
+                return [];
+            }
         }
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
