@@ -522,6 +522,7 @@ const VirtualCinemaPage: React.FC = () => {
                             playing={isVideoPlaying}
                             setPlaying={setIsVideoPlaying}
                             defaultActivated={true}
+                            isTheaterMode={true}
                         />
                     )}
 
@@ -660,6 +661,7 @@ const VirtualCinemaPage: React.FC = () => {
                                 cinemaItem={selectedCinemaItem}
                                 playing={isVideoPlaying}
                                 setPlaying={setIsVideoPlaying}
+                                isTheaterMode={true}
                             />
                         </div>
 

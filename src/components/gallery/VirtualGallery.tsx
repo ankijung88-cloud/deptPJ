@@ -526,7 +526,8 @@ const GalleryScene = ({
     setPlaying,
     onActiveIndexChange,
     isActivated,
-    targetIndex = 0
+    targetIndex = 0,
+    isTheaterMode = false
 }: {
     items: FeaturedItem[],
     stories: any[],
@@ -540,7 +541,8 @@ const GalleryScene = ({
     setPlaying?: (p: boolean) => void,
     onActiveIndexChange?: (index: number) => void,
     isActivated?: boolean,
-    targetIndex?: number
+    targetIndex?: number,
+    isTheaterMode?: boolean
 }) => {
     // We only call useScroll if we are NOT on mobile, 
     // because on mobile we are not wrapped in ScrollControls
@@ -555,6 +557,9 @@ const GalleryScene = ({
             zPos: -i * 20 - 10
         }));
     }, [items, stories]);
+
+    const isTheater = isTheaterMode || (!!cinemaItem && !isMuseum);
+    const activeCinemaItem = cinemaItem || (isTheaterMode ? items[0] : null);
 
     const forcedScroll = useRef<{ offset: number, startTime: number, active: boolean }>({ offset: 0, startTime: 0, active: false });
     const currentOffset = useRef(targetIndex);
@@ -619,7 +624,6 @@ const GalleryScene = ({
         );
     }, [isMuseum, exhibits.length, theme.accentColor]);
 
-    const isTheater = !!cinemaItem && !isMuseum;
 
     const lastSetIndex = useRef<number>(-1);
     useFrame((frameState, delta) => {
@@ -738,11 +742,11 @@ const GalleryScene = ({
                 <TheaterEnvironment accentColor={theme.accentColor} isMobile={isMobile} />
             )}
 
-            {cinemaItem && (
+            {activeCinemaItem && (
                 <group position={[0, isMobile ? 3 : 5, -25]}>
                     <VideoScreen
-                        videoUrl={normalizeVideoUrl(cinemaItem.videoUrl || (cinemaItem as any).video_url)}
-                        imageUrl={cinemaItem.imageUrl || (cinemaItem as any).image_url}
+                        videoUrl={normalizeVideoUrl(activeCinemaItem.videoUrl || (activeCinemaItem as any).video_url)}
+                        imageUrl={activeCinemaItem.imageUrl || (activeCinemaItem as any).image_url}
                         scale={isMobile ? [18, 10] : [45, 25.3]} // Increased scale for 4/5 view
                         hovered={false}
                         theme={theme}
@@ -752,7 +756,7 @@ const GalleryScene = ({
                 </group>
             )}
 
-            {!isTheater && !cinemaItem && exhibits.map((ex: any, i: number) => (
+            {!isTheater && !activeCinemaItem && exhibits.map((ex: any, i: number) => (
                 <ExhibitCard
                     key={`${i}-${lang}`}
                     item={ex}
@@ -788,6 +792,7 @@ export const VirtualGallery = ({
     onClick,
     isMuseum = false,
     cinemaItem = null,
+    isTheaterMode = false,
 }: {
     items: FeaturedItem[],
     stories: any[],
@@ -801,7 +806,8 @@ export const VirtualGallery = ({
     cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null
+    initialItemId?: string | null,
+    isTheaterMode?: boolean
 }) => {
     const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -902,6 +908,7 @@ export const VirtualGallery = ({
                                 onActiveIndexChange={setActiveIndex}
                                 isActivated={isActivated}
                                 targetIndex={targetIndex}
+                                isTheaterMode={isTheaterMode}
                             />
                         ) : (
                             <ScrollControls
@@ -926,6 +933,7 @@ export const VirtualGallery = ({
                                     onActiveIndexChange={setActiveIndex}
                                     isActivated={isActivated}
                                     targetIndex={targetIndex}
+                                    isTheaterMode={isTheaterMode}
                                 />
                             </ScrollControls>
                         )}
@@ -935,7 +943,7 @@ export const VirtualGallery = ({
 
             {showUI && (
                 <>
-                    {!isActivated && (
+                    {!isActivated && !isTheaterMode && (
                         <div className="absolute inset-0 z-[30] flex items-center justify-center bg-black/20 backdrop-blur-[2px] cursor-pointer transition-all hover:bg-black/10">
                             <div className="px-8 py-4 border border-white/20 rounded-full backdrop-blur-xl bg-black/40 shadow-2xl flex flex-col items-center gap-2 group-hover:scale-105 transition-transform duration-500">
                                 <Compass size={24} className="text-white/60 animate-[spin_8s_linear_infinite]" />
@@ -945,25 +953,29 @@ export const VirtualGallery = ({
                         </div>
                     )}
 
-                    <div className="absolute top-10 right-10 pointer-events-none z-20 text-right">
-                        <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
-                        <div className="text-xl font-serif italic text-white/60">
-                            {isActivated ? (
-                                <AutoTranslatedText text="Scroll to explore the Temporal Corridor" />
-                            ) : (
-                                <AutoTranslatedText text={onClick ? "가상공간을 보려면 클릭하세요" : "스크롤을 활성화하려면 클릭하세요"} />
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="absolute bottom-24 md:bottom-10 left-20 md:left-10 pointer-events-none z-20">
-                        <div className="flex items-center gap-4">
-                            <div className="flex flex-col">
-                                <span className="text-2xl font-black text-white leading-none">{(activeIndex % totalExhibits + totalExhibits) % totalExhibits + 1} / {totalExhibits}</span>
-                                <span className="text-[8px] font-mono tracking-widest text-white/40 uppercase"><AutoTranslatedText text="Current Exhibit" /></span>
+                    {!isTheaterMode && (
+                        <div className="absolute top-10 right-10 pointer-events-none z-20 text-right">
+                            <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
+                            <div className="text-xl font-serif italic text-white/60">
+                                {isActivated ? (
+                                    <AutoTranslatedText text="Scroll to explore the Temporal Corridor" />
+                                ) : (
+                                    <AutoTranslatedText text={onClick ? "가상공간을 보려면 클릭하세요" : "스크롤을 활성화하려면 클릭하세요"} />
+                                )}
                             </div>
                         </div>
-                    </div>
+                    )}
+
+                    {!isTheaterMode && (
+                        <div className="absolute bottom-24 md:bottom-10 left-20 md:left-10 pointer-events-none z-20">
+                            <div className="flex items-center gap-4">
+                                <div className="flex flex-col">
+                                    <span className="text-2xl font-black text-white leading-none">{(activeIndex % totalExhibits + totalExhibits) % totalExhibits + 1} / {totalExhibits}</span>
+                                    <span className="text-[8px] font-mono tracking-widest text-white/40 uppercase"><AutoTranslatedText text="Current Exhibit" /></span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
 
