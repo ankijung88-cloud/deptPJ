@@ -213,16 +213,16 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                     <planeGeometry args={[120, 100]} />
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
                 </mesh>
-                {/* Visual Panel Divisions */}
-                {[ -40, -20, 0, 20, 40 ].map((z, i) => (
-                    <mesh key={i} position={[0, 0, z]}>
+                {/* Visual Panel Divisions - Corrected coordinate to x (world z) */}
+                {[ -50, -25, 0, 25, 50 ].map((x, i) => (
+                    <mesh key={i} position={[x, 0, 0.1]}>
                         <boxGeometry args={[0.2, 100, 2]} />
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces - Restore visibility and usage */}
-                <WallSconce position={[0.2, 5, -20]} rotation={[0, -Math.PI/2, 0]} accentColor={accentColor} isPlaying={isPlaying} />
-                <WallSconce position={[0.2, 5, 20]} rotation={[0, -Math.PI/2, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                {/* Wall Sconces - Positioned on the wall (local z is world x offset) */}
+                <WallSconce position={[-20, 5, 0.2]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                <WallSconce position={[20, 5, 0.2]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
             {/* 4. Right Wall - Strictly Parallel */}
@@ -232,15 +232,15 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                     <meshStandardMaterial color={wallColor} roughness={0.7} />
                 </mesh>
                 {/* Visual Panel Divisions */}
-                {[ -40, -20, 0, 20, 40 ].map((z, i) => (
-                    <mesh key={i} position={[0, 0, z]}>
+                {[ -50, -25, 0, 25, 50 ].map((x, i) => (
+                    <mesh key={i} position={[x, 0, 0.1]}>
                         <boxGeometry args={[0.2, 100, 2]} />
                         <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces - Restore visibility and usage */}
-                <WallSconce position={[-0.2, 5, -20]} rotation={[0, Math.PI/2, 0]} accentColor={accentColor} isPlaying={isPlaying} />
-                <WallSconce position={[-0.2, 5, 20]} rotation={[0, Math.PI/2, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                {/* Wall Sconces */}
+                <WallSconce position={[-20, 5, 0.2]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                <WallSconce position={[20, 5, 0.2]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
             {/* 5. Back Wall - Moved safely behind the screen at -25 */}
