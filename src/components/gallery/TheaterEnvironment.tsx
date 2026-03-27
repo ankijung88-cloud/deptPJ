@@ -9,27 +9,27 @@ interface TheaterEnvironmentProps {
 }
 
 // Sub-component for Aisle Lights (glowing strips on the floor)
-const AisleLights = ({ accentColor }: { accentColor: string }) => {
+const AisleLights = ({ accentColor, isPlaying }: { accentColor: string, isPlaying: boolean }) => {
     return (
         <group>
             {/* Left Aisle Light */}
-            <mesh position={[-25, -5.95, -10]} rotation={[-Math.PI / 2, 0, 0]}>
+            <mesh position={[-25, -5.9, -10]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[0.3, 40]} />
                 <meshStandardMaterial 
                     color={accentColor} 
                     emissive={accentColor} 
-                    emissiveIntensity={2} 
+                    emissiveIntensity={isPlaying ? 2 : 1.2} 
                     transparent 
                     opacity={0.6}
                 />
             </mesh>
             {/* Right Aisle Light */}
-            <mesh position={[25, -5.95, -10]} rotation={[-Math.PI / 2, 0, 0]}>
+            <mesh position={[25, -5.9, -10]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[0.3, 40]} />
                 <meshStandardMaterial 
                     color={accentColor} 
                     emissive={accentColor} 
-                    emissiveIntensity={2} 
+                    emissiveIntensity={isPlaying ? 2 : 1.2} 
                     transparent 
                     opacity={0.6}
                 />
@@ -39,13 +39,14 @@ const AisleLights = ({ accentColor }: { accentColor: string }) => {
 };
 
 // Sub-component for Wall Sconces (decorative lights)
-const WallSconce = ({ position, rotation, accentColor }: { position: [number, number, number], rotation: [number, number, number], accentColor: string }) => {
+const WallSconce = ({ position, rotation, accentColor, isPlaying }: { position: [number, number, number], rotation: [number, number, number], accentColor: string, isPlaying: boolean }) => {
     const lightRef = useRef<THREE.PointLight>(null);
     
     useFrame(({ clock }) => {
         if (lightRef.current) {
             // Subtle flicker to simulate high-end decorative lighting
-            lightRef.current.intensity = 1.0 + Math.sin(clock.getElapsedTime() * 2) * 0.1;
+            const baseIntensity = isPlaying ? 0.3 : 2.5;
+            lightRef.current.intensity = baseIntensity + Math.sin(clock.getElapsedTime() * 2) * 0.1;
         }
     });
 
@@ -54,28 +55,36 @@ const WallSconce = ({ position, rotation, accentColor }: { position: [number, nu
             {/* Sconce Base */}
             <mesh>
                 <boxGeometry args={[0.2, 1.5, 0.1]} />
-                <meshStandardMaterial color="#222" metalness={0.8} roughness={0.2} />
+                <meshStandardMaterial color={isPlaying ? "#111" : "#333"} metalness={0.8} roughness={0.2} />
             </mesh>
             {/* Light Source (Visual) */}
             <mesh position={[0, 0, 0.1]}>
                 <planeGeometry args={[0.1, 1]} />
-                <meshStandardMaterial color={accentColor} emissive={accentColor} emissiveIntensity={5} />
+                <meshStandardMaterial 
+                    color={accentColor} 
+                    emissive={accentColor} 
+                    emissiveIntensity={isPlaying ? 1 : 4} 
+                    transparent 
+                    opacity={isPlaying ? 0.5 : 1}
+                />
             </mesh>
             {/* Real Light */}
-            <pointLight ref={lightRef} intensity={1} distance={15} color={accentColor} />
+            <pointLight ref={lightRef} intensity={isPlaying ? 0.2 : 2} distance={15} color={accentColor} />
         </group>
     );
 };
 
 // Sub-component for Projector Beam
-const ProjectorBeam = ({ accentColor }: { accentColor: string }) => {
+const ProjectorBeam = ({ accentColor, isPlaying }: { accentColor: string, isPlaying: boolean }) => {
     const beamRef = useRef<THREE.Mesh>(null);
     useFrame(({ clock }) => {
-        if (beamRef.current) {
+        if (beamRef.current && isPlaying) {
             // Slight jitter to simulate light through dust particles
             beamRef.current.rotation.z = Math.sin(clock.getElapsedTime() * 10) * 0.001;
         }
     });
+
+    if (!isPlaying) return null;
 
     return (
         <mesh ref={beamRef} position={[0, 15, 20]} rotation={[0.4, 0, 0]}>
@@ -127,7 +136,12 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
         }
     });
 
-    const wallColor = "#0d0d0f"; // Refined charcoal with slight blue hint for depth
+    // Dynamic colors based on play state - SIGNIFICANTLY BRIGHTER when paused
+    // Using grey tones for clarity as requested
+    const wallColor = isPlaying ? "#0d0d0f" : "#4a4a4f"; 
+    const floorColor = isPlaying ? "#0a0a0a" : "#3a3a3f";
+    const ceilingColor = isPlaying ? "#08080a" : "#2a2a2f";
+    const trimColor = isPlaying ? "#050505" : "#18181a";
 
     return (
         <group>
@@ -135,6 +149,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             <mesh rotation={[-Math.PI / 2.1, 0, 0]} position={[0, -6, 0]}>
                 <planeGeometry args={[120, 100]} />
                 <meshStandardMaterial 
+                    color={floorColor}
                     map={carpetTexture}
                     roughness={0.9} 
                     metalness={0.05}
@@ -142,13 +157,13 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             </mesh>
 
             {/* Aisle Lights for floor definition */}
-            <AisleLights accentColor={accentColor} />
+            <AisleLights accentColor={accentColor} isPlaying={isPlaying} />
 
             {/* 2. Textured Ceiling (Panels) */}
             <mesh rotation={[Math.PI / 2.1, 0, 0]} position={[0, 20, 0]}>
                 <planeGeometry args={[120, 100]} />
                 <meshStandardMaterial 
-                    color="#08080a" 
+                    color={ceilingColor} 
                     roughness={0.8} 
                     metalness={0.1}
                 />
@@ -162,14 +177,14 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 </mesh>
                 {/* Visual Panel Divisions */}
                 {[ -30, -10, 10, 30 ].map((x, i) => (
-                    <mesh key={i} position={[x, 0, 0.1]}>
+                    <mesh key={i} position={[x, 0, 0.15]}>
                         <boxGeometry args={[2, 100, 0.2]} />
-                        <meshStandardMaterial color="#080808" roughness={0.5} />
+                        <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces */}
-                <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} />
-                <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} />
+                {/* Wall Sconces - only bright when paused */}
+                <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
             {/* 4. Right Wall with Acoustic Panels */}
@@ -180,20 +195,20 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 </mesh>
                 {/* Visual Panel Divisions */}
                 {[ -30, -10, 10, 30 ].map((x, i) => (
-                    <mesh key={i} position={[x, 0, 0.1]}>
+                    <mesh key={i} position={[x, 0, 0.15]}>
                         <boxGeometry args={[2, 100, 0.2]} />
-                        <meshStandardMaterial color="#080808" roughness={0.5} />
+                        <meshStandardMaterial color={trimColor} roughness={0.5} />
                     </mesh>
                 ))}
-                {/* Wall Sconces */}
-                <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} />
-                <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} />
+                {/* Wall Sconces - only bright when paused */}
+                <WallSconce position={[-20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
+                <WallSconce position={[20, 8, 0.3]} rotation={[0, 0, 0]} accentColor={accentColor} isPlaying={isPlaying} />
             </group>
 
             {/* 5. Back Wall (behind projector) */}
             <mesh position={[0, 5, -28]}>
                 <planeGeometry args={[100, 60]} />
-                <meshStandardMaterial color="#050505" roughness={0.9} />
+                <meshStandardMaterial color={isPlaying ? "#050505" : "#333338"} roughness={0.9} />
             </mesh>
 
             {/* Screen Glow Halo */}
@@ -202,41 +217,45 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 <meshBasicMaterial 
                     color={accentColor} 
                     transparent={true} 
-                    opacity={0.12} 
+                    opacity={isPlaying ? 0.12 : 0.05} 
                     side={THREE.DoubleSide}
                 />
             </mesh>
 
-            {/* Projector light beam */}
-            {!isMobile && <ProjectorBeam accentColor={accentColor} />}
+            {/* Projector light beam - only when playing */}
+            {!isMobile && <ProjectorBeam accentColor={accentColor} isPlaying={isPlaying} />}
 
-            {/* Lighting - Substantial Screen Glow (Bounce) */}
+            {/* Dynamic atmosphere lights - DRASTICALLY BRIGHTER when paused to reveal architecture */}
+            <ambientLight intensity={isPlaying ? 0.05 : 1.5} /> 
+            <pointLight 
+                position={[0, 15, -10]} 
+                intensity={isPlaying ? 1 : 15} 
+                color={isPlaying ? accentColor : "#ffffff"} 
+                distance={60} 
+            />
+            {!isPlaying && (
+                <>
+                    {/* Fill light coming from the "entrance/back" */}
+                    <pointLight 
+                        position={[0, 5, 10]} 
+                        intensity={12} 
+                        color="#ffffff" 
+                        distance={100} 
+                    />
+                    {/* Top highlights to distinguish ceiling and walls */}
+                    <pointLight position={[0, 18, -10]} intensity={10} color="#ffffff" distance={60} />
+                </>
+            )}
+            
+            {/* Lighting - Substantial Screen Glow (Bounce) - Stronger when playing */}
             <rectAreaLight
                 width={50}
                 height={30}
-                intensity={isPlaying ? 15 : 6} // Brighter glow when playing to simulate screen reflection
+                intensity={isPlaying ? 15 : 2} 
                 color={accentColor}
                 position={[0, 5, -24.8]}
                 rotation={[0, Math.PI, 0]} 
             />
-
-            {/* Dynamic atmosphere lights - Significantly brighter when paused to show interior */}
-            <ambientLight intensity={isPlaying ? 0.05 : 1.2} /> 
-            <pointLight 
-                position={[0, 15, -10]} 
-                intensity={isPlaying ? 1 : 12} 
-                color={accentColor} 
-                distance={60} 
-            />
-            {!isPlaying && (
-                <pointLight 
-                    position={[0, 5, 10]} 
-                    intensity={8} 
-                    color="#ffffff" 
-                    distance={80} 
-                    decay={1.5}
-                />
-            )}
         </group>
     );
 };
