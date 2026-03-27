@@ -6,14 +6,14 @@ import { Search, Tag, Calendar, ChevronRight } from 'lucide-react';
 import { searchProducts } from '../api/products';
 import { getNotices } from '../api/notices';
 import { getFaqs } from '../api/faqs';
-import { FeaturedItem, Notice, FAQ } from '../types';
+import { FeaturedItem, Notice, FAQ, FloorCategory } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getJoseonThemeById } from '../utils/themeUtils';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS } from '../data/fallbackData';
+import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_FLOORS } from '../data/fallbackData';
 
-type SearchResultType = 'product' | 'notice' | 'faq';
+type SearchResultType = 'product' | 'notice' | 'faq' | 'floor';
 
 interface UnifiedSearchResult {
     id: string | number;
@@ -33,6 +33,7 @@ const SearchPage: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [notices, setNotices] = useState<Notice[]>([]);
     const [faqs, setFaqs] = useState<FAQ[]>([]);
+    const [floors, setFloors] = useState<FloorCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const { translateAsync } = useAutoTranslate(null);
     const theme = getJoseonThemeById('search', 'default');
@@ -57,37 +58,57 @@ const SearchPage: React.FC = () => {
                     }
                 }
 
-                // 2. Parallel fetching from APIs
+                // 2. Parallel fetching from APIs (with error isolation)
                 const [productData, noticeData, faqData] = await Promise.all([
                     searchProducts(searchquery, i18n.language).catch(() => []),
                     getNotices().catch(() => []),
                     getFaqs().catch(() => [])
                 ]);
 
-                // 3. Filtering logic (Shared for API results and Fallbacks)
-                const lowerQuery = query.toLowerCase();
-                const lowerTrans = searchquery.toLowerCase();
+                // 3. Deep Filtering logic
+                const lowerQuery = query.toLowerCase().trim();
+                const lowerTrans = searchquery.toLowerCase().trim();
                 
                 const filterText = (text: any) => {
                     const val = getLocalizedText(text, i18n.language).toLowerCase();
                     return val.includes(lowerQuery) || val.includes(lowerTrans);
                 };
 
-                // 4. Consolidate results with fallbacks
-                // Products: If API returns empty, search fallback products
+                // 4. Products: Search title, description, long_description, location, subcategory
                 let finalProducts = productData;
                 if (finalProducts.length === 0) {
-                    finalProducts = FALLBACK_PRODUCTS.filter(p => filterText(p.title) || filterText(p.description));
+                    finalProducts = FALLBACK_PRODUCTS.filter(p => 
+                        filterText(p.title) || 
+                        filterText(p.description) || 
+                        (p.long_description && filterText(p.long_description)) ||
+                        (p.location && filterText(p.location)) ||
+                        (p.subcategory && filterText(p.subcategory))
+                    );
                 }
                 setProducts(finalProducts);
 
-                // Notices: Combine API and Fallback, then filter
+                // 5. Notices: Search title, content, category
                 const combinedNotices = noticeData.length > 0 ? noticeData : FALLBACK_NOTICES;
-                setNotices(combinedNotices.filter(n => filterText(n.title) || filterText(n.content)));
+                setNotices(combinedNotices.filter(n => 
+                    filterText(n.title) || 
+                    filterText(n.content) || 
+                    filterText(n.category)
+                ));
 
-                // FAQs: Combine API and Fallback, then filter
+                // 6. FAQs: Search question, answer, category
                 const combinedFaqs = faqData.length > 0 ? faqData : FALLBACK_FAQS;
-                setFaqs(combinedFaqs.filter(f => filterText(f.question) || filterText(f.answer)));
+                setFaqs(combinedFaqs.filter(f => 
+                    filterText(f.question) || 
+                    filterText(f.answer) || 
+                    (f.category && filterText(f.category))
+                ));
+
+                // 7. Floors (Pages): Search floor title, description, floor number
+                setFloors(FALLBACK_FLOORS.filter(f => 
+                    filterText(f.title) || 
+                    filterText(f.description) || 
+                    f.floor.toLowerCase().includes(lowerQuery)
+                ));
 
             } catch (error) {
                 console.error('Search internal error:', error);
@@ -100,10 +121,23 @@ const SearchPage: React.FC = () => {
         fetchAll();
     }, [query, i18n.language]);
 
-    // Consolidate all results into a single list for UI display
+    // Consolidate all results into a single sorted list
     const allResults = useMemo(() => {
         const results: UnifiedSearchResult[] = [];
 
+        // Floors (Information)
+        floors.forEach(f => {
+            results.push({
+                id: f.id,
+                type: 'floor',
+                title: `${f.floor} ${getLocalizedText(f.title, i18n.language)}`,
+                description: getLocalizedText(f.description, i18n.language),
+                category: 'Information',
+                link: `/detail/${f.id}`,
+            });
+        });
+
+        // Products (Archive)
         products.forEach(p => {
             results.push({
                 id: p.id,
@@ -117,6 +151,7 @@ const SearchPage: React.FC = () => {
             });
         });
 
+        // Notices
         notices.forEach(n => {
             results.push({
                 id: n.id,
@@ -129,6 +164,7 @@ const SearchPage: React.FC = () => {
             });
         });
 
+        // FAQs
         faqs.forEach(f => {
             results.push({
                 id: f.id,
@@ -141,7 +177,7 @@ const SearchPage: React.FC = () => {
         });
 
         return results;
-    }, [products, notices, faqs, i18n.language]);
+    }, [products, notices, faqs, floors, i18n.language]);
 
     return (
         <div className="min-h-screen pb-20 text-white font-sans" style={theme.bgStyle}>
@@ -157,7 +193,7 @@ const SearchPage: React.FC = () => {
                             <AutoTranslatedText text="통합 검색 결과" />
                         </h1>
                         <p className="text-sm text-white/40 font-light tracking-[0.3em] uppercase">
-                             ARCHIVE • NOTICE • FAQ
+                             ARCHIVE • NOTICE • FAQ • INFO
                         </p>
                         <div className="mt-8 inline-block px-8 py-2 rounded-full bg-white/5 border border-white/10 text-dancheong-gold font-serif italic text-xl">
                             "{query}"
@@ -175,7 +211,8 @@ const SearchPage: React.FC = () => {
                             {allResults.length} <AutoTranslatedText text="Search Entries Found" />
                         </span>
                     </div>
-                    <div className="flex items-center gap-6 text-[10px] font-bold tracking-widest text-white/20 uppercase">
+                    <div className="flex items-center gap-6 text-[9px] font-bold tracking-widest text-white/20 uppercase overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                        <span className={floors.length > 0 ? 'text-green-400' : ''}>Info ({floors.length})</span>
                         <span className={products.length > 0 ? 'text-dancheong-gold' : ''}>Archive ({products.length})</span>
                         <span className={notices.length > 0 ? 'text-dancheong-red' : ''}>Notice ({notices.length})</span>
                         <span className={faqs.length > 0 ? 'text-blue-400' : ''}>FAQ ({faqs.length})</span>
@@ -205,7 +242,8 @@ const SearchPage: React.FC = () => {
                                         <div 
                                             className={`w-1.5 shrink-0 ${
                                                 result.type === 'product' ? 'bg-dancheong-gold/40' : 
-                                                result.type === 'notice' ? 'bg-dancheong-red/40' : 'bg-blue-400/40'
+                                                result.type === 'notice' ? 'bg-dancheong-red/40' : 
+                                                result.type === 'floor' ? 'bg-green-400/40' : 'bg-blue-400/40'
                                             }`} 
                                         />
 
@@ -214,7 +252,8 @@ const SearchPage: React.FC = () => {
                                             <div className="flex flex-wrap items-center gap-3 mb-3">
                                                 <span className={`text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded border ${
                                                     result.type === 'product' ? 'border-dancheong-gold/20 text-dancheong-gold/60' : 
-                                                    result.type === 'notice' ? 'border-dancheong-red/20 text-dancheong-red/60' : 'border-blue-400/20 text-blue-400/60'
+                                                    result.type === 'notice' ? 'border-dancheong-red/20 text-dancheong-red/60' : 
+                                                    result.type === 'floor' ? 'border-green-400/20 text-green-400/60' : 'border-blue-400/20 text-blue-400/60'
                                                 }`}>
                                                     <AutoTranslatedText text={result.type} />
                                                 </span>
