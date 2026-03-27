@@ -626,14 +626,14 @@ const GalleryScene = ({
         if (!isActivated) return;
 
         if (isTheater) {
-            // Theater Perspective - Move closer and tilt for "Screen Focus"
+            // Theater Perspective - Move closer and level for "Screen Focus"
             const targetZ = isMobile ? 12 : 22;
-            const targetY = isMobile ? 1 : 2;
+            const targetY = isMobile ? 3 : 5; // Align closer to screen center Y
             camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 2);
             camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * 2);
             camera.position.x = 0;
-            // Look exactly at the screen center (which is at Y=4 or Y=6 depending on scale)
-            camera.lookAt(0, isMobile ? 3 : 5, -25);
+            // Upright look exactly at screen center (at [0, 5, -25])
+            camera.lookAt(0, 5, -25);
             return;
         }
 
