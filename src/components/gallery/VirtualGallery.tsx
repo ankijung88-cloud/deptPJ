@@ -201,7 +201,28 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme,
         } else {
             video.pause();
         }
+
+        // Add cleanup to ensure video stops when component unmounts or playing state changes
+        return () => {
+            if (video) video.pause();
+        };
     }, [playing, video]);
+
+    // Handle full element disposal on unmount or video re-creation
+    useEffect(() => {
+        return () => {
+            if (video) {
+                video.pause();
+                video.src = "";
+                video.load();
+                try {
+                    video.remove();
+                } catch (e) {
+                    // Ignore if remove fails
+                }
+            }
+        };
+    }, [video]);
 
 
     const videoTexture = useMemo(() => video ? new THREE.VideoTexture(video) : null, [video]);
