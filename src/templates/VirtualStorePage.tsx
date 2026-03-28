@@ -765,99 +765,103 @@ const VirtualStorePage: React.FC = () => {
                     </div>
 
                     <div className="lg:col-span-4 flex flex-col justify-center gap-10">
-                        {selectedItem ? (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                key={selectedItem.id}
-                                className="space-y-8"
-                            >
-                                <div>
-                                    <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase mb-4 block">Product Identification</span>
-                                    <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-tight mb-4" style={{ color: theme.highlightColor }}>
-                                        <AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} />
-                                    </h2>
-                                    <div className="flex items-center gap-4 text-white/60">
-                                         <div className="px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 font-black text-xl">
-                                             {getLoc(selectedItem.price, i18n.language)}
-                                         </div>
-                                         <div className="text-[10px] font-bold tracking-widest uppercase opacity-40">Tax Included / Global Shipping</div>
-                                    </div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            key={selectedItem?.id || 'empty-sidebar'}
+                            className="space-y-8"
+                        >
+                            <div>
+                                <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase mb-4 block">Product Identification</span>
+                                <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-tight mb-4" style={{ color: theme.highlightColor }}>
+                                    {selectedItem ? <AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} /> : "---"}
+                                </h2>
+                                <div className="flex items-center gap-4 text-white/60">
+                                     <div className="px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 font-black text-xl">
+                                         {selectedItem ? getLoc(selectedItem.price, i18n.language) : "₩0"}
+                                     </div>
+                                     <div className="text-[10px] font-bold tracking-widest uppercase opacity-40">Tax Included / Global Shipping</div>
                                 </div>
-
-                                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                                     <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30">
-                                         <Info size={12} />
-                                         <AutoTranslatedText text="Product Description" />
-                                     </h5>
-                                     <p className="text-sm text-white/60 leading-relaxed font-medium">
-                                         <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || '최고급 소재를 사용하고 한국 전통 공예 전문가의 손길로 완성된 명품 제품입니다.'} />
-                                     </p>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <button 
-                                        onClick={handlePurchase}
-                                        disabled={isPurchasing || purchaseComplete}
-                                        className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50"
-                                    >
-                                        <AnimatePresence mode="wait">
-                                            {isPurchasing ? (
-                                                <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                    <AutoTranslatedText text="Processing..." />
-                                                </motion.div>
-                                            ) : purchaseComplete ? (
-                                                <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                    <Check size={18} />
-                                                    <AutoTranslatedText text="Payment Success" />
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                    <CreditCard size={18} />
-                                                    <AutoTranslatedText text="결제 진행하기 (Checkout)" />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                        <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:left-[100%] transition-all duration-1000" />
-                                    </button>
-                                    
-                                    <button 
-                                         onClick={() => { setDetailItem(selectedItem); setShowDetailModal(true); }}
-                                         className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3"
-                                     >
-                                          <AutoTranslatedText text="상세설명보기 (View Details)" />
-                                     </button>
-
-                                      {isManagementAllowed && (
-                                         <div className="grid grid-cols-2 gap-4">
-                                             <button 
-                                                  onClick={() => handleEditInitiate(selectedItem)}
-                                                  className="py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2"
-                                             >
-                                                  <Pencil size={14} />
-                                                  <AutoTranslatedText text="수정 (Edit)" />
-                                             </button>
-                                             <button 
-                                                  onClick={() => handleDelete(selectedItem.id)}
-                                                  className="py-6 rounded-2xl bg-white/5 border border-white/10 text-red-500/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 transition-all flex items-center justify-center gap-2"
-                                             >
-                                                  <Trash2 size={14} />
-                                                  <AutoTranslatedText text="삭제 (Delete)" />
-                                             </button>
-                                         </div>
-                                     )}
-
-                                     <button className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all">
-                                          <AutoTranslatedText text="장바구니 담기 (Add to Cart)" />
-                                     </button>
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <div className="text-center opacity-20 py-20">
-                                 <AutoTranslatedText text="상품 정보가 선택되지 않았습니다." />
                             </div>
-                        )}
+
+                            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
+                                 <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30">
+                                     <Info size={12} />
+                                     <AutoTranslatedText text="Product Description" />
+                                 </h5>
+                                 <p className="text-sm text-white/60 leading-relaxed font-medium">
+                                     {selectedItem ? (
+                                         <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || '최고급 소재를 사용하고 한국 전통 공예 전문가의 손길로 완성된 명품 제품입니다.'} />
+                                     ) : (
+                                         <AutoTranslatedText text="상품 정보가 선택되지 않았습니다." />
+                                     )}
+                                 </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <button 
+                                    onClick={handlePurchase}
+                                    disabled={!selectedItem || isPurchasing || purchaseComplete}
+                                    className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    <AnimatePresence mode="wait">
+                                        {isPurchasing ? (
+                                            <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <AutoTranslatedText text="Processing..." />
+                                            </motion.div>
+                                        ) : purchaseComplete ? (
+                                            <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <Check size={18} />
+                                                <AutoTranslatedText text="Payment Success" />
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <CreditCard size={18} />
+                                                <AutoTranslatedText text="결제 진행하기 (Checkout)" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:left-[100%] transition-all duration-1000" />
+                                </button>
+                                
+                                <button 
+                                     onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
+                                     disabled={!selectedItem}
+                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
+                                 >
+                                      <AutoTranslatedText text="상세설명보기 (View Details)" />
+                                 </button>
+
+                                  {isManagementAllowed && (
+                                     <div className="grid grid-cols-2 gap-4">
+                                         <button 
+                                              onClick={() => selectedItem && handleEditInitiate(selectedItem)}
+                                              disabled={!selectedItem}
+                                              className="py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-20"
+                                         >
+                                              <Pencil size={14} />
+                                              <AutoTranslatedText text="수정 (Edit)" />
+                                         </button>
+                                         <button 
+                                              onClick={() => selectedItem && handleDelete(selectedItem.id)}
+                                              disabled={!selectedItem}
+                                              className="py-6 rounded-2xl bg-white/5 border border-white/10 text-red-500/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 transition-all flex items-center justify-center gap-2 disabled:opacity-20"
+                                         >
+                                              <Trash2 size={14} />
+                                              <AutoTranslatedText text="삭제 (Delete)" />
+                                         </button>
+                                     </div>
+                                 )}
+
+                                 <button 
+                                     disabled={!selectedItem}
+                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all disabled:opacity-20"
+                                 >
+                                      <AutoTranslatedText text="장바구니 담기 (Add to Cart)" />
+                                 </button>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 
