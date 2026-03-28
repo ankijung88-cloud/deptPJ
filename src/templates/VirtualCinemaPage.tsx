@@ -21,13 +21,13 @@ const VirtualCinemaPage: React.FC = () => {
     const { id: paramId } = useParams();
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     useImmersiveMode(isExplorationMode);
-    
+
     // Determine the effective parent ID (favor params, fallback to state)
     const parentId = paramId || location.state?.parentId;
 
 
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
-    const theme = JOSEON_THEMES[10]; 
+    const theme = JOSEON_THEMES[10];
 
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [cinemaItems, setCinemaItems] = useState<FeaturedItem[]>([]);
@@ -75,15 +75,15 @@ const VirtualCinemaPage: React.FC = () => {
                 const data = await getProductById(parentId);
                 if (data) {
                     setParentProduct(data);
-                    
+
                     // Initialize temp values from parent metadata if available
-                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
-                        ? JSON.parse(data.selected_templates) 
+                    const selectedTemplatesRaw = typeof data.selected_templates === 'string'
+                        ? JSON.parse(data.selected_templates)
                         : (data.selected_templates as any);
-                    
+
                     // Standardize as array
-                    const templates = Array.isArray(selectedTemplatesRaw) 
-                        ? selectedTemplatesRaw 
+                    const templates = Array.isArray(selectedTemplatesRaw)
+                        ? selectedTemplatesRaw
                         : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
                             ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
                                 id,
@@ -107,7 +107,7 @@ const VirtualCinemaPage: React.FC = () => {
         setIsLoading(true);
         try {
             const effectiveParentId = parentId; // Use calculated parentId
-            const url = effectiveParentId 
+            const url = effectiveParentId
                 ? `/api/products/category/cinema?parentId=${effectiveParentId}`
                 : '/api/products/category/cinema';
             const response = await fetch(url, {
@@ -129,7 +129,7 @@ const VirtualCinemaPage: React.FC = () => {
                 agency_id: dbItem.agency_id
             }));
             setCinemaItems(normalizedData);
-            
+
             // Re-fetch should keep selections current if needed
             // VirtualCinemaPage doesn't have selectedItem yet, but good for future.
         } catch (error) {
@@ -179,7 +179,7 @@ const VirtualCinemaPage: React.FC = () => {
         if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
-            const res = await fetch(`/api/products/${id}`, { 
+            const res = await fetch(`/api/products/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
@@ -224,7 +224,7 @@ const VirtualCinemaPage: React.FC = () => {
         try {
             let finalImageUrl = newThumbnailUrl;
             let finalVideoUrl = newVideoUrl;
-            
+
             const adminToken = sessionStorage.getItem('admin_token');
 
             // Handle Image Upload
@@ -233,7 +233,7 @@ const VirtualCinemaPage: React.FC = () => {
                 try {
                     const formData = new FormData();
                     formData.append('file', imageFile);
-                    const uploadRes = await fetch('/api/upload', { 
+                    const uploadRes = await fetch('/api/upload', {
                         method: 'POST', body: formData,
                         headers: { 'Authorization': `Bearer ${adminToken}` }
                     });
@@ -250,7 +250,7 @@ const VirtualCinemaPage: React.FC = () => {
                 try {
                     const formData = new FormData();
                     formData.append('file', videoFile);
-                    const uploadRes = await fetch('/api/upload', { 
+                    const uploadRes = await fetch('/api/upload', {
                         method: 'POST', body: formData,
                         headers: { 'Authorization': `Bearer ${adminToken}` }
                     });
@@ -286,7 +286,7 @@ const VirtualCinemaPage: React.FC = () => {
 
             const res = await fetch(endpoint, {
                 method,
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${adminToken}`
                 },
@@ -316,15 +316,15 @@ const VirtualCinemaPage: React.FC = () => {
 
     const handleSaveMetadata = async () => {
         if (!parentProduct || !parentId) return;
-        
+
         try {
-            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
-                ? JSON.parse(parentProduct.selected_templates) 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string'
+                ? JSON.parse(parentProduct.selected_templates)
                 : (parentProduct.selected_templates as any) || [];
-            
+
             // Standardize as array
-            let templates = Array.isArray(selectedTemplatesRaw) 
-                ? selectedTemplatesRaw 
+            let templates = Array.isArray(selectedTemplatesRaw)
+                ? selectedTemplatesRaw
                 : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
                     ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
                         id,
@@ -336,8 +336,8 @@ const VirtualCinemaPage: React.FC = () => {
 
             // Check if cinema template already exists in the selection
             const hasCinema = templates.some((t: any) => t.id === 'cinema');
-            
-            const updatedTemplates = hasCinema 
+
+            const updatedTemplates = hasCinema
                 ? templates.map((t: any) => t.id === 'cinema' ? {
                     ...t,
                     title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
@@ -349,12 +349,12 @@ const VirtualCinemaPage: React.FC = () => {
                     title: { ko: tempTitle },
                     description: { ko: tempDesc }
                 }];
-            
+
             const updatedProduct = {
                 ...parentProduct,
                 selected_templates: updatedTemplates
             };
-            
+
             await updateProduct(parentId, updatedProduct);
             setParentProduct(updatedProduct as any);
             setIsEditingMetadata(false);
@@ -373,7 +373,7 @@ const VirtualCinemaPage: React.FC = () => {
             <header className="relative w-full py-20 px-6 md:px-12 z-[50]" style={{ borderBottom: `1px solid ${theme.color3}44` }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-center mb-10 relative z-[60]">
-                        <button 
+                        <button
                             onClick={() => {
                                 if (window.history.state && window.history.state.idx > 0) {
                                     navigate(-1);
@@ -394,7 +394,7 @@ const VirtualCinemaPage: React.FC = () => {
 
                         {isManagementAllowed && (
                             <div className="flex gap-2">
-                                <button 
+                                <button
                                     onClick={() => {
                                         if (isEditingMetadata) {
                                             handleSaveMetadata();
@@ -409,7 +409,7 @@ const VirtualCinemaPage: React.FC = () => {
                                     <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
                                 </button>
                                 {isEditingMetadata && (
-                                    <button 
+                                    <button
                                         onClick={() => setIsEditingMetadata(false)}
                                         className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
                                     >
@@ -419,36 +419,36 @@ const VirtualCinemaPage: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    
+
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
                         <div className="max-w-4xl">
                             <div className="flex items-center gap-4 mb-6">
-                                <Link 
+                                <Link
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all relative z-[60]" 
-                                     style={{ color: theme.highlightColor }}>
+                                    className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all relative z-[60]"
+                                    style={{ color: theme.highlightColor }}>
                                     <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </Link>
                                 <div className="h-4 w-[1px] bg-white/20" />
                                 <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Now Streaming in 4K</span>
                             </div>
-                            
+
                             {isEditingMetadata ? (
-                                <textarea 
+                                <textarea
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
                                     className="w-full bg-white/5 border border-white/30 rounded-2xl p-4 text-4xl md:text-6xl font-black mb-8 text-white focus:outline-none focus:border-white transition-all resize-none"
                                     rows={2}
                                 />
                             ) : (
-                                <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep" 
+                                <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep"
                                     style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}44` }}>
                                     <AutoTranslatedText text={tempTitle} />
                                 </h1>
                             )}
-                            
+
                             {isEditingMetadata ? (
-                                <textarea 
+                                <textarea
                                     value={tempDesc}
                                     onChange={(e) => setTempDesc(e.target.value)}
                                     className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg font-serif italic text-white/80 focus:outline-none focus:border-white/50 transition-all resize-none"
@@ -462,19 +462,19 @@ const VirtualCinemaPage: React.FC = () => {
                         </div>
 
                         <div className="shrink-0 flex items-center gap-6">
-                             <div 
+                            <div
                                 onClick={() => setIsVideoPlaying(true)}
                                 className="w-24 h-24 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-md border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl"
-                             >
-                                 <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
-                             </div>
+                            >
+                                <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Ambient Cinematic Glow */}
                 <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
-                    <div className="absolute -top-1/2 -right-1/4 w-[100%] h-[150%] opacity-20" style={{ 
+                    <div className="absolute -top-1/2 -right-1/4 w-[100%] h-[150%] opacity-20" style={{
                         background: `radial-gradient(circle at center, ${theme.accentColor} 0%, transparent 60%)`,
                         filter: 'blur(120px)',
                     }} />
@@ -489,34 +489,34 @@ const VirtualCinemaPage: React.FC = () => {
                             <Film size={20} className="text-white/30" />
                             <h2 className="text-2xl font-black uppercase tracking-tight"><AutoTranslatedText text="Cinema Selection" /></h2>
                         </div>
-                        <p className="text-sm font-medium opacity-40 tracking-widest uppercase"><AutoTranslatedText text="Interactive Video corridor" /></p>
+                        <p className="text-sm font-medium opacity-40 tracking-widest uppercase"><AutoTranslatedText text="Interactive Video Theatre" /></p>
                     </div>
-                    
+
                     <div className="flex items-center gap-6">
                         <div className="flex -space-x-2">
-                             {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full border border-black bg-white/10" />)}
+                            {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full border border-black bg-white/10" />)}
                         </div>
                         <span className="text-[10px] font-black tracking-widest uppercase opacity-40"><AutoTranslatedText text="1,248 Viewers Online" /></span>
                     </div>
                 </div>
 
                 {/* 3D Cinema Corridor */}
-                <div className="h-[65vh] md:h-[85vh] rounded-[4rem] overflow-hidden border shadow-[0_0_100px_rgba(0,0,0,0.8)] relative group" 
-                     style={{ borderColor: `${theme.color3}33`, backgroundColor: '#020202' }}>
-                    
+                <div className="h-[65vh] md:h-[85vh] rounded-[4rem] overflow-hidden border shadow-[0_0_100px_rgba(0,0,0,0.8)] relative group"
+                    style={{ borderColor: `${theme.color3}33`, backgroundColor: '#020202' }}>
+
                     {isLoading ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/20" />
                         </div>
                     ) : cinemaItems.length === 0 ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-40">
-                             <AutoTranslatedText text="상영 중인 영상이 없습니다." />
+                            <AutoTranslatedText text="상영 중인 영상이 없습니다." />
                         </div>
                     ) : (
-                        <VirtualGallery 
-                            items={cinemaItems} 
-                            stories={[]} 
-                            theme={theme} 
+                        <VirtualGallery
+                            items={cinemaItems}
+                            stories={[]}
+                            theme={theme}
                             lang={i18n.language}
                             onClick={() => setIsExplorationMode(true)}
                             cinemaItem={selectedCinemaItem}
@@ -530,7 +530,7 @@ const VirtualCinemaPage: React.FC = () => {
                     {/* Fullscreen Toggle Button */}
                     {!isLoading && cinemaItems.length > 0 && (
                         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4">
-                            <button 
+                            <button
                                 onClick={() => setIsExplorationMode(true)}
                                 className="flex items-center gap-3 px-8 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
                             >
@@ -547,7 +547,7 @@ const VirtualCinemaPage: React.FC = () => {
                 {/* Cinema Selection Slider - Slide-style cards */}
                 {!isLoading && cinemaItems.length > 0 && (
                     <div className="mt-12 overflow-x-auto pb-8 hide-scrollbar">
-                        <motion.div 
+                        <motion.div
                             className="flex gap-6 px-4"
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
@@ -568,9 +568,9 @@ const VirtualCinemaPage: React.FC = () => {
                                         <div className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-1">
                                             {typeof item.price === 'string' ? item.price : (item.price as any).ko}
                                         </div>
-                                         <div className="text-xs font-bold text-white uppercase whitespace-pre-wrap break-keep">
-                                             <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
-                                         </div>
+                                        <div className="text-xs font-bold text-white uppercase whitespace-pre-wrap break-keep">
+                                            <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
+                                        </div>
                                     </div>
                                     {selectedCinemaItem?.id === item.id && (
                                         <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_#fff]" />
@@ -578,13 +578,13 @@ const VirtualCinemaPage: React.FC = () => {
 
                                     {isManagementAllowed && (
                                         <div className="absolute top-3 left-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button 
+                                            <button
                                                 onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
                                                 className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500/80 transition-all backdrop-blur-md"
                                             >
                                                 <Edit3 size={14} />
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
                                                 className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500/80 transition-all backdrop-blur-md"
                                             >
@@ -601,16 +601,16 @@ const VirtualCinemaPage: React.FC = () => {
                 {/* Management Section */}
                 {isManagementAllowed && (
                     <div className="mt-12 flex flex-col items-center gap-8">
-                        <button 
-                            onClick={() => { 
-                                setIsEditMode(false); 
+                        <button
+                            onClick={() => {
+                                setIsEditMode(false);
                                 setEditingId(null);
                                 setNewTitle('');
                                 setNewThumbnailUrl('');
                                 setNewVideoUrl('');
                                 setPreviewUrl(null);
                                 setVideoPreviewUrl(null);
-                                setShowAddModal(true); 
+                                setShowAddModal(true);
                             }}
                             className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
                         >
@@ -652,9 +652,9 @@ const VirtualCinemaPage: React.FC = () => {
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[1000] bg-black"
                     >
-                        <motion.div 
+                        <motion.div
                             className="absolute left-10 z-[1010]"
-                            animate={{ 
+                            animate={{
                                 top: isZoomed ? '1rem' : '2.5rem',
                                 opacity: isZoomed ? 0 : 1,
                                 height: isZoomed ? 0 : 'auto',
@@ -666,15 +666,15 @@ const VirtualCinemaPage: React.FC = () => {
                             <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Cinematic Space</h2>
                         </motion.div>
 
-                        <motion.div 
+                        <motion.div
                             className="absolute z-[1010] flex gap-4"
-                            animate={{ 
+                            animate={{
                                 top: isZoomed ? '1rem' : '2.5rem',
                                 right: isZoomed ? '1rem' : '2.5rem'
                             }}
                             transition={{ duration: 0.5 }}
                         >
-                            <button 
+                            <button
                                 onClick={() => setIsZoomed(!isZoomed)}
                                 className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl active:scale-95"
                                 title={isZoomed ? "Exit Zoom" : "Zoom to Screen"}
@@ -682,7 +682,7 @@ const VirtualCinemaPage: React.FC = () => {
                                 {isZoomed ? <Minimize size={24} /> : <Maximize size={24} />}
                             </button>
 
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsExplorationMode(false);
                                     setIsZoomed(false);
@@ -694,10 +694,10 @@ const VirtualCinemaPage: React.FC = () => {
                         </motion.div>
 
                         <div className="w-full h-full">
-                            <VirtualGallery 
-                                items={cinemaItems} 
-                                stories={[]} 
-                                theme={theme} 
+                            <VirtualGallery
+                                items={cinemaItems}
+                                stories={[]}
+                                theme={theme}
                                 showUI={false}
                                 defaultActivated={true}
                                 lang={i18n.language}
@@ -711,8 +711,8 @@ const VirtualCinemaPage: React.FC = () => {
 
                         {/* Scrolling HUD */}
                         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-[1010] flex flex-col items-center">
-                             <div className="w-[2px] h-12 bg-gradient-to-t from-white/40 to-transparent mb-4" />
-                             <div className="text-[10px] font-black tracking-[0.6em] text-white/40 uppercase">Navigate Theater</div>
+                            <div className="w-[2px] h-12 bg-gradient-to-t from-white/40 to-transparent mb-4" />
+                            <div className="text-[10px] font-black tracking-[0.6em] text-white/40 uppercase">Navigate Theater</div>
                         </div>
                     </motion.div>
                 )}
@@ -741,11 +741,11 @@ const VirtualCinemaPage: React.FC = () => {
                                         </h3>
                                         <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">{isEditMode ? "Edit Video Info" : "Add New Cinematic Content"}</p>
                                     </div>
-                                    <button 
-                                        onClick={() => { 
-                                            setShowAddModal(false); 
-                                            setIsEditMode(false); 
-                                            setEditingId(null); 
+                                    <button
+                                        onClick={() => {
+                                            setShowAddModal(false);
+                                            setIsEditMode(false);
+                                            setEditingId(null);
                                             setVideoPreviewUrl(null);
                                         }}
                                         className="p-3 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition-colors"
@@ -761,7 +761,7 @@ const VirtualCinemaPage: React.FC = () => {
                                         </label>
                                         <div className="relative">
                                             <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
-                                            <textarea 
+                                            <textarea
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 placeholder="Enter video title..."
@@ -777,7 +777,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                 <AutoTranslatedText text="영상 썸네일 (Thumbnail)" />
                                             </label>
                                             <div className="space-y-4">
-                                                <input 
+                                                <input
                                                     type="text"
                                                     value={newThumbnailUrl}
                                                     onChange={(e) => {
@@ -796,7 +796,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                 ) : (
                                                     <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32">
                                                         <img src={previewUrl || newThumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
-                                                        <button onClick={() => { setPreviewUrl(null); setNewThumbnailUrl(''); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12}/></button>
+                                                        <button onClick={() => { setPreviewUrl(null); setNewThumbnailUrl(''); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12} /></button>
                                                     </div>
                                                 )}
                                             </div>
@@ -807,7 +807,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                 <AutoTranslatedText text="영상 파일 (Video Content)" />
                                             </label>
                                             <div className="space-y-4">
-                                                <input 
+                                                <input
                                                     type="text"
                                                     value={newVideoUrl}
                                                     onChange={(e) => setNewVideoUrl(e.target.value)}
@@ -822,8 +822,8 @@ const VirtualCinemaPage: React.FC = () => {
                                                     </button>
                                                 ) : (
                                                     <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32 flex items-center justify-center bg-black/40">
-                                                        <video 
-                                                            src={videoPreviewUrl || newVideoUrl} 
+                                                        <video
+                                                            src={videoPreviewUrl || newVideoUrl}
                                                             className="w-full h-full object-cover"
                                                             onLoadedMetadata={(e) => {
                                                                 (e.target as HTMLVideoElement).currentTime = 0.1;
@@ -831,15 +831,15 @@ const VirtualCinemaPage: React.FC = () => {
                                                         />
                                                         <div className="absolute inset-0 bg-black/20 pointer-events-none" />
                                                         <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Preview Loaded</span>
-                                                        <button 
-                                                            onClick={() => { 
-                                                                setNewVideoUrl(''); 
+                                                        <button
+                                                            onClick={() => {
+                                                                setNewVideoUrl('');
                                                                 setVideoPreviewUrl(null);
-                                                                if (videoInputRef.current) videoInputRef.current.value = ''; 
-                                                            }} 
+                                                                if (videoInputRef.current) videoInputRef.current.value = '';
+                                                            }}
                                                             className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors shadow-lg"
                                                         >
-                                                            <X size={12}/>
+                                                            <X size={12} />
                                                         </button>
                                                     </div>
                                                 )}
@@ -847,7 +847,7 @@ const VirtualCinemaPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <button 
+                                    <button
                                         onClick={handleAddItem}
                                         disabled={isUploading || !newTitle || (!newThumbnailUrl && !previewUrl)}
                                         className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-3"
@@ -874,10 +874,10 @@ const VirtualCinemaPage: React.FC = () => {
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="text-3xl font-black tracking-tighter uppercase">DEPT. CINEMA</div>
                     <div className="flex gap-10 text-[10px] font-black tracking-widest uppercase">
-                         <a href="#">Showtimes</a>
-                         <a href="#">Archives</a>
-                         <a href="#">Technical</a>
-                         <a href="#">Access</a>
+                        <a href="#">Showtimes</a>
+                        <a href="#">Archives</a>
+                        <a href="#">Technical</a>
+                        <a href="#">Access</a>
                     </div>
                 </div>
             </footer>
