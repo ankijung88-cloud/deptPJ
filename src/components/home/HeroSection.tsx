@@ -120,13 +120,13 @@ export const HeroSection: React.FC = () => {
                                 <button
                                     onClick={handleExplore}
                                     disabled={phase === 'warping'}
-                                    className="w-36 py-4 bg-[#FF3B30] text-white font-semibold rounded-sm hover:bg-[#e6352b] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,59,48,0.4)] tracking-wider uppercase disabled:opacity-50"
+                                    className="w-36 py-4 bg-[#FF3B30] text-white font-semibold rounded-full hover:bg-[#e6352b] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,59,48,0.4)] tracking-wider uppercase disabled:opacity-50"
                                 >
                                     {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                                 </button>
                                 <button
                                     onClick={() => navigate('/admin/login')}
-                                    className="w-36 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-sm hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
+                                    className="w-36 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
                                 >
                                     <AutoTranslatedText text={t('hero.story')} />
                                 </button>
