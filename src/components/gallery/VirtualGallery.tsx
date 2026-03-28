@@ -636,10 +636,10 @@ const GalleryScene = ({
             // Reduced FOV (40) and height (12) to minimize perspective "keystone" distortion on vertical lines
             // isZoomed: Zoom directly into the screen plane for 1:1 video focus
             const theaterZ = playing ? (isMobile ? 18 : 32) : (isMobile ? 32 : 55);
-            const theaterY = playing ? (isMobile ? 3 : 5) : (isMobile ? 8 : 12);
+            const theaterY = playing ? (isMobile ? 3 : 7) : (isMobile ? 8 : 14);
             
             const zoomZ = isMobile ? 0 : 9; // Calibrated for FOV 40 to fill roughly 90% of screen
-            const zoomY = isMobile ? 3 : 5; // Center of screen
+            const zoomY = isMobile ? 3 : 7.2; // Center of screen
 
             const targetZ = isZoomed ? zoomZ : theaterZ;
             const targetY = isZoomed ? zoomY : theaterY;
@@ -651,7 +651,7 @@ const GalleryScene = ({
             camera.position.x = 0;
             
             // Focus on screen at all times
-            camera.lookAt(0, 5, -25);
+            camera.lookAt(0, 7.2, -25);
             return;
         }
 
@@ -760,7 +760,7 @@ const GalleryScene = ({
             )}
 
             {activeCinemaItem && (
-                <group position={[0, isMobile ? 3 : 5, -25]}>
+                <group position={[0, isMobile ? 3 : 7.2, -25]}>
                     <VideoScreen
                         videoUrl={normalizeVideoUrl(activeCinemaItem.videoUrl || (activeCinemaItem as any).video_url)}
                         imageUrl={activeCinemaItem.imageUrl || (activeCinemaItem as any).image_url}

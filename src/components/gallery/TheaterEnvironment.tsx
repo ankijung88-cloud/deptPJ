@@ -250,7 +250,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
             </mesh>
 
             {/* Screen Glow Halo - Behind the screen (-25.8) */}
-            <mesh ref={glowRef} position={[0, 5, -25.8]} rotation={[0, Math.PI, 0]}>
+            <mesh ref={glowRef} position={[0, 7.2, -25.8]} rotation={[0, Math.PI, 0]}>
                 <planeGeometry args={[55, 32]} />
                 <meshBasicMaterial 
                     color={accentColor} 
@@ -262,7 +262,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
 
             <ambientLight intensity={isPlaying ? 0.1 : 1.5} /> 
             <pointLight 
-                position={[0, 15, -10]} 
+                position={[0, 17.2, -10]} 
                 intensity={isPlaying ? 2 : 10} 
                 color={isPlaying ? accentColor : "#ffffff"} 
                 distance={60} 
@@ -276,7 +276,7 @@ const TheaterEnvironment: React.FC<TheaterEnvironmentProps> = ({ accentColor, is
                 height={30}
                 intensity={isPlaying ? 20 : 2} 
                 color={accentColor}
-                position={[0, 5, -24.8]}
+                position={[0, 7.2, -24.8]}
                 rotation={[0, Math.PI, 0]} 
             />
         </group>
