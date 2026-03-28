@@ -17,13 +17,13 @@ const diskStorage = multer.diskStorage({
 
 const upload = multer({ 
   storage: diskStorage,
-  limits: { fileSize: 1024 * 1024 * 1024 }, // 1GB limit (SSD-based streaming)
+  limits: { fileSize: 5 * 1024 * 1024 * 1024 }, // 5GB limit (SSD-based streaming)
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|webp|mp4|webm|ogg|mov/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) return cb(null, true);
-    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov) up to 1GB'));
+    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov) up to 5GB'));
   }
 });
 
