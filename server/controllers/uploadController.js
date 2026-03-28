@@ -28,6 +28,9 @@ const upload = multer({
 });
 
 export const uploadSingle = (req, res, next) => {
+  const contentLength = req.headers['content-length'];
+  console.log(`[Upload] New request initialized. Size: ${contentLength ? (contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'unknown'}`);
+  
   upload.single('file')(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       console.error('[Multer Error]:', err);
@@ -49,6 +52,7 @@ export const handleUpload = async (req, res) => {
 
     const uniqueFilename = req.file.filename;
     const mimetype = req.file.mimetype;
+    console.log(`[Upload] File saved successfully to disk: ${uniqueFilename} (${req.file.size} bytes)`);
 
     // Save metadata to media_storage table (data column is NULL for new SSD files)
     await pool.query(

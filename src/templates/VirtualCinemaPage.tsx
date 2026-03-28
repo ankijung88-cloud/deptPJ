@@ -240,8 +240,20 @@ const VirtualCinemaPage: React.FC = () => {
                     if (uploadRes.ok) {
                         const data = await uploadRes.json();
                         finalImageUrl = data.url;
+                    } else {
+                        const errorData = await uploadRes.json().catch(() => ({ message: 'Image upload failed' }));
+                        const msg = await translateAsync(`이미지 업로드 실패: ${errorData.message || 'Unknown error'}`);
+                        alert(msg);
+                        setIsUploading(false);
+                        return;
                     }
-                } catch (err) { console.error('Image upload failed:', err); }
+                } catch (err: any) { 
+                    console.error('Image upload failed:', err); 
+                    const msg = await translateAsync(`이미지 업로드 중 오류가 발생했습니다: ${err.message}`);
+                    alert(msg);
+                    setIsUploading(false);
+                    return;
+                }
             }
 
             // Handle Video Upload
@@ -257,8 +269,20 @@ const VirtualCinemaPage: React.FC = () => {
                     if (uploadRes.ok) {
                         const data = await uploadRes.json();
                         finalVideoUrl = data.url;
+                    } else {
+                        const errorData = await uploadRes.json().catch(() => ({ message: 'Video upload failed' }));
+                        const baseMsg = await translateAsync(`영상 업로드 실패: ${errorData.message || 'Unknown error'}\n\n팁: 대용량 영상은 타용환경에 따라 타임아웃이 발생할 수 있으니 WinSCP를 통한 직접 업로드를 권장합니다.`);
+                        alert(baseMsg);
+                        setIsUploading(false);
+                        return;
                     }
-                } catch (err) { console.error('Video upload failed:', err); }
+                } catch (err: any) { 
+                    console.error('Video upload failed:', err); 
+                    const msg = await translateAsync(`영상 업로드 중 오류가 발생했습니다: ${err.message}`);
+                    alert(msg);
+                    setIsUploading(false);
+                    return;
+                }
             }
 
             if (!finalImageUrl) {

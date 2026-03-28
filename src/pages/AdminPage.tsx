@@ -629,9 +629,15 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Upload Error:', errorText);
-                throw new Error(`Server responded with ${response.status}`);
+                let errorMsg = 'Unknown error';
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.message || errorData.error || JSON.stringify(errorData);
+                } catch (e) {
+                    errorMsg = await response.text();
+                }
+                console.error('Upload Error:', errorMsg);
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
