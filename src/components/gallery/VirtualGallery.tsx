@@ -148,7 +148,10 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme,
         const v = document.createElement('video');
         v.crossOrigin = "anonymous"; // Set before src
         v.src = videoUrl;
-        v.loop = true;
+        v.loop = false;
+        v.onended = () => {
+            setPlaying(false);
+        };
         
         // Match global mute state
         const savedMuted = localStorage.getItem('isGlobalMuted');
