@@ -114,38 +114,64 @@ const VirtualCinemaPage: React.FC = () => {
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const effectiveParentId = parentId; // Use calculated parentId
+            const effectiveParentId = parentId;
             const url = effectiveParentId
                 ? `/api/products/category/cinema?parentId=${effectiveParentId}`
                 : '/api/products/category/cinema';
+                
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 }
             });
+            
             const data = await response.json();
+            
+            if (!Array.isArray(data)) {
+                console.error('Expected array from API, got:', data);
+                setCinemaItems([]);
+                return;
+            }
+
+            const safeParse = (str: any) => {
+                if (!str) return null;
+                if (typeof str !== 'string') return str;
+                try {
+                    // Try to parse if it looks like JSON
+                    if (str.trim().startsWith('{') || str.trim().startsWith('[')) {
+                        return JSON.parse(str);
+                    }
+                    return str;
+                } catch (e) {
+                    console.error('Safe JSON parse failed for:', str);
+                    return str;
+                }
+            };
+
             const normalizedData = data.map((dbItem: any) => ({
                 id: dbItem.id,
-                title: typeof dbItem.title === 'string' ? JSON.parse(dbItem.title) : dbItem.title,
+                title: safeParse(dbItem.title),
                 category: dbItem.category,
-                description: typeof dbItem.description === 'string' ? JSON.parse(dbItem.description) : dbItem.description,
+                description: safeParse(dbItem.description),
                 imageUrl: dbItem.image_url,
-                date: typeof dbItem.event_date === 'string' ? JSON.parse(dbItem.event_date) : dbItem.event_date,
-                location: typeof dbItem.location === 'string' ? JSON.parse(dbItem.location) : dbItem.location,
+                date: safeParse(dbItem.event_date),
+                location: safeParse(dbItem.location),
                 price: dbItem.price,
                 videoUrl: dbItem.video_url,
                 agency_id: dbItem.agency_id
             }));
+            
+            console.log(`[VirtualCinema] Loaded ${normalizedData.length} items`);
             setCinemaItems(normalizedData);
 
-            // Re-fetch should keep selections current if needed
-            // VirtualCinemaPage doesn't have selectedItem yet, but good for future.
         } catch (error) {
-            console.error('Failed to fetch items:', error);
+            console.error('Failed to fetch cinema items:', error);
+            setCinemaItems([]);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchItems();

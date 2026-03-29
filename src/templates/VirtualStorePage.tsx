@@ -289,33 +289,57 @@ const VirtualStorePage: React.FC = () => {
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const effectiveParentId = parentId; // Use calculated parentId
-            const url = effectiveParentId 
+            const effectiveParentId = parentId;
+            const url = effectiveParentId
                 ? `/api/products/category/store?parentId=${effectiveParentId}`
                 : '/api/products/category/store';
+            
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 }
             });
             const data = await response.json();
+            
+            if (!Array.isArray(data)) {
+                console.error('[VirtualStore] Expected array from API, got:', data);
+                setStoreItems([]);
+                return;
+            }
+
+            const safeParse = (str: any) => {
+                if (!str) return null;
+                if (typeof str !== 'string') return str;
+                try {
+                    const trimmed = str.trim();
+                    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                        return JSON.parse(str);
+                    }
+                    return str;
+                } catch (e) {
+                    return str;
+                }
+            };
+
             const normalizedData = data.map((dbItem: any) => ({
                 id: dbItem.id,
-                title: typeof dbItem.title === 'string' ? JSON.parse(dbItem.title) : dbItem.title,
+                title: safeParse(dbItem.title),
                 category: dbItem.category,
-                description: typeof dbItem.description === 'string' ? JSON.parse(dbItem.description) : dbItem.description,
-                long_description: typeof dbItem.long_description === 'string' ? JSON.parse(dbItem.long_description) : dbItem.long_description,
+                description: safeParse(dbItem.description),
+                long_description: safeParse(dbItem.long_description),
                 imageUrl: dbItem.image_url,
                 thumbnailUrl: dbItem.thumbnail_url,
                 sideImageUrl: dbItem.side_image_url,
                 leftSideImageUrl: dbItem.left_side_image_url,
                 rightSideImageUrl: dbItem.right_side_image_url,
                 backImageUrl: dbItem.back_image_url,
-                date: typeof dbItem.event_date === 'string' ? JSON.parse(dbItem.event_date) : dbItem.event_date,
-                location: typeof dbItem.location === 'string' ? JSON.parse(dbItem.location) : dbItem.location,
+                date: safeParse(dbItem.event_date),
+                location: safeParse(dbItem.location),
                 price: dbItem.price || '₩0',
                 agency_id: dbItem.agency_id
             }));
+            
+            console.log(`[VirtualStore] Loaded ${normalizedData.length} items`);
             setStoreItems(normalizedData);
             
             // Update selectedItem/detailItem references if they exist
@@ -333,11 +357,13 @@ const VirtualStorePage: React.FC = () => {
                 setSelectedItem(normalizedData[0]);
             }
         } catch (error) {
-            console.error('Failed to fetch items:', error);
+            console.error('Failed to fetch store items:', error);
+            setStoreItems([]);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchItems();

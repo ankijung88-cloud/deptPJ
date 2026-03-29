@@ -51,37 +51,42 @@ export const getProductsByCategory = async (req, res) => {
   const { parentId } = req.query;
   const user = req.user;
   
-  console.log(`[getProductsByCategory] Category: ${category}, ParentID: ${parentId}, UserID: ${user?.id}, Role: ${user?.role}`);
+  console.log(`[getProductsByCategory] Request - Category: ${category}, ParentID: ${parentId}, UserID: ${user?.id}, Role: ${user?.role}`);
 
   try {
     let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
     let params = [`%${category}%`, `%${category}%`];
 
-    // Strictly filter by parent's agency_id if parentId is provided
+    // Filter by parentId if provided
     if (parentId && parentId !== 'undefined' && parentId !== 'null') {
-      // Use a subquery to find parent's agency_id and match it
+      console.log(`[getProductsByCategory] Filtering by ParentID: ${parentId}`);
+      
+      // Simplify query: Just match parent_id. 
+      // The agency check is good but can be brittle if parent item is missing or agency_id is null.
+      // We will keep a safer version of the agency check.
       query += ` AND (parent_id = ? AND id != ? AND (
-        agency_id = (SELECT agency_id FROM (SELECT * FROM featured_items) as p WHERE id = ?)
-        OR (agency_id IS NULL AND (SELECT agency_id FROM (SELECT * FROM featured_items) as p2 WHERE id = ?) IS NULL)
+        agency_id = (SELECT agency_id FROM (SELECT id, agency_id FROM featured_items) as p WHERE id = ?)
+        OR (SELECT agency_id FROM (SELECT id, agency_id FROM featured_items) as p2 WHERE id = ?) IS NULL
+        OR agency_id IS NULL
       ))`;
       params.push(parentId, parentId, parentId, parentId);
     } else if (user && user.role === 'AGENCY') {
-      // If no parentId but it's an agency user, show only their products for this category
       console.log(`[getProductsByCategory] Applying Agency filter (No ParentID): ${user.id}`);
       query += ' AND agency_id = ?';
       params.push(user.id);
     }
 
-    console.log(`[getProductsByCategory] Final Query: ${query} params: ${JSON.stringify(params)}`);
+    console.log(`[getProductsByCategory] Executing Query: ${query} params: ${JSON.stringify(params)}`);
 
     const [rows] = await pool.query(query, params);
-    console.log(`[getProductsByCategory] Found ${rows.length} products`);
+    console.log(`[getProductsByCategory] Success: Found ${rows.length} products for ${category}`);
     res.json(rows);
   } catch (error) {
     console.error(`[getProductsByCategory] Error: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const getProductById = async (req, res) => {
   const { id } = req.params;
