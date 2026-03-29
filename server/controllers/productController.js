@@ -54,22 +54,25 @@ export const getProductsByCategory = async (req, res) => {
   console.log(`[getProductsByCategory] Request - Category: ${category}, ParentID: ${parentId}, UserID: ${user?.id}, Role: ${user?.role}`);
 
   try {
-    let query = 'SELECT * FROM featured_items WHERE (category LIKE ? OR subcategory LIKE ?)';
+    // Use LOWER() for case-insensitive matching if DB collation is strict, 
+    // although MySQL LIKE is usually case-insensitive.
+    let query = 'SELECT * FROM featured_items WHERE (LOWER(category) LIKE LOWER(?) OR LOWER(subcategory) LIKE LOWER(?))';
     let params = [`%${category}%`, `%${category}%`];
 
     // Filter by parentId if provided
     if (parentId && parentId !== 'undefined' && parentId !== 'null') {
       console.log(`[getProductsByCategory] Filtering by ParentID: ${parentId}`);
       
-      // Simplify query: Just match parent_id. 
-      // The agency check is good but can be brittle if parent item is missing or agency_id is null.
-      // We will keep a safer version of the agency check.
-      query += ` AND (parent_id = ? AND id != ? AND (
-        agency_id = (SELECT agency_id FROM (SELECT id, agency_id FROM featured_items) as p WHERE id = ?)
-        OR (SELECT agency_id FROM (SELECT id, agency_id FROM featured_items) as p2 WHERE id = ?) IS NULL
-        OR agency_id IS NULL
-      ))`;
-      params.push(parentId, parentId, parentId, parentId);
+      // Simplify query: Items must have the same parent_id.
+      // Additionally, only filter by agency if the user IS an agency and it's their own product.
+      // For public/admin, we show all children of that parent.
+      query += ` AND (parent_id = ? AND id != ?)`;
+      params.push(parentId, parentId);
+      
+      if (user && user.role === 'AGENCY') {
+          query += ' AND agency_id = ?';
+          params.push(user.id);
+      }
     } else if (user && user.role === 'AGENCY') {
       console.log(`[getProductsByCategory] Applying Agency filter (No ParentID): ${user.id}`);
       query += ' AND agency_id = ?';
@@ -86,6 +89,7 @@ export const getProductsByCategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const getProductById = async (req, res) => {

@@ -271,7 +271,8 @@ const VirtualMuseumPage: React.FC = () => {
 
     useEffect(() => {
         fetchItems();
-    }, []);
+    }, [parentId, i18n.language]);
+
 
     // Handle initial item selection if passed via navigation state
     useEffect(() => {

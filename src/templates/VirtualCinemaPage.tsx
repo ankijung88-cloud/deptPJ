@@ -175,7 +175,8 @@ const VirtualCinemaPage: React.FC = () => {
 
     useEffect(() => {
         fetchItems();
-    }, []);
+    }, [parentId, i18n.language]);
+
 
     // Set default selection if none exists
     useEffect(() => {
