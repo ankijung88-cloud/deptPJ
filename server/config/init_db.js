@@ -118,21 +118,8 @@ async function initDB() {
       console.log('[DB] Migration successful: Added agency_id to featured_items.');
     }
     
-    // NEW: Add parent_id, page_type, long_description, detail_media_url, detail_media_type, theme_data to featured_items
-    const [parentIdCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'parent_id'");
-    if (parentIdCols.length === 0) {
-      console.log('[DB] Missing parent_id column in featured_items. Running migration...');
-      await pool.query("ALTER TABLE featured_items ADD COLUMN parent_id INT NULL AFTER page_type");
-      console.log('[DB] Migration successful: Added parent_id to featured_items.');
-    }
-
-    const [pageTypeCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'page_type'");
-    if (pageTypeCols.length === 0) {
-      console.log('[DB] Missing page_type column in featured_items. Running migration...');
-      await pool.query("ALTER TABLE featured_items ADD COLUMN page_type VARCHAR(50) NULL AFTER video_url");
-      console.log('[DB] Migration successful: Added page_type to featured_items.');
-    }
-
+    // NEW: Add missing columns to featured_items in a specific dependency order
+    // 1. long_description (After description - core column)
     const [longDescCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'long_description'");
     if (longDescCols.length === 0) {
       console.log('[DB] Missing long_description column in featured_items. Running migration...');
@@ -140,6 +127,7 @@ async function initDB() {
       console.log('[DB] Migration successful: Added long_description to featured_items.');
     }
 
+    // 2. detail_media_url & type (After long_description - just added)
     const [detailMediaCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'detail_media_url'");
     if (detailMediaCols.length === 0) {
       console.log('[DB] Missing detail_media_url column in featured_items. Running migration...');
@@ -151,6 +139,23 @@ async function initDB() {
       console.log('[DB] Migration successful: Added detailed media columns to featured_items.');
     }
 
+    // 3. page_type (After video_url - core column)
+    const [pageTypeCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'page_type'");
+    if (pageTypeCols.length === 0) {
+      console.log('[DB] Missing page_type column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN page_type VARCHAR(50) NULL AFTER video_url");
+      console.log('[DB] Migration successful: Added page_type to featured_items.');
+    }
+
+    // 4. parent_id (After page_type - just added)
+    const [parentIdCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'parent_id'");
+    if (parentIdCols.length === 0) {
+      console.log('[DB] Missing parent_id column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN parent_id INT NULL AFTER page_type");
+      console.log('[DB] Migration successful: Added parent_id to featured_items.');
+    }
+
+    // 5. theme_data (After parent_id - just added)
     const [themeDataCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'theme_data'");
     if (themeDataCols.length === 0) {
       console.log('[DB] Missing theme_data column in featured_items. Running migration...');
