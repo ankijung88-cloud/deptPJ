@@ -190,6 +190,12 @@ const VirtualStorePage: React.FC = () => {
     });
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
+    const getLoc = (val: any, lang: string): string => {
+        if (!val) return '';
+        if (typeof val === 'string') return val;
+        return val[lang] || val['ko'] || '';
+    };
+
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
@@ -200,7 +206,7 @@ const VirtualStorePage: React.FC = () => {
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
-        { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
+        { id: parentProduct.id, label: getLoc(parentProduct.title, i18n.language), type: 'detail' },
         { id: 'store', label: <AutoTranslatedText text="가상 스토어" />, type: 'template' }
     ] : []);
 
@@ -237,13 +243,6 @@ const VirtualStorePage: React.FC = () => {
         };
         fetchParent();
     }, [parentId, i18n.language]);
-
-
-    const getLoc = (val: any, lang: string): string => {
-        if (!val) return '';
-        if (typeof val === 'string') return val;
-        return val[lang] || val['ko'] || '';
-    };
 
     // Using "Hunter Amber" (index 4) theme for Store - warm, premium, and commercial
     const theme = JOSEON_THEMES[4]; 
@@ -600,8 +599,7 @@ const VirtualStorePage: React.FC = () => {
                 userPhone: orderInfo.phone,
                 userAddress: orderInfo.address,
                 productId: selectedItem?.id,
-                productName: typeof selectedItem?.title === 'string' ? selectedItem.title : selectedItem?.title.ko,
-                price: parseFloat(String(selectedItem?.price || '0').replace(/[^0-9.]/g, '')),
+                price: parseFloat(String(getLoc(selectedItem?.price, 'ko') || '0').replace(/[^0-9.]/g, '')),
                 agencyId: selectedItem?.agency_id,
                 paymentId: simulatedPaymentId
             };
