@@ -9,8 +9,9 @@ const router = express.Router();
 router.post('/', createOrder);
 
 // Protected routes for admins and agencies to manage orders
-router.get('/', authMiddleware, getAllOrders);
-router.patch('/:id/status', authMiddleware, updateOrderStatus);
-router.delete('/:id', authMiddleware, deleteOrder);
+router.get('/', authenticateAdmin, getAllOrders);
+router.patch('/:id/status', authenticateAdmin, updateOrderStatus);
+router.delete('/:id', authenticateAdmin, deleteOrder);
+
 
 export default router;
