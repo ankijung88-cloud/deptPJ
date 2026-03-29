@@ -180,7 +180,6 @@ async function initDB() {
   }
 }
 
-// Execute initialization
-initDB();
-
+// Export the initialization function to be called from a safe context (e.g. server.js app.listen)
 export default initDB;
+

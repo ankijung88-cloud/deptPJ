@@ -76,6 +76,16 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Dept Backend is running - V2' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
+  
+  // Database self-healing: Run only in local development or explicitly once
+  try {
+    const { default: initDB } = await import('./config/init_db.js');
+    await initDB();
+    console.log('[DB] Initialization complete.');
+  } catch (err) {
+    console.error('[DB] Initialization failed:', err.message);
+  }
 });
+
