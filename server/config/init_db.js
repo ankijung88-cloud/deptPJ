@@ -118,31 +118,47 @@ async function initDB() {
       console.log('[DB] Migration successful: Added agency_id to featured_items.');
     }
     
+    // NEW: Add parent_id, page_type, long_description, detail_media_url, detail_media_type, theme_data to featured_items
+    const [parentIdCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'parent_id'");
+    if (parentIdCols.length === 0) {
+      console.log('[DB] Missing parent_id column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN parent_id INT NULL AFTER page_type");
+      console.log('[DB] Migration successful: Added parent_id to featured_items.');
+    }
+
+    const [pageTypeCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'page_type'");
+    if (pageTypeCols.length === 0) {
+      console.log('[DB] Missing page_type column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN page_type VARCHAR(50) NULL AFTER video_url");
+      console.log('[DB] Migration successful: Added page_type to featured_items.');
+    }
+
+    const [longDescCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'long_description'");
+    if (longDescCols.length === 0) {
+      console.log('[DB] Missing long_description column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN long_description TEXT AFTER description");
+      console.log('[DB] Migration successful: Added long_description to featured_items.');
+    }
+
+    const [detailMediaCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'detail_media_url'");
+    if (detailMediaCols.length === 0) {
+      console.log('[DB] Missing detail_media_url column in featured_items. Running migration...');
+      await pool.query(`
+        ALTER TABLE featured_items 
+        ADD COLUMN detail_media_url TEXT AFTER long_description,
+        ADD COLUMN detail_media_type VARCHAR(20) DEFAULT 'image' AFTER detail_media_url
+      `);
+      console.log('[DB] Migration successful: Added detailed media columns to featured_items.');
+    }
+
+    const [themeDataCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'theme_data'");
+    if (themeDataCols.length === 0) {
+      console.log('[DB] Missing theme_data column in featured_items. Running migration...');
+      await pool.query("ALTER TABLE featured_items ADD COLUMN theme_data JSON NULL AFTER parent_id");
+      console.log('[DB] Migration successful: Added theme_data to featured_items.');
+    }
+
     // Check if agency_id exists in notices
-    const [noticeAgencyCols] = await pool.query("SHOW COLUMNS FROM notices LIKE 'agency_id'");
-    if (noticeAgencyCols.length === 0) {
-      console.log('[DB] Missing agency_id column in notices. Running migration...');
-      await pool.query("ALTER TABLE notices ADD COLUMN agency_id INT NULL AFTER id");
-      
-      const [adminRows] = await pool.query("SELECT id FROM users WHERE role = 'ADMIN' LIMIT 1");
-      if (adminRows.length > 0) {
-        await pool.query("UPDATE notices SET agency_id = ? WHERE agency_id IS NULL", [adminRows[0].id]);
-      }
-      console.log('[DB] Migration successful: Added agency_id to notices.');
-    }
-    
-    // Check if agency_id exists in faqs
-    const [faqAgencyCols] = await pool.query("SHOW COLUMNS FROM faqs LIKE 'agency_id'");
-    if (faqAgencyCols.length === 0) {
-      console.log('[DB] Missing agency_id column in faqs. Running migration...');
-      await pool.query("ALTER TABLE faqs ADD COLUMN agency_id INT NULL AFTER id");
-      
-      const [adminRows] = await pool.query("SELECT id FROM users WHERE role = 'ADMIN' LIMIT 1");
-      if (adminRows.length > 0) {
-        await pool.query("UPDATE faqs SET agency_id = ? WHERE agency_id IS NULL", [adminRows[0].id]);
-      }
-      console.log('[DB] Migration successful: Added agency_id to faqs.');
-    }
 
     // Ensure data column allows NULL
     const [mediaColumns] = await pool.query("SHOW COLUMNS FROM media_storage LIKE 'data'");

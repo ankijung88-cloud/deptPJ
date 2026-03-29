@@ -289,23 +289,32 @@ const VirtualStorePage: React.FC = () => {
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const effectiveParentId = parentId;
-            const url = effectiveParentId
-                ? `/api/products/category/store?parentId=${effectiveParentId}`
+            const url = parentId
+                ? `/api/products/category/store?parentId=${parentId}`
                 : '/api/products/category/store';
+            
+            console.log(`[VirtualStore] Fetching from: ${url}`);
             
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                 }
             });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            }
+
             const data = await response.json();
+            console.log(`[VirtualStore] Received ${data?.length} items:`, data);
             
             if (!Array.isArray(data)) {
-                console.error('[VirtualStore] Expected array from API, got:', data);
+                console.error('[VirtualStore] Data is not an array:', data);
                 setStoreItems([]);
                 return;
             }
+
 
             const safeParse = (str: any) => {
                 if (!str) return null;
