@@ -159,18 +159,20 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
 const VirtualStorePage: React.FC = () => {
     const { i18n } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
-    const navigate = useNavigate();
+    const { id: routeId } = useParams();
     const location = useLocation();
-    const { id: paramId } = useParams();
-    const [selectedItem, setSelectedItem] = useState<FeaturedItem | null>(null);
+    const navigate = useNavigate();
     
-    // Determine the effective parent ID (favor params, fallback to state)
-    const parentId = paramId || location.state?.parentId;
+    // Determine the effective parent ID (favor route params, fallback to state)
+    const parentId = routeId || location.state?.parentId;
+
+    const [selectedItem, setSelectedItem] = useState<FeaturedItem | null>(null);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
+
 
     // Inline Editing for Page Metadata
     const [isEditingMetadata, setIsEditingMetadata] = useState(false);
@@ -179,6 +181,7 @@ const VirtualStorePage: React.FC = () => {
 
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
+
     const { floors } = useFloors();
 
     // Checkout Modal States
@@ -203,46 +206,56 @@ const VirtualStorePage: React.FC = () => {
     const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
-        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
+        { id: currentFloor?.floor || parentProduct.category, label: String(floorLabel), type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: String(currentCategory?.label || parentProduct.subcategory), type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
         { id: parentProduct.id, label: getLoc(parentProduct.title, i18n.language), type: 'detail' },
-        { id: 'store', label: <AutoTranslatedText text="가상 스토어" />, type: 'template' }
+        { id: 'store', label: '가상 스토어', type: 'template' }
     ] : []);
+
 
     useEffect(() => {
         const fetchParent = async () => {
             if (parentId) {
-                const data = await getProductById(parentId);
-                if (data) {
-                    setParentProduct(data);
-                    
-                    // Initialize temp values from parent metadata if available
-                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
-                        ? JSON.parse(data.selected_templates) 
-                        : (data.selected_templates as any);
-                    
-                    // Standardize as array
-                    const templates = Array.isArray(selectedTemplatesRaw) 
-                        ? selectedTemplatesRaw 
-                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                                id,
-                                status: val.status || 'visible',
-                                title: val.title,
-                                description: val.description
-                            }))
-                            : []);
-
-                    const storeMeta = templates.find((t: any) => t.id === 'store');
-                    // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "가상 스토어");
-                    setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "브랜드의 스토리와 제품을 혁신적인 3D 공간에서 경험하세요. 오감을 자극하는 특별한 쇼핑 여정이 시작됩니다.");
+                try {
+                    const data = await getProductById(parentId);
+                    if (data) {
+                        setParentProduct(data);
+                        
+                        // Safe parsing of selected_templates
+                        let templates = [];
+                        try {
+                            const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
+                                ? JSON.parse(data.selected_templates) 
+                                : (data.selected_templates as any);
+                            
+                            templates = Array.isArray(selectedTemplatesRaw) 
+                                ? selectedTemplatesRaw 
+                                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                        id,
+                                        status: val.status || 'visible',
+                                        title: val.title,
+                                        description: val.description
+                                    }))
+                                    : []);
+                        } catch (e) {
+                            console.error("Failed to parse templates:", e);
+                        }
+                        
+                        const storeMeta = templates.find((t: any) => t.id === 'store');
+                        // Always load Korean for the editable fields to ensure consistency
+                        setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "가상 스토어");
+                        setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "브랜드의 스토리와 제품을 혁신적인 3D 공간에서 경험하세요. 오감을 자극하는 특별한 쇼핑 여정이 시작됩니다.");
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch parent product:", error);
                 }
             }
         };
         fetchParent();
     }, [parentId, i18n.language]);
+
 
     // Using "Hunter Amber" (index 4) theme for Store - warm, premium, and commercial
     const theme = JOSEON_THEMES[4]; 

@@ -16,15 +16,14 @@ import { useAdmin } from '../hooks/useAdmin';
 const VirtualCinemaPage: React.FC = () => {
     const { i18n } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
-    const navigate = useNavigate();
+    const { id: routeId } = useParams();
     const location = useLocation();
-    const { id: paramId } = useParams();
+    const navigate = useNavigate();
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     useImmersiveMode(isExplorationMode);
 
-    // Determine the effective parent ID (favor params, fallback to state)
-    const parentId = paramId || location.state?.parentId;
-
+    // Determine the effective parent ID (favor route params, fallback to state)
+    const parentId = routeId || location.state?.parentId;
 
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
     const theme = JOSEON_THEMES[10];
@@ -62,41 +61,50 @@ const VirtualCinemaPage: React.FC = () => {
     const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
-        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
-        { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'cinema', label: <AutoTranslatedText text="가상 시네마" />, type: 'template' }
+        { id: currentFloor?.floor || parentProduct.category, label: String(floorLabel), type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: String(currentCategory?.label || parentProduct.subcategory), type: 'category' },
+        { id: 'detail', label: '상세', type: 'detail' },
+        { id: parentProduct.id, label: String(typeof parentProduct.title === 'string' ? parentProduct.title : (parentProduct.title.ko || parentProduct.title.en)), type: 'detail' },
+        { id: 'cinema', label: '가상 시네마', type: 'template' }
     ] : []);
 
     useEffect(() => {
         const fetchParent = async () => {
             if (parentId) {
-                const data = await getProductById(parentId);
-                if (data) {
-                    setParentProduct(data);
+                try {
+                    const data = await getProductById(parentId);
+                    if (data) {
+                        setParentProduct(data);
 
-                    // Initialize temp values from parent metadata if available
-                    const selectedTemplatesRaw = typeof data.selected_templates === 'string'
-                        ? JSON.parse(data.selected_templates)
-                        : (data.selected_templates as any);
+                        // Safe parsing of selected_templates
+                        let templates = [];
+                        try {
+                            const selectedTemplatesRaw = typeof data.selected_templates === 'string'
+                                ? JSON.parse(data.selected_templates)
+                                : (data.selected_templates as any);
 
-                    // Standardize as array
-                    const templates = Array.isArray(selectedTemplatesRaw)
-                        ? selectedTemplatesRaw
-                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                                id,
-                                status: val.status || 'visible',
-                                title: val.title,
-                                description: val.description
-                            }))
-                            : []);
+                            // Standardize as array
+                            templates = Array.isArray(selectedTemplatesRaw)
+                                ? selectedTemplatesRaw
+                                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                                        id,
+                                        status: val.status || 'visible',
+                                        title: val.title,
+                                        description: val.description
+                                    }))
+                                    : []);
+                        } catch (e) {
+                            console.error("Failed to parse templates:", e);
+                        }
 
-                    const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
-                    // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "3D 가상 시네마");
-                    setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 3D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
+                        const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
+                        // Always load Korean for the editable fields to ensure consistency
+                        setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "3D 가상 시네마");
+                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 3D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch parent product:", error);
                 }
             }
         };
