@@ -12,9 +12,9 @@ import noticeRoutes from './routes/noticeRoutes.js';
 import faqRoutes from './routes/faqRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
-import './config/init_db.js'; // Database auto-heal
 
 dotenv.config();
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
