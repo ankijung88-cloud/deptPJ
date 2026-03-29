@@ -13,6 +13,7 @@ import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
+import { createOrder } from '../api/orders';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
@@ -165,7 +166,6 @@ const VirtualStorePage: React.FC = () => {
     
     // Determine the effective parent ID (favor params, fallback to state)
     const parentId = paramId || location.state?.parentId;
-    const [isPurchasing, setIsPurchasing] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
@@ -180,6 +180,15 @@ const VirtualStorePage: React.FC = () => {
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
+
+    // Checkout Modal States
+    const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+    const [orderInfo, setOrderInfo] = useState({
+        name: '',
+        phone: '',
+        address: ''
+    });
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
@@ -568,13 +577,51 @@ const VirtualStorePage: React.FC = () => {
     };
 
     const handlePurchase = () => {
-        setIsPurchasing(true);
-        // Simulate payment process
-        setTimeout(() => {
-            setIsPurchasing(false);
+        if (!selectedItem) return;
+        setShowCheckoutModal(true);
+    };
+
+    const handleCompletePayment = async () => {
+        if (!orderInfo.name || !orderInfo.phone || !orderInfo.address) {
+            const msg = await translateAsync('주문 정보를 모두 입력해주세요.');
+            alert(msg);
+            return;
+        }
+
+        setIsProcessingPayment(true);
+        try {
+            // 1. Simulate PortOne Payment
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const simulatedPaymentId = `PAY-${Date.now()}`;
+
+            // 2. Create Order in DB
+            const orderData = {
+                userName: orderInfo.name,
+                userPhone: orderInfo.phone,
+                userAddress: orderInfo.address,
+                productId: selectedItem?.id,
+                productName: typeof selectedItem?.title === 'string' ? selectedItem.title : selectedItem?.title.ko,
+                price: parseFloat(String(selectedItem?.price || '0').replace(/[^0-9.]/g, '')),
+                agencyId: selectedItem?.agency_id,
+                paymentId: simulatedPaymentId
+            };
+
+            await createOrder(orderData);
+
+            // 3. Success UI
+            setIsProcessingPayment(false);
+            setShowCheckoutModal(false);
             setPurchaseComplete(true);
             setTimeout(() => setPurchaseComplete(false), 3000);
-        }, 2000);
+            
+            const successMsg = await translateAsync('주문이 완료되었습니다.');
+            alert(successMsg);
+        } catch (error) {
+            console.error('Payment failed:', error);
+            setIsProcessingPayment(false);
+            const errorMsg = await translateAsync('결제 처리에 실패했습니다.');
+            alert(errorMsg);
+        }
     };
 
     const scrollSlider = (direction: 'left' | 'right') => {
@@ -801,11 +848,11 @@ const VirtualStorePage: React.FC = () => {
                             <div className="space-y-4">
                                 <button 
                                     onClick={handlePurchase}
-                                    disabled={!selectedItem || isPurchasing || purchaseComplete}
+                                    disabled={!selectedItem || isProcessingPayment || purchaseComplete}
                                     className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50"
                                 >
                                     <AnimatePresence mode="wait">
-                                        {isPurchasing ? (
+                                        {isProcessingPayment ? (
                                             <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                                 <AutoTranslatedText text="Processing..." />
@@ -1146,11 +1193,11 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="pt-8">
                                     <button 
                                         onClick={handlePurchase}
-                                        disabled={isPurchasing || purchaseComplete}
+                                        disabled={isProcessingPayment || purchaseComplete}
                                         className="w-full py-8 rounded-[2rem] bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50 shadow-2xl shadow-white/5"
                                     >
                                         <AnimatePresence mode="wait">
-                                            {isPurchasing ? (
+                                            {isProcessingPayment ? (
                                                 <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                     <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                                     <AutoTranslatedText text="Processing..." />
@@ -1175,6 +1222,104 @@ const VirtualStorePage: React.FC = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Checkout Modal */}
+            <AnimatePresence>
+                {showCheckoutModal && selectedItem && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="bg-[#111] border border-white/10 w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-10">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+                                        <AutoTranslatedText text="주문 정보 입력" />
+                                    </h3>
+                                    <button onClick={() => setShowCheckoutModal(false)} className="p-2 hover:bg-white/5 rounded-full text-white/40"><X size={20} /></button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-4">
+                                        <img src={selectedItem.imageUrl} className="w-16 h-16 rounded-xl object-cover" alt="" />
+                                        <div>
+                                            <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Selected Item</div>
+                                            <div className="text-sm font-black text-white"><AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} /></div>
+                                            <div className="text-xs font-bold text-orange-500">{getLoc(selectedItem.price, i18n.language)}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                                <AutoTranslatedText text="주문자 성함" />
+                                            </label>
+                                            <input 
+                                                type="text"
+                                                value={orderInfo.name}
+                                                onChange={(e) => setOrderInfo({...orderInfo, name: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
+                                                placeholder="Orderer Name"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                                <AutoTranslatedText text="연락처" />
+                                            </label>
+                                            <input 
+                                                type="text"
+                                                value={orderInfo.phone}
+                                                onChange={(e) => setOrderInfo({...orderInfo, phone: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
+                                                placeholder="010-0000-0000"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                                <AutoTranslatedText text="배송 주소" />
+                                            </label>
+                                            <textarea 
+                                                value={orderInfo.address}
+                                                onChange={(e) => setOrderInfo({...orderInfo, address: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none resize-none"
+                                                rows={3}
+                                                placeholder="Shipping Address"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        onClick={handleCompletePayment}
+                                        disabled={isProcessingPayment || !orderInfo.name || !orderInfo.phone || !orderInfo.address}
+                                        className="w-full py-5 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest disabled:opacity-20 flex items-center justify-center gap-3"
+                                        style={{ backgroundColor: theme.accentColor }}
+                                    >
+                                        {isProcessingPayment ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <AutoTranslatedText text="Processing..." />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CreditCard size={18} />
+                                                <AutoTranslatedText text="결제 완료하기" />
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
                  <div className="container mx-auto flex flex-col items-center gap-6">

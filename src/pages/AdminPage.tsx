@@ -22,7 +22,8 @@ import {
     Check,
     RotateCcw,
     LogOut,
-    Menu
+    Menu,
+    ShoppingCart
 } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { getFeaturedProducts, deleteProduct, createProduct, updateProduct } from '../api/products';
@@ -34,6 +35,7 @@ import {
 import { getNotices, createNotice as apiCreateNotice, updateNotice as apiUpdateNotice, deleteNotice as apiDeleteNotice } from '../api/notices';
 import { getFaqs, createFaq as apiCreateFaq, updateFaq as apiUpdateFaq, deleteFaq as apiDeleteFaq } from '../api/faqs';
 import { getAgencies, createAgency, updateAgency, deleteAgency, updateAgencyStatus } from '../api/auth';
+import { getOrders, updateOrderStatus, deleteOrder } from '../api/orders';
 import { FeaturedItem, Notice, FAQ } from '../types';
 
 // Helper for localized text
@@ -1699,6 +1701,225 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
         </div>
     );
 };
+
+const OrderManager = ({ agencies }: { agencies: any[] }) => {
+    const { isAdmin } = useAdmin();
+    const [orders, setOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingOrder, setEditingOrder] = useState<any>(null);
+
+    useEffect(() => { fetchOrders(); }, []);
+
+    const fetchOrders = async () => {
+        setLoading(true);
+        try {
+            const data = await getOrders();
+            setOrders(data || []);
+        } catch (err) {
+            console.error('Failed to fetch orders:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('Are you sure you want to delete this order?')) {
+            try {
+                await deleteOrder(id);
+                fetchOrders();
+            } catch (err) {
+                alert('Delete failed');
+            }
+        }
+    };
+
+    const filteredOrders = orders.filter(o => {
+        const matchesSearch = 
+            o.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            o.user_phone.includes(searchTerm) ||
+            o.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            o.payment_id.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = !selectedStatus || o.status === selectedStatus;
+        return matchesSearch && matchesStatus;
+    });
+
+    const statusColors: any = {
+        'PENDING': 'bg-yellow-500/20 text-yellow-500',
+        'PAID': 'bg-green-500/20 text-green-500',
+        'SHIPPED': 'bg-blue-500/20 text-blue-500',
+        'DELIVERED': 'bg-purple-500/20 text-purple-500',
+        'CANCELLED': 'bg-red-500/20 text-red-500'
+    };
+
+    return (
+        <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Order Management" /></h2>
+                <div className="flex gap-4">
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                        <input 
+                            type="text" 
+                            placeholder="Search orders..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="bg-black/40 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                        />
+                    </div>
+                    <select 
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        className="bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="PAID">PAID</option>
+                        <option value="SHIPPED">SHIPPED</option>
+                        <option value="DELIVERED">DELIVERED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                            <tr>
+                                <th className="px-6 py-4">Order Info</th>
+                                <th className="px-6 py-4">Customer</th>
+                                <th className="px-6 py-4">Product</th>
+                                <th className="px-6 py-4">Price</th>
+                                <th className="px-6 py-4">Status</th>
+                                {isAdmin && <th className="px-6 py-4">Agency</th>}
+                                <th className="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {filteredOrders.map(order => (
+                                <tr key={order.id} className="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-white text-xs font-mono">{order.payment_id}</span>
+                                            <span className="text-white/30 text-[10px]">{new Date(order.created_at).toLocaleString()}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-white font-bold">{order.user_name}</span>
+                                            <span className="text-white/40 text-[10px]">{order.user_phone}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-white/60 text-sm whitespace-nowrap">{order.product_name}</td>
+                                    <td className="px-6 py-4 text-white font-bold whitespace-nowrap">{order.price?.toLocaleString()}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${statusColors[order.status]}`}>
+                                            {order.status}
+                                        </span>
+                                    </td>
+                                    {isAdmin && (
+                                        <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs whitespace-nowrap">
+                                            {agencies.find(a => Number(a.id) === Number(order.agency_id))?.agency_name || 'Admin'}
+                                        </td>
+                                    )}
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <button onClick={() => { setEditingOrder(order); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
+                                            <button onClick={() => handleDelete(order.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {loading && <div className="py-20 text-center text-white/20">Loading orders...</div>}
+                {!loading && filteredOrders.length === 0 && <div className="py-20 text-center text-white/20">No orders found.</div>}
+            </div>
+
+            {isModalOpen && (
+                <OrderEditModal 
+                    order={editingOrder} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={() => { setIsModalOpen(false); fetchOrders(); }} 
+                />
+            )}
+        </div>
+    );
+};
+
+const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
+    const [status, setStatus] = useState(order.status);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleUpdate = async () => {
+        setIsUpdating(true);
+        try {
+            await updateOrderStatus(order.id, status);
+            onSuccess();
+        } catch (err) {
+            alert('Update failed');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
+                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">Update Order Status</h3>
+                
+                <div className="space-y-6">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
+                        <div className="flex justify-between">
+                            <span className="text-[10px] text-white/40 font-bold uppercase">Customer</span>
+                            <span className="text-sm text-white font-bold">{order.user_name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[10px] text-white/40 font-bold uppercase">Product</span>
+                            <span className="text-sm text-white/60">{order.product_name}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-white/5 pt-2">
+                            <span className="text-[10px] text-white/40 font-bold uppercase">Address</span>
+                            <span className="text-xs text-white/40 max-w-[200px] text-right">{order.user_address}</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-white/40 uppercase block">Status</label>
+                        <select 
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                        >
+                            <option value="PENDING">PENDING</option>
+                            <option value="PAID">PAID</option>
+                            <option value="SHIPPED">SHIPPED</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </div>
+
+                    <div className="flex justify-end gap-4 pt-4">
+                        <button onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors">Cancel</button>
+                        <button 
+                            onClick={handleUpdate}
+                            disabled={isUpdating}
+                            className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50"
+                        >
+                            {isUpdating ? 'Updating...' : 'Update Status'}
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
 const AgencyManager = () => {
     const [agencies, setAgencies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -1948,6 +2169,7 @@ export const AdminPage: React.FC = () => {
 
     const tabs = [
         { id: 'products', label: 'Products', icon: Package },
+        { id: 'orders', label: 'Orders', icon: ShoppingCart },
         ...(isAdmin ? [
             { id: 'agencies', label: 'Agencies', icon: Layers },
             { id: 'floors', label: 'Floors', icon: Layers },
@@ -2052,6 +2274,7 @@ export const AdminPage: React.FC = () => {
                         transition={{ duration: 0.3 }}
                     >
                         {activeTab === 'products' && <ProductManager agencies={agencies} />}
+                        {activeTab === 'orders' && <OrderManager agencies={agencies} />}
                         {activeTab === 'agencies' && <AgencyManager />}
                         {activeTab === 'floors' && <FloorManager />}
 

@@ -151,6 +151,29 @@ async function initDB() {
       await pool.query("ALTER TABLE media_storage MODIFY COLUMN data LONGBLOB NULL");
     }
 
+    // NEW: Create orders table if it doesn't exist
+    console.log('[DB] Ensuring orders table exists...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id VARCHAR(50) UNIQUE NOT NULL,
+        user_name VARCHAR(100) NOT NULL,
+        user_phone VARCHAR(20) NOT NULL,
+        user_address TEXT NOT NULL,
+        product_id VARCHAR(100) NOT NULL,
+        product_name TEXT NOT NULL,
+        price DECIMAL(15, 2) NOT NULL,
+        status ENUM('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+        payment_id VARCHAR(100) NULL,
+        agency_id INT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX (order_id),
+        INDEX (agency_id)
+      ) ENGINE=InnoDB;
+    `);
+    console.log('[DB] orders table is ready.');
+
   } catch (error) {
     if (error.code === 'ER_DUP_COLUMN') {
       console.log('[DB] Columns already exist.');

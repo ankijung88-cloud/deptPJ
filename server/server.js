@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import noticeRoutes from './routes/noticeRoutes.js';
 import faqRoutes from './routes/faqRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import './config/init_db.js'; // Database auto-heal
 
 dotenv.config();
@@ -52,6 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/faqs', faqRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
