@@ -76,16 +76,22 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Dept Backend is running - V2' });
 });
 
-app.listen(PORT, '0.0.0.0', async () => {
-  console.log(`Server is running on http://0.0.0.0:${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', async () => {
+  console.log(`[Server] Dept Backend is running on http://0.0.0.0:${PORT}`);
   
-  // Database self-healing: Run only in local development or explicitly once
+  // Database self-healing: Ensuring schema is correct for 3D Gallery & Admin
   try {
     const { default: initDB } = await import('./config/init_db.js');
+    console.log('[DB] Starting schema synchronization...');
     await initDB();
-    console.log('[DB] Initialization complete.');
+    console.log('[DB] Schema synchronization complete. All units operational.');
   } catch (err) {
-    console.error('[DB] Initialization failed:', err.message);
+    console.error('[DB] Critical: Initialization failed, but server will stay alive:', err.message);
   }
 });
+
+// Final safety for Vercel/Proxy timeouts
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
 
