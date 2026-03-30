@@ -200,12 +200,21 @@ const VirtualStorePage: React.FC = () => {
     const [isSearchingOrder, setIsSearchingOrder] = useState(false);
     const [lookupResult, setLookupResult] = useState<any>(null);
 
+    const getLoc = (val: any, lang: string): string => {
+        if (!val) return '';
+        if (typeof val === 'string') return val;
+        return val[lang] || val['ko'] || '';
+    };
+
+    const formatPrice = (price: number) => {
+        return `₩${price.toLocaleString()}`;
+    };
+
     // --- Cart Management ---
     const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalItems } = useCart();
     const [showCartDrawer, setShowCartDrawer] = useState(false);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
     const [checkoutMode, setCheckoutMode] = useState<'single' | 'cart'>('single');
-
 
     const handleAddToCart = () => {
         if (!selectedItem) return;
@@ -225,17 +234,6 @@ const VirtualStorePage: React.FC = () => {
         return acc + (parseInt(priceStr || '0') * item.quantity);
     }, 0);
 
-    const formatPrice = (price: number) => {
-        return `₩${price.toLocaleString()}`;
-    };
-
-
-
-    const getLoc = (val: any, lang: string): string => {
-        if (!val) return '';
-        if (typeof val === 'string') return val;
-        return val[lang] || val['ko'] || '';
-    };
 
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
