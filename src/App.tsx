@@ -22,13 +22,16 @@ import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import SearchPage from './pages/SearchPage';
 import { FloorProvider } from './context/FloorContext';
+import { CartProvider } from './context/CartContext';
 
 function App() {
     return (
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <FloorProvider>
-                <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-white/20">Loading...</div>}>
-                <Routes>
+                <CartProvider>
+                    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-white/20">Loading...</div>}>
+                    <Routes>
+
                     {/* Public Store Routes */}
                     <Route element={<Layout />}>
                         <Route path="/" element={<LandingPage />} />
@@ -53,7 +56,8 @@ function App() {
                     {/* Presentation Pages (No Layout/Navbar) */}
                     <Route path="/about" element={<AboutPage />} />
                 </Routes>
-            </Suspense>
+                    </Suspense>
+                </CartProvider>
             </FloorProvider>
         </Router>
     );

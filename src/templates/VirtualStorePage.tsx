@@ -15,6 +15,7 @@ import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
 import { createOrder } from '../api/orders';
 import { useFloors } from '../context/FloorContext';
+import { useCart } from '../context/CartContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
 
@@ -198,6 +199,36 @@ const VirtualStorePage: React.FC = () => {
     const [orderLookupInfo, setOrderLookupInfo] = useState({ name: '', phone: '' });
     const [isSearchingOrder, setIsSearchingOrder] = useState(false);
     const [lookupResult, setLookupResult] = useState<any>(null);
+
+    // --- Cart Management ---
+    const { cart, addToCart, removeFromCart, updateQuantity, clearCart, totalItems } = useCart();
+    const [showCartDrawer, setShowCartDrawer] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
+    const [checkoutMode, setCheckoutMode] = useState<'single' | 'cart'>('single');
+
+
+    const handleAddToCart = () => {
+        if (!selectedItem) return;
+        setIsAddingToCart(true);
+        addToCart({
+            id: selectedItem.id,
+            title: selectedItem.title,
+            price: selectedItem.price,
+            imageUrl: selectedItem.imageUrl,
+            quantity: 1
+        });
+        setTimeout(() => setIsAddingToCart(false), 2000);
+    };
+
+    const cartTotal = cart.reduce((acc, item) => {
+        const priceStr = getLoc(item.price, i18n.language).replace(/[^0-9]/g, '');
+        return acc + (parseInt(priceStr || '0') * item.quantity);
+    }, 0);
+
+    const formatPrice = (price: number) => {
+        return `₩${price.toLocaleString()}`;
+    };
+
 
 
     const getLoc = (val: any, lang: string): string => {
@@ -633,8 +664,10 @@ const VirtualStorePage: React.FC = () => {
 
     const handlePurchase = () => {
         if (!selectedItem) return;
+        setCheckoutMode('single');
         setShowCheckoutModal(true);
     };
+
 
     const handleCompletePayment = async () => {
         if (!orderInfo.name || !orderInfo.phone || !orderInfo.address) {
@@ -650,19 +683,27 @@ const VirtualStorePage: React.FC = () => {
             const simulatedPaymentId = `PAY-${Date.now()}`;
 
             // 2. Create Order in DB
+            const finalPrice = checkoutMode === 'single' 
+                ? parseFloat(String(getLoc(selectedItem?.price, i18n.language) || '0').replace(/[^0-9.]/g, ''))
+                : cartTotal;
+
             const orderData = {
                 userName: orderInfo.name,
                 userPhone: orderInfo.phone,
                 userAddress: orderInfo.address,
-                productId: selectedItem?.id,
-                price: parseFloat(String(getLoc(selectedItem?.price, 'ko') || '0').replace(/[^0-9.]/g, '')),
-                agencyId: selectedItem?.agency_id,
-                paymentId: simulatedPaymentId
+                productId: checkoutMode === 'single' ? selectedItem?.id : 'MULTIPLE_ITEMS',
+                price: finalPrice,
+                agencyId: checkoutMode === 'single' ? selectedItem?.agency_id : null,
+                paymentId: simulatedPaymentId,
+                items: checkoutMode === 'single' ? [{ id: selectedItem?.id, quantity: 1 }] : cart.map(i => ({ id: i.id, quantity: i.quantity }))
             };
 
             await createOrder(orderData);
 
             // 3. Success UI
+            if (checkoutMode === 'cart') {
+                clearCart();
+            }
             setIsProcessingPayment(false);
             setShowCheckoutModal(false);
             setPurchaseComplete(true);
@@ -819,15 +860,21 @@ const VirtualStorePage: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
+                        <button 
+                            onClick={() => setShowCartDrawer(true)}
+                            className="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl hover:bg-white/10 transition-all active:scale-95 group relative"
+                        >
                             <div className="px-6 py-4 flex flex-col items-center border-r border-white/10">
-                                <span className="text-xl font-black" style={{ color: theme.highlightColor }}>{storeItems.length}</span>
-                                <span className="text-[8px] font-bold tracking-widest uppercase opacity-30">Artifacts</span>
+                                <span className="text-xl font-black" style={{ color: theme.highlightColor }}>{totalItems}</span>
+                                <span className="text-[8px] font-bold tracking-widest uppercase opacity-30">In Bag</span>
                             </div>
-                            <div className="px-6 py-4 flex items-center justify-center">
-                                <ShoppingCart size={20} className="opacity-40" />
+                            <div className="px-6 py-4 flex items-center justify-center relative">
+                                <ShoppingCart size={20} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                                {totalItems > 0 && (
+                                    <span className="absolute top-3 right-4 w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                )}
                             </div>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </header>
@@ -958,6 +1005,26 @@ const VirtualStorePage: React.FC = () => {
                                         )}
                                     </AnimatePresence>
                                     <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:left-[100%] transition-all duration-1000" />
+                                </button>
+
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={!selectedItem || isAddingToCart}
+                                    className="w-full py-6 rounded-2xl bg-[#D4AF37] text-white font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(212,175,55,0.3)]"
+                                >
+                                    <AnimatePresence mode="wait">
+                                        {isAddingToCart ? (
+                                            <motion.div key="added" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
+                                                <Check size={18} />
+                                                <AutoTranslatedText text="Added to Bag" />
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div key="add" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
+                                                <ShoppingBag size={18} />
+                                                <AutoTranslatedText text="장바구니 담기 (Add to Bag)" />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </button>
 
                                 <button
@@ -1315,7 +1382,7 @@ const VirtualStorePage: React.FC = () => {
 
             {/* Checkout Modal */}
             <AnimatePresence>
-                {showCheckoutModal && selectedItem && (
+                {showCheckoutModal && (selectedItem || checkoutMode === 'cart') && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -1337,12 +1404,32 @@ const VirtualStorePage: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-6">
-                                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-4">
-                                        <img src={selectedItem.imageUrl} className="w-16 h-16 rounded-xl object-cover" alt="" />
-                                        <div>
-                                            <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Selected Item</div>
-                                            <div className="text-sm font-black text-white"><AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} /></div>
-                                            <div className="text-xs font-bold text-orange-500">{getLoc(selectedItem.price, i18n.language)}</div>
+                                    <div className="p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6">
+                                        <div className="flex justify-between items-end">
+                                            <div className="space-y-1">
+                                                <span className="text-[10px] font-black tracking-widest text-white/20 uppercase">
+                                                    {checkoutMode === 'single' ? 'Product' : 'Items Summary'}
+                                                </span>
+                                                <div className="text-xl font-bold text-white uppercase tracking-tighter">
+                                                    {checkoutMode === 'single' ? (
+                                                        <AutoTranslatedText text={getLoc(selectedItem?.title, i18n.language)} />
+                                                    ) : (
+                                                        <div className="text-sm">
+                                                            {cart.length > 0 && (
+                                                                <AutoTranslatedText text={`${getLoc(cart[0].title, i18n.language)} 외 ${totalItems - cart[0].quantity}개`} />
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="text-[10px] font-black tracking-widest text-[#D4AF37] uppercase block mb-1">Total Amount</span>
+                                                <div className="text-2xl font-black text-white tracking-tighter">
+                                                    {checkoutMode === 'single' 
+                                                        ? getLoc(selectedItem?.price, i18n.language)
+                                                        : formatPrice(cartTotal)}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -1547,8 +1634,134 @@ const VirtualStorePage: React.FC = () => {
                     </p>
                 </div>
             </footer>
+
+            {/* Shopping Cart Drawer */}
+            <AnimatePresence>
+                {showCartDrawer && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowCartDrawer(false)}
+                            className="fixed inset-0 z-[50000] bg-black/60 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="fixed top-0 right-0 bottom-0 w-full max-w-md z-[51000] bg-[#111]/90 backdrop-blur-2xl border-l border-white/10 shadow-2xl flex flex-col"
+                        >
+                            <div className="p-8 border-b border-white/5 flex justify-between items-center">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-black text-white uppercase tracking-tighter">
+                                        <AutoTranslatedText text="Shopping Bag" />
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-[10px] font-bold text-white/30 uppercase tracking-widest">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                                        <span>{totalItems} <AutoTranslatedText text="Items in Bag" /></span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setShowCartDrawer(false)}
+                                    className="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white/40 transition-all hover:text-white"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="flex-grow overflow-y-auto p-8 space-y-6 scrollbar-hide">
+                                {cart.length === 0 ? (
+                                    <div className="h-full flex flex-col items-center justify-center opacity-20 space-y-4">
+                                        <ShoppingCart size={48} />
+                                        <p className="text-sm font-bold uppercase tracking-widest text-center">
+                                            <AutoTranslatedText text="Your bag is empty" />
+                                        </p>
+                                    </div>
+                                ) : (
+                                    cart.map((item: any) => (
+                                        <motion.div
+                                            key={item.id}
+                                            layout
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 relative group"
+                                        >
+                                            <div className="w-20 h-20 rounded-xl overflow-hidden bg-black/50 border border-white/10 shrink-0">
+                                                <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="flex-grow min-w-0 py-1">
+                                                <h4 className="text-xs font-bold text-white uppercase tracking-tight truncate mb-1">
+                                                    <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
+                                                </h4>
+                                                <p className="text-[10px] font-black tracking-widest text-[#D4AF37] mb-3">
+                                                    {getLoc(item.price, i18n.language)}
+                                                </p>
+                                                <div className="flex items-center gap-3">
+                                                    <button 
+                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="text-xs font-black text-white w-4 text-center">{item.quantity}</span>
+                                                    <button 
+                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => removeFromCart(item.id)}
+                                                className="absolute top-4 right-4 text-white/20 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </motion.div>
+                                    ))
+                                )}
+                            </div>
+
+                            {cart.length > 0 && (
+                                <div className="p-8 bg-white/[0.02] border-t border-white/10 space-y-6">
+                                    <div className="flex justify-between items-end">
+                                        <div className="space-y-1">
+                                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Subtotal Estimate</span>
+                                            <div className="text-3xl font-black text-white tracking-tighter">
+                                                {formatPrice(cartTotal)}
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={clearCart}
+                                            className="text-[10px] font-black text-red-500/40 hover:text-red-500 uppercase tracking-widest transition-colors mb-2"
+                                        >
+                                            <AutoTranslatedText text="Clear Bag" />
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setCheckoutMode('cart');
+                                            setShowCartDrawer(false);
+                                            setShowCheckoutModal(true);
+                                        }}
+                                        className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all"
+                                    >
+
+                                        <AutoTranslatedText text="Checkout All" />
+                                    </button>
+                                </div>
+                            )}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
 
 export default VirtualStorePage;
+
+
