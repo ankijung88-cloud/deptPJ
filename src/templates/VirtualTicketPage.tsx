@@ -636,6 +636,14 @@ return (
                                         <X size={14} />
                                     </button>
                                 )}
+                                <button 
+                                    onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
+                                    style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
+                                >
+                                    <Plus size={14} />
+                                    <AutoTranslatedText text="Add Event" />
+                                </button>
                             </div>
                         )}
                     </div>
