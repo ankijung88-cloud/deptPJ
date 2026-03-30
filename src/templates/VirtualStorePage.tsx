@@ -980,10 +980,19 @@ const VirtualStorePage: React.FC = () => {
 
                             <div className="space-y-4">
                                 <button
+                                    onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
+                                    disabled={!selectedItem}
+                                    className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
+                                >
+                                    <AutoTranslatedText text="상세설명보기 (View Details)" />
+                                </button>
+
+                                <button
                                     onClick={handlePurchase}
                                     disabled={!selectedItem || isProcessingPayment || purchaseComplete}
                                     className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50"
                                 >
+
                                     <AnimatePresence mode="wait">
                                         {isProcessingPayment ? (
                                             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
@@ -1025,15 +1034,9 @@ const VirtualStorePage: React.FC = () => {
                                     </AnimatePresence>
                                 </button>
 
-                                <button
-                                    onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
-                                    disabled={!selectedItem}
-                                    className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
-                                >
-                                    <AutoTranslatedText text="상세설명보기 (View Details)" />
-                                </button>
 
                                 {isManagementAllowed && (
+
                                     <div className="grid grid-cols-2 gap-4">
                                         <button
                                             onClick={() => selectedItem && handleEditInitiate(selectedItem)}
