@@ -10,6 +10,7 @@ import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
+import { useAdmin } from '../hooks/useAdmin';
 
 // --- Sub-components for Broadway Billboard ---
 
@@ -268,7 +269,8 @@ const VirtualTicketPage: React.FC = () => {
     const [isReserving, setIsReserving] = useState(false);
     const [reservationComplete, setReservationComplete] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+    
+    const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
     const { floors } = useFloors();
 
@@ -277,8 +279,7 @@ const VirtualTicketPage: React.FC = () => {
     const [tempTitle, setTempTitle] = useState('');
     const [tempDesc, setTempDesc] = useState('');
 
-    const isAdmin = isAdminLoggedIn; 
-    const isManagementAllowed = isAdmin; // Simple check for now, can be refined like other pages if needed
+    const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
 
     // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
@@ -328,14 +329,7 @@ const VirtualTicketPage: React.FC = () => {
         fetchParent();
     }, [parentId, i18n.language]);
 
-    useEffect(() => {
-        const checkAdmin = () => {
-            setIsAdminLoggedIn(!!sessionStorage.getItem('admin_token'));
-        };
-        checkAdmin();
-        window.addEventListener('storage', checkAdmin);
-        return () => window.removeEventListener('storage', checkAdmin);
-    }, []);
+
 
 
     // Using "Royal Guard" (index 0) theme for Ticket Booth - formal, striking, and prestigious
@@ -754,7 +748,7 @@ return (
                                 ticket={ticket} 
                                 theme={theme}
                                 lang={i18n.language}
-                                isAdmin={isAdminLoggedIn}
+                                isAdmin={isManagementAllowed}
                                 onEdit={() => handleEditInitiate(ticket)}
                                 onDelete={() => handleDelete(ticket.id)}
                                 onClick={() => {
@@ -767,7 +761,7 @@ return (
                     </div>
                 )}
 
-                {isAdminLoggedIn && (
+                {isManagementAllowed && (
                     <div className="mt-12 flex justify-center">
                         <button 
                             onClick={() => {
