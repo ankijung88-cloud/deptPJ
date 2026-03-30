@@ -1080,6 +1080,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         description: { ko: '', en: '' },
         subitems: [],
         color: '',
+        bgImage: '',
         video_url: ''
     });
 
@@ -1092,6 +1093,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                 description: floor.description || { ko: '', en: '' },
                 subitems: floor.subitems || [],
                 color: floor.color || '',
+                bgImage: floor.bgImage || '',
                 video_url: floor.videoUrl || ''
             });
         }
@@ -1100,7 +1102,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     const isEdit = !!floor;
 
     const addSubitem = () => {
-        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' } }];
+        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' }, bgImage: '' }];
         setFormData({ ...formData, subitems: newSubitems });
     };
 
@@ -1117,6 +1119,45 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     const removeSubitem = (index: number) => {
         const newSubitems = formData.subitems.filter((_: any, i: number) => i !== index);
         setFormData({ ...formData, subitems: newSubitems });
+    };
+
+    const [uploading, setUploading] = useState<string | null>(null);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string, subIdx?: number) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const uploadId = subIdx !== undefined ? `${field}-${subIdx}` : field;
+        setUploading(uploadId);
+        
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                },
+                body: uploadData
+            });
+            
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            if (data.url) {
+                if (subIdx !== undefined) {
+                    updateSubitem(subIdx, field, data.url);
+                } else {
+                    setFormData({ ...formData, [field]: data.url });
+                }
+            }
+        } catch (err: any) {
+            console.error('Upload failure:', err);
+            alert(`Upload failed: ${err.message || 'Unknown error'}`);
+        } finally {
+            setUploading(null);
+        }
     };
 
     const translateAsync = async (t: string) => t;
@@ -1196,6 +1237,42 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                 <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" placeholder="https://..." />
                             </div>
                         </div>
+
+                        {/* Floor Background Image */}
+                        <div>
+                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Floor Background Image</label>
+                            <div className="flex gap-4 items-start">
+                                <div className="flex-1 relative group bg-black/40 border border-white/10 rounded-xl overflow-hidden aspect-[21/9] flex items-center justify-center">
+                                    {formData.bgImage ? (
+                                        <>
+                                            <img src={formData.bgImage} alt="" className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <label className="cursor-pointer p-3 bg-white/20 hover:bg-white/30 rounded-full text-white backdrop-blur-md">
+                                                    <Upload size={20} />
+                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
+                                                </label>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-white/20 hover:text-[#00FFC2] transition-colors">
+                                            {uploading === 'bgImage' ? <div className="w-6 h-6 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={24} />}
+                                            <span className="text-[10px] font-bold uppercase tracking-widest">Upload Image</span>
+                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
+                                        </label>
+                                    )}
+                                </div>
+                                <div className="flex-1 space-y-2">
+                                    <input 
+                                        type="text" 
+                                        value={formData.bgImage || ''} 
+                                        onChange={e => setFormData({...formData, bgImage: e.target.value})}
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-xs focus:border-[#00FFC2]/50"
+                                        placeholder="https://..."
+                                    />
+                                    <p className="text-[10px] text-white/20 px-1 italic">* 층 전체의 배경으로 사용되는 이미지입니다. 가로가 긴 이미지 권장.</p>
+                                </div>
+                            </div>
+                        </div>
                         <div>
                             <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
                             <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
@@ -1241,6 +1318,42 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                     className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30"
                                                     placeholder="헤리티지"
                                                 />
+                                            </div>
+                                        </div>
+
+                                        {/* Sub-item Background Image */}
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-bold text-white/20 uppercase block tracking-wider">Sub-category Background Image</label>
+                                            <div className="flex gap-4 items-start">
+                                                <div className="w-32 h-20 bg-black/20 border border-white/5 rounded-xl overflow-hidden flex items-center justify-center relative group">
+                                                    {sub.bgImage ? (
+                                                        <>
+                                                            <img src={sub.bgImage} alt="" className="w-full h-full object-cover" />
+                                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                <label className="cursor-pointer p-2 bg-white/10 hover:bg-white/20 rounded-full text-white">
+                                                                    <Upload size={14} />
+                                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage', idx)} />
+                                                                </label>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        <label className="cursor-pointer flex flex-col items-center gap-1 text-white/10 hover:text-[#00FFC2] transition-colors">
+                                                            {uploading === `bgImage-${idx}` ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
+                                                            <span className="text-[8px] font-bold uppercase">Upload</span>
+                                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage', idx)} />
+                                                        </label>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 space-y-2">
+                                                    <input 
+                                                        type="text" 
+                                                        value={sub.bgImage || ''} 
+                                                        onChange={e => updateSubitem(idx, 'bgImage', e.target.value)}
+                                                        className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-[10px] focus:border-[#00FFC2]/30"
+                                                        placeholder="Image URL (https://...)"
+                                                    />
+                                                    <p className="text-[9px] text-white/10 italic px-1">* 해당 카테고리 진입 시 헤더 배경으로 사용됩니다.</p>
+                                                </div>
                                             </div>
                                         </div>
                                         
