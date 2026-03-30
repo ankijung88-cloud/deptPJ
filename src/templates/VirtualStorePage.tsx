@@ -3,7 +3,7 @@ console.log("VirtualStorePage.tsx version 2 loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2, Edit3 } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2, Edit3, Search } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Float, ContactShadows } from '@react-three/drei';
@@ -192,6 +192,13 @@ const VirtualStorePage: React.FC = () => {
         address: ''
     });
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+    // Order Lookup States
+    const [showOrderLookupModal, setShowOrderLookupModal] = useState(false);
+    const [orderLookupInfo, setOrderLookupInfo] = useState({ name: '', phone: '' });
+    const [isSearchingOrder, setIsSearchingOrder] = useState(false);
+    const [lookupResult, setLookupResult] = useState<any>(null);
+
 
     const getLoc = (val: any, lang: string): string => {
         if (!val) return '';
@@ -671,6 +678,33 @@ const VirtualStorePage: React.FC = () => {
         }
     };
 
+    const handleLookupOrder = async () => {
+        if (!orderLookupInfo.name || !orderLookupInfo.phone) {
+            const msg = await translateAsync('조회를 위해 이름과 연락처를 입력해주세요.');
+            alert(msg);
+            return;
+        }
+
+        setIsSearchingOrder(true);
+        setLookupResult(null);
+
+        // Simulate lookup delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Simulated high-fidelity result
+        setLookupResult({
+            id: `ORD-DEPT-${Math.floor(Math.random() * 90000 + 10000)}`,
+            date: new Date().toLocaleDateString(),
+            status: 'PREPARING', // PAID, PREPARING, SHIPPING, DELIVERED
+            productName: selectedItem ? getLoc(selectedItem.title, 'ko') : 'Premium Joseon Craft',
+            price: selectedItem ? getLoc(selectedItem.price, 'ko') : '₩120,000',
+            address: '서울특별시 종로구 세종로 1 (시뮬레이션 주소)'
+        });
+
+        setIsSearchingOrder(false);
+    };
+
+
     const scrollSlider = (direction: 'left' | 'right') => {
         if (sliderRef.current) {
             const scrollAmount = 300;
@@ -956,11 +990,13 @@ const VirtualStorePage: React.FC = () => {
                                 )}
 
                                 <button
+                                    onClick={() => setShowOrderLookupModal(true)}
                                     disabled={!selectedItem}
                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all disabled:opacity-20"
                                 >
                                     <AutoTranslatedText text="주문/배송확인 (CHECK ORDER/DELIVERY)" />
                                 </button>
+
                             </div>
                         </motion.div>
                     </div>
@@ -1373,6 +1409,134 @@ const VirtualStorePage: React.FC = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Order Lookup Modal */}
+            <AnimatePresence>
+                {showOrderLookupModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="bg-[#111] border border-white/10 w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-10">
+                                <div className="flex justify-between items-center mb-10">
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+                                        <AutoTranslatedText text="주문/배송 조회 (Order Tracking)" />
+                                    </h3>
+                                    <button
+                                        onClick={() => {
+                                            setShowOrderLookupModal(false);
+                                            setLookupResult(null);
+                                            setOrderLookupInfo({ name: '', phone: '' });
+                                        }}
+                                        className="p-2 hover:bg-white/5 rounded-full text-white/40 transition-colors"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+
+                                {!lookupResult ? (
+                                    <div className="space-y-8">
+                                        <div className="space-y-5">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black tracking-widest text-white/30 uppercase pl-1">
+                                                    <AutoTranslatedText text="주문자 성함" />
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={orderLookupInfo.name}
+                                                    onChange={(e) => setOrderLookupInfo({ ...orderLookupInfo, name: e.target.value })}
+                                                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 px-6 text-white text-sm focus:border-white/30 focus:bg-white/5 outline-none transition-all"
+                                                    placeholder="Enter your name"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black tracking-widest text-white/30 uppercase pl-1">
+                                                    <AutoTranslatedText text="연락처" />
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={orderLookupInfo.phone}
+                                                    onChange={(e) => setOrderLookupInfo({ ...orderLookupInfo, phone: e.target.value })}
+                                                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 px-6 text-white text-sm focus:border-white/30 focus:bg-white/5 outline-none transition-all"
+                                                    placeholder="010-0000-0000"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleLookupOrder}
+                                            disabled={isSearchingOrder || !orderLookupInfo.name || !orderLookupInfo.phone}
+                                            className="w-full py-6 rounded-2xl bg-white text-black font-black text-[11px] uppercase tracking-[0.2em] disabled:opacity-20 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-white/5"
+                                            style={{ backgroundColor: theme.accentColor }}
+                                        >
+                                            {isSearchingOrder ? (
+                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Search size={16} />
+                                                    <AutoTranslatedText text="조회하기 (Search)" />
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-8">
+                                        <div className="p-6 rounded-[2rem] bg-white/5 border border-white/10 space-y-6">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <span className="text-[9px] font-black tracking-widest text-white/20 uppercase block mb-1">Status</span>
+                                                    <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-widest">
+                                                        <AutoTranslatedText text={lookupResult.status} />
+                                                    </span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Order ID</div>
+                                                    <div className="text-[11px] font-bold text-white/60 tracking-tighter">{lookupResult.id}</div>
+                                                </div>
+                                            </div>
+
+                                            <div className="h-[1px] w-full bg-white/5" />
+
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Product</div>
+                                                    <div className="text-sm font-bold text-white"><AutoTranslatedText text={lookupResult.productName} /></div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Date</div>
+                                                        <div className="text-[11px] text-white/60">{lookupResult.date}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Price</div>
+                                                        <div className="text-[11px] text-white/60">{lookupResult.price}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => setLookupResult(null)}
+                                            className="w-full py-5 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:text-white hover:bg-white/10 transition-all"
+                                        >
+                                            <AutoTranslatedText text="다시 조회 (Search Again)" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
 
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
