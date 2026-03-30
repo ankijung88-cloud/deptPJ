@@ -22,15 +22,15 @@ import { useAdmin } from '../hooks/useAdmin';
 
 const DisplacementMesh: React.FC<{ imageUrl: string, scale?: number, subdivisions?: number }> = ({ imageUrl, scale = 0.6, subdivisions = 128 }) => {
     if (!imageUrl) return null;
-    
+
     const texture = useLoader(THREE.TextureLoader, imageUrl);
     const meshRef = useRef<THREE.Mesh>(null);
 
     return (
         <mesh ref={meshRef} castShadow receiveShadow>
             <planeGeometry args={[3.2, 4.2, subdivisions, subdivisions]} />
-            <meshStandardMaterial 
-                map={texture} 
+            <meshStandardMaterial
+                map={texture}
                 displacementMap={texture}
                 displacementScale={scale}
                 displacementBias={-0.1}
@@ -43,7 +43,7 @@ const DisplacementMesh: React.FC<{ imageUrl: string, scale?: number, subdivision
 
 const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
     const { imageUrl, sideImageUrl, leftSideImageUrl, rightSideImageUrl, backImageUrl } = item;
-    
+
     return (
         <group>
             <Suspense fallback={null}>
@@ -69,7 +69,7 @@ const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
                     </>
                 )}
             </Suspense>
-            
+
             {/* 4. Exhibition Stand (Base) */}
             <mesh position={[0, -2.5, 0]}>
                 <cylinderGeometry args={[2.5, 2.8, 0.4, 32]} />
@@ -97,13 +97,13 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
     if (!has3DAssets) {
         return (
             <div className="w-full h-full flex items-center justify-center p-12 bg-black/20">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="relative w-full h-full flex items-center justify-center"
                 >
-                    <img 
-                        src={item.thumbnailUrl || item.imageUrl} 
+                    <img
+                        src={item.thumbnailUrl || item.imageUrl}
                         alt={typeof item.title === 'string' ? item.title : item.title.ko}
                         className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
                     />
@@ -120,12 +120,12 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
             <Canvas shadows dpr={[1, 2]} gl={{ antialias: false, powerPreference: 'high-performance' }}>
                 <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={40} />
                 <ambientLight intensity={0.4} />
-                
+
                 {/* Dynamic Studio Lighting */}
                 <spotLight position={[5, 10, 5]} angle={0.3} penumbra={1} intensity={2} castShadow />
                 <spotLight position={[-5, 5, 5]} angle={0.2} penumbra={1} intensity={1} color="#ffaa00" />
                 <pointLight position={[0, -5, 5]} intensity={0.5} />
-                
+
                 <Suspense fallback={null}>
                     {/* Near zero floating as requested (제자리에 있도록) */}
                     <Float speed={0.5} rotationIntensity={0.1} floatIntensity={0.1}>
@@ -134,20 +134,20 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
                     <ContactShadows position={[0, -2.5, 0]} opacity={0.6} scale={8} blur={2.5} far={4} color="#000" />
                 </Suspense>
 
-                <OrbitControls 
-                    enableZoom={true} 
-                    enablePan={false} 
-                    minDistance={4} 
+                <OrbitControls
+                    enableZoom={true}
+                    enablePan={false}
+                    minDistance={4}
                     maxDistance={12}
                     autoRotate={true}
                     autoRotateSpeed={1}
                     makeDefault
                 />
             </Canvas>
-            
+
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl">
-                 <div className="w-2 h-2 rounded-full bg-orange-500 animate-[pulse_2s_infinite]" />
-                 <span className="text-[10px] font-black uppercase text-white tracking-[0.3em]">Holographic Engine Active</span>
+                <div className="w-2 h-2 rounded-full bg-orange-500 animate-[pulse_2s_infinite]" />
+                <span className="text-[10px] font-black uppercase text-white tracking-[0.3em]">Holographic Engine Active</span>
             </div>
         </div>
     );
@@ -162,7 +162,7 @@ const VirtualStorePage: React.FC = () => {
     const { id: routeId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    
+
     // Determine the effective parent ID (favor route params, fallback to state)
     const parentId = routeId || location.state?.parentId;
 
@@ -221,16 +221,16 @@ const VirtualStorePage: React.FC = () => {
                     const data = await getProductById(parentId);
                     if (data) {
                         setParentProduct(data);
-                        
+
                         // Safe parsing of selected_templates
                         let templates = [];
                         try {
-                            const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
-                                ? JSON.parse(data.selected_templates) 
+                            const selectedTemplatesRaw = typeof data.selected_templates === 'string'
+                                ? JSON.parse(data.selected_templates)
                                 : (data.selected_templates as any);
-                            
-                            templates = Array.isArray(selectedTemplatesRaw) 
-                                ? selectedTemplatesRaw 
+
+                            templates = Array.isArray(selectedTemplatesRaw)
+                                ? selectedTemplatesRaw
                                 : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
                                     ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
                                         id,
@@ -242,7 +242,7 @@ const VirtualStorePage: React.FC = () => {
                         } catch (e) {
                             console.error("Failed to parse templates:", e);
                         }
-                        
+
                         const storeMeta = templates.find((t: any) => t.id === 'store');
                         // Always load Korean for the editable fields to ensure consistency
                         setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "가상 스토어");
@@ -258,7 +258,7 @@ const VirtualStorePage: React.FC = () => {
 
 
     // Using "Hunter Amber" (index 4) theme for Store - warm, premium, and commercial
-    const theme = JOSEON_THEMES[4]; 
+    const theme = JOSEON_THEMES[4];
 
     const [storeItems, setStoreItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -292,9 +292,9 @@ const VirtualStorePage: React.FC = () => {
             const url = parentId
                 ? `/api/products/category/store?parentId=${parentId}`
                 : '/api/products/category/store';
-            
+
             console.log(`[VirtualStore] Fetching from: ${url}`);
-            
+
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
@@ -308,7 +308,7 @@ const VirtualStorePage: React.FC = () => {
 
             const data = await response.json();
             console.log(`[VirtualStore] Received ${data?.length} items:`, data);
-            
+
             if (!Array.isArray(data)) {
                 console.error('[VirtualStore] Data is not an array:', data);
                 setStoreItems([]);
@@ -347,10 +347,10 @@ const VirtualStorePage: React.FC = () => {
                 price: dbItem.price || '₩0',
                 agency_id: dbItem.agency_id
             }));
-            
+
             console.log(`[VirtualStore] Loaded ${normalizedData.length} items`);
             setStoreItems(normalizedData);
-            
+
             // Update selectedItem/detailItem references if they exist
             if (selectedItem) {
                 const refreshed = normalizedData.find((i: any) => i.id === selectedItem.id);
@@ -393,21 +393,21 @@ const VirtualStorePage: React.FC = () => {
         setIsEditMode(true);
         setEditingId(item.id);
         setNewTitle(typeof item.title === 'string' ? item.title : item.title.ko);
-        
-        const priceVal = typeof item.price === 'string' 
-            ? item.price 
+
+        const priceVal = typeof item.price === 'string'
+            ? item.price
             : (item.price?.ko || '');
         setNewPrice(priceVal);
 
         setNewShortDescription(getLoc(item.description, 'ko'));
         setNewLongDescription(getLoc(item.long_description, 'ko'));
-        
+
         setPreviewUrl(item.imageUrl);
         setNewImageUrl(item.imageUrl);
-        
+
         setDetailPreviewUrl(item.thumbnailUrl || null);
         setNewDetailImageUrl(item.thumbnailUrl || '');
-        
+
         setLeftSidePreviewUrl(item.leftSideImageUrl || null);
         setNewLeftSideImageUrl(item.leftSideImageUrl || '');
 
@@ -416,7 +416,7 @@ const VirtualStorePage: React.FC = () => {
 
         setBackPreviewUrl(item.backImageUrl || null);
         setNewBackImageUrl(item.backImageUrl || '');
-        
+
         setShowAddModal(true);
     };
 
@@ -425,7 +425,7 @@ const VirtualStorePage: React.FC = () => {
         if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
-            const res = await fetch(`/api/products/${id}`, { 
+            const res = await fetch(`/api/products/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
@@ -480,8 +480,8 @@ const VirtualStorePage: React.FC = () => {
             const uploadFile = async (file: File) => {
                 const formData = new FormData();
                 formData.append('file', file);
-                const uploadRes = await fetch('/api/upload', { 
-                    method: 'POST', 
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
                     body: formData,
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
@@ -529,7 +529,7 @@ const VirtualStorePage: React.FC = () => {
 
             const res = await fetch(endpoint, {
                 method,
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${adminToken}`
                 },
@@ -573,15 +573,15 @@ const VirtualStorePage: React.FC = () => {
 
     const handleSaveMetadata = async () => {
         if (!parentProduct || !parentId) return;
-        
+
         try {
-            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' 
-                ? JSON.parse(parentProduct.selected_templates) 
+            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string'
+                ? JSON.parse(parentProduct.selected_templates)
                 : (parentProduct.selected_templates as any) || [];
-                
+
             // Standardize as array
-            let templates = Array.isArray(selectedTemplatesRaw) 
-                ? selectedTemplatesRaw 
+            let templates = Array.isArray(selectedTemplatesRaw)
+                ? selectedTemplatesRaw
                 : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
                     ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
                         id,
@@ -593,8 +593,8 @@ const VirtualStorePage: React.FC = () => {
 
             // Check if store template already exists in the selection
             const hasStore = templates.some((t: any) => t.id === 'store');
-            
-            const updatedTemplates = hasStore 
+
+            const updatedTemplates = hasStore
                 ? templates.map((t: any) => t.id === 'store' ? {
                     ...t,
                     title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
@@ -606,12 +606,12 @@ const VirtualStorePage: React.FC = () => {
                     title: { ko: tempTitle },
                     description: { ko: tempDesc }
                 }];
-            
+
             const updatedProduct = {
                 ...parentProduct,
                 selected_templates: updatedTemplates
             };
-            
+
             await updateProduct(parentId, updatedProduct);
             setParentProduct(updatedProduct as any);
             setIsEditingMetadata(false);
@@ -660,7 +660,7 @@ const VirtualStorePage: React.FC = () => {
             setShowCheckoutModal(false);
             setPurchaseComplete(true);
             setTimeout(() => setPurchaseComplete(false), 3000);
-            
+
             const successMsg = await translateAsync('주문이 완료되었습니다.');
             alert(successMsg);
         } catch (error) {
@@ -687,7 +687,7 @@ const VirtualStorePage: React.FC = () => {
             <header className="relative w-full py-12 px-6 md:px-12 border-b z-[50]" style={{ borderColor: `${theme.color3}22` }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-center mb-6 relative z-[60]">
-                        <button 
+                        <button
                             onClick={() => {
                                 if (window.history.state && window.history.state.idx > 0) {
                                     navigate(-1);
@@ -708,7 +708,7 @@ const VirtualStorePage: React.FC = () => {
 
                         {isManagementAllowed && (
                             <div className="flex gap-2 relative z-[70]">
-                                <button 
+                                <button
                                     onClick={() => {
                                         if (isEditingMetadata) {
                                             handleSaveMetadata();
@@ -723,14 +723,14 @@ const VirtualStorePage: React.FC = () => {
                                     <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
                                 </button>
                                 {isEditingMetadata && (
-                                    <button 
+                                    <button
                                         onClick={() => setIsEditingMetadata(false)}
                                         className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
-                                <button 
+                                <button
                                     onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
                                     className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
                                     style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
@@ -741,36 +741,36 @@ const VirtualStorePage: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    
+
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div className="max-w-3xl">
-                             <div className="flex items-center gap-4 mb-3">
-                                <Link 
+                            <div className="flex items-center gap-4 mb-3">
+                                <Link
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all relative z-[60]" 
-                                     style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor, border: `1px solid ${theme.color3}33` }}>
+                                    className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all relative z-[60]"
+                                    style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor, border: `1px solid ${theme.color3}33` }}>
                                     <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-12 bg-white/10" />
                                 <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20">Virtual Commerce V2</span>
                             </div>
-                            
+
                             {isEditingMetadata ? (
-                                <textarea 
+                                <textarea
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
                                     className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-4 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
                                     rows={2}
                                 />
                             ) : (
-                                <h1 className="text-4xl md:text-7xl font-sans font-black mb-4 leading-tight uppercase tracking-tighter" 
+                                <h1 className="text-4xl md:text-7xl font-sans font-black mb-4 leading-tight uppercase tracking-tighter"
                                     style={{ color: theme.highlightColor, textShadow: `0 0 40px ${theme.glowColor}22` }}>
                                     <AutoTranslatedText text={tempTitle} />
                                 </h1>
                             )}
 
                             {isEditingMetadata ? (
-                                <textarea 
+                                <textarea
                                     value={tempDesc}
                                     onChange={(e) => setTempDesc(e.target.value)}
                                     className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-sm md:text-base opacity-60 max-w-2xl leading-relaxed mb-4 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
@@ -784,7 +784,7 @@ const VirtualStorePage: React.FC = () => {
                                 )
                             )}
                         </div>
-                        
+
                         <div className="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
                             <div className="px-6 py-4 flex flex-col items-center border-r border-white/10">
                                 <span className="text-xl font-black" style={{ color: theme.highlightColor }}>{storeItems.length}</span>
@@ -799,34 +799,34 @@ const VirtualStorePage: React.FC = () => {
             </header>
 
             <main className="container mx-auto px-6 md:px-12 py-12 space-y-20">
-                
+
                 {/* 1. Product Slider Section */}
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center" style={{ color: theme.accentColor }}>
+                            <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center" style={{ color: theme.accentColor }}>
                                 <Tag size={16} />
-                             </div>
-                             <h3 className="text-xl font-black uppercase tracking-tight text-white/80">
+                            </div>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-white/80">
                                 <AutoTranslatedText text="Collection Slider" />
-                             </h3>
+                            </h3>
                         </div>
                         <div className="flex gap-2">
-                             <button onClick={() => scrollSlider('left')} className="p-2 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
+                            <button onClick={() => scrollSlider('left')} className="p-2 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
                                 <ChevronLeft size={20} className="text-white/40" />
-                             </button>
-                             <button onClick={() => scrollSlider('right')} className="p-2 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
+                            </button>
+                            <button onClick={() => scrollSlider('right')} className="p-2 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
                                 <ChevronRight size={20} className="text-white/40" />
-                             </button>
+                            </button>
                         </div>
                     </div>
 
-                    <div 
+                    <div
                         ref={sliderRef}
                         className="flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar"
                     >
                         {isLoading ? (
-                            [1,2,3,4,5].map(i => (
+                            [1, 2, 3, 4, 5].map(i => (
                                 <div key={i} className="min-w-[280px] h-[380px] rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
                             ))
                         ) : storeItems.map((item) => (
@@ -835,19 +835,18 @@ const VirtualStorePage: React.FC = () => {
                                 whileHover={{ y: -10 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => setSelectedItem(item)}
-                                className={`min-w-[280px] h-[380px] rounded-3xl border transition-all cursor-pointer snap-start relative overflow-hidden group ${
-                                    selectedItem?.id === item.id 
-                                    ? 'border-white/40 bg-white/10 shadow-2xl' 
-                                    : 'border-white/5 bg-white/5 opacity-60 hover:opacity-100 hover:border-white/20'
-                                }`}
+                                className={`min-w-[280px] h-[380px] rounded-3xl border transition-all cursor-pointer snap-start relative overflow-hidden group ${selectedItem?.id === item.id
+                                        ? 'border-white/40 bg-white/10 shadow-2xl'
+                                        : 'border-white/5 bg-white/5 opacity-60 hover:opacity-100 hover:border-white/20'
+                                    }`}
                             >
                                 <img src={item.imageUrl} alt={getLoc(item.title, 'ko')} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 p-8">
-                                     <div className="text-[9px] font-black tracking-widest text-white/40 uppercase mb-2">{getLoc(item.price, i18n.language)}</div>
-                                     <h4 className="text-lg font-black text-white uppercase leading-tight">
+                                    <div className="text-[9px] font-black tracking-widest text-white/40 uppercase mb-2">{getLoc(item.price, i18n.language)}</div>
+                                    <h4 className="text-lg font-black text-white uppercase leading-tight">
                                         <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
-                                     </h4>
+                                    </h4>
                                 </div>
                                 {selectedItem?.id === item.id && (
                                     <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white flex items-center justify-center text-black">
@@ -862,8 +861,8 @@ const VirtualStorePage: React.FC = () => {
                 {/* 2. Interactive 3D Showcase Section */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-8 h-[70vh] rounded-[3.5rem] bg-black/40 border border-white/5 relative overflow-hidden group shadow-inner">
-                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
-                         <Product3DViewer item={selectedItem} />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
+                        <Product3DViewer item={selectedItem} />
                     </div>
 
                     <div className="lg:col-span-4 flex flex-col justify-center gap-10">
@@ -879,46 +878,46 @@ const VirtualStorePage: React.FC = () => {
                                     {selectedItem ? <AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} /> : "---"}
                                 </h2>
                                 <div className="flex items-center gap-4 text-white/60">
-                                     <div className="px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 font-black text-xl">
-                                         {selectedItem ? getLoc(selectedItem.price, i18n.language) : "₩0"}
-                                     </div>
-                                     <div className="text-[10px] font-bold tracking-widest uppercase opacity-40">Tax Included / Global Shipping</div>
+                                    <div className="px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 font-black text-xl">
+                                        {selectedItem ? getLoc(selectedItem.price, i18n.language) : "₩0"}
+                                    </div>
+                                    <div className="text-[10px] font-bold tracking-widest uppercase opacity-40">Tax Included / Global Shipping</div>
                                 </div>
                             </div>
 
                             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-                                 <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30">
-                                     <Info size={12} />
-                                     <AutoTranslatedText text="Product Description" />
-                                 </h5>
-                                 <p className="text-sm text-white/60 leading-relaxed font-medium">
-                                     {selectedItem ? (
-                                         <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || '최고급 소재를 사용하고 한국 전통 공예 전문가의 손길로 완성된 명품 제품입니다.'} />
-                                     ) : (
-                                         <AutoTranslatedText text="상품 정보가 선택되지 않았습니다." />
-                                     )}
-                                 </p>
+                                <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30">
+                                    <Info size={12} />
+                                    <AutoTranslatedText text="Product Description" />
+                                </h5>
+                                <p className="text-sm text-white/60 leading-relaxed font-medium">
+                                    {selectedItem ? (
+                                        <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || '최고급 소재를 사용하고 한국 전통 공예 전문가의 손길로 완성된 명품 제품입니다.'} />
+                                    ) : (
+                                        <AutoTranslatedText text="상품 정보가 선택되지 않았습니다." />
+                                    )}
+                                </p>
                             </div>
 
                             <div className="space-y-4">
-                                <button 
+                                <button
                                     onClick={handlePurchase}
                                     disabled={!selectedItem || isProcessingPayment || purchaseComplete}
                                     className="w-full py-6 rounded-2xl bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50"
                                 >
                                     <AnimatePresence mode="wait">
                                         {isProcessingPayment ? (
-                                            <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                 <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                                 <AutoTranslatedText text="Processing..." />
                                             </motion.div>
                                         ) : purchaseComplete ? (
-                                            <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                            <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                 <Check size={18} />
                                                 <AutoTranslatedText text="Payment Success" />
                                             </motion.div>
                                         ) : (
-                                            <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                            <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                 <CreditCard size={18} />
                                                 <AutoTranslatedText text="결제 진행하기 (Checkout)" />
                                             </motion.div>
@@ -926,42 +925,42 @@ const VirtualStorePage: React.FC = () => {
                                     </AnimatePresence>
                                     <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:left-[100%] transition-all duration-1000" />
                                 </button>
-                                
-                                <button 
-                                     onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
-                                     disabled={!selectedItem}
-                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
-                                 >
-                                      <AutoTranslatedText text="상세설명보기 (View Details)" />
-                                 </button>
 
-                                  {isManagementAllowed && (
-                                     <div className="grid grid-cols-2 gap-4">
-                                         <button 
-                                              onClick={() => selectedItem && handleEditInitiate(selectedItem)}
-                                              disabled={!selectedItem}
-                                              className="py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-20"
-                                         >
-                                              <Pencil size={14} />
-                                              <AutoTranslatedText text="수정 (Edit)" />
-                                         </button>
-                                         <button 
-                                              onClick={() => selectedItem && handleDelete(selectedItem.id)}
-                                              disabled={!selectedItem}
-                                              className="py-6 rounded-2xl bg-white/5 border border-white/10 text-red-500/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 transition-all flex items-center justify-center gap-2 disabled:opacity-20"
-                                         >
-                                              <Trash2 size={14} />
-                                              <AutoTranslatedText text="삭제 (Delete)" />
-                                         </button>
-                                     </div>
-                                 )}
+                                <button
+                                    onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
+                                    disabled={!selectedItem}
+                                    className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
+                                >
+                                    <AutoTranslatedText text="상세설명보기 (View Details)" />
+                                </button>
 
-                                 <button 
-                                     disabled={!selectedItem}
-                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all disabled:opacity-20"
-                                 >
-                                      <AutoTranslatedText text="장바구니 담기 (Add to Cart)" />
-                                 </button>
+                                {isManagementAllowed && (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            onClick={() => selectedItem && handleEditInitiate(selectedItem)}
+                                            disabled={!selectedItem}
+                                            className="py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-20"
+                                        >
+                                            <Pencil size={14} />
+                                            <AutoTranslatedText text="수정 (Edit)" />
+                                        </button>
+                                        <button
+                                            onClick={() => selectedItem && handleDelete(selectedItem.id)}
+                                            disabled={!selectedItem}
+                                            className="py-6 rounded-2xl bg-white/5 border border-white/10 text-red-500/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 transition-all flex items-center justify-center gap-2 disabled:opacity-20"
+                                        >
+                                            <Trash2 size={14} />
+                                            <AutoTranslatedText text="삭제 (Delete)" />
+                                        </button>
+                                    </div>
+                                )}
+
+                                <button
+                                    disabled={!selectedItem}
+                                    className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all disabled:opacity-20"
+                                >
+                                    <AutoTranslatedText text="주문/배송확인 (CHECK ORDER/DELIVERY)" />
+                                </button>
                             </div>
                         </motion.div>
                     </div>
@@ -969,7 +968,7 @@ const VirtualStorePage: React.FC = () => {
 
                 {isManagementAllowed && (
                     <div className="flex justify-center pt-10">
-                        <button 
+                        <button
                             onClick={() => setShowAddModal(true)}
                             className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
                         >
@@ -1013,7 +1012,7 @@ const VirtualStorePage: React.FC = () => {
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                                 <AutoTranslatedText text="상품 명칭" />
                                             </label>
-                                            <input 
+                                            <input
                                                 type="text"
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
@@ -1025,7 +1024,7 @@ const VirtualStorePage: React.FC = () => {
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                                 <AutoTranslatedText text="판매 금액" />
                                             </label>
-                                            <input 
+                                            <input
                                                 type="text"
                                                 value={newPrice}
                                                 onChange={(e) => setNewPrice(e.target.value)}
@@ -1039,7 +1038,7 @@ const VirtualStorePage: React.FC = () => {
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                             <AutoTranslatedText text="상품 한줄 설명" />
                                         </label>
-                                        <input 
+                                        <input
                                             type="text"
                                             value={newShortDescription}
                                             onChange={(e) => setNewShortDescription(e.target.value)}
@@ -1052,7 +1051,7 @@ const VirtualStorePage: React.FC = () => {
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                             <AutoTranslatedText text="세부 상세 설명" />
                                         </label>
-                                        <textarea 
+                                        <textarea
                                             value={newLongDescription}
                                             onChange={(e) => setNewLongDescription(e.target.value)}
                                             rows={4}
@@ -1165,7 +1164,7 @@ const VirtualStorePage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <button 
+                                    <button
                                         onClick={handleAddItem}
                                         disabled={isUploading || !newTitle || (!newImageUrl && !previewUrl)}
                                         className="w-full py-5 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest disabled:opacity-20 translate-y-2 flex items-center justify-center gap-3"
@@ -1202,7 +1201,7 @@ const VirtualStorePage: React.FC = () => {
                             exit={{ y: 50, opacity: 0 }}
                             className="bg-[#0a0a0a] border border-white/10 w-full max-w-5xl h-[85vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative"
                         >
-                            <button 
+                            <button
                                 onClick={() => setShowDetailModal(false)}
                                 className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
                             >
@@ -1210,9 +1209,9 @@ const VirtualStorePage: React.FC = () => {
                             </button>
 
                             <div className="w-full md:w-1/2 h-full bg-black flex items-center justify-center p-12">
-                                <img 
-                                    src={detailItem.thumbnailUrl || detailItem.imageUrl} 
-                                    alt="Detail view" 
+                                <img
+                                    src={detailItem.thumbnailUrl || detailItem.imageUrl}
+                                    alt="Detail view"
                                     className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
                                 />
                             </div>
@@ -1228,42 +1227,42 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="h-[2px] w-12 bg-orange-500/20" />
 
                                 <div className="space-y-6">
-                                     <h5 className="text-[10px] font-black uppercase tracking-widest text-white/20"><AutoTranslatedText text="상세 스토리 & 설명" /></h5>
-                                     <p className="text-lg text-white/60 leading-relaxed font-medium">
-                                          <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || '해당 상품의 상세 설명이 등록되지 않았습니다.'} />
-                                     </p>
+                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-white/20"><AutoTranslatedText text="상세 스토리 & 설명" /></h5>
+                                    <p className="text-lg text-white/60 leading-relaxed font-medium">
+                                        <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || '해당 상품의 상세 설명이 등록되지 않았습니다.'} />
+                                    </p>
                                 </div>
 
-                                 <div className="pt-8 grid grid-cols-2 gap-4">
-                                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                                          <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Category</span>
-                                          <span className="text-xs font-bold text-white uppercase">{detailItem.category}</span>
-                                     </div>
-                                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                                          <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Pricing</span>
-                                          <span className="text-xs font-bold text-white uppercase">{getLoc(detailItem.price, i18n.language)}</span>
-                                     </div>
+                                <div className="pt-8 grid grid-cols-2 gap-4">
+                                    <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Category</span>
+                                        <span className="text-xs font-bold text-white uppercase">{detailItem.category}</span>
+                                    </div>
+                                    <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Pricing</span>
+                                        <span className="text-xs font-bold text-white uppercase">{getLoc(detailItem.price, i18n.language)}</span>
+                                    </div>
                                 </div>
 
                                 <div className="pt-8">
-                                    <button 
+                                    <button
                                         onClick={handlePurchase}
                                         disabled={isProcessingPayment || purchaseComplete}
                                         className="w-full py-8 rounded-[2rem] bg-white text-black font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50 shadow-2xl shadow-white/5"
                                     >
                                         <AnimatePresence mode="wait">
                                             {isProcessingPayment ? (
-                                                <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                     <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                                     <AutoTranslatedText text="Processing..." />
                                                 </motion.div>
                                             ) : purchaseComplete ? (
-                                                <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                     <Check size={18} />
                                                     <AutoTranslatedText text="Payment Success" />
                                                 </motion.div>
                                             ) : (
-                                                <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
+                                                <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                     <CreditCard size={18} />
                                                     <AutoTranslatedText text="지금 결제하기 (Purchase Now)" />
                                                 </motion.div>
@@ -1316,10 +1315,10 @@ const VirtualStorePage: React.FC = () => {
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                                 <AutoTranslatedText text="주문자 성함" />
                                             </label>
-                                            <input 
+                                            <input
                                                 type="text"
                                                 value={orderInfo.name}
-                                                onChange={(e) => setOrderInfo({...orderInfo, name: e.target.value})}
+                                                onChange={(e) => setOrderInfo({ ...orderInfo, name: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
                                                 placeholder="Orderer Name"
                                             />
@@ -1328,10 +1327,10 @@ const VirtualStorePage: React.FC = () => {
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                                 <AutoTranslatedText text="연락처" />
                                             </label>
-                                            <input 
+                                            <input
                                                 type="text"
                                                 value={orderInfo.phone}
-                                                onChange={(e) => setOrderInfo({...orderInfo, phone: e.target.value})}
+                                                onChange={(e) => setOrderInfo({ ...orderInfo, phone: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
                                                 placeholder="010-0000-0000"
                                             />
@@ -1340,9 +1339,9 @@ const VirtualStorePage: React.FC = () => {
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
                                                 <AutoTranslatedText text="배송 주소" />
                                             </label>
-                                            <textarea 
+                                            <textarea
                                                 value={orderInfo.address}
-                                                onChange={(e) => setOrderInfo({...orderInfo, address: e.target.value})}
+                                                onChange={(e) => setOrderInfo({ ...orderInfo, address: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none resize-none"
                                                 rows={3}
                                                 placeholder="Shipping Address"
@@ -1350,7 +1349,7 @@ const VirtualStorePage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <button 
+                                    <button
                                         onClick={handleCompletePayment}
                                         disabled={isProcessingPayment || !orderInfo.name || !orderInfo.phone || !orderInfo.address}
                                         className="w-full py-5 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest disabled:opacity-20 flex items-center justify-center gap-3"
@@ -1377,12 +1376,12 @@ const VirtualStorePage: React.FC = () => {
 
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
-                 <div className="container mx-auto flex flex-col items-center gap-6">
-                      <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">DEPT. STORE IMMERSIVE</div>
-                      <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
-                         The convergence of traditional aesthetics and cutting-edge virtual commerce technology.
-                      </p>
-                 </div>
+                <div className="container mx-auto flex flex-col items-center gap-6">
+                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">DEPT. STORE IMMERSIVE</div>
+                    <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
+                        The convergence of traditional aesthetics and cutting-edge virtual commerce technology.
+                    </p>
+                </div>
             </footer>
         </div>
     );
