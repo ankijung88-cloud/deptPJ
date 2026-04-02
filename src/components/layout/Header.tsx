@@ -27,7 +27,7 @@ const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { isImmersive, breadcrumbPath } = useNavigationState();
-    
+
     // Dynamic Theme Detection
     const getThemeData = () => {
         const path = location.pathname;
@@ -143,8 +143,8 @@ const Header: React.FC = () => {
 
         // MutationObserver to handle dynamic videos (e.g., modals, lazy-loaded components)
         const observer = new MutationObserver(syncVideos);
-        observer.observe(document.body, { 
-            childList: true, 
+        observer.observe(document.body, {
+            childList: true,
             subtree: true,
             attributes: true,
             attributeFilter: ['data-has-sound']
@@ -165,7 +165,7 @@ const Header: React.FC = () => {
             level: 1,
             label: t('nav.floor1'),
             subitems: [
-                { id: 'global', label: '글로벌 트렌드', path: '/category/global' },
+                { id: 'global', label: 'CAR 케어', path: '/category/global' },
                 { id: 'window', label: '디지털 쇼윈도', path: '/category/window' },
                 { id: 'f1_kpop', label: 'K-팝 스테이지', path: '/category/f1_kpop' },
                 { id: 'f1_library', label: '트렌드 라이브러리', path: '/category/f1_library' },
@@ -201,7 +201,7 @@ const Header: React.FC = () => {
             level: 4,
             label: t('nav.floor4'),
             subitems: [
-                { id: 'talk', label: '문화 담론', path: '/category/talk' },
+                { id: 'talk', label: '게더 몰', path: '/category/talk' },
                 { id: 'interview', label: '아티스트 인터뷰', path: '/category/interview' },
                 { id: 'f4_plus', label: '토크 플러스', path: '/category/f4_plus' },
                 { id: 'f4_book', label: '도서관 섹션', path: '/category/f4_book' },
@@ -249,17 +249,17 @@ const Header: React.FC = () => {
         >
             {/* Curved Technical Blueprint Lines (SVG Precision Implementation) */}
             <div className={`absolute bottom-0 left-0 right-0 h-5 pointer-events-none transition-opacity duration-700 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
-                <svg 
-                    viewBox="0 0 1000 16" 
-                    preserveAspectRatio="none" 
+                <svg
+                    viewBox="0 0 1000 16"
+                    preserveAspectRatio="none"
                     className="absolute bottom-0 left-0 right-0 w-full h-4"
                     style={{ transform: 'translateY(0.5px)' }}
                 >
                     {/* Measurement Ticks (SVG Dash Array) */}
-                    <path 
-                        d="M 0 0 A 500 16 0 0 0 1000 0" 
-                        fill="none" 
-                        stroke={theme.accentColor} 
+                    <path
+                        d="M 0 0 A 500 16 0 0 0 1000 0"
+                        fill="none"
+                        stroke={theme.accentColor}
                         strokeWidth="4"
                         strokeDasharray="1,24"
                         className="opacity-40"
@@ -267,10 +267,10 @@ const Header: React.FC = () => {
                     />
 
                     {/* Secondary Ticks (Offset) */}
-                    <path 
-                        d="M 0 0 A 500 16 0 0 0 1000 0" 
-                        fill="none" 
-                        stroke={theme.highlightColor} 
+                    <path
+                        d="M 0 0 A 500 16 0 0 0 1000 0"
+                        fill="none"
+                        stroke={theme.highlightColor}
                         strokeWidth="2"
                         strokeDasharray="1,12"
                         className="opacity-20"
@@ -278,30 +278,30 @@ const Header: React.FC = () => {
                     />
 
                     {/* Main Technical Lines */}
-                    <path 
-                        d="M 0 0 A 500 16 0 0 0 1000 0" 
-                        fill="none" 
-                        stroke={theme.accentColor} 
+                    <path
+                        d="M 0 0 A 500 16 0 0 0 1000 0"
+                        fill="none"
+                        stroke={theme.accentColor}
                         strokeWidth="1.5"
                         vectorEffect="non-scaling-stroke"
                         className="brightness-150"
                         style={{ filter: `drop-shadow(0 0 8px ${theme.accentColor}cc)` }}
                     />
-                    
+
                     {/* Offset Inner Lines for Depth */}
-                    <path 
-                        d="M 0 -2 A 500 16 0 0 0 1000 -2" 
-                        fill="none" 
-                        stroke={theme.accentColor} 
+                    <path
+                        d="M 0 -2 A 500 16 0 0 0 1000 -2"
+                        fill="none"
+                        stroke={theme.accentColor}
                         strokeWidth="0.5"
                         vectorEffect="non-scaling-stroke"
                         className="opacity-30"
                     />
-                    
-                    <path 
-                        d="M 0 -4 A 500 16 0 0 0 1000 -4" 
-                        fill="none" 
-                        stroke={theme.accentColor} 
+
+                    <path
+                        d="M 0 -4 A 500 16 0 0 0 1000 -4"
+                        fill="none"
+                        stroke={theme.accentColor}
                         strokeWidth="0.5"
                         vectorEffect="non-scaling-stroke"
                         className="opacity-10"
@@ -405,53 +405,53 @@ const Header: React.FC = () => {
                                     localStorage.setItem('isGlobalMuted', String(next));
                                     window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
                                 }}
-                            className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
-                            onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
-                            onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
-                            title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
-                        >
-                            {isGlobalMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                        </button>
-
-                        <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
-
-                        {/* Search */}
-                        <div className="relative flex items-center justify-end">
-                            <div
-                                className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/10 backdrop-blur-md w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
-                                    }`}
-                                style={isSearchOpen ? { border: `1px solid ${theme.borderColor}/40` } : {}}
+                                className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
+                                onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
+                                onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
+                                title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                             >
-                                <button
-                                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                    className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70')}`}
-                                    style={isSearchOpen ? theme.highlightStyle : {}}
-                                    title={t('nav.search')}
-                                >
-                                    <Search size={18} />
-                                </button>
-                                <input
-                                    ref={searchInputRef}
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    onKeyDown={handleSearch}
-                                    placeholder={t('search.placeholder')}
-                                    className={`w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
+                                {isGlobalMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                            </button>
+
+                            <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
+
+                            {/* Search */}
+                            <div className="relative flex items-center justify-end">
+                                <div
+                                    className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/10 backdrop-blur-md w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
                                         }`}
-                                />
-                                {isSearchOpen && (
+                                    style={isSearchOpen ? { border: `1px solid ${theme.borderColor}/40` } : {}}
+                                >
                                     <button
-                                        onClick={() => setIsSearchOpen(false)}
-                                        className="text-dancheong-white/50 shrink-0 ml-1 transition-colors"
-                                        onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
-                                        onMouseLeave={e => e.currentTarget.style.color = ''}
+                                        onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                        className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70')}`}
+                                        style={isSearchOpen ? theme.highlightStyle : {}}
+                                        title={t('nav.search')}
                                     >
-                                        <X size={16} />
+                                        <Search size={18} />
                                     </button>
-                                )}
+                                    <input
+                                        ref={searchInputRef}
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onKeyDown={handleSearch}
+                                        placeholder={t('search.placeholder')}
+                                        className={`w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
+                                            }`}
+                                    />
+                                    {isSearchOpen && (
+                                        <button
+                                            onClick={() => setIsSearchOpen(false)}
+                                            className="text-dancheong-white/50 shrink-0 ml-1 transition-colors"
+                                            onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
+                                            onMouseLeave={e => e.currentTarget.style.color = ''}
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
                             <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
 
