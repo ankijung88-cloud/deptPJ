@@ -11,10 +11,12 @@ import { ArrowRight, BookOpen } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
-    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌'],
+    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global'],
+    'floor-1': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global'],
     'floor-2': ['Trend', 'popup', 'collab', 'pop', 'sync', '팝업', '협업'],
     'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
-    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰'],
+    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk'],
+    'floor-4': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk'],
     'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브'],
     'floor-6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산'],
     'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
@@ -37,7 +39,14 @@ const FloorContentPage: React.FC = () => {
             setLoading(true);
             try {
                 const floors = await getFloorCategories();
-                const currentFloor = floors.find(f => f.id === categoryId);
+                let currentFloor = floors.find(f => f.id === categoryId);
+                
+                // Legacy ID Fallback
+                if (!currentFloor) {
+                    if (categoryId === 'floor-tech-care') currentFloor = floors.find(f => f.id === 'floor-1');
+                    if (categoryId === 'floor-gather-mall') currentFloor = floors.find(f => f.id === 'floor-4');
+                }
+                
                 if (mounted) setFloorData(currentFloor || null);
                 const targetInternalCategories = CATEGORY_FILTERS[categoryId] || [];
                 if (targetInternalCategories.length === 0) {

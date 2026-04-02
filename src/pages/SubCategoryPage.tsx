@@ -89,9 +89,23 @@ const SubCategoryPage: React.FC = () => {
 
     const targetSubId = subId || '';
 
-    // Find parent floor from dynamic floors
-    const parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
-    const subcategoryData = parentFloor?.subitems?.find(s => s.id === targetSubId) || null;
+    // Legacy ID mapping
+    const getLegacyId = (id: string) => {
+        if (id === 'car-care') return 'global';
+        if (id === 'b2b-mall') return 'talk';
+        return null;
+    };
+
+    const legacySubId = getLegacyId(targetSubId);
+    
+    let parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
+    if (!parentFloor && legacySubId) {
+        parentFloor = floors.find(f => f.subitems?.some(s => s.id === legacySubId)) || null;
+    }
+
+    const subcategoryData = parentFloor?.subitems?.find(s => 
+        s.id === targetSubId || (legacySubId && s.id === legacySubId)
+    ) || null;
 
 
     useEffect(() => {
@@ -106,11 +120,26 @@ const SubCategoryPage: React.FC = () => {
                             'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
                         }
                     }),
-                    fetch(`/api/categories/nav?subcategory=${targetSubId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                    (async () => {
+                        const original = await fetch(`/api/categories/nav?subcategory=${targetSubId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                            }
+                        });
+                        
+                        // Fallback for stories
+                        if (legacySubId) {
+                            const data = await original.clone().json();
+                            if ((!data || data.length === 0) || !original.ok) {
+                                return fetch(`/api/categories/nav?subcategory=${legacySubId}`, {
+                                    headers: {
+                                        'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                                    }
+                                });
+                            }
                         }
-                    })
+                        return original;
+                    })()
                 ]);
 
                 if (mounted) {
@@ -127,8 +156,9 @@ const SubCategoryPage: React.FC = () => {
                                 if (targetSubId) {
                                     // Robust matching:
                                     // 1. Exact ID match (e.g., 'f4_book' === 'f4_book')
-                                    // 2. Label match (e.g., DB has '도서관 섹션' and targetSubId is 'f4_book' which labels to '도서관 섹션')
-                                    const exactMatch = item.subcategory === targetSubId;
+                                    // 2. Legacy ID match (e.g., 'car-care' matches 'global' from DB)
+                                    // 3. Label match (e.g., DB has '도서관 섹션' and targetSubId is 'f4_book' which labels to '도서관 섹션')
+                                    const exactMatch = item.subcategory === targetSubId || (legacySubId && item.subcategory === legacySubId);
                                     
                                     // Check if the current subcategory label matches
                                     const labelMatch = subcategoryData && subcategoryData.label && (
@@ -139,7 +169,6 @@ const SubCategoryPage: React.FC = () => {
                                         ))
                                     );
 
-                                    
                                     const match = exactMatch || !!labelMatch;
                                     return match;
                                 }

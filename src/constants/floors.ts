@@ -29,12 +29,12 @@ export const FLOORS = [
     },
     {
         level: 4,
-        title: 'CULTURE TALK',
+        title: 'GATHER MALL',
         label: '4F',
         color: '#F8FAFF', // White (West)
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'talk', label: '문화 담론' },
+            { id: 'b2b-mall', label: 'B2B 몰' },
             { id: 'interview', label: '아티스트 인터뷰' },
             { id: 'f4_plus', label: '토크 플러스' },
             { id: 'f4_book', label: '도서관 섹션' },
@@ -71,12 +71,12 @@ export const FLOORS = [
     },
     {
         level: 1,
-        title: 'K-CULTURE TRENDS',
+        title: 'TECH & CARE',
         label: '1F',
         color: '#0A0D17', // Black (North/Void Navy)
         videoUrl: '/uploads/k-culture.mp4',
         subcategories: [
-            { id: 'global', label: '글로벌 트렌드' },
+            { id: 'car-care', label: 'CAR 케어' },
             { id: 'window', label: '디지털 쇼윈도' },
             { id: 'f1_kpop', label: 'K-팝 스테이지' },
             { id: 'f1_library', label: '트렌드 라이브러리' },
