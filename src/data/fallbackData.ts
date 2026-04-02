@@ -34,15 +34,15 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         ]
     },
     {
-        id: 'floor-4',
+        id: 'floor-gather-mall',
         floor: '4F',
-        title: { ko: '컬처 토크', en: 'CULTURE TALK' },
+        title: { ko: '게더 몰', en: 'GATHER MALL' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
         videoUrl: '/uploads/travel.mp4',
         color: '#FF4757', // 4F - Vibrant Red (Culture)
         content: [],
         subitems: [
-            { id: 'talk', label: { ko: '문화 담론', en: 'Cultural Talk' } },
+            { id: 'b2b-mall', label: { ko: 'B2B 몰', en: 'B2B Mall' } },
             { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview' } },
             { id: 'f4_plus', label: { ko: '토크 플러스', en: 'Talk Plus' } },
             { id: 'f4_book', label: { ko: '도서관 섹션', en: 'Book Section' } },
@@ -82,15 +82,15 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         ]
     },
     {
-        id: 'floor-1',
+        id: 'floor-tech-care',
         floor: '1F',
-        title: { ko: 'K-컬처 트렌드', en: 'K-CULTURE TRENDS' },
-        description: { ko: '한국의 아름다운 전통과 현대 예술이 조화를 이루는 프리미엄 갤러리입니다.', en: 'A premium gallery where beautiful Korean tradition harmonizes with modern art.' },
+        title: { ko: '테크 앤 케어', en: 'TECH & CARE' },
+        description: { ko: '자동차 기술의 혁신과 라이프스타일 케어가 만나는 미래형 공간입니다.', en: 'A futuristic space where automotive innovation meets lifestyle care.' },
         videoUrl: '/uploads/k-culture.mp4',
         color: '#FFD32A', // 1F - Sunny Yellow (Trends)
         content: [],
         subitems: [
-            { id: 'global', label: { ko: '글로벌 트렌드', en: 'Global Trend' } },
+            { id: 'car-care', label: { ko: 'CAR 케어', en: 'CAR Care' } },
             { id: 'window', label: { ko: '디지털 쇼윈도', en: 'Digital Window' } },
             { id: 'f1_kpop', label: { ko: 'K-팝 스테이지', en: 'K-Pop Stage' } },
             { id: 'f1_library', label: { ko: '트렌드 라이브러리', en: 'Trend Library' } },
@@ -137,10 +137,10 @@ export const FALLBACK_PRODUCTS: any[] = [
     { id: 'p5-3', subcategory: 'f5_material', category: 'floor-5', title: { ko: '특수 가공 한지 섬유 샘플러', en: 'Specially Processed Hanji Fiber Sampler' }, description: { ko: '친환경적이며 통기성이 뛰어난 혁신 소재입니다.', en: 'An innovative material that is eco-friendly and highly breathable.' }, image_url: '/DEPT_Logo.png', price: '15,000₩' },
     { id: 'p5-4', subcategory: 'f5_fitting', category: 'floor-5', title: { ko: '3D 스마트 피팅 서비스권', en: '3D Smart Fitting Service Pass' }, description: { ko: '정밀 스캔을 통한 완벽한 핏의 맞춤복 솔루션입니다.', en: 'A custom clothing solution with a perfect fit through precision scanning.' }, image_url: '/DEPT_Logo.png', price: '120,000₩' },
 
-    // 4F Culture Talk
-    { id: 'p4-1', subcategory: 'talk', category: 'floor-4', title: { ko: '명사 초청 문화 담론 티켓', en: 'VIP Cultural Discourse Ticket' }, description: { ko: '당대 최고의 지성들과 나누는 깊이 있는 대화입니다.', en: 'In-depth conversations with the greatest minds of our time.' }, image_url: '/DEPT_Logo.png', price: '50,000₩' },
-    { id: 'p4-2', subcategory: 'interview', category: 'floor-4', title: { ko: '아티스트 인터뷰 영상 아카이브', en: 'Artist Interview Video Archive' }, description: { ko: '작가의 철학을 날것 그대로 담아낸 독점 인터뷰입니다.', en: 'Exclusive interviews capturing the artist\'s philosophy in its raw form.' }, image_url: '/DEPT_Logo.png', price: '15,000₩' },
-    { id: 'p4-3', subcategory: 'f4_book', category: 'floor-4', title: { ko: '디자인 총서 화보집', en: 'Design Series Art Book' }, description: { ko: '수동적 독서를 넘어 영감을 주는 시각 예술 도서입니다.', en: 'A visual art book that goes beyond passive reading and provides inspiration.' }, image_url: '/DEPT_Logo.png', price: '95,000₩' },
+    // 4F Gather Mall
+    { id: 'p4-1', subcategory: 'b2b-mall', category: 'floor-gather-mall', title: { ko: '명사 초청 문화 담론 티켓', en: 'VIP Cultural Discourse Ticket' }, description: { ko: '당대 최고의 지성들과 나누는 깊이 있는 대화입니다.', en: 'In-depth conversations with the greatest minds of our time.' }, image_url: '/DEPT_Logo.png', price: '50,000₩' },
+    { id: 'p4-2', subcategory: 'interview', category: 'floor-gather-mall', title: { ko: '아티스트 인터뷰 영상 아카이브', en: 'Artist Interview Video Archive' }, description: { ko: '작가의 철학을 날것 그대로 담아낸 독점 인터뷰입니다.', en: 'Exclusive interviews capturing the artist\'s philosophy in its raw form.' }, image_url: '/DEPT_Logo.png', price: '15,000₩' },
+    { id: 'p4-3', subcategory: 'f4_book', category: 'floor-gather-mall', title: { ko: '디자인 총서 화보집', en: 'Design Series Art Book' }, description: { ko: '수동적 독서를 넘어 영감을 주는 시각 예술 도서입니다.', en: 'A visual art book that goes beyond passive reading and provides inspiration.' }, image_url: '/DEPT_Logo.png', price: '95,000₩' },
 
     // 3F Lifestyle Curation
     { id: 'p3-1', subcategory: 'performance', category: 'floor-3', title: { ko: '미디어 융합 실감 공연 티켓', en: 'Media Convergence Immersive Performance Ticket' }, description: { ko: '무대와 기술이 하나되는 압도적 공연의 순간입니다.', en: 'A moment of overwhelming performance where the stage and technology become one.' }, image_url: '/DEPT_Logo.png', price: '110,000₩' },
@@ -152,19 +152,19 @@ export const FALLBACK_PRODUCTS: any[] = [
     { id: 'p2-2', subcategory: 'pop', category: 'floor-2', title: { ko: '카라이네 한정판 피규어 세트', en: 'Karaine Limited Edition Figure Set' }, description: { ko: '전 세계 100세트 한정 제작된 캐릭터 컬렉터블입니다.', en: 'Character collectibles limited to 100 sets worldwide.' }, image_url: '/DEPT_Logo.png', price: '450,000₩' },
     { id: 'p2-3', subcategory: 'f2_art', category: 'floor-2', title: { ko: '스트릿 아티스트 콜라보 스니커즈', en: 'Street Artist Collab Sneakers' }, description: { ko: '거리의 에너지를 담은 대담한 디자인의 스니커즈입니다.', en: 'Sneakers with a bold design containing the energy of the street.' }, image_url: '/DEPT_Logo.png', price: '249,000₩' },
 
-    // 1F K-Culture Trends
-    { id: 'p1-1', subcategory: 'global', category: 'floor-1', title: { ko: 'K-POP 월드 투어 글로벌 공식 굿즈', en: 'K-POP World Tour Global Official Goods' }, description: { ko: '글로벌 팬덤을 위한 리미티드 패키지입니다.', en: 'A limited package for the global fandom.' }, image_url: '/DEPT_Logo.png', price: '75,000₩' },
-    { id: 'p1-2', subcategory: 'window', category: 'floor-1', title: { ko: '스마트 시티 홀로그램 키트', en: 'Smart City Hologram Kit' }, description: { ko: '내 손안의 작은 서울을 구현하는 테크 키트입니다.', en: 'A tech kit that implements a small Seoul in your hands.' }, image_url: '/DEPT_Logo.png', price: '129,000₩' },
-    { id: 'p1-3', subcategory: 'f1_kpop', category: 'floor-1', title: { ko: '가상 아이돌 데뷔 앨범 컨셉 아트', en: 'Virtual Idol Debut Album Concept Art' }, description: { ko: '가상 세계의 스타를 현실로 소환하는 아트 컬렉션입니다.', en: 'An art collection that summons stars from the virtual world to reality.' }, image_url: '/DEPT_Logo.png', price: '55,000₩' }
+    // 1F Tech & Care
+    { id: 'p1-1', subcategory: 'car-care', category: 'floor-tech-care', title: { ko: '프리미엄 세정 및 코팅 키트', en: 'Premium Washing & Coating Kit' }, description: { ko: '전문가의 손길을 집에서도 경험할 수 있는 하이엔드 카케어 세트입니다.', en: 'A high-end car care set to experience a professional touch at home.' }, image_url: '/DEPT_Logo.png', price: '75,000₩' },
+    { id: 'p1-2', subcategory: 'window', category: 'floor-tech-care', title: { ko: '스마트 시티 홀로그램 키트', en: 'Smart City Hologram Kit' }, description: { ko: '내 손안의 작은 서울을 구현하는 테크 키트입니다.', en: 'A tech kit that implements a small Seoul in your hands.' }, image_url: '/DEPT_Logo.png', price: '129,000₩' },
+    { id: 'p1-3', subcategory: 'f1_kpop', category: 'floor-tech-care', title: { ko: '가상 아이돌 데뷔 앨범 컨셉 아트', en: 'Virtual Idol Debut Album Concept Art' }, description: { ko: '가상 세계의 스타를 현실로 소환하는 아트 컬렉션입니다.', en: 'An art collection that summons stars from the virtual world to reality.' }, image_url: '/DEPT_Logo.png', price: '55,000₩' }
 ];
 
 export const FALLBACK_STORIES: any[] = [
     { id: 's6-1', subcategory: 'heritage', title: '잊혀진 궁궐의 노래', content: '서울의 중심에서 잠자고 있던 옛 이야기들을 현대적으로 발굴해냅니다.', image_url: '/DEPT_Logo.png' },
     { id: 's5-1', subcategory: 'archive', title: '실을 잣는 마음', content: '전통 섬유 소재가 현대 패션의 주역이 되기까지의 긴 여정을 담았습니다.', image_url: '/DEPT_Logo.png' },
-    { id: 's4-1', subcategory: 'talk', title: '목소리의 파동', content: '담론과 대화가 어떻게 세상을 바꾸는지 작가들의 목소리로 들어봅니다.', image_url: '/DEPT_Logo.png' },
+    { id: 's4-1', subcategory: 'b2b-mall', title: '목소리의 파동', content: '담론과 대화가 어떻게 세상을 바꾸는지 작가들의 목소리로 들어봅니다.', image_url: '/DEPT_Logo.png' },
     { id: 's3-1', subcategory: 'performance', title: '무대의 확장', content: '공연이 끝난 후에도 남는 여운, 그 이상의 감동을 가공공간에서 이어갑니다.', image_url: '/DEPT_Logo.png' },
     { id: 's2-1', subcategory: 'sync', title: '초연결의 일상', content: '기술과 사람이 만나는 접점에서 발생하는 새로운 시너지를 탐구합니다.', image_url: '/DEPT_Logo.png' },
-    { id: 's1-1', subcategory: 'global', title: 'K-웨이브의 근원', content: '한국 문화가 전 세계를 매료시킨 이유, 그 저변의 트렌드를 분석합니다.', image_url: '/DEPT_Logo.png' }
+    { id: 's1-1', subcategory: 'car-care', title: '혁신적 디테일링의 세계', content: '자동차를 아끼는 마음에서 시작된 기술의 정점, 새로운 케어 패러다임을 제안합니다.', image_url: '/DEPT_Logo.png' }
 ];
 
 export const FALLBACK_NOTICES: Notice[] = [

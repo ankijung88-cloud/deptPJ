@@ -804,7 +804,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 value={formData.parent_id || ''} 
                                 onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
                                 className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
-                                placeholder="연결할 상위 제품의 ID를 입력하세요 (예: global-exchange-week)"
+                                placeholder="연결할 상위 제품의 ID를 입력하세요 (예: car-care-exchange-week)"
                             />
                             <p className="text-[10px] text-white/30 mt-2 px-1">
                                 * 템플릿(Cinema, Museum 등) 데이터는 상위 제품 ID가 정확히 입력되어야 해당 페이지에서 노출됩니다.

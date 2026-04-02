@@ -161,11 +161,11 @@ const Header: React.FC = () => {
 
     const navItems: NavItem[] = [
         {
-            id: 'floor1',
+            id: 'floor-tech-care',
             level: 1,
-            label: t('nav.floor1'),
+            label: t('nav.floor-tech-care'),
             subitems: [
-                { id: 'global', label: 'CAR 케어', path: '/category/global' },
+                { id: 'car-care', label: t('subcategory.car-care'), path: '/category/car-care' },
                 { id: 'window', label: '디지털 쇼윈도', path: '/category/window' },
                 { id: 'f1_kpop', label: 'K-팝 스테이지', path: '/category/f1_kpop' },
                 { id: 'f1_library', label: '트렌드 라이브러리', path: '/category/f1_library' },
@@ -197,11 +197,11 @@ const Header: React.FC = () => {
             ]
         },
         {
-            id: 'floor4',
+            id: 'floor-gather-mall',
             level: 4,
-            label: t('nav.floor4'),
+            label: t('nav.floor-gather-mall'),
             subitems: [
-                { id: 'talk', label: '게더 몰', path: '/category/talk' },
+                { id: 'b2b-mall', label: t('subcategory.b2b-mall'), path: '/category/b2b-mall' },
                 { id: 'interview', label: '아티스트 인터뷰', path: '/category/interview' },
                 { id: 'f4_plus', label: '토크 플러스', path: '/category/f4_plus' },
                 { id: 'f4_book', label: '도서관 섹션', path: '/category/f4_book' },

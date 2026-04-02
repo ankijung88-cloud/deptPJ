@@ -11,10 +11,10 @@ import { ArrowRight, BookOpen } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
-    'floor-1': ['Trend', 'trend', 'global', 'window', 'exchange', '글로벌'],
+    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌'],
     'floor-2': ['Trend', 'popup', 'collab', 'pop', 'sync', '팝업', '협업'],
     'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
-    'floor-4': ['Art', 'art', 'class', 'talk', 'interview', '문화', '토크', '인터뷰'],
+    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰'],
     'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브'],
     'floor-6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산'],
     'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
