@@ -9,7 +9,7 @@ const resources = {
             "floor_guide": "층별 안내",
             "nav": {
                 "login": "로그인",
-                "gallery": "department",
+                "gallery": "VIA STATION",
                 "floor-tech-care": "1F | 테크 앤 케어",
                 "floor2": "2F | 뷰티 앤 케어",
                 "floor3": "3F | 라이프스타일 큐레이션",
@@ -31,19 +31,19 @@ const resources = {
 
             "hero": {
                 "title": "시선과 취향이 만나는 곳",
-                "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, department",
+                "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, VIA STATION",
                 "cta": "층별 안내 보기",
                 "tagline": "한국의 유산과 현대적 공간",
-                "title_main": "디파트먼트",
-                "title_sub": "OF K-CULTURE",
-                "description": "전통과 현대가 어우어진 새로운 공간의 재해석. 우리의 유산에서 영감을 얻어 시대를 앞서가는 경험을 제안합니다.",
+                "title_main": "VIA STATION",
+                "title_sub": "THE VIRTUAL GATEWAY",
+                "description": "전통과 현대가 어우러진 새로운 공간의 재해석. 우리의 유산에서 영감을 얻어 시대를 앞서가는 경험을 제안합니다.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
                 "philosophy": "브랜드 철학",
                 "arrived": "가상의 공간에 도착했습니다",
-                "welcome": "Welcome to the Virtual Gateway",
-                "site_description": "당신의 시선이 머무는 모든 곳이 예술이 되는 공간. 전통의 가치와 현대의 감각이 공존하는 프리미엄 문화 큐레이션 플랫폼 department입니다.",
+                "welcome": "Welcome to VIA STATION",
+                "site_description": "당신의 시선이 머무는 모든 곳이 예술이 되는 공간. 전통의 가치와 현대의 감각이 공존하는 프리미엄 문화 큐레이션 플랫폼 VIA STATION입니다.",
                 "start": "시작하기"
             },
             "subcategory": {
@@ -118,9 +118,9 @@ const resources = {
                 "no_content": "등록된 콘텐츠가 없습니다."
             },
             "about": {
-                "title": "취향이 살아 숨쉬는 공간, department",
+                "title": "취향이 살아 숨쉬는 공간, VIA STATION",
                 "subtitle": "전통의 깊이와 현대의 감각이 교차하는 아트 갤러리 백화점",
-                "description1": "department은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
+                "description1": "VIA STATION은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
                 "description2": "가장 트렌디한 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
                 "cta": "브랜드 철학 보기"
             },
@@ -143,7 +143,7 @@ const resources = {
             },
             "footer": {
                 "address": "서울특별시 중구 소공로 123",
-                "copyright": "© 2026 Culture Dept. Store. All rights reserved.",
+                "copyright": "© 2026 VIA STATION. All rights reserved.",
                 "privacy": "개인정보처리방침",
                 "terms": "이용약관",
                 "shop": "SHOP",
