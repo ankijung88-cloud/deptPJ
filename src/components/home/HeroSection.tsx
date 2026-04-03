@@ -175,6 +175,16 @@ export const HeroSection: React.FC = () => {
                             <motion.p
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
+                                transition={{ delay: 0.8, duration: 1 }}
+                                className="text-white/60 tracking-[0.4em] uppercase text-sm mb-6"
+                            >
+                                <AutoTranslatedText text={t('hero.welcome')} />
+                            </motion.p>
+
+
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
                                 transition={{ delay: 1.6, duration: 1 }}
                                 className="text-white/40 max-w-lg mx-auto mt-4 text-xs md:text-sm leading-relaxed break-keep"
                             >
