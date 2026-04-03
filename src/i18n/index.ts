@@ -56,7 +56,7 @@ const resources = {
                 "hair": "헤어케어",
                 "perfume": "퍼퓸",
                 "inner-beauty": "이너 뷰티",
-                "body-care": "바비케어",
+                "body-care": "바디케어",
                 "performance": "공연 실황",
                 "exhibit": "가상 전시",
                 "f3_media": "미디어 아트 홀",
@@ -198,11 +198,36 @@ const resources = {
                 "floor-6": "6F | LOCAL HERITAGE"
             },
             "subcategory": {
+                "car-care": "CAR Care",
+                "window": "Digital Window",
+                "f1_kpop": "K-Pop Stage",
+                "f1_library": "Trend Library",
+                "f1_tech": "K-Tech Zone",
                 "skincare": "Skincare",
                 "hair": "Hair Care",
                 "perfume": "Perfume",
                 "inner-beauty": "Inner Beauty",
-                "body-care": "Body Care"
+                "body-care": "Body Care",
+                "performance": "Live Performance",
+                "exhibit": "Virtual Exhibit",
+                "f3_media": "Media Art Hall",
+                "f3_lounge": "Artist Lounge",
+                "f3_audio": "Sound Archive",
+                "b2b-mall": "B2B Mall",
+                "interview": "Artist Interview",
+                "f4_plus": "Talk Plus",
+                "f4_book": "Book Section",
+                "f4_seminar": "Seminar Room",
+                "archive": "Fashion Archive",
+                "collection": "Season Collection",
+                "f5_material": "Material Library",
+                "f5_fitting": "Fitting Studio",
+                "f5_textile": "Textile Room",
+                "heritage": "Local Heritage",
+                "travel": "Strategic Anchor",
+                "f6_gourmet": "Gourmet Archive",
+                "f6_craft": "Local Craft",
+                "f6_tour": "Heritage Tour"
             }
         }
     }

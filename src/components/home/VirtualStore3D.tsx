@@ -117,6 +117,7 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
     productCount?: number,
     onHoverChange?: (id: string | null) => void
 }) => {
+    const { t } = useTranslation();
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
 
@@ -165,7 +166,7 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                                 color: 'white',
                                 transform: hovered ? 'scale(1.1)' : 'scale(1)'
                             }}>
-                            <AutoTranslatedText text={getLocalizedText(category.label, i18nLanguage)} />
+                            {t(`subcategory.${category.id}`, getLocalizedText(category.label, i18nLanguage))}
                         </span>
                     </div>
                 </Html>
@@ -184,6 +185,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
     productCounts: Record<string, number>,
     productGroupedTitles: Record<string, string[]>
 }) => {
+    const { t } = useTranslation();
     const groupRef = useRef<THREE.Group>(null);
     const [hoveredCatId, setHoveredCatId] = useState<string | null>(null);
 
@@ -244,7 +246,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                     {activeFloorData.floor}
                                 </span>
                                 <span className="text-7xl font-black text-white tracking-widest leading-none text-center">
-                                    <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18nLanguage)} />
+                                    {t(`nav.${activeFloorData.id}`, getLocalizedText(activeFloorData.title, i18nLanguage))}
                                 </span>
                             </div>
                             <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-4 tracking-[0.2em] uppercase text-center max-w-[800px]">
@@ -1551,7 +1553,7 @@ export const VirtualStore3D: React.FC = () => {
                     counts[sub] = (counts[sub] || 0) + 1;
                     if (!titles[sub]) titles[sub] = [];
                     // Use Ko title for internal tracking/display, AutoTranslatedText will handle it
-                    const pTitle = typeof p.title === 'string' ? p.title : p.title.ko;
+                    const pTitle = getLocalizedText(p.title, i18n.language);
                     if (pTitle) titles[sub].push(pTitle);
                 }
             });

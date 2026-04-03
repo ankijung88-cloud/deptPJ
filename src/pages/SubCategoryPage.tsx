@@ -297,7 +297,7 @@ const SubCategoryPage: React.FC = () => {
                                         color: theme.highlightColor, 
                                         textShadow: `0 0 40px ${theme.glowColor}44` 
                                     }}>
-                                    <AutoTranslatedText text={getLocalizedText(subcategoryData?.label, i18n.language) || t('common.no_info')} />
+                                    {t(`subcategory.${targetSubId}`, getLocalizedText(subcategoryData?.label, i18n.language) || t('common.no_info'))}
                                 </h1>
 
                                 <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 

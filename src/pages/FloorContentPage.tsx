@@ -11,12 +11,12 @@ import { ArrowRight, BookOpen } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
-    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global'],
-    'floor-2': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care'],
-    'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
-    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk'],
-    'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브'],
-    'floor-6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산'],
+    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global', 'tech', 'Tech', 'car'],
+    'floor-2': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care', 'Beauty', 'beauty', 'care', 'Care'],
+    'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시', 'lifestyle', 'Lifestyle'],
+    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk', 'mall', 'culture'],
+    'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브', 'Fashion', 'fashion'],
+    'floor-6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산', 'Heritage', 'heritage'],
     'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
 };
 
@@ -24,7 +24,7 @@ const FloorContentPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const filter = searchParams.get('filter');
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [floorData, setFloorData] = useState<FloorCategory | null>(null);
@@ -41,15 +41,25 @@ const FloorContentPage: React.FC = () => {
                 if (mounted) setFloorData(currentFloor);
 
                 const targetInternalCategories = CATEGORY_FILTERS[categoryId] || [];
-                if (targetInternalCategories.length === 0) {
-                    if (mounted) setItems([]);
-                } else {
-                    const promises = targetInternalCategories.map(cat => getProductsByCategory(cat));
-                    const results = await Promise.all(promises);
-                    // Deduplicate items
-                    const uniqueMap = new Map();
-                    results.flat().forEach(item => uniqueMap.set(item.id, item));
-                    let allItems = Array.from(uniqueMap.values());
+                
+                // 1. Fetch by subcategories
+                const subPromises = targetInternalCategories.map(cat => getProductsByCategory(cat));
+                
+                // 2. Also fetch by Floor ID directly to catch products mapped to the floor but not specific subcats
+                const floorPromise = getProductsByCategory(categoryId);
+                
+                const [subResults, floorResults] = await Promise.all([
+                    Promise.all(subPromises),
+                    floorPromise
+                ]);
+
+                // Flatten and combine results
+                const allFetchedItems = [...subResults.flat(), ...floorResults];
+
+                // Deduplicate items by ID
+                const uniqueMap = new Map();
+                allFetchedItems.filter(item => !!item).forEach(item => uniqueMap.set(item.id, item));
+                let allItems = Array.from(uniqueMap.values());
 
                     // Apply Sub-filter if present
                     if (filter) {
@@ -59,10 +69,10 @@ const FloorContentPage: React.FC = () => {
                         );
                     }
 
-                    if (mounted) setItems(allItems);
-                }
+                if (mounted) setItems(allItems);
             } catch (error: any) {
                 // Silently handle or use a proper logger in production
+                console.error('Error in FloorContentPage fetchData:', error);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -71,7 +81,7 @@ const FloorContentPage: React.FC = () => {
         window.scrollTo(0, 0);
         fetchData();
         return () => { mounted = false; };
-    }, [categoryId, filter]);
+    }, [categoryId, filter, id]);
 
     const floorNumber = floorData?.floor?.charAt(0) || '1';
     const theme = getJoseonThemeById(id || '', floorNumber);
@@ -165,7 +175,7 @@ const FloorContentPage: React.FC = () => {
 
                                 <div className="absolute top-6 left-6 flex gap-2">
                                     <span className="bg-black/80 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 select-none">
-                                        <AutoTranslatedText text={getLocalizedText(item.category || item.subcategory || 'Culture', i18n.language)} />
+                                        {t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))}
                                     </span>
                                 </div>
                             </div>
@@ -183,11 +193,11 @@ const FloorContentPage: React.FC = () => {
                                 </div>
 
                                 <h3 className="text-3xl md:text-5xl font-serif font-bold mb-6 leading-tight" style={theme.textPrimaryStyle}>
-                                    <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                    {getLocalizedText(item.title, i18n.language)}
                                 </h3>
 
                                 <p className="text-lg font-light leading-relaxed mb-10 line-clamp-3" style={theme.textSecondaryStyle}>
-                                    <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
+                                    {getLocalizedText(item.description, i18n.language)}
                                 </p>
 
                                 <Link
@@ -196,7 +206,7 @@ const FloorContentPage: React.FC = () => {
                                     style={{ borderBottomColor: theme.accentColor }}
                                 >
                                     <BookOpen size={20} />
-                                    <AutoTranslatedText text="아티클 읽기" />
+                                    {t('common.read_article', 'Read Article')}
                                     <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                                 </Link>
                             </div>
