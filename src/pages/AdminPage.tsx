@@ -1131,7 +1131,8 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     const updateSubitem = (index: number, field: string, value: any) => {
         const newSubitems = [...(formData.subitems || [])];
         if (field === 'label') {
-            newSubitems[index] = { ...newSubitems[index], label: { ...newSubitems[index].label, ko: value } };
+            const oldLabel = typeof newSubitems[index].label === 'object' ? newSubitems[index].label : { ko: newSubitems[index].label || '' };
+            newSubitems[index] = { ...newSubitems[index], label: { ...oldLabel, ko: value } };
         } else {
             newSubitems[index] = { ...newSubitems[index], [field]: value };
         }

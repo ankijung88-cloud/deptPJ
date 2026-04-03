@@ -34,7 +34,13 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                         id: fallback.id, 
                         floor: fallback.floor,
                         title: fallback.title, // Force fallback title for rebranding consistency
-                        subitems: fallback.subitems // Ensure categories match our new i18n/branding
+                        subitems: (fallback.subitems || []).map((fbSub: any) => {
+                            const dynSub = (dynamic.subitems || []).find((dSub: any) => dSub.id === fbSub.id);
+                            return {
+                                ...fbSub,
+                                bgImage: dynSub?.bgImage || fbSub.bgImage
+                            };
+                        })
                     };
                 }
                 return fallback;

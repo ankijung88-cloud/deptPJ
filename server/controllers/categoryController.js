@@ -30,8 +30,8 @@ export const createFloorCategory = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO floor_categories (id, floor, title, description, content, subitems, color, video_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO floor_categories (id, floor, title, description, content, subitems, color, video_url, bg_image)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await pool.query(query, [
       id, 
@@ -41,7 +41,8 @@ export const createFloorCategory = async (req, res) => {
       JSON.stringify(content), 
       JSON.stringify(subitems), 
       color, 
-      final_video_url
+      final_video_url,
+      final_bg_image
     ]);
     res.status(201).json({ id, message: 'Floor category created successfully' });
   } catch (error) {
@@ -63,7 +64,7 @@ export const updateFloorCategory = async (req, res) => {
   try {
     const query = `
       UPDATE floor_categories 
-      SET floor = ?, title = ?, description = ?, content = ?, subitems = ?, color = ?, video_url = ?
+      SET floor = ?, title = ?, description = ?, content = ?, subitems = ?, color = ?, video_url = ?, bg_image = ?
       WHERE id = ?
     `;
     const [result] = await pool.query(query, [
@@ -74,6 +75,7 @@ export const updateFloorCategory = async (req, res) => {
       JSON.stringify(subitems), 
       color, 
       final_video_url, 
+      final_bg_image,
       id
     ]);
 
