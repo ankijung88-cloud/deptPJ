@@ -10,6 +10,8 @@ import { getJoseonThemeById } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
 import { useImmersiveMode } from '../context/NavigationActionContext';
+import { getFeaturedProducts } from '../api/products';
+import { FALLBACK_PRODUCTS } from '../data/fallbackData';
 
 interface StoryCard {
     id: string;
@@ -54,25 +56,6 @@ const PointingFinger = ({ size = 24, className = "" }: { size?: number; classNam
     </svg>
 );
 
-// Mirrors the FLOORS data in VirtualStore3D.tsx (single source of truth for nav IDs)
-
-const mapToFeaturedItem = (item: any): FeaturedItem => ({
-    id: item.id,
-    title: typeof item.title === 'string' ? { ko: item.title } : item.title,
-    category: item.category,
-    subcategory: item.subcategory,
-    description: typeof item.description === 'string' ? { ko: item.description } : item.description,
-    imageUrl: item.image_url || item.imageUrl,
-    date: item.event_date || item.date,
-    location: item.location,
-    price: item.price,
-    closedDays: item.closed_days || item.closedDays || [],
-    videoUrl: item.video_url || item.videoUrl,
-    agency_id: item.agency_id,
-    user_id: item.user_id,
-    eventDates: item.event_dates || item.eventDates || [],
-});
-
 const SubCategoryPage: React.FC = () => {
     const { subId } = useParams<{ subId: string }>();
     const navigate = useNavigate();
@@ -114,12 +97,8 @@ const SubCategoryPage: React.FC = () => {
             if (!parentFloor) { setLoading(false); return; }
             setLoading(true);
             try {
-                const [itemsResponse, storiesResponse] = await Promise.all([
-                    fetch(`/api/products`, {
-                        headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                        }
-                    }),
+                const [itemsData, storiesResponse] = await Promise.all([
+                    getFeaturedProducts(),
                     (async () => {
                         const original = await fetch(`/api/categories/nav?subcategory=${targetSubId}`, {
                             headers: {
@@ -146,31 +125,35 @@ const SubCategoryPage: React.FC = () => {
                     let finalItems: FeaturedItem[] = [];
                     let finalStories: StoryCard[] = [];
 
-                    if (itemsResponse.ok) {
-                        const itemsData = await itemsResponse.json();
+                    if (itemsData) {
+                        const sourceItems = itemsData.length > 0 ? itemsData : FALLBACK_PRODUCTS;
                         const seen = new Set<string>();
-                        finalItems = itemsData
-                            .map(mapToFeaturedItem)
-                            .filter((item: FeaturedItem) => { if (seen.has(item.id)) return false; seen.add(item.id); return true; })
+                        finalItems = sourceItems
+                            .filter((item: FeaturedItem) => { 
+                                if (seen.has(item.id)) return false; 
+                                seen.add(item.id); 
+                                return true; 
+                            })
                             .filter((item: FeaturedItem) => {
                                 if (targetSubId) {
                                     // Robust matching:
-                                    // 1. Exact ID match (e.g., 'f4_book' === 'f4_book')
-                                    // 2. Legacy ID match (e.g., 'car-care' matches 'global' from DB)
-                                    // 3. Label match (e.g., DB has '도서관 섹션' and targetSubId is 'f4_book' which labels to '도서관 섹션')
+                                    // 1. Exact ID match
                                     const exactMatch = item.subcategory === targetSubId || (legacySubId && item.subcategory === legacySubId);
                                     
-                                    // Check if the current subcategory label matches
+                                    // 2. Label match
                                     const labelMatch = subcategoryData && subcategoryData.label && (
-                                        (typeof subcategoryData.label === 'string' && subcategoryData.label === item.subcategory) ||
+                                        (typeof subcategoryData.label === 'string' && subcategoryData.label.toLowerCase() === (item.subcategory || '').toLowerCase()) ||
                                         (typeof subcategoryData.label === 'object' && (
                                             (subcategoryData.label as any).ko === item.subcategory ||
                                             (subcategoryData.label as any).en === item.subcategory
-                                        ))
+                                        )) ||
+                                        t(`subcategory.${targetSubId}`).toLowerCase() === (item.subcategory || '').toLowerCase()
                                     );
 
-                                    const match = exactMatch || !!labelMatch;
-                                    return match;
+                                    // 3. Category (Floor) match
+                                    const categoryMatch = parentFloor && item.category === parentFloor.id;
+
+                                    return exactMatch || !!labelMatch || categoryMatch;
                                 }
                                 return true;
                             });
