@@ -45,7 +45,7 @@ const FloorContentPage: React.FC = () => {
                 // Legacy ID Fallback
                 if (!currentFloor) {
                     if (categoryId === 'floor-tech-care') currentFloor = floors.find(f => f.id === 'floor-1');
-                    if (categoryId === 'floor-beauty-care') currentFloor = floors.find(f => f.id === 'floor2');
+                    if (categoryId === 'floor-beauty-care' || categoryId === 'floor2') currentFloor = floors.find(f => f.id === 'floor-2');
                     if (categoryId === 'floor-gather-mall') currentFloor = floors.find(f => f.id === 'floor-4');
                 }
                 

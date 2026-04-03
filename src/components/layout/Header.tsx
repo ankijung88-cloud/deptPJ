@@ -173,7 +173,7 @@ const Header: React.FC = () => {
             ]
         },
         {
-            id: 'floor2',
+            id: 'floor-2',
             level: 2,
             label: t('nav.floor2'),
             subitems: [
@@ -185,9 +185,9 @@ const Header: React.FC = () => {
             ]
         },
         {
-            id: 'floor3',
+            id: 'floor-3',
             level: 3,
-            label: t('nav.floor3'),
+            label: t('nav.floor-3'),
             subitems: [
                 { id: 'performance', label: '공연 실황', path: '/category/performance' },
                 { id: 'exhibit', label: '가상 전시', path: '/category/exhibit' },
@@ -209,9 +209,9 @@ const Header: React.FC = () => {
             ]
         },
         {
-            id: 'floor5',
+            id: 'floor-5',
             level: 5,
-            label: t('nav.floor5'),
+            label: t('nav.floor-5'),
             subitems: [
                 { id: 'archive', label: '패션 아카이브', path: '/category/archive' },
                 { id: 'collection', label: '시즌 컬렉션', path: '/category/collection' },
@@ -221,9 +221,9 @@ const Header: React.FC = () => {
             ]
         },
         {
-            id: 'floor6',
+            id: 'floor-6',
             level: 6,
-            label: t('nav.floor6'),
+            label: t('nav.floor-6'),
             subitems: [
                 { id: 'heritage', label: '지역 문화 유산', path: '/category/heritage' },
                 { id: 'travel', label: '전략적 앵커', path: '/category/travel' },
