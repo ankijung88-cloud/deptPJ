@@ -120,11 +120,11 @@ const SubCategoryPage: React.FC = () => {
                                     const exactMatch = item.subcategory === targetSubId || (legacySubId && item.subcategory === legacySubId);
                                     const labelMatch = subcategoryData && subcategoryData.label && (
                                         (typeof subcategoryData.label === 'string' && subcategoryData.label.toLowerCase() === (item.subcategory || '').toLowerCase()) ||
-                                        (typeof subcategoryData.label === 'object' && (
+                                        (typeof subcategoryData.label === 'object' && subcategoryData.label !== null && (
                                             (subcategoryData.label as any).ko === item.subcategory ||
                                             (subcategoryData.label as any).en === item.subcategory
                                         )) ||
-                                        t(`subcategory.${targetSubId}`).toLowerCase() === (item.subcategory || '').toLowerCase()
+                                        t(`subcategory.${targetSubId}`, '').toLowerCase() === (item.subcategory || '').toLowerCase()
                                     );
                                     const categoryMatch = parentFloor && item.category === parentFloor.id;
                                     return exactMatch || !!labelMatch || categoryMatch;

@@ -1124,7 +1124,8 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
     const isEdit = !!floor;
 
     const addSubitem = () => {
-        const newSubitems = [...(formData.subitems || []), { id: '', label: { ko: '' }, bgImage: '' }];
+        const uniqueId = `cat-${Date.now()}`;
+        const newSubitems = [...(formData.subitems || []), { id: uniqueId, label: { ko: '' }, bgImage: '' }];
         setFormData({ ...formData, subitems: newSubitems });
     };
 

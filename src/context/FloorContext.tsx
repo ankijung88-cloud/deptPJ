@@ -36,15 +36,17 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                             const dynamicSubitems = (dynamic.subitems || []) as any[];
                             
                             // 1. Start with All subitems from DB
-                            const merged = dynamicSubitems.map(dynSub => {
-                                const fbSub = fallbackSubitems.find(f => f.id === dynSub.id);
-                                return {
-                                    ...fbSub,
-                                    ...dynSub,
-                                    // Ensure bgImage is normalized and prioritized
-                                    bgImage: dynSub.bgImage || dynSub.bg_image || fbSub?.bgImage
-                                };
-                            });
+                            const merged = dynamicSubitems
+                                .filter(dynSub => dynSub && dynSub.id) // Skip subitems with missing IDs
+                                .map(dynSub => {
+                                    const fbSub = fallbackSubitems.find(f => f.id === dynSub.id);
+                                    return {
+                                        ...fbSub,
+                                        ...dynSub,
+                                        // Ensure bgImage is normalized and prioritized
+                                        bgImage: dynSub.bgImage || dynSub.bg_image || fbSub?.bgImage
+                                    };
+                                });
 
                             // 2. Add subitems from Fallback that are NOT in DB (to prevent breaks)
                             fallbackSubitems.forEach(fbSub => {
