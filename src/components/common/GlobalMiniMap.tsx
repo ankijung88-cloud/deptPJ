@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from './AutoTranslatedText';
 import { getComplementaryColor } from '../../utils/themeUtils';
+import { getNormalizedSubcategoryId } from '../../utils/idUtils';
 
 
 export const GlobalMiniMap: React.FC<{
@@ -98,8 +99,8 @@ export const GlobalMiniMap: React.FC<{
         );
 
         const getItemsForSub = (sid: string) => {
-            const subItems = items.filter(i => i.subcategory === sid);
-            const subStories = stories.filter(s => s.subcategory === sid);
+            const subItems = items.filter(i => getNormalizedSubcategoryId(i.subcategory) === sid);
+            const subStories = stories.filter(s => getNormalizedSubcategoryId(s.subcategory) === sid);
             return [...subItems, ...subStories];
         };
 
