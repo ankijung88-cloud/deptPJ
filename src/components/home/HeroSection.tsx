@@ -171,22 +171,7 @@ export const HeroSection: React.FC = () => {
                                     className="h-44 w-auto drop-shadow-[0_0_40px_rgba(255,215,0,0.4)]"
                                 />
                             </motion.div>
-                            <motion.h2
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5, duration: 1 }}
-                                className="text-5xl md:text-7xl font-serif text-white mb-6"
-                            >
-                                <AutoTranslatedText text={t('hero.arrived')} />
-                            </motion.h2>
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 1.2, duration: 1 }}
-                                className="text-white/60 tracking-[0.4em] uppercase text-sm"
-                            >
-                                <AutoTranslatedText text={t('hero.welcome')} />
-                            </motion.p>
+
                             <motion.p
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}

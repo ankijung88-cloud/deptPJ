@@ -41,9 +41,8 @@ const resources = {
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
                 "philosophy": "브랜드 철학",
-                "arrived": "가상의 공간에 도착했습니다",
                 "welcome": "Welcome to VIA STATION",
-                "site_description": "당신의 시선이 머무는 모든 곳이 예술이 되는 공간. 전통의 가치와 현대의 감각이 공존하는 프리미엄 문화 큐레이션 플랫폼 VIA STATION입니다.",
+                "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, VIA STATION입니다.",
                 "start": "시작하기"
             },
             "subcategory": {
