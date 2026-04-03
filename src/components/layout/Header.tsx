@@ -164,7 +164,14 @@ const Header: React.FC = () => {
     };
 
     const navItems: NavItem[] = useMemo(() => {
-        return floors.map(floor => ({
+        // Sort floors by numeric level (1, 2, 3...) ascending
+        const sortedFloors = [...floors].sort((a, b) => {
+            const levelA = parseInt(a.floor.replace(/[^0-9]/g, '')) || 0;
+            const levelB = parseInt(b.floor.replace(/[^0-9]/g, '')) || 0;
+            return levelA - levelB;
+        });
+
+        return sortedFloors.map(floor => ({
             id: floor.id,
             level: parseInt(floor.floor.replace(/[^0-9]/g, '')) || 0,
             label: `${floor.floor.toUpperCase().includes('F') ? floor.floor : floor.floor + 'F'} | ${getLocalizedText(floor.title, i18n.language)}`,
