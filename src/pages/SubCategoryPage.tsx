@@ -97,50 +97,27 @@ const SubCategoryPage: React.FC = () => {
             if (!parentFloor) { setLoading(false); return; }
             setLoading(true);
             try {
-                const [itemsData, storiesResponse] = await Promise.all([
+                const [itemsData] = await Promise.all([
                     getFeaturedProducts(),
-                    (async () => {
-                        const original = await fetch(`/api/categories/nav?subcategory=${targetSubId}`, {
-                            headers: {
-                                'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                            }
-                        });
-                        
-                        // Fallback for stories
-                        if (legacySubId) {
-                            const data = await original.clone().json();
-                            if ((!data || data.length === 0) || !original.ok) {
-                                return fetch(`/api/categories/nav?subcategory=${legacySubId}`, {
-                                    headers: {
-                                        'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                                    }
-                                });
-                            }
-                        }
-                        return original;
-                    })()
                 ]);
 
                 if (mounted) {
                     let finalItems: FeaturedItem[] = [];
+                    // Fallback to empty stories for now as nav fetch was redundant for metadata
                     let finalStories: StoryCard[] = [];
 
                     if (itemsData) {
-                        const sourceItems = itemsData.length > 0 ? itemsData : FALLBACK_PRODUCTS;
+                        const sourceItems = (itemsData && itemsData.length > 0) ? itemsData : (FALLBACK_PRODUCTS as any[]);
                         const seen = new Set<string>();
                         finalItems = sourceItems
-                            .filter((item: FeaturedItem) => { 
+                            .filter((item: any) => { 
                                 if (seen.has(item.id)) return false; 
                                 seen.add(item.id); 
                                 return true; 
                             })
-                            .filter((item: FeaturedItem) => {
+                            .filter((item: any) => {
                                 if (targetSubId) {
-                                    // Robust matching:
-                                    // 1. Exact ID match
                                     const exactMatch = item.subcategory === targetSubId || (legacySubId && item.subcategory === legacySubId);
-                                    
-                                    // 2. Label match
                                     const labelMatch = subcategoryData && subcategoryData.label && (
                                         (typeof subcategoryData.label === 'string' && subcategoryData.label.toLowerCase() === (item.subcategory || '').toLowerCase()) ||
                                         (typeof subcategoryData.label === 'object' && (
@@ -149,19 +126,11 @@ const SubCategoryPage: React.FC = () => {
                                         )) ||
                                         t(`subcategory.${targetSubId}`).toLowerCase() === (item.subcategory || '').toLowerCase()
                                     );
-
-                                    // 3. Category (Floor) match
                                     const categoryMatch = parentFloor && item.category === parentFloor.id;
-
                                     return exactMatch || !!labelMatch || categoryMatch;
                                 }
                                 return true;
                             });
-                    }
-
-                    if (storiesResponse.ok) {
-                        const storiesData = await storiesResponse.json();
-                        finalStories = storiesData as StoryCard[];
                     }
 
                     setItems(finalItems);

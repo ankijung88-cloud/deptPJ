@@ -21,26 +21,40 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const data = await getFloorCategories();
             // Merge dynamic data with fallback data
             const mergedFloors = FALLBACK_FLOORS.map(fallback => {
-                const dynamic = (data || []).find(d => {
-                    const floorMatch = d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase();
-                    const idMatch = d.id?.toString() === fallback.id?.toString();
-                    return floorMatch || idMatch;
-                });
+                const dynamic = (data || []).find(d => d.id?.toString() === fallback.id?.toString()) || 
+                                (data || []).find(d => d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase());
                 
                 if (dynamic) {
-                    // Update dynamic data but preserve branding-critical fields from fallback
+                    // Start with dynamic data but ensure critical fallback structure for rebranding
                     return { 
                         ...dynamic, 
                         id: fallback.id, 
                         floor: fallback.floor,
-                        title: fallback.title, // Force fallback title for rebranding consistency
-                        subitems: (fallback.subitems || []).map((fbSub: any) => {
-                            const dynSub = (dynamic.subitems || []).find((dSub: any) => dSub.id === fbSub.id);
-                            return {
-                                ...fbSub,
-                                bgImage: dynSub?.bgImage || fbSub.bgImage
-                            };
-                        })
+                        title: dynamic.title || fallback.title, 
+                        subitems: (() => {
+                            const fallbackSubitems = fallback.subitems || [];
+                            const dynamicSubitems = (dynamic.subitems || []) as any[];
+                            
+                            // 1. Start with All subitems from DB
+                            const merged = dynamicSubitems.map(dynSub => {
+                                const fbSub = fallbackSubitems.find(f => f.id === dynSub.id);
+                                return {
+                                    ...fbSub,
+                                    ...dynSub,
+                                    // Ensure bgImage is normalized and prioritized
+                                    bgImage: dynSub.bgImage || dynSub.bg_image || fbSub?.bgImage
+                                };
+                            });
+
+                            // 2. Add subitems from Fallback that are NOT in DB (to prevent breaks)
+                            fallbackSubitems.forEach(fbSub => {
+                                if (!merged.some(m => m.id === fbSub.id)) {
+                                    merged.push(fbSub);
+                                }
+                            });
+
+                            return merged;
+                        })()
                     };
                 }
                 return fallback;
