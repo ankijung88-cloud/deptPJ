@@ -167,7 +167,7 @@ const Header: React.FC = () => {
         return floors.map(floor => ({
             id: floor.id,
             level: parseInt(floor.floor.replace(/[^0-9]/g, '')) || 0,
-            label: getLocalizedText(floor.title, i18n.language),
+            label: `${floor.floor.toUpperCase().includes('F') ? floor.floor : floor.floor + 'F'} | ${getLocalizedText(floor.title, i18n.language)}`,
             subitems: (floor.subitems || []).map(sub => ({
                 id: sub.id,
                 label: getLocalizedText(sub.label, i18n.language),
