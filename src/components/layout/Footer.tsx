@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { BrandLogo } from '../common/BrandLogo';
 
 export const Footer: React.FC = () => {
     const { t } = useTranslation();
@@ -17,7 +18,7 @@ export const Footer: React.FC = () => {
                     {/* Brand Meta */}
                     <div className="md:col-span-5 space-y-10">
                         <div className="flex items-center gap-6 mb-4">
-                            <img src="/via_station_logo_portal.png" alt="VIA STATION logo" className="h-20 w-auto opacity-80" />
+                            <BrandLogo size={60} color="white" className="opacity-80" />
                             <div className="space-y-4">
                                 <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="본질" /></span>
                                 <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">

@@ -9,6 +9,7 @@ import { getFloorCategories } from '../api/categories';
 import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import { getJoseonThemeById } from '../utils/themeUtils';
+import { BrandLogo } from '../components/common/BrandLogo';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
     'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global', 'tech', 'Tech', 'car'],
@@ -110,10 +111,11 @@ const FloorContentPage: React.FC = () => {
                     >
                         {/* Front-aligned Logo above title - Increased size & reduced gap */}
                         <div className="mb-6">
-                            <img 
-                                src="/via_station_logo_portal.png" 
-                                alt="Logo" 
-                                className="h-32 w-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
+                            <BrandLogo 
+                                size={120} 
+                                color={theme.accentColor} 
+                                mode="portal" 
+                                className="drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-700 hover:scale-105" 
                             />
                         </div>
 

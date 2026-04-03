@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { BrandLogo } from '../components/common/BrandLogo';
 import { Users, Target, Layers, Box, Activity, Globe, Code2, Cpu, Layout, Play, Server, Award, Palette, Heart, ShieldCheck, Calendar, TrendingUp, Home } from 'lucide-react';
 
 const Slide = ({ children, className = "", bgColor = "transparent", id, title, icon: Icon }: { children: React.ReactNode, className?: string, bgColor?: string, id?: string, title?: string, icon?: any }) => (
@@ -256,7 +257,7 @@ const AboutPage: React.FC = () => {
                     >
                         {/* Editorial Logo placement */}
                         <div className="mb-8">
-                            <img src="/via_station_logo_portal.png" alt="VIA STATION Logo" className="h-44 w-auto drop-shadow-[0_0_40px_rgba(0,242,255,0.4)]" />
+                            <BrandLogo size={140} color="#ff3e00" mode="portal" className="drop-shadow-[0_0_50px_rgba(255,62,0,0.5)] transition-all duration-700 hover:scale-105" />
                         </div>
 
                         <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-4 drop-shadow-lg"><AutoTranslatedText text="01. 프로젝트 발표" /></span>

@@ -9,6 +9,7 @@ import { Breadcrumbs } from '../common/Breadcrumbs';
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 import { useNavigationState } from '../../context/NavigationActionContext';
 import { useAdmin } from '../../hooks/useAdmin';
+import { BrandLogo } from '../common/BrandLogo';
 
 interface SubItem {
     id: string;
@@ -311,7 +312,7 @@ const Header: React.FC = () => {
 
             <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-16' : 'h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
-                    <img src="/via_station_logo_portal.png" alt="VIA STATION Logo" className="h-[84px] w-auto object-contain transition-all duration-300 group-hover:scale-105" />
+                    <BrandLogo size={isScrolled ? 48 : 64} color={theme.accentColor} className="transition-all duration-500 group-hover:scale-105" />
                 </Link>
 
                 {/* Desktop Navigation */}
