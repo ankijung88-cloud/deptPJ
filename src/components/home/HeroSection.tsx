@@ -106,8 +106,7 @@ export const HeroSection: React.FC = () => {
                             <motion.h1
                                 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
                             >
-                                <AutoTranslatedText text={t('hero.title_main')} /> <br className="hidden sm:block" />
-                                <span className="text-[#FFD700]/80"><AutoTranslatedText text={t('hero.title_sub')} /></span>
+                                <AutoTranslatedText text={t('hero.title_main')} />
                             </motion.h1>
 
                             <motion.p
