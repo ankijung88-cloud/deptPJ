@@ -84,6 +84,76 @@ const AboutPage: React.FC = () => {
                 <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
             </button>
 
+            {/* 00. Brand Vision / Intro Section */}
+            <section className="w-full min-h-[100dvh] flex flex-col items-center justify-center snap-start snap-always relative overflow-hidden bg-[#0A100D] py-20">
+                {/* Animated Background Mesh */}
+                <div className="absolute inset-0 opacity-40">
+                    <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-dancheong-red/10 blur-[130px] animate-pulse"></div>
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-dancheong-gold/10 blur-[130px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+                </div>
+
+                <div className="w-full max-w-6xl mx-auto px-6 relative z-10 flex flex-col items-center">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false, amount: 0.3 }}
+                        transition={{ duration: 1 }}
+                        className="text-center mb-16 md:mb-24"
+                    >
+                        <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-4 drop-shadow-[0_0_15px_rgba(235,59,45,0.5)]">
+                            {t('brand_vision.section_id')}
+                        </span>
+                        <h2 className="text-5xl md:text-8xl font-serif font-black mb-8 tracking-tighter leading-[1.1]">
+                            <AutoTranslatedText text={t('brand_vision.title')} />
+                        </h2>
+                        <div className="h-[2px] w-24 bg-dancheong-gold/50 mx-auto mb-8 shadow-[0_0_20px_rgba(197,161,90,0.8)]" />
+                        <p className="text-xl md:text-2xl font-light text-white/60 max-w-3xl mx-auto break-keep leading-relaxed px-4">
+                            <AutoTranslatedText text={t('brand_vision.subtitle')} />
+                        </p>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-3 gap-8 w-full">
+                        {[
+                            { title: t('brand_vision.philosophy_title'), desc: t('brand_vision.philosophy_desc'), icon: Heart, delay: 0.2, color: 'dancheong-red' },
+                            { title: t('brand_vision.future_title'), desc: t('brand_vision.future_desc'), icon: TrendingUp, delay: 0.4, color: 'dancheong-gold' },
+                            { title: t('brand_vision.essential_title'), desc: t('brand_vision.essential_desc'), icon: ShieldCheck, delay: 0.6, color: 'dancheong-green' },
+                        ].map((item, idx) => (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: false, amount: 0.3 }}
+                                transition={{ duration: 1, delay: item.delay, ease: "easeOut" }}
+                                className="group p-10 rounded-[3rem] bg-white/5 border border-white/10 backdrop-blur-2xl hover:bg-white/10 hover:border-white/30 transition-all duration-700 relative overflow-hidden"
+                            >
+                                <div className={`absolute top-0 left-0 w-2 h-full bg-${item.color} opacity-40`} />
+                                <item.icon className="w-14 h-14 text-white mb-8 opacity-90 group-hover:scale-110 group-hover:text-dancheong-gold transition-all duration-500" strokeWidth={1} />
+                                <h3 className="text-2xl font-bold mb-6 tracking-tight">
+                                    <AutoTranslatedText text={item.title} />
+                                </h3>
+                                <p className="text-white/50 font-light text-lg leading-relaxed break-keep">
+                                    <AutoTranslatedText text={item.desc} />
+                                </p>
+                                <div className="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                                    <item.icon className="w-40 h-40" />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+                
+                {/* Scroll Indicator */}
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 2, duration: 1.5 }}
+                    className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+                >
+                    <span className="text-[10px] tracking-[0.5em] uppercase text-white/30"><AutoTranslatedText text="SCROLL" /></span>
+                    <div className="w-[1px] h-20 bg-gradient-to-b from-dancheong-gold/40 via-dancheong-gold/20 to-transparent"></div>
+                </motion.div>
+            </section>
+
             {/* 01. Hero / Title Section */}
             <Slide className="border-b border-white/5 !px-0 !py-0 overscroll-none" id="01">
                 <motion.div style={{ y: yHero }} className="absolute inset-0 z-0 bg-[#0A100D]">

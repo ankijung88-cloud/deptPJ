@@ -140,6 +140,17 @@ const resources = {
                 "loading": "처리 중...",
                 "error_generic": "오류가 발생했습니다."
             },
+            "brand_vision": {
+                "section_id": "VISION",
+                "title": "디지털 문법의 새로운 질서",
+                "subtitle": "공간과 일상, 그리고 문화를 하나로 잇는 차별화된 발견의 경험.",
+                "philosophy_title": "Connecting Gaze (시선의 연결)",
+                "philosophy_desc": "사용자의 시선이 머무는 모든 지점에 브랜드의 숨은 가치를 부여하며, 단순한 소비를 넘어 지적/감각적 영감을 공유하는 '감성적 항구'입니다.",
+                "future_title": "Future Progressive (진취적 미래)",
+                "future_desc": "끊임없이 변화하는 기술과 고유한 아날로그 감성의 균형을 맞추며, 가상 공간의 물리적 한계를 부수는 혁신적 UX를 지향합니다.",
+                "essential_title": "The Necessity (필수적 존재)",
+                "essential_desc": "정보의 홍수 속에서 가장 본질적인 취향을 제안하며, 현대인의 삶에 새로운 기준을 제시하는 필수 라이프스타일 거점으로 거듭납니다."
+            },
             "footer": {
                 "address": "서울특별시 중구 소공로 123",
                 "copyright": "© 2026 VIA STATION. All rights reserved.",
