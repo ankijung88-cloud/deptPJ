@@ -732,7 +732,7 @@ const VirtualStorePage: React.FC = () => {
 
         // Simulated high-fidelity result
         setLookupResult({
-            id: `ORD-DEPT-${Math.floor(Math.random() * 90000 + 10000)}`,
+            id: `ORD-VIA-${Math.floor(Math.random() * 90000 + 10000)}`,
             date: new Date().toLocaleDateString(),
             status: 'PREPARING', // PAID, PREPARING, SHIPPING, DELIVERED
             productName: selectedItem ? getLoc(selectedItem.title, 'ko') : 'Premium Joseon Craft',
@@ -1629,7 +1629,7 @@ const VirtualStorePage: React.FC = () => {
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
                 <div className="container mx-auto flex flex-col items-center gap-6">
-                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">DEPT. STORE IMMERSIVE</div>
+                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">VIA STATION IMMERSIVE</div>
                     <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
                         The convergence of traditional aesthetics and cutting-edge virtual commerce technology.
                     </p>

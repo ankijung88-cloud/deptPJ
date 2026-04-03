@@ -34,7 +34,7 @@ const TermsPage: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-white/40 max-w-2xl mx-auto italic font-light"
                     >
-                        <AutoTranslatedText text="Culture Dept. Store 서비스 이용에 관한 권리와 책임을 안내해 드립니다." />
+                        <AutoTranslatedText text="VIA STATION 서비스 이용에 관한 권리와 책임을 안내해 드립니다." />
                     </motion.p>
                 </div>
 
@@ -47,7 +47,7 @@ const TermsPage: React.FC = () => {
                     <div className="relative z-10 space-y-10 text-white/70 leading-relaxed font-light">
                         <section className="space-y-4">
                             <h2 className="text-xl font-bold text-white"><AutoTranslatedText text="제 1 조 (목적)" /></h2>
-                            <p><AutoTranslatedText text="본 약관은 Culture Dept. Store(이하 '회사')가 운영하는 웹사이트 및 관련 서비스를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다." /></p>
+                            <p><AutoTranslatedText text="본 약관은 VIA STATION(이하 '회사')가 운영하는 웹사이트 및 관련 서비스를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다." /></p>
                         </section>
 
                         <section className="space-y-4">

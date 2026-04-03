@@ -27,7 +27,17 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     return floorMatch || idMatch;
                 });
                 
-                return dynamic ? { ...fallback, ...dynamic } : fallback;
+                if (dynamic) {
+                    // Update dynamic data but preserve branding-critical fields from fallback
+                    return { 
+                        ...dynamic, 
+                        id: fallback.id, 
+                        floor: fallback.floor,
+                        title: fallback.title, // Force fallback title for rebranding consistency
+                        subitems: fallback.subitems // Ensure categories match our new i18n/branding
+                    };
+                }
+                return fallback;
             });
 
             // Add extra floors from DB that are not in fallback

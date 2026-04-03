@@ -947,7 +947,7 @@ const VirtualCinemaPage: React.FC = () => {
             {/* Cinema Footer */}
             <footer className="mt-48 pb-20 px-6 opacity-30">
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-                    <div className="text-3xl font-black tracking-tighter uppercase">DEPT. CINEMA</div>
+                    <div className="text-3xl font-black tracking-tighter uppercase">VIA STATION CINEMA</div>
                     <div className="flex gap-10 text-[10px] font-black tracking-widest uppercase">
                         <a href="#">Showtimes</a>
                         <a href="#">Archives</a>

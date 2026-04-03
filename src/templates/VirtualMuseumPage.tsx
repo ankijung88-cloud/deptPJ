@@ -684,7 +684,7 @@ const VirtualMuseumPage: React.FC = () => {
                                                         setPreviewUrl(null);
                                                     }
                                                 }}
-                                                placeholder="/DEPT_Logo.png"
+                                                placeholder="/via_station_logo_portal.png"
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                             />
                                         </div>
@@ -787,7 +787,7 @@ const VirtualMuseumPage: React.FC = () => {
             <footer className="py-20 px-6 border-t mt-32" style={{ backgroundColor: `${theme.color1}44`, borderColor: `${theme.color3}44` }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
                     <div className="space-y-4">
-                        <div className="text-2xl font-serif font-black opacity-40">DEPT. MUSEUM</div>
+                        <div className="text-2xl font-serif font-black opacity-40">VIA STATION MUSEUM</div>
                         <p className="text-xs font-bold tracking-widest opacity-30 uppercase max-w-md">
                             <AutoTranslatedText text="상호작용하는 가상 전시장, 디지털 헤리티지의 새로운 지평을 엽니다." />
                         </p>

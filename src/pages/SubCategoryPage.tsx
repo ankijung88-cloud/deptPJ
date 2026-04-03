@@ -506,7 +506,7 @@ const SubCategoryPage: React.FC = () => {
                             {subcategoryData?.id.substring(0, 2).toUpperCase() || 'FF'}
                         </div>
                         <div className="text-xs font-bold tracking-widest uppercase" style={{ color: theme.textMuted }}>
-                            <AutoTranslatedText text="DEPT. Curation Policy V1.0 - Selection Based on Timeless Aesthetics" />
+                            <AutoTranslatedText text="VIA STATION Curation Policy V1.0 - Selection Based on Timeless Aesthetics" />
                         </div>
                     </div>
                     <button

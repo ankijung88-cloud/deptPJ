@@ -113,7 +113,7 @@ const resources = {
             },
             "featured": {
                 "title": "추천 & 이벤트",
-                "subtitle": "Culture Dept.에서 만나는 특별한 경험",
+                "subtitle": "VIA STATION에서 만나는 특별한 경험",
                 "no_content": "등록된 콘텐츠가 없습니다."
             },
             "about": {
