@@ -126,8 +126,7 @@ const SubCategoryPage: React.FC = () => {
                                         )) ||
                                         t(`subcategory.${targetSubId}`, '').toLowerCase() === (item.subcategory || '').toLowerCase()
                                     );
-                                    const categoryMatch = parentFloor && item.category === parentFloor.id;
-                                    return exactMatch || !!labelMatch || categoryMatch;
+                                    return exactMatch || !!labelMatch;
                                 }
                                 return true;
                             });
