@@ -9,6 +9,8 @@ import { Breadcrumbs } from '../common/Breadcrumbs';
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 import { useNavigationState } from '../../context/NavigationActionContext';
 import { useAdmin } from '../../hooks/useAdmin';
+import { useFloors } from '../../context/FloorContext';
+import { getLocalizedText } from '../../utils/i18nUtils';
 import { BrandLogo } from '../common/BrandLogo';
 
 interface SubItem {
@@ -108,6 +110,7 @@ const Header: React.FC = () => {
 
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const { floors } = useFloors();
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
@@ -160,80 +163,18 @@ const Header: React.FC = () => {
         setExpandedMobileMenu(expandedMobileMenu === menu ? null : menu);
     };
 
-    const navItems: NavItem[] = [
-        {
-            id: 'floor-tech-care',
-            level: 1,
-            label: t('nav.floor-tech-care'),
-            subitems: [
-                { id: 'car-care', label: t('subcategory.car-care'), path: '/category/car-care' },
-                { id: 'window', label: '디지털 쇼윈도', path: '/category/window' },
-                { id: 'f1_kpop', label: 'K-팝 스테이지', path: '/category/f1_kpop' },
-                { id: 'f1_library', label: '트렌드 라이브러리', path: '/category/f1_library' },
-                { id: 'f1_tech', label: '한류 테크존', path: '/category/f1_tech' }
-            ]
-        },
-        {
-            id: 'floor-2',
-            level: 2,
-            label: t('nav.floor-2'),
-            subitems: [
-                { id: 'skincare', label: t('subcategory.skincare'), path: '/category/skincare' },
-                { id: 'hair', label: t('subcategory.hair'), path: '/category/hair' },
-                { id: 'perfume', label: t('subcategory.perfume'), path: '/category/perfume' },
-                { id: 'inner-beauty', label: t('subcategory.inner-beauty'), path: '/category/inner-beauty' },
-                { id: 'body-care', label: t('subcategory.body-care'), path: '/category/body-care' }
-            ]
-        },
-        {
-            id: 'floor-3',
-            level: 3,
-            label: t('nav.floor-3'),
-            subitems: [
-                { id: 'performance', label: '공연 실황', path: '/category/performance' },
-                { id: 'exhibit', label: '가상 전시', path: '/category/exhibit' },
-                { id: 'f3_media', label: '미디어 아트 홀', path: '/category/f3_media' },
-                { id: 'f3_lounge', label: '아티스트 라운지', path: '/category/f3_lounge' },
-                { id: 'f3_audio', label: '사운드 아카이브', path: '/category/f3_audio' }
-            ]
-        },
-        {
-            id: 'floor-gather-mall',
-            level: 4,
-            label: t('nav.floor-gather-mall'),
-            subitems: [
-                { id: 'b2b-mall', label: t('subcategory.b2b-mall'), path: '/category/b2b-mall' },
-                { id: 'interview', label: '아티스트 인터뷰', path: '/category/interview' },
-                { id: 'f4_plus', label: '토크 플러스', path: '/category/f4_plus' },
-                { id: 'f4_book', label: '도서관 섹션', path: '/category/f4_book' },
-                { id: 'f4_seminar', label: '세미나 룸', path: '/category/f4_seminar' }
-            ]
-        },
-        {
-            id: 'floor-5',
-            level: 5,
-            label: t('nav.floor-5'),
-            subitems: [
-                { id: 'archive', label: '패션 아카이브', path: '/category/archive' },
-                { id: 'collection', label: '시즌 컬렉션', path: '/category/collection' },
-                { id: 'f5_material', label: '소재 도서관', path: '/category/f5_material' },
-                { id: 'f5_fitting', label: '피팅 스튜디오', path: '/category/f5_fitting' },
-                { id: 'f5_textile', label: '텍스타일 룸', path: '/category/f5_textile' }
-            ]
-        },
-        {
-            id: 'floor-6',
-            level: 6,
-            label: t('nav.floor-6'),
-            subitems: [
-                { id: 'heritage', label: '지역 문화 유산', path: '/category/heritage' },
-                { id: 'travel', label: '전략적 앵커', path: '/category/travel' },
-                { id: 'f6_gourmet', label: '미식 아카이브', path: '/category/f6_gourmet' },
-                { id: 'f6_craft', label: '지역 공예관', path: '/category/f6_craft' },
-                { id: 'f6_tour', label: '헤리티지 투어', path: '/category/f6_tour' }
-            ]
-        }
-    ];
+    const navItems: NavItem[] = useMemo(() => {
+        return floors.map(floor => ({
+            id: floor.id,
+            level: parseInt(floor.floor.replace(/[^0-9]/g, '')) || 0,
+            label: getLocalizedText(floor.title, i18n.language),
+            subitems: (floor.subitems || []).map(sub => ({
+                id: sub.id,
+                label: getLocalizedText(sub.label, i18n.language),
+                path: `/category/${sub.id}`
+            }))
+        }));
+    }, [floors, i18n.language]);
 
     if (isImmersive) return null;
 
