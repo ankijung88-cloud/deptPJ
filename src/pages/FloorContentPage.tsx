@@ -13,7 +13,8 @@ import { getJoseonThemeById } from '../utils/themeUtils';
 const CATEGORY_FILTERS: Record<string, string[]> = {
     'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global'],
     'floor-1': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global'],
-    'floor-2': ['Trend', 'popup', 'collab', 'pop', 'sync', '팝업', '협업'],
+    'floor-beauty-care': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care'],
+    'floor-2': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care'],
     'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시'],
     'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk'],
     'floor-4': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk'],
@@ -44,6 +45,7 @@ const FloorContentPage: React.FC = () => {
                 // Legacy ID Fallback
                 if (!currentFloor) {
                     if (categoryId === 'floor-tech-care') currentFloor = floors.find(f => f.id === 'floor-1');
+                    if (categoryId === 'floor-beauty-care') currentFloor = floors.find(f => f.id === 'floor2');
                     if (categoryId === 'floor-gather-mall') currentFloor = floors.find(f => f.id === 'floor-4');
                 }
                 

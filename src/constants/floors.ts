@@ -57,16 +57,16 @@ export const FLOORS = [
     },
     {
         level: 2,
-        title: 'MEDIA ROOM',
+        title: 'BEAUTY & CARE',
         label: '2F',
         color: '#00FFC2', // Cyan/Green (East/Neo-Dancheong Mint)
         videoUrl: '/uploads/trend.mp4',
         subcategories: [
-            { id: 'sync', label: '시너지 공간' },
-            { id: 'pop', label: '다이내믹 팝업' },
-            { id: 'f2_lab', label: '브랜드 랩' },
-            { id: 'f2_art', label: '아트 콜라보' },
-            { id: 'f2_gallery', label: '한정판 갤러리' }
+            { id: 'skincare', label: '스킨케어' },
+            { id: 'hair', label: '헤어케어' },
+            { id: 'perfume', label: '퍼퓸' },
+            { id: 'inner-beauty', label: '이너 뷰티' },
+            { id: 'body-care', label: '바디케어' }
         ]
     },
     {

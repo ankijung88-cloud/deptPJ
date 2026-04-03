@@ -177,11 +177,11 @@ const Header: React.FC = () => {
             level: 2,
             label: t('nav.floor2'),
             subitems: [
-                { id: 'sync', label: '시너지 공간', path: '/category/sync' },
-                { id: 'pop', label: '다이내믹 팝업', path: '/category/pop' },
-                { id: 'f2_lab', label: '브랜드 랩', path: '/category/f2_lab' },
-                { id: 'f2_art', label: '아트 콜라보', path: '/category/f2_art' },
-                { id: 'f2_gallery', label: '한정판 갤러리', path: '/category/f2_gallery' }
+                { id: 'skincare', label: t('subcategory.skincare'), path: '/category/skincare' },
+                { id: 'hair', label: t('subcategory.hair'), path: '/category/hair' },
+                { id: 'perfume', label: t('subcategory.perfume'), path: '/category/perfume' },
+                { id: 'inner-beauty', label: t('subcategory.inner-beauty'), path: '/category/inner-beauty' },
+                { id: 'body-care', label: t('subcategory.body-care'), path: '/category/body-care' }
             ]
         },
         {

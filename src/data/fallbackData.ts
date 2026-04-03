@@ -66,19 +66,19 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         ]
     },
     {
-        id: 'floor-2',
+        id: 'floor2',
         floor: '2F',
-        title: { ko: '미디어 룸', en: 'MEDIA ROOM' },
-        description: { ko: '가장 트렌디한 K-라이프스타일을 제안합니다. 현대적인 감각의 로컬 브랜드들을 소개합니다.', en: 'Suggesting the trendiest K-lifestyle and introducing modern local brands.' },
+        title: { ko: '뷰티 앤 케어', en: 'BEAUTY & CARE' },
+        description: { ko: '나만의 아름다움을 발견하고 완성하는 고품격 뷰티 큐레이션 공간입니다.', en: 'A premium beauty curation space where you discover and complete your own beauty.' },
         videoUrl: '/uploads/trend.mp4',
         color: '#F39C12', // 2F - Vibrant Orange/Marigold (Media)
         content: [],
         subitems: [
-            { id: 'sync', label: { ko: '시너지 공간', en: 'Synergy Space' } },
-            { id: 'pop', label: { ko: '다이내믹 팝업', en: 'Dynamic Pop-up' } },
-            { id: 'f2_lab', label: { ko: '브랜드 랩', en: 'Brand Lab' } },
-            { id: 'f2_art', label: { ko: '아트 콜라보', en: 'Art Collab' } },
-            { id: 'f2_gallery', label: { ko: '한정판 갤러리', en: 'Limited Gallery' } }
+            { id: 'skincare', label: { ko: '스킨케어', en: 'Skincare' } },
+            { id: 'hair', label: { ko: '헤어케어', en: 'Hair Care' } },
+            { id: 'perfume', label: { ko: '퍼퓸', en: 'Perfume' } },
+            { id: 'inner-beauty', label: { ko: '이너 뷰티', en: 'Inner Beauty' } },
+            { id: 'body-care', label: { ko: '바디케어', en: 'Body Care' } }
         ]
     },
     {
@@ -147,10 +147,10 @@ export const FALLBACK_PRODUCTS: any[] = [
     { id: 'p3-2', subcategory: 'exhibit', category: 'floor-3', title: { ko: '디지털 캔버스 아트 워크', en: 'Digital Canvas Art Work' }, description: { ko: '공간의 분위기를 실시간으로 변화시키는 예술 경험입니다.', en: 'An art experience that changes the atmosphere of a space in real time.' }, image_url: '/DEPT_Logo.png', price: '850,000₩' },
     { id: 'p3-3', subcategory: 'f3_media', category: 'floor-3', title: { ko: '홀로그램 이머시브 전시 관람권', en: 'Hologram Immersive Exhibition Ticket' }, description: { ko: '빛으로 구현된 가상 세계를 직접 체험해보세요.', en: 'Experience a virtual world implemented with light.' }, image_url: '/DEPT_Logo.png', price: '25,000₩' },
 
-    // 2F Media Room
-    { id: 'p2-1', subcategory: 'sync', category: 'floor-2', title: { ko: '시너지 협업 도킹 스테이션', en: 'Synergy Collaboration Docking Station' }, description: { ko: '창의적인 연결을 위해 설계된 하이브리드 워크 디바이스입니다.', en: 'A hybrid work device designed for creative connection.' }, image_url: '/DEPT_Logo.png', price: '320,000₩' },
-    { id: 'p2-2', subcategory: 'pop', category: 'floor-2', title: { ko: '카라이네 한정판 피규어 세트', en: 'Karaine Limited Edition Figure Set' }, description: { ko: '전 세계 100세트 한정 제작된 캐릭터 컬렉터블입니다.', en: 'Character collectibles limited to 100 sets worldwide.' }, image_url: '/DEPT_Logo.png', price: '450,000₩' },
-    { id: 'p2-3', subcategory: 'f2_art', category: 'floor-2', title: { ko: '스트릿 아티스트 콜라보 스니커즈', en: 'Street Artist Collab Sneakers' }, description: { ko: '거리의 에너지를 담은 대담한 디자인의 스니커즈입니다.', en: 'Sneakers with a bold design containing the energy of the street.' }, image_url: '/DEPT_Logo.png', price: '249,000₩' },
+    // 2F Beauty & Care
+    { id: 'p2-1', subcategory: 'skincare', category: 'floor2', title: { ko: '프리미엄 밸런싱 세럼', en: 'Premium Balancing Serum' }, description: { ko: '피부 속 깊은 곳까지 수분을 채워주는 고농축 영양 Serum입니다.', en: 'A highly concentrated nourishing serum that fills moisture deep into the skin.' }, image_url: '/DEPT_Logo.png', price: '120,000₩' },
+    { id: 'p2-2', subcategory: 'hair', category: 'floor2', title: { ko: '실크 리페어 헤어 에센스', en: 'Silk Repair Hair Essence' }, description: { ko: '손상된 모발에 즉각적인 윤기와 부드러움을 부여하는 프로페셔널 헤어 케어입니다.', en: 'Professional hair care that gives instant shine and softness to damaged hair.' }, image_url: '/DEPT_Logo.png', price: '68,000₩' },
+    { id: 'p2-3', subcategory: 'inner-beauty', category: 'floor2', title: { ko: '비타 부스트 콜라겐 앰플', en: 'Vita Boost Collagen Ampoule' }, description: { ko: '속부터 차오르는 생기를 위한 마시는 프리미엄 뷰티 솔루션입니다.', en: 'A drinking premium beauty solution for vitality from the inside out.' }, image_url: '/DEPT_Logo.png', price: '85,000₩' },
 
     // 1F Tech & Care
     { id: 'p1-1', subcategory: 'car-care', category: 'floor-tech-care', title: { ko: '프리미엄 세정 및 코팅 키트', en: 'Premium Washing & Coating Kit' }, description: { ko: '전문가의 손길을 집에서도 경험할 수 있는 하이엔드 카케어 세트입니다.', en: 'A high-end car care set to experience a professional touch at home.' }, image_url: '/DEPT_Logo.png', price: '75,000₩' },
@@ -163,7 +163,7 @@ export const FALLBACK_STORIES: any[] = [
     { id: 's5-1', subcategory: 'archive', title: '실을 잣는 마음', content: '전통 섬유 소재가 현대 패션의 주역이 되기까지의 긴 여정을 담았습니다.', image_url: '/DEPT_Logo.png' },
     { id: 's4-1', subcategory: 'b2b-mall', title: '목소리의 파동', content: '담론과 대화가 어떻게 세상을 바꾸는지 작가들의 목소리로 들어봅니다.', image_url: '/DEPT_Logo.png' },
     { id: 's3-1', subcategory: 'performance', title: '무대의 확장', content: '공연이 끝난 후에도 남는 여운, 그 이상의 감동을 가공공간에서 이어갑니다.', image_url: '/DEPT_Logo.png' },
-    { id: 's2-1', subcategory: 'sync', title: '초연결의 일상', content: '기술과 사람이 만나는 접점에서 발생하는 새로운 시너지를 탐구합니다.', image_url: '/DEPT_Logo.png' },
+    { id: 's2-1', subcategory: 'skincare', title: '아름다움의 본질을 찾아서', content: '스킨케어 기초부터 시작하는 건강한 피부 변화의 기록을 담았습니다.', image_url: '/DEPT_Logo.png' },
     { id: 's1-1', subcategory: 'car-care', title: '혁신적 디테일링의 세계', content: '자동차를 아끼는 마음에서 시작된 기술의 정점, 새로운 케어 패러다임을 제안합니다.', image_url: '/DEPT_Logo.png' }
 ];
 

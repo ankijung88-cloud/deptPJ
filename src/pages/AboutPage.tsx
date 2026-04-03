@@ -422,9 +422,9 @@ const AboutPage: React.FC = () => {
                                 {[
                                     { n: '6F', t: '로컬 헤리티지 (Local Heritage)', c: 'border-dancheong-gold' },
                                     { n: '5F', t: '패션 아카이브 (Fashion Archive)', c: 'border-white/20' },
-                                    { n: '4F', t: '컬처 토크 (Culture Talk)', c: 'border-white/20' },
+                                    { n: '4F', t: '게더 몰 (Gather Mall)', c: 'border-white/20' },
                                     { n: '3F', t: '라이프스타일 큐레이션 (Lifestyle Curation)', c: 'border-white/20' },
-                                    { n: '2F', t: '미디어 룸 (Media Room)', c: 'border-white/20' },
+                                    { n: '2F', t: '뷰티 앤 케어 (Beauty & Care)', c: 'border-white/20' },
                                     { n: '1F', t: 'K-컬처 트렌드 (K-Culture Trends)', c: 'border-dancheong-red' }
                                 ].map((f, i) => (
                                     <div key={i} className={`flex items-center gap-4 px-6 py-4 bg-white/5 rounded-xl border border-white/5 border-l-4 ${f.c} hover:bg-white/10 transition-colors cursor-default`}>
