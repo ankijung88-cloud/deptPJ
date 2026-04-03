@@ -254,6 +254,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         return id;
     };
 
+    const getNormalizedSubcategoryId = (sub: string) => {
+        if (!sub) return '';
+        const s = sub.toLowerCase();
+        if (['car', 'trend', 'exchange', 'car-care', 'car-care-exchange-week'].includes(s)) return 'car-care';
+        if (['window', '디지털쇼윈도', '디지털 쇼윈도'].includes(s)) return 'window';
+        return sub;
+    };
+
     // 1. Base search & primary filters
     const baseFiltered = products.filter(p => {
         const normalizedCatId = getNormalizedFloorId(p.category);
@@ -267,7 +275,10 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
             p.category.toLowerCase().includes(term) ||
             normalizedCatId.toLowerCase().includes(term) ||
             floorLabel.includes(term) ||
-            (p.subcategory && p.subcategory.toLowerCase().includes(term));
+            (p.subcategory && (
+                p.subcategory.toLowerCase().includes(term) || 
+                getNormalizedSubcategoryId(p.subcategory).toLowerCase().includes(term)
+            ));
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
         return matchesSearch && matchesAgency;
     });
@@ -285,11 +296,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         ? floors.find(f => f.id === selectedFloor)?.subitems || []
         : floors.flatMap(f => f.subitems || []);
         
-    const subcategoryOptions = Array.from(new Map(allRelevantSubitems.map(s => [s.id, s])).values())
-        .filter(s => floorFiltered.some(p => p.subcategory === s.id));
+    const subcategoryOptions = Array.from(new Map(allRelevantSubitems.map(s => [s.id, s])).values());
+    // Show all defined subcategories for the selected floor to ensure rebranded items like "CAR 케어" are visible
 
+    const floorFilteredNormalized = floorFiltered.map(p => ({ ...p, subcategory: getNormalizedSubcategoryId(p.subcategory || '') }));
+    
     // 4. Filtered for Product Title dropdown
-    const subFiltered = floorFiltered.filter(p => !selectedSubcategory || p.subcategory === selectedSubcategory);
+    const subFiltered = floorFilteredNormalized.filter(p => !selectedSubcategory || p.subcategory === selectedSubcategory);
     const productTitleOptions = Array.from(new Set(subFiltered.map(p => displayLocalized(p.title)).filter(Boolean))).sort();
 
     // 5. Filtered for Template dropdown
@@ -520,8 +533,9 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     {(() => {
                                         const normalizedCatId = getNormalizedFloorId(product.category);
                                         const floor = floors.find(f => f.id === normalizedCatId);
-                                        const sub = floor?.subitems?.find(s => s.id === product.subcategory);
-                                        return sub ? displayLocalized(sub.label) : displayLocalized(product.subcategory);
+                                        const normalizedSubId = getNormalizedSubcategoryId(product.subcategory || '');
+                                        const sub = floor?.subitems?.find(s => s.id === normalizedSubId);
+                                        return sub ? displayLocalized(sub.label) : displayLocalized(normalizedSubId);
                                     })()}
                                 </td>
                                 <td className="px-6 py-4 text-right">
