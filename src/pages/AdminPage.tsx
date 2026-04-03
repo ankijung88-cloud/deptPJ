@@ -247,22 +247,38 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         }
     };
 
+    // Helper to map legacy floor IDs to current rebranded IDs
+    const getNormalizedFloorId = (id: string) => {
+        if (id === 'floor-1') return 'floor-tech-care';
+        if (id === 'floor-4') return 'floor-gather-mall';
+        return id;
+    };
+
     // 1. Base search & primary filters
     const baseFiltered = products.filter(p => {
+        const normalizedCatId = getNormalizedFloorId(p.category);
+        const floor = floors.find(f => f.id === normalizedCatId);
+        const floorLabel = floor ? `${floor.floor} ${displayLocalized(floor.title)}`.toLowerCase() : '';
+        
+        const term = searchTerm.toLowerCase();
         const matchesSearch = !searchTerm || 
-            p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            displayLocalized(p.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (p.subcategory && p.subcategory.toLowerCase().includes(searchTerm.toLowerCase()));
+            p.id.toLowerCase().includes(term) ||
+            displayLocalized(p.title).toLowerCase().includes(term) ||
+            p.category.toLowerCase().includes(term) ||
+            normalizedCatId.toLowerCase().includes(term) ||
+            floorLabel.includes(term) ||
+            (p.subcategory && p.subcategory.toLowerCase().includes(term));
         const matchesAgency = !selectedAgency || Number(p.agency_id) === Number(selectedAgency);
         return matchesSearch && matchesAgency;
     });
 
     // 2. Options for Floor & Category dropdown (Filtered by Agency)
-    const floorOptions = floors.filter(f => baseFiltered.some(p => p.category === f.id));
+    const floorOptions = floors.filter(f => 
+        baseFiltered.some(p => getNormalizedFloorId(p.category) === f.id)
+    );
     
     // 3. Filtered for Subcategory dropdown
-    const floorFiltered = baseFiltered.filter(p => !selectedFloor || p.category === selectedFloor);
+    const floorFiltered = baseFiltered.filter(p => !selectedFloor || getNormalizedFloorId(p.category) === selectedFloor);
     
     // Aggregated subcategories from all floors if none selected, or from selected floor
     const allRelevantSubitems = selectedFloor 
@@ -279,8 +295,9 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     // 5. Filtered for Template dropdown
     const typeFiltered = subFiltered.filter(p => !selectedProductType || displayLocalized(p.title) === selectedProductType);
     const templateOptions = Array.from(new Set(typeFiltered.map(p => {
-        if (TEMPLATE_CATEGORIES.includes(p.category)) return p.category;
-        const isFloor = floors.some(f => f.id === p.category);
+        const normalizedCatId = getNormalizedFloorId(p.category);
+        if (TEMPLATE_CATEGORIES.includes(normalizedCatId)) return normalizedCatId;
+        const isFloor = floors.some(f => f.id === normalizedCatId);
         if (!isFloor || !p.category) return 'uncategorized';
         return null;
     }).filter((cat): cat is string => !!cat))).sort();
@@ -291,7 +308,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         : typeFiltered.filter(p => {
             const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
             const matchesTemplate = !selectedTemplate || 
-                (selectedTemplate === 'uncategorized' ? isUncategorized : p.category === selectedTemplate);
+                (selectedTemplate === 'uncategorized' ? isUncategorized : getNormalizedFloorId(p.category) === selectedTemplate);
             return matchesTemplate;
         });
 
@@ -478,10 +495,11 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 )}
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === product.category)?.color || '#333' }}></div>
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === getNormalizedFloorId(product.category))?.color || '#333' }}></div>
                                         <span className="text-white font-bold">
                                             {(() => {
-                                                const floor = floors.find(f => f.id === product.category);
+                                            const normalizedCatId = getNormalizedFloorId(product.category);
+                                                const floor = floors.find(f => f.id === normalizedCatId);
                                                 if (floor) return `${floor.floor}`;
                                                 if (TEMPLATE_CATEGORIES.includes(product.category)) return 'Template';
                                                 return displayLocalized(product.category);
@@ -489,9 +507,10 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                         </span>
                                         <span className="text-white/40 text-xs">
                                             {(() => {
-                                                const floor = floors.find(f => f.id === product.category);
+                                                const normalizedCatId = getNormalizedFloorId(product.category);
+                                                const floor = floors.find(f => f.id === normalizedCatId);
                                                 if (floor) return displayLocalized(floor.title);
-                                                if (TEMPLATE_CATEGORIES.includes(product.category)) return product.category.toUpperCase();
+                                                if (TEMPLATE_CATEGORIES.includes(normalizedCatId)) return normalizedCatId.toUpperCase();
                                                 return '';
                                             })()}
                                         </span>
@@ -499,7 +518,8 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 </td>
                                 <td className="px-6 py-4 text-white/60">
                                     {(() => {
-                                        const floor = floors.find(f => f.id === product.category);
+                                        const normalizedCatId = getNormalizedFloorId(product.category);
+                                        const floor = floors.find(f => f.id === normalizedCatId);
                                         const sub = floor?.subitems?.find(s => s.id === product.subcategory);
                                         return sub ? displayLocalized(sub.label) : displayLocalized(product.subcategory);
                                     })()}
