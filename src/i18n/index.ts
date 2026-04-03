@@ -17,6 +17,7 @@ const resources = {
                 "floor-5": "5F | 패션 아카이브",
                 "floor-6": "6F | 로컬 헤리티지",
 
+
                 "tickets": "회사소개",
                 "art": "입점사 로그인",
                 "travel": "브랜드 철학",
@@ -49,13 +50,13 @@ const resources = {
                 "car-care": "CAR 케어",
                 "window": "디지털 쇼윈도",
                 "f1_kpop": "K-팝 스테이지",
-                "f1_library": "트렌드 라이브러리",
+                "f1_library": "트랜드 라이브러리",
                 "f1_tech": "한류 테크존",
                 "skincare": "스킨케어",
                 "hair": "헤어케어",
                 "perfume": "퍼퓸",
                 "inner-beauty": "이너 뷰티",
-                "body-care": "바디케어",
+                "body-care": "바비케어",
                 "performance": "공연 실황",
                 "exhibit": "가상 전시",
                 "f3_media": "미디어 아트 홀",
@@ -185,6 +186,25 @@ const resources = {
                 "loading_content": "콘텐츠를 불러오는 중입니다..."
             }
         }
+    },
+    en: {
+        translation: {
+            "nav": {
+                "floor-tech-care": "1F | TECH & CARE",
+                "floor-2": "2F | BEAUTY & CARE",
+                "floor-3": "3F | LIFESTYLE CURATION",
+                "floor-gather-mall": "4F | GATHER MALL",
+                "floor-5": "5F | FASHION ARCHIVE",
+                "floor-6": "6F | LOCAL HERITAGE"
+            },
+            "subcategory": {
+                "skincare": "Skincare",
+                "hair": "Hair Care",
+                "perfume": "Perfume",
+                "inner-beauty": "Inner Beauty",
+                "body-care": "Body Care"
+            }
+        }
     }
 };
 
@@ -193,16 +213,10 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: 'ko', // Default language
         fallbackLng: 'ko',
-        supportedLngs: ['ko', 'en', 'ja', 'zh', 'fr', 'de', 'es', 'it', 'ru', 'pt', 'nl', 'pl', 'sv', 'ar', 'tr', 'fa', 'he', 'vi', 'th', 'id', 'hi'],
-        detection: {
-            order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
-            caches: ['localStorage', 'cookie'],
-            convertDetectedLanguage: (lng) => lng.split('-')[0], // Always use short code
-        },
+        supportedLngs: ['ko', 'en'],
         interpolation: {
-            escapeValue: false // react already safes from xss
+            escapeValue: false
         }
     });
 

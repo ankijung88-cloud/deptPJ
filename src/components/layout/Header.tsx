@@ -175,7 +175,7 @@ const Header: React.FC = () => {
         {
             id: 'floor-2',
             level: 2,
-            label: t('nav.floor2'),
+            label: t('nav.floor-2'),
             subitems: [
                 { id: 'skincare', label: t('subcategory.skincare'), path: '/category/skincare' },
                 { id: 'hair', label: t('subcategory.hair'), path: '/category/hair' },
