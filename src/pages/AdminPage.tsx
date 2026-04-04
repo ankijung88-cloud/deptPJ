@@ -115,7 +115,9 @@ const normalizeProductData = (product: any) => {
         closed_days: [],
         parent_id: '',
         detail_media_url: '',
-        detail_media_type: 'image'
+        detail_media_type: 'image',
+        reservation_programs: [],
+        reservation_slots: []
     };
     if (!product) return defaultData;
 
@@ -146,7 +148,9 @@ const normalizeProductData = (product: any) => {
         closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : [],
         parent_id: product.parent_id || '',
         detail_media_url: product.detail_media_url || product.detailMediaUrl || '',
-        detail_media_type: product.detail_media_type || product.detailMediaType || 'image'
+        detail_media_type: product.detail_media_type || product.detailMediaType || 'image',
+        reservation_programs: typeof product.reservation_programs === 'string' ? JSON.parse(product.reservation_programs) : (product.reservation_programs || []),
+        reservation_slots: typeof product.reservation_slots === 'string' ? JSON.parse(product.reservation_slots) : (product.reservation_slots || [])
     };
 };
 
@@ -1002,6 +1006,151 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
                                 placeholder="https://youtube.com/..."
                             />
+                        </div>
+                    </div>
+
+                    {/* Reservation Settings Section */}
+                    <div className="space-y-6 pt-6 border-t border-white/5">
+                        <div className="flex items-center gap-2">
+                            <Layers className="text-[#00FFC2]" size={18} />
+                            <h4 className="text-sm font-bold text-white uppercase tracking-widest">Reservation Settings</h4>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-8">
+                            {/* Programs Management */}
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1">Programs</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => {
+                                            const newProgram = {
+                                                id: `prog-${Date.now()}`,
+                                                title: { ko: '', en: '' },
+                                                description: { ko: '', en: '' },
+                                                price: ''
+                                            };
+                                            setFormData({
+                                                ...formData,
+                                                reservation_programs: [...formData.reservation_programs, newProgram]
+                                            });
+                                        }}
+                                        className="text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
+                                    >
+                                        + Add Program
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-1 gap-4">
+                                    {formData.reservation_programs.map((prog: any, idx: number) => (
+                                        <div key={prog.id} className="bg-black/20 border border-white/5 rounded-2xl p-6 relative group">
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    const updated = formData.reservation_programs.filter((_: any, i: number) => i !== idx);
+                                                    setFormData({ ...formData, reservation_programs: updated });
+                                                }}
+                                                className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-4">
+                                                    <input 
+                                                        type="text"
+                                                        placeholder="Program Title (KO)"
+                                                        value={prog.title?.ko || ''}
+                                                        onChange={(e) => {
+                                                            const updated = [...formData.reservation_programs];
+                                                            updated[idx] = { ...updated[idx], title: { ...updated[idx].title, ko: e.target.value } };
+                                                            setFormData({ ...formData, reservation_programs: updated });
+                                                        }}
+                                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50"
+                                                    />
+                                                    <input 
+                                                        type="text"
+                                                        placeholder="Price (e.g. 50,000원)"
+                                                        value={prog.price || ''}
+                                                        onChange={(e) => {
+                                                            const updated = [...formData.reservation_programs];
+                                                            updated[idx] = { ...updated[idx], price: e.target.value };
+                                                            setFormData({ ...formData, reservation_programs: updated });
+                                                        }}
+                                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <textarea 
+                                                        placeholder="Description (KO)"
+                                                        rows={3}
+                                                        value={prog.description?.ko || ''}
+                                                        onChange={(e) => {
+                                                            const updated = [...formData.reservation_programs];
+                                                            updated[idx] = { ...updated[idx], description: { ...updated[idx].description, ko: e.target.value } };
+                                                            setFormData({ ...formData, reservation_programs: updated });
+                                                        }}
+                                                        className="w-full h-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50 resize-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {formData.reservation_programs.length === 0 && (
+                                        <div className="text-center py-8 border border-dashed border-white/5 rounded-2xl text-white/20 text-xs italic">
+                                            No programs registered. Default programs will be used.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Time Slots Management */}
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1">Time Slots</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => {
+                                            setFormData({
+                                                ...formData,
+                                                reservation_slots: [...formData.reservation_slots, "10:00"]
+                                            });
+                                        }}
+                                        className="text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
+                                    >
+                                        + Add Slot
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {formData.reservation_slots.map((slot: string, idx: number) => (
+                                        <div key={idx} className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pl-3">
+                                            <input 
+                                                type="text"
+                                                value={slot}
+                                                onChange={(e) => {
+                                                    const updated = [...formData.reservation_slots];
+                                                    updated[idx] = e.target.value;
+                                                    setFormData({ ...formData, reservation_slots: updated });
+                                                }}
+                                                className="bg-transparent border-none text-white text-xs font-mono w-16 focus:outline-none"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    const updated = formData.reservation_slots.filter((_: any, i: number) => i !== idx);
+                                                    setFormData({ ...formData, reservation_slots: updated });
+                                                }}
+                                                className="p-1.5 hover:bg-white/10 rounded-lg text-white/20 hover:text-red-400 transition-all font-sans"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {formData.reservation_slots.length === 0 && (
+                                        <div className="w-full text-center py-4 border border-dashed border-white/5 rounded-2xl text-white/20 text-xs italic">
+                                            No time slots registered. Default slots will be used.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
 

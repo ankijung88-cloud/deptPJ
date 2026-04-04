@@ -17,7 +17,7 @@ export interface NavItem {
 }
 
 export interface SelectedTemplate {
-    id: string; // cinema, museum, store, ticket
+    id: string; // cinema, museum, store, ticket, inquiry, reservation
     status: 'visible' | 'hidden';
     title?: LocalizedString;
     description?: LocalizedString;
@@ -57,6 +57,8 @@ export interface FeaturedItem {
     agency_id?: string | number;
     detail_media_url?: string;
     detail_media_type?: 'image' | 'video';
+    reservation_programs?: any[] | string;
+    reservation_slots?: string[] | string;
 }
 
 export interface FloorContent {

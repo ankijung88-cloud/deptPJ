@@ -138,6 +138,8 @@ async function initDB() {
     await addColumnSafely('page_type', "ALTER TABLE featured_items ADD COLUMN page_type VARCHAR(50) NULL");
     await addColumnSafely('parent_id', "ALTER TABLE featured_items ADD COLUMN parent_id INT NULL");
     await addColumnSafely('theme_data', "ALTER TABLE featured_items ADD COLUMN theme_data JSON NULL");
+    await addColumnSafely('reservation_programs', "ALTER TABLE featured_items ADD COLUMN reservation_programs JSON NULL");
+    await addColumnSafely('reservation_slots', "ALTER TABLE featured_items ADD COLUMN reservation_slots JSON NULL");
 
     // NEW: Ensure 'description' column is TEXT to prevent "Data too long" errors
     try {
