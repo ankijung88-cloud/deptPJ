@@ -6,11 +6,10 @@ export const FLOORS = [
         color: '#00A8FF',
         videoUrl: '/uploads/festival.mp4',
         subcategories: [
-            { id: 'heritage', label: '지역 문화 유산' },
-            { id: 'travel', label: '전략적 앵커' },
-            { id: 'f6_gourmet', label: '미식 아카이브' },
-            { id: 'f6_craft', label: '지역 공예관' },
-            { id: 'f6_tour', label: '헤리티지 투어' },
+            { id: 'heritage', label: '로컬' },
+            { id: 'travel', label: '여행' },
+            { id: 'f6_gourmet', label: '음식' },
+            { id: 'f6_craft', label: '참여 ' },
         ]
     },
     {
