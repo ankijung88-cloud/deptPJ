@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import categoriesJson from './categories.json';
 
 // Translation resources
 const resources = {
@@ -10,12 +11,7 @@ const resources = {
             "nav": {
                 "login": "로그인",
                 "gallery": "VIA STATION",
-                "floor-tech-care": "1F | 테크 앤 케어",
-                "floor-2": "2F | 뷰티 앤 케어",
-                "floor-3": "3F | 라이프스타일 큐레이션",
-                "floor-gather-mall": "4F | 게더 몰",
-                "floor-5": "5F | 패션 아카이브",
-                "floor-6": "6F | 로컬 헤리티지",
+                ...categoriesJson.ko.nav,
 
 
                 "tickets": "회사소개",
@@ -47,36 +43,7 @@ const resources = {
                 "start": "시작하기"
             },
             "subcategory": {
-                "car-care": "CAR 케어",
-                "window": "디지털 쇼윈도",
-                "f1_kpop": "K-팝 스테이지",
-                "f1_library": "트랜드 라이브러리",
-                "f1_tech": "한류 테크존",
-                "skincare": "스킨케어",
-                "hair": "헤어케어",
-                "perfume": "퍼퓸",
-                "inner-beauty": "이너 뷰티",
-                "body-care": "바디케어",
-                "performance": "공연 실황",
-                "exhibit": "가상 전시",
-                "f3_media": "미디어 아트 홀",
-                "f3_lounge": "아티스트 라운지",
-                "f3_audio": "사운드 아카이브",
-                "b2b-mall": "B2B 몰",
-                "interview": "아티스트 인터뷰",
-                "f4_plus": "토크 플러스",
-                "f4_book": "도서관 섹션",
-                "f4_seminar": "세미나 룸",
-                "archive": "패션 아카이브",
-                "collection": "시즌 컬렉션",
-                "f5_material": "소재 도서관",
-                "f5_fitting": "피팅 스튜디오",
-                "f5_textile": "텍스타일 룸",
-                "heritage": "지역 문화 유산",
-                "travel": "전략적 앵커",
-                "f6_gourmet": "미식 아카이브",
-                "f6_craft": "지역 공예관",
-                "f6_tour": "헤리티지 투어"
+                ...categoriesJson.ko.subcategory
             },
             "subcategory_desc": "전통의 깊이와 현대적 감각이 교차하는 지점에서 발견한 새로운 영감의 기록들을 탐색합니다.",
             "subcategory_guide": "하단의 3D 가상공간 미리보기를 클릭하여 시공간을 넘나드는 몰입형 검색을 시작해보세요.",
@@ -88,7 +55,7 @@ const resources = {
                 "f1_tech": "한류 문화의 확산을 이끄는 기술적 도전과 혁신적인 미디어 아트를 선보입니다.",
                 "skincare": "피부 본연의 건강함과 맑은 결을 찾아가는 정교한 스킨케어 큐레이션입니다.",
                 "hair": "전문적인 헤어 솔루션을 통해 건강한 모발과 아름다운 스타일의 조화를 제안합니다.",
-                "perfume": "기억의 문을 여는 향기, 브랜드의 철학을 후각으로 경험하는 감각적인 공간입니다.",
+                "p_surgery": "기억의 문을 여는 향기, 브랜드의 철학을 후각으로 경험하는 감각적인 공간입니다.",
                 "inner-beauty": "몸 안의 밸런스를 맞춰 진정한 아름다움의 에너지를 채우는 웰니스 솔루션입니다.",
                 "body-care": "지친 몸에 휴식을 선사하고 온전한 나를 만나는 섬세한 바디 케어 리추얼입니다.",
                 "performance": "그날의 공기와 함성까지 고스란히 담아낸 생동감 넘치는 공연의 기록들입니다.",
@@ -190,44 +157,10 @@ const resources = {
     en: {
         translation: {
             "nav": {
-                "floor-tech-care": "1F | TECH & CARE",
-                "floor-2": "2F | BEAUTY & CARE",
-                "floor-3": "3F | LIFESTYLE CURATION",
-                "floor-gather-mall": "4F | GATHER MALL",
-                "floor-5": "5F | FASHION ARCHIVE",
-                "floor-6": "6F | LOCAL HERITAGE"
+                ...categoriesJson.en.nav
             },
             "subcategory": {
-                "car-care": "CAR Care",
-                "window": "Digital Window",
-                "f1_kpop": "K-Pop Stage",
-                "f1_library": "Trend Library",
-                "f1_tech": "K-Tech Zone",
-                "skincare": "Skincare",
-                "hair": "Hair Care",
-                "perfume": "Perfume",
-                "inner-beauty": "Inner Beauty",
-                "body-care": "Body Care",
-                "performance": "Live Performance",
-                "exhibit": "Virtual Exhibit",
-                "f3_media": "Media Art Hall",
-                "f3_lounge": "Artist Lounge",
-                "f3_audio": "Sound Archive",
-                "b2b-mall": "B2B Mall",
-                "interview": "Artist Interview",
-                "f4_plus": "Talk Plus",
-                "f4_book": "Book Section",
-                "f4_seminar": "Seminar Room",
-                "archive": "Fashion Archive",
-                "collection": "Season Collection",
-                "f5_material": "Material Library",
-                "f5_fitting": "Fitting Studio",
-                "f5_textile": "Textile Room",
-                "heritage": "Local Heritage",
-                "travel": "Strategic Anchor",
-                "f6_gourmet": "Gourmet Archive",
-                "f6_craft": "Local Craft",
-                "f6_tour": "Heritage Tour"
+                ...categoriesJson.en.subcategory
             }
         }
     }

@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import { syncAll } from '../utils/syncService.js';
 
 export const getFloorCategories = async (req, res) => {
   try {
@@ -44,6 +45,10 @@ export const createFloorCategory = async (req, res) => {
       final_video_url,
       final_bg_image
     ]);
+    
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.status(201).json({ id, message: 'Floor category created successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -83,6 +88,9 @@ export const updateFloorCategory = async (req, res) => {
       return res.status(404).json({ message: 'No category found with this ID to update. If this is a new floor, please use Create instead of Update.' });
     }
 
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.json({ message: 'Floor category updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -93,6 +101,10 @@ export const deleteFloorCategory = async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM floor_categories WHERE id = ?', [id]);
+    
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.json({ message: 'Floor category deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -105,6 +117,10 @@ export const createNavItem = async (req, res) => {
   try {
     const query = `INSERT INTO nav_items (id, href, subitems) VALUES (?, ?, ?)`;
     await pool.query(query, [id, href, JSON.stringify(subitems)]);
+    
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.status(201).json({ id, message: 'Nav item created successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -117,6 +133,10 @@ export const updateNavItem = async (req, res) => {
   try {
     const query = `UPDATE nav_items SET href = ?, subitems = ? WHERE id = ?`;
     await pool.query(query, [href, JSON.stringify(subitems), id]);
+    
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.json({ message: 'Nav item updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -127,6 +147,10 @@ export const deleteNavItem = async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM nav_items WHERE id = ?', [id]);
+    
+    // Auto-sync physical code and git commit
+    await syncAll().catch(err => console.error('Sync failed:', err));
+
     res.json({ message: 'Nav item deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -76,7 +76,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         subitems: [
             { id: 'skincare', label: { ko: '스킨케어', en: 'Skincare' } },
             { id: 'hair', label: { ko: '헤어케어', en: 'Hair Care' } },
-            { id: 'perfume', label: { ko: '퍼퓸', en: 'Perfume' } },
+            { id: 'p_surgery', label: { ko: '뷰티성형', en: 'Plastic Surgery' } },
             { id: 'inner-beauty', label: { ko: '이너 뷰티', en: 'Inner Beauty' } },
             { id: 'body-care', label: { ko: '바디케어', en: 'Body Care' } }
         ]

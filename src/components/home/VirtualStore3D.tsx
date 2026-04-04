@@ -166,7 +166,7 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                                 color: 'white',
                                 transform: hovered ? 'scale(1.1)' : 'scale(1)'
                             }}>
-                            {t(`subcategory.${category.id}`, getLocalizedText(category.label, i18nLanguage))}
+                            {getLocalizedText(category.label, i18nLanguage) || t(`subcategory.${category.id}`)}
                         </span>
                     </div>
                 </Html>
@@ -246,7 +246,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                     {activeFloorData.floor}
                                 </span>
                                 <span className="text-7xl font-black text-white tracking-widest leading-none text-center">
-                                    {t(`nav.${activeFloorData.id}`, getLocalizedText(activeFloorData.title, i18nLanguage))}
+                                    {getLocalizedText(activeFloorData.title, i18nLanguage) || t(`nav.${activeFloorData.id}`)}
                                 </span>
                             </div>
                             <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-4 tracking-[0.2em] uppercase text-center max-w-[800px]">

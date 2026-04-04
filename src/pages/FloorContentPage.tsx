@@ -177,7 +177,7 @@ const FloorContentPage: React.FC = () => {
 
                                 <div className="absolute top-6 left-6 flex gap-2">
                                     <span className="bg-black/80 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 select-none">
-                                        {t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))}
+                                        {getLocalizedText(floorData.subitems?.find(s => s.id === item.subcategory)?.label, i18n.language) || t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))}
                                     </span>
                                 </div>
                             </div>
