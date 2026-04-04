@@ -40,6 +40,17 @@ export const FLOORS = [
         ]
     },
     {
+        level: 4,
+        title: '게더 몰',
+        label: '4F',
+        color: '#FF4757',
+        videoUrl: '/uploads/travel.mp4',
+        subcategories: [
+            { id: 'talk', label: 'B2B 몰' },
+            { id: 'f4_seminar', label: '세미나 룸' },
+        ]
+    },
+    {
         level: 3,
         title: '라이프스타일 큐레이션',
         label: '3F',
