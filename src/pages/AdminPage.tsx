@@ -885,12 +885,19 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                         </label>
                                     </div>
                                 </div>
-                                <div className="p-4 bg-white/5 rounded-xl border border-white/10 min-h-[100px] flex items-center justify-center overflow-hidden">
+                                <div className="p-4 bg-white/5 rounded-xl border border-white/10 min-h-[150px] flex items-center justify-center overflow-hidden">
                                     {formData.detail_media_url ? (
                                         formData.detail_media_type === 'video' ? (
-                                            <video src={formData.detail_media_url} className="max-h-[150px] w-auto" muted loop autoPlay />
+                                            <video src={formData.detail_media_url} className="max-h-[300px] w-auto" muted loop autoPlay />
                                         ) : (
-                                            <img src={formData.detail_media_url} alt="" className="max-h-[150px] w-auto object-contain" />
+                                            <div className="max-h-[400px] w-full overflow-y-auto custom-scrollbar flex justify-center">
+                                                <img 
+                                                    src={formData.detail_media_url} 
+                                                    alt="" 
+                                                    className="w-full h-auto max-w-full" 
+                                                    style={{ objectFit: 'contain' }}
+                                                />
+                                            </div>
                                         )
                                     ) : (
                                         <span className="text-[10px] text-white/20 uppercase tracking-widest italic">미리보기 (No Preview)</span>
