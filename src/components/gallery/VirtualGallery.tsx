@@ -128,7 +128,7 @@ const normalizeVideoUrl = (url: string): string => {
     return url.replace('/assets/videos/', '/uploads/');
 };
 
-const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme, hovered, playing, setPlaying }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void }) => {
+const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme, hovered, playing, setPlaying, isMobile = false }: { videoUrl: string, imageUrl: string, scale: [number, number], theme: any, hovered: boolean, playing: boolean, setPlaying: (p: boolean) => void, isMobile?: boolean }) => {
     const [videoReady, setVideoReady] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(baseScale[0] / baseScale[1]);
     
@@ -319,6 +319,33 @@ const VideoScreen = ({ videoUrl: rawVideoUrl, imageUrl, scale: baseScale, theme,
 
             {/* Screen Glow */}
             <pointLight position={[0, 0, 2]} intensity={(hovered || !playing) ? 6 : 2} color={theme.accentColor} distance={15} />
+
+            {/* Empty State Message inside the 3D Screen */}
+            {!videoUrl && !imageUrl && (
+                <group position={[0, 0, 0.1]}>
+                    <DreiText
+                        fontSize={isMobile ? 0.4 : 0.8}
+                        color="white"
+                        anchorX="center"
+                        anchorY="middle"
+                        maxWidth={isMobile ? 5 : 15}
+                        textAlign="center"
+                    >
+                        {/* Removed external font URL to prevent loading crash */}
+                        상영 중인 영상이 없습니다.
+                    </DreiText>
+                    <DreiText
+                        position={[0, -1.2, 0]}
+                        fontSize={isMobile ? 0.2 : 0.4}
+                        color={theme?.accentColor || '#ffffff'}
+                        fillOpacity={0.4}
+                        anchorX="center"
+                        anchorY="middle"
+                    >
+                        NO CONTENT PLAYING
+                    </DreiText>
+                </group>
+            )}
         </group>
     );
 };
@@ -783,16 +810,17 @@ const GalleryScene = ({
                 />
             )}
 
-            {activeCinemaItem && (
+            {(activeCinemaItem || isTheater) && (
                 <group position={[0, isMobile ? 3 : 7.2, -25]}>
                     <VideoScreen
-                        videoUrl={normalizeVideoUrl(activeCinemaItem.videoUrl || (activeCinemaItem as any).video_url)}
-                        imageUrl={activeCinemaItem.imageUrl || (activeCinemaItem as any).image_url}
+                        videoUrl={normalizeVideoUrl(activeCinemaItem?.videoUrl || (activeCinemaItem as any)?.video_url || '')}
+                        imageUrl={activeCinemaItem?.imageUrl || (activeCinemaItem as any)?.image_url || ''}
                         scale={isMobile ? [18, 10] : [45, 25.3]} // Increased scale for 4/5 view
                         hovered={false}
                         theme={theme}
                         playing={!!playing}
                         setPlaying={(p) => setPlaying?.(p)}
+                        isMobile={isMobile}
                     />
                 </group>
             )}

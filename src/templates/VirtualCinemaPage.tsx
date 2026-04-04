@@ -583,10 +583,6 @@ const VirtualCinemaPage: React.FC = () => {
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/20" />
                         </div>
-                    ) : cinemaItems.length === 0 ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-40">
-                            <AutoTranslatedText text="상영 중인 영상이 없습니다." />
-                        </div>
                     ) : (
                         <VirtualGallery
                             items={cinemaItems}
