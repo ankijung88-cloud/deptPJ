@@ -139,6 +139,18 @@ async function initDB() {
     await addColumnSafely('parent_id', "ALTER TABLE featured_items ADD COLUMN parent_id INT NULL");
     await addColumnSafely('theme_data', "ALTER TABLE featured_items ADD COLUMN theme_data JSON NULL");
 
+    // NEW: Ensure 'description' column is TEXT to prevent "Data too long" errors
+    try {
+      const [descCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'description'");
+      if (descCols.length > 0 && !descCols[0].Type.toLowerCase().includes('text')) {
+        console.log('[DB] Description column type is too small. Upgrading to TEXT...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN description TEXT");
+        console.log('[DB] Migration successful: description column updated to TEXT.');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for description:', err.message);
+    }
+
     // Check if agency_id exists in notices
 
     // Ensure data column allows NULL
