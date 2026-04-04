@@ -58,6 +58,7 @@ export const FLOORS = [
         subcategories: [
             { id: 'performance', label: '공연 실황' },
             { id: 'exhibit', label: '가상 전시' },
+            { id: 'movement', label: '무브먼트 아카이브' },
         ]
     },
     {
