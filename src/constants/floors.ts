@@ -59,9 +59,6 @@ export const FLOORS = [
         subcategories: [
             { id: 'performance', label: '공연 실황' },
             { id: 'exhibit', label: '가상 전시' },
-            { id: 'f3_media', label: '미디어 아트 홀' },
-            { id: 'f3_lounge', label: '아티스트 라운지' },
-            { id: 'f3_audio', label: '사운드 아카이브' },
         ]
     },
     {
