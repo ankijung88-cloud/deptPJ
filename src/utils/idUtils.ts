@@ -11,7 +11,8 @@ export const getNormalizedFloorId = (id: string): string => {
     if (!id) return '';
     const s = id.toLowerCase();
     if (s === 'floor-1' || s === 'floor-tech-care') return 'floor-tech-care';
-    if (s === 'floor-4' || s === 'floor-gather-mall') return 'floor-gather-mall';
+    if (s === 'floor-4') return 'floor-6'; // 4F is now Local Heritage
+    if (s === 'floor-6') return 'floor-gather-mall'; // 6F is now Gather Mall
     return id;
 };
 
@@ -30,7 +31,7 @@ export const getNormalizedSubcategoryId = (sub: string): string => {
         return 'window';
     }
     
-    // Floor 4: GATHER MALL (previously floor-4)
+    // Floor 6: GATHER MALL (previously 4F)
     if (['talk', 'b2b-mall', '인터뷰', 'interview', 'mall'].includes(s)) {
         return 'b2b-mall';
     }

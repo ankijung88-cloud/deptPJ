@@ -2,8 +2,20 @@ import { FloorCategory, NavItem, Notice, FAQ } from '../types';
 
 export const FALLBACK_FLOORS: FloorCategory[] = [
     {
+        id: 'floor-7',
+        floor: '7F',
+        title: { ko: '커뮤니케이션 라운지', en: 'COMMUNICATION LOUNGE' },
+        description: { ko: '실시간 가상 회의와 아바타 기반의 소통이 이루어지는 입체적인 협업 공간입니다.', en: 'A 3D collaborative space for real-time virtual meetings and avatar-based communication.' },
+        videoUrl: '/uploads/meeting_room.mp4',
+        color: '#FF3B30', // 7F - Vibrant Red (Meeting/Action)
+        content: [],
+        subitems: [
+            { id: 'meeting-room', label: { ko: '회의실', en: 'Meeting Room' } }
+        ]
+    },
+    {
         id: 'floor-6',
-        floor: '6F',
+        floor: '4F',
         title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
         videoUrl: '/uploads/festival.mp4',
@@ -35,7 +47,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
     },
     {
         id: 'floor-gather-mall',
-        floor: '4F',
+        floor: '6F',
         title: { ko: '게더 몰', en: 'GATHER MALL' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
         videoUrl: '/uploads/travel.mp4',

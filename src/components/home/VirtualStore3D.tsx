@@ -522,9 +522,10 @@ const FirstFloorColumns = ({ width, depth, height }: { width: number, depth: num
     );
 };
 
-const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal, isSelectedAnything, isMobile }: any) => {
+const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal, isSelectedAnything, isMobile, loungeFloor }: any) => {
     const [isMainButtonHovered, setIsMainButtonHovered] = React.useState(false);
     const [isPlaceholderHovered, setIsPlaceholderHovered] = React.useState(false);
+    const [isLoungeHovered, setIsLoungeHovered] = React.useState(false);
 
     const active = isSelected || isHovered || isMainButtonHovered;
     const targetScale = active ? 1.02 : 1;
@@ -688,34 +689,85 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                 }} />
                             </div>
 
-                            {/* Expansion Placeholder Button (Same Design) */}
-                            <div
-                                onPointerEnter={(e) => { e.stopPropagation(); setIsPlaceholderHovered(true); document.body.style.cursor = 'pointer'; }}
-                                onPointerLeave={() => { setIsPlaceholderHovered(false); document.body.style.cursor = 'auto'; }}
-                                style={{
-                                    width: isMobile ? '36px' : '56px',
-                                    height: isMobile ? '36px' : '56px',
-                                    borderRadius: '50%',
-                                    border: isPlaceholderHovered ? `1.5px solid ${floor.color}` : '1.5px dashed rgba(255, 255, 255, 0.2)',
-                                    backgroundColor: isPlaceholderHovered ? `${floor.color}11` : 'rgba(255, 255, 255, 0.05)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.4s ease',
-                                    opacity: 1,
-                                    transform: isPlaceholderHovered ? 'scale(1.1)' : 'scale(1)',
-                                    boxShadow: isPlaceholderHovered ? `0 0 15px ${floor.color}33` : 'none',
-                                    zIndex: isPlaceholderHovered ? 10 : 1
-                                }}
-                            >
-                                <span style={{
-                                    fontSize: isMobile ? '14px' : '20px',
-                                    fontWeight: '400',
-                                    color: isPlaceholderHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.5)',
-                                    lineHeight: 1
-                                }}>+</span>
-                            </div>
+                            {/* Expansion Placeholder Button (Same Design) OR 7F Lounge Button for 1F */}
+                            {floor.floor === '1F' && loungeFloor ? (
+                                <div
+                                    onPointerEnter={(e) => {
+                                        e.stopPropagation();
+                                        setIsLoungeHovered(true);
+                                        onHover(parseInt(loungeFloor.floor));
+                                        document.body.style.cursor = 'pointer';
+                                    }}
+                                    onPointerLeave={() => {
+                                        setIsLoungeHovered(false);
+                                        onHover(null);
+                                        document.body.style.cursor = 'auto';
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onToggleModal(parseInt(loungeFloor.floor));
+                                    }}
+                                    style={{
+                                        width: isMobile ? '40px' : '64px',
+                                        height: isMobile ? '40px' : '64px',
+                                        borderRadius: '50%',
+                                        border: `1.5px solid ${isLoungeHovered ? loungeFloor.color : 'rgba(255, 255, 255, 0.3)'}`,
+                                        backgroundColor: isLoungeHovered ? `${loungeFloor.color}22` : 'rgba(20, 28, 25, 0.6)',
+                                        backdropFilter: 'blur(10px)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        boxShadow: isLoungeHovered
+                                            ? `0 0 20px ${loungeFloor.color}44, inset 0 0 10px ${loungeFloor.color}33`
+                                            : '0 4px 15px rgba(0,0,0,0.3)',
+                                        transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
+                                        transform: isLoungeHovered ? 'scale(1.1)' : 'scale(1)',
+                                        position: 'relative',
+                                        zIndex: isLoungeHovered ? 10 : 1
+                                    }}
+                                >
+                                    <span style={{
+                                        fontSize: isMobile ? '16px' : '24px',
+                                        fontWeight: '900',
+                                        color: isLoungeHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
+                                        lineHeight: 1,
+                                        fontFamily: 'serif',
+                                        textShadow: isLoungeHovered ? `0 0 10px ${loungeFloor.color}` : 'none',
+                                        transition: 'all 0.3s ease'
+                                    }}>
+                                        7F
+                                    </span>
+                                </div>
+                            ) : (
+                                <div
+                                    onPointerEnter={(e) => { e.stopPropagation(); setIsPlaceholderHovered(true); document.body.style.cursor = 'pointer'; }}
+                                    onPointerLeave={() => { setIsPlaceholderHovered(false); document.body.style.cursor = 'auto'; }}
+                                    style={{
+                                        width: isMobile ? '36px' : '56px',
+                                        height: isMobile ? '36px' : '56px',
+                                        borderRadius: '50%',
+                                        border: isPlaceholderHovered ? `1.5px solid ${floor.color}` : '1.5px dashed rgba(255, 255, 255, 0.2)',
+                                        backgroundColor: isPlaceholderHovered ? `${floor.color}11` : 'rgba(255, 255, 255, 0.05)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.4s ease',
+                                        opacity: 1,
+                                        transform: isPlaceholderHovered ? 'scale(1.1)' : 'scale(1)',
+                                        boxShadow: isPlaceholderHovered ? `0 0 15px ${floor.color}33` : 'none',
+                                        zIndex: isPlaceholderHovered ? 10 : 1
+                                    }}
+                                >
+                                    <span style={{
+                                        fontSize: isMobile ? '14px' : '20px',
+                                        fontWeight: '400',
+                                        color: isPlaceholderHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.5)',
+                                        lineHeight: 1
+                                    }}>+</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </Html>
@@ -727,8 +779,9 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
 // --- Scene Assembly ---
 
 const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFloor, setHoveredFloor, setActiveModalFloor, setSelectedFloor, isMobile, lang }: any) => {
-    // Center the building vertically
-    const totalHeight = floors.length * METRICS.floorHeight;
+    const buildingFloors = floors.filter((f: any) => f.floor !== '7F');
+    const loungeFloor = floors.find((f: any) => f.floor === '7F');
+    const totalHeight = buildingFloors.length * METRICS.floorHeight;
 
     return (
         <group
@@ -742,8 +795,8 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
             }}
         >
             {/* Central 'Gimsim' Pillar through all floors */}
-            <mesh position={[0, (floors.length * METRICS.floorHeight) / 2, 0]}>
-                <cylinderGeometry args={[0.3, 0.3, floors.length * METRICS.floorHeight, 12]} />
+            <mesh position={[0, (buildingFloors.length * METRICS.floorHeight) / 2, 0]}>
+                <cylinderGeometry args={[0.3, 0.3, buildingFloors.length * METRICS.floorHeight, 12]} />
                 <SolidMaterial color={COLORS.fill} />
                 <Edges color={COLORS.line} />
             </mesh>
@@ -770,22 +823,22 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                 </mesh>
             </group>
 
-            {floors.map((floor: FloorCategory, index: number) => (
+            {buildingFloors.map((floor: FloorCategory, index: number) => (
                 <FloorUnit
                     key={floor.id}
                     floor={floor}
-                    yPos={(floors.length - 1 - index) * METRICS.floorHeight}
+                    yPos={(buildingFloors.length - 1 - index) * METRICS.floorHeight}
                     isSelected={selectedFloor === parseInt(floor.floor)}
                     isHovered={hoveredFloor === parseInt(floor.floor)}
                     isSelectedAnything={selectedFloor !== null}
                     onHover={setHoveredFloor}
-                    onToggleModal={() => {
-                        const floorNum = parseInt(floor.floor);
-                        // Directly enter the zone skip intermediate modal as requested for both mobile and desktop
+                    onToggleModal={(overrideNum?: number) => {
+                        const floorNum = overrideNum || parseInt(floor.floor);
                         setSelectedFloor(floorNum);
                     }}
                     isMobile={isMobile}
                     lang={lang}
+                    loungeFloor={loungeFloor}
                 />
             ))}
 
@@ -1092,9 +1145,12 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                         <button
                             key={idx}
                             onClick={() => {
-                                // Don't call onClose() or onSelectFloor() here to avoid visual flicker.
-                                // Let the router unmount this page during navigation.
-                                navigate(`/category/${sub.id}`);
+                                // Special handling for meeting room
+                                if (sub.id === 'meeting-room') {
+                                    navigate(`/detail/floor-7/meeting`);
+                                } else {
+                                    navigate(`/category/${sub.id}`);
+                                }
                             }}
                             className="flex items-center gap-4 text-white/90 hover:text-[#00FFC2] transition-all group w-full text-left"
                         >
@@ -1251,7 +1307,11 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                         i18nLanguage={i18n.language}
                         categories={activeFloorData.subitems}
                         onCategoryClick={(catId) => {
-                            navigate(`/category/${catId}`);
+                            if (catId === 'meeting-room') {
+                                navigate(`/detail/floor-7/meeting`);
+                            } else {
+                                navigate(`/category/${catId}`);
+                            }
                         }}
                         productCounts={productCounts}
                         productGroupedTitles={productGroupedTitles}

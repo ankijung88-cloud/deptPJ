@@ -275,10 +275,8 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         return matchesSearch && matchesAgency;
     });
 
-    // 2. Options for Floor & Category dropdown (Filtered by Agency)
-    const floorOptions = floors.filter(f => 
-        baseFiltered.some(p => getNormalizedFloorId(p.category) === f.id)
-    );
+    // 2. Options for Floor & Category dropdown (Show all floors unconditionally)
+    const floorOptions = floors;
     
     // 3. Filtered for Subcategory dropdown
     const floorFiltered = baseFiltered.filter(p => !selectedFloor || getNormalizedFloorId(p.category) === selectedFloor);

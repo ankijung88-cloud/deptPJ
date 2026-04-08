@@ -184,7 +184,7 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
 
                 const ai = new GoogleGenAI({
                     apiKey,
-                    apiVersion: 'v1'
+                    apiVersion: 'v1beta'
                 });
 
                 const prompt = `Translate the following short product title to ${targetLangName}. 
@@ -192,18 +192,18 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
                 If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${text}`;
 
-                // Try Gemini 2.0 Flash first, then 1.5 Flash as fallback
+                // Try Gemini 1.5 Flash latest, then 1.5 Flash as fallback
                 let translated = '';
                 try {
                     const response: any = await ai.models.generateContent({
-                        model: 'gemini-2.0-flash',
+                        model: 'gemini-1.5-flash-latest',
                         contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     });
                     
                     // The SDK uses a getter for .text
                     translated = response.text;
                 } catch (e) {
-                    console.warn('[AutoTranslate] Gemini 2.0 failed, trying 1.5:', e);
+                    console.warn('[AutoTranslate] Gemini 1.5 Latest failed, trying specific version:', e);
                     const response: any = await ai.models.generateContent({
                         model: 'gemini-1.5-flash',
                         contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -250,10 +250,10 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
         if (!apiKey) return textToTranslate;
 
         try {
-            const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1' });
+            const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1beta' });
             const prompt = `Translate to ${langNames[short] || short}. Output ONLY translated text.\nText: ${textToTranslate}`;
             const response: any = await ai.models.generateContent({
-                model: 'gemini-2.0-flash',
+                model: 'gemini-1.5-flash-latest',
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
             });
             const result = response.text?.trim().replace(/^["']|["']$/g, '') || textToTranslate;

@@ -7,6 +7,8 @@ interface NavigationActionContextType {
     setBreadcrumbTitle: (title: string | null) => void;
     isImmersive: boolean;
     setIsImmersive: (value: boolean) => void;
+    isUiVisible: boolean;
+    resetUiTimer: () => void;
     breadcrumbPath: any[];
     setBreadcrumbPath: (path: any[]) => void;
 }
@@ -17,13 +19,49 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
     const [action, setAction] = useState<React.ReactNode>(null);
     const [breadcrumbTitle, setBreadcrumbTitle] = useState<string | null>(null);
     const [isImmersive, setIsImmersive] = useState(false);
+    const [isUiVisible, setIsUiVisible] = useState(true);
     const [breadcrumbPath, setBreadcrumbPath] = useState<any[]>([]);
+    const uiTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+    const resetUiTimer = () => {
+        setIsUiVisible(true);
+        if (uiTimerRef.current) clearTimeout(uiTimerRef.current);
+        uiTimerRef.current = setTimeout(() => {
+            setIsUiVisible(false);
+        }, 3000);
+    };
+
+    useEffect(() => {
+        // Initial timer
+        resetUiTimer();
+
+        const handleActivity = () => {
+            resetUiTimer();
+        };
+
+        // Standard activity events
+        window.addEventListener('mousemove', handleActivity);
+        window.addEventListener('mousedown', handleActivity);
+        window.addEventListener('keydown', handleActivity);
+        window.addEventListener('scroll', handleActivity);
+        window.addEventListener('touchstart', handleActivity);
+
+        return () => {
+            if (uiTimerRef.current) clearTimeout(uiTimerRef.current);
+            window.removeEventListener('mousemove', handleActivity);
+            window.removeEventListener('mousedown', handleActivity);
+            window.removeEventListener('keydown', handleActivity);
+            window.removeEventListener('scroll', handleActivity);
+            window.removeEventListener('touchstart', handleActivity);
+        };
+    }, []);
 
     return (
         <NavigationActionContext.Provider value={{ 
             action, setAction, 
             breadcrumbTitle, setBreadcrumbTitle,
             isImmersive, setIsImmersive,
+            isUiVisible, resetUiTimer,
             breadcrumbPath, setBreadcrumbPath
         }}>
             {children}
@@ -92,6 +130,8 @@ export const useNavigationState = () => {
         action: context?.action || null,
         breadcrumbTitle: context?.breadcrumbTitle || null,
         isImmersive: context?.isImmersive || false,
+        isUiVisible: context?.isUiVisible ?? true,
+        resetUiTimer: context?.resetUiTimer || (() => {}),
         breadcrumbPath: context?.breadcrumbPath || []
     };
 };

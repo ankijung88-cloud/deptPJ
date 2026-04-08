@@ -29,7 +29,7 @@ interface NavItem {
 const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isImmersive, breadcrumbPath } = useNavigationState();
+    const { isImmersive, breadcrumbPath, isUiVisible, resetUiTimer } = useNavigationState();
 
     // Dynamic Theme Detection
     const getThemeData = () => {
@@ -71,6 +71,20 @@ const Header: React.FC = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isScrolled, setIsScrolled] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    useEffect(() => {
+        const handleTopZoneReveal = (e: MouseEvent) => {
+            if (e.clientY < 60) {
+                resetUiTimer();
+            }
+        };
+
+        window.addEventListener('mousemove', handleTopZoneReveal);
+        return () => {
+            window.removeEventListener('mousemove', handleTopZoneReveal);
+        };
+    }, [resetUiTimer]);
+
     const [isGlobalMuted, setIsGlobalMuted] = useState(() => {
         const saved = localStorage.getItem('isGlobalMuted');
         return saved === null ? true : saved === 'true';
@@ -109,7 +123,6 @@ const Header: React.FC = () => {
     }, [isSearchOpen]);
 
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const { floors } = useFloors();
     const { t, i18n } = useTranslation();
 
@@ -183,17 +196,20 @@ const Header: React.FC = () => {
         }));
     }, [floors, i18n.language]);
 
-    if (isImmersive) return null;
+    // if (isImmersive) return null; // Logic moved to Layout.tsx for more granular control
 
     return (
         <header
-            className={`fixed top-0 inset-x-0 z-[9999] transition-all duration-700`}
+            className={`fixed top-0 inset-x-0 z-[9999] transition-all duration-700 ${(!isUiVisible && isImmersive) ? '-translate-y-full' : 'translate-y-0'}`}
+            onMouseEnter={() => resetUiTimer()}
+            onMouseLeave={() => resetUiTimer()}
             style={{
                 backgroundColor: isScrolled ? `${theme.bgColor}f2` : theme.bgColor,
                 backdropFilter: isScrolled ? 'blur(12px)' : 'none',
                 boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.5)' : '0 15px 40px rgba(0,0,0,0.4)',
                 borderBottomLeftRadius: isScrolled ? '0' : '50% 16px',
-                borderBottomRightRadius: isScrolled ? '0' : '50% 16px'
+                borderBottomRightRadius: isScrolled ? '0' : '50% 16px',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, backdrop-filter 0.7s, box-shadow 0.7s, border-radius 0.7s'
             }}
         >
             {/* Curved Technical Blueprint Lines (SVG Precision Implementation) */}

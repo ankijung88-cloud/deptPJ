@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -224,7 +224,8 @@ export const DetailPage: React.FC = () => {
         store: `/detail/${item.id}/store`,
         ticket: `/detail/${item.id}/ticket`,
         inquiry: `/detail/${item.id}/inquiry`,
-        reservation: `/detail/${item.id}/reservation`
+        reservation: `/detail/${item.id}/reservation`,
+        meeting: `/detail/${item.id}/meeting`
     };
                 navigate(routes[templateType], { 
                     state: { 
@@ -476,7 +477,8 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
                                                 { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' },
                                                 { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
-                                                { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' }
+                                                { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
+                                                { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' }
                                             ].find(t => t.id === tpl.id);
                                             
                                             if (!tplInfo) return null;
@@ -520,7 +522,8 @@ export const DetailPage: React.FC = () => {
                                             { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
                                             { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' },
                                             { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
-                                            { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' }
+                                            { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
+                                            { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' }
                                         ].map((tpl) => {
                                             const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
                                             const isSelected = !!selectedTpl;

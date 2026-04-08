@@ -370,7 +370,7 @@ const AboutPage: React.FC = () => {
                                     <AutoTranslatedText text="VIA STATION" />
                                 </h3>
                                 <p className="text-xl text-white/80 font-light break-keep leading-relaxed max-w-3xl">
-                                    <AutoTranslatedText text="1층부터 6층까지 각기 다른 K-테마의 디지털 스토어를 입체화. 기존의 스크롤 중심 웹페이지에서 벗어나, 층을 이동하는 형태의 탐험 심리를 자극합니다." />
+                                    <AutoTranslatedText text="1층부터 7층까지 각기 다른 K-테마의 디지털 스토어와 협업 공간을 입체화. 기존의 스크롤 중심 웹페이지에서 벗어나, 층을 이동하는 형태의 탐험 심리를 자극합니다." />
                                 </p>
                             </div>
                         </div>
@@ -550,14 +550,15 @@ const AboutPage: React.FC = () => {
                 </FadeInContent>
             </Slide>
 
-            {/* 10. 6-Tier Architecture */}
-            <Slide id="10" title="6단계 공간 컨텐츠 구조 (6F Building Meta)" icon={Layers}>
+            {/* 10. 7-Tier Architecture */}
+            <Slide id="10" title="7단계 공간 컨텐츠 구조 (7F Building Meta)" icon={Layers}>
                 <FadeInContent>
                     <div className="grid md:grid-cols-2 gap-16 items-center bg-black/40 p-12 rounded-[2.5rem] border border-white/10 mt-6 backdrop-blur-xl">
                         <div>
                             <p className="text-white/80 text-xl font-light mb-10 break-keep leading-relaxed"><AutoTranslatedText text="물리적 백화점 건축의 수직적 계층 구조를 차용하여, 하이엔드 럭셔리부터 로컬 헤리티지까지 체계적이고 직관적인 데이터 라우팅을 설계했습니다." /></p>
                             <div className="space-y-4">
                                 {[
+                                    { n: '7F', t: '커뮤니케이션 라운지 (Communication Lounge)', c: 'border-[#FF3B30]' },
                                     { n: '6F', t: '로컬 헤리티지 (Local Heritage)', c: 'border-dancheong-gold' },
                                     { n: '5F', t: '패션 아카이브 (Fashion Archive)', c: 'border-white/20' },
                                     { n: '4F', t: '게더 몰 (Gather Mall)', c: 'border-white/20' },
@@ -575,23 +576,25 @@ const AboutPage: React.FC = () => {
                         <div className="relative aspect-[3/4] bg-gradient-to-b from-white/5 to-[#0a0a0a] rounded-[2rem] flex flex-col items-center justify-center border border-white/10 overflow-hidden shadow-2xl group/img p-4 md:p-8">
                             {/* Inline SVG Blueprint for 100% Reliability (High Visibility) */}
                             <svg viewBox="0 0 200 280" className="w-full h-full opacity-85 mix-blend-screen transition-transform duration-[3s] group-hover/img:scale-105" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M40 240L160 240L160 200L40 200Z" stroke="white" strokeWidth="0.8" />
-                                <path d="M40 200L160 200L160 160L40 160Z" stroke="white" strokeWidth="0.8" />
-                                <path d="M40 160L160 160L160 120L40 120Z" stroke="white" strokeWidth="0.8" />
-                                <path d="M40 120L160 120L160 80L40 80Z" stroke="white" strokeWidth="0.8" />
-                                <path d="M40 80L160 80L160 40L40 40Z" stroke="white" strokeWidth="0.8" />
-                                <path d="M40 40L160 40L160 10L40 10Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 240L160 240L160 208L40 208Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 208L160 208L160 176L40 176Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 176L160 176L160 144L40 144Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 144L160 144L160 112L40 112Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 112L160 112L160 80L40 80Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 80L160 80L160 48L40 48Z" stroke="white" strokeWidth="0.8" />
+                                <path d="M40 48L160 48L160 16L40 16Z" stroke="white" strokeWidth="0.8" />
 
                                 {/* Structural Vertical Lines */}
                                 <path d="M60 10L60 240 M100 10L100 240 M140 10L140 240" stroke="white" strokeWidth="0.3" strokeDasharray="3 3" opacity="0.5" />
 
                                 {/* Floor Labels */}
-                                <text x="170" y="225" fill="white" fontSize="11" className="font-serif font-bold">1F</text>
-                                <text x="170" y="185" fill="white" fontSize="11" className="font-serif font-bold">2F</text>
-                                <text x="170" y="145" fill="white" fontSize="11" className="font-serif font-bold">3F</text>
-                                <text x="170" y="105" fill="white" fontSize="11" className="font-serif font-bold">4F</text>
-                                <text x="170" y="65" fill="white" fontSize="11" className="font-serif font-bold">5F</text>
-                                <text x="170" y="25" fill="white" fontSize="11" className="font-serif font-bold">6F</text>
+                                <text x="170" y="228" fill="white" fontSize="11" className="font-serif font-bold">1F</text>
+                                <text x="170" y="196" fill="white" fontSize="11" className="font-serif font-bold">2F</text>
+                                <text x="170" y="164" fill="white" fontSize="11" className="font-serif font-bold">3F</text>
+                                <text x="170" y="132" fill="white" fontSize="11" className="font-serif font-bold">4F</text>
+                                <text x="170" y="100" fill="white" fontSize="11" className="font-serif font-bold">5F</text>
+                                <text x="170" y="68" fill="white" fontSize="11" className="font-serif font-bold">6F</text>
+                                <text x="170" y="36" fill="white" fontSize="11" className="font-serif font-bold text-dancheong-red">7F</text>
 
                                 {/* Technical Grid Accents */}
                                 <circle cx="40" cy="240" r="2" fill="#C5A15A" />
@@ -666,7 +669,7 @@ const AboutPage: React.FC = () => {
                             <div className="bg-black/40 backdrop-blur-2xl p-10 rounded-3xl border border-white/10 border-t-4 border-t-dancheong-red hover:-translate-y-2 transition-transform duration-500 md:translate-y-12">
                                 <h3 className="text-3xl font-bold mb-6 text-dancheong-red text-center"><AutoTranslatedText text="플랫폼 데이터" /><br /><span className="text-lg opacity-50 font-light text-white"><AutoTranslatedText text="(Data)" /></span></h3>
                                 <ul className="text-base font-light text-white/80 space-y-4 list-disc list-outside ml-4 marker:text-dancheong-red">
-                                    <li><AutoTranslatedText text="공간 메타포(1F~6F) 기반 사용자 체류 및 이동 경로 입체 분석." /></li>
+                                    <li><AutoTranslatedText text="공간 메타포(1F~7F) 기반 사용자 체류 및 이동 경로 입체 분석." /></li>
                                     <li><AutoTranslatedText text="글로벌 문화 소비 패턴을 선별하여 미래 큐레이션 알고리즘 선점." /></li>
                                 </ul>
                             </div>
