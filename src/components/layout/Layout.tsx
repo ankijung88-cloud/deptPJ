@@ -22,7 +22,7 @@ export const Layout: React.FC = () => {
     const isLandingPage = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
     const isInspirationPage = normalizedPath === '/inspiration' || normalizedPath.endsWith('/inspiration');
     const isMeetingPage = normalizedPath.endsWith('/meeting');
-    const hideHeader = isMeetingPage; // ONLY hide on the 3D meeting room itself
+    const hideHeader = isLandingPage || isInspirationPage || isMeetingPage; // Hide on portal, floor guidance, and meeting room
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
     const [activeEffect, setActiveEffect] = useState<MouseEffectType>('none');
