@@ -1,5 +1,15 @@
 export const FLOORS = [
     {
+        level: 7,
+        title: '커뮤니케이션 라운지',
+        label: '7F',
+        color: '#FF3B30',
+        videoUrl: '/uploads/meeting_room.mp4',
+        subcategories: [
+            { id: 'meeting-room', label: '회의실' },
+        ]
+    },
+    {
         level: 6,
         title: '로컬 헤리티지',
         label: '6F',

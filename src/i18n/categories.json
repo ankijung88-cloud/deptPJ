@@ -1,6 +1,7 @@
 {
   "ko": {
     "nav": {
+      "floor-7": "7F | 커뮤니케이션 라운지",
       "floor-6": "6F | 로컬 헤리티지",
       "floor-5": "5F | 패션 아카이브",
       "floor-4": "4F | 게더 몰",
@@ -11,6 +12,7 @@
       "floor-tech-care": "1F | 테크 앤 케어"
     },
     "subcategory": {
+      "meeting-room": "회의실",
       "heritage": "로컬",
       "travel": "여행",
       "f6_gourmet": "음식",
@@ -42,6 +44,7 @@
   },
   "en": {
     "nav": {
+      "floor-7": "7F | COMMUNICATION LOUNGE",
       "floor-6": "6F | LOCAL HERITAGE",
       "floor-5": "5F | FASHION ARCHIVE",
       "floor-4": "4F | CULTURE TALK",
@@ -52,6 +55,7 @@
       "floor-tech-care": "1F | TECH & CARE"
     },
     "subcategory": {
+      "meeting-room": "Meeting Room",
       "heritage": "Local Heritage",
       "travel": "Strategic Anchor",
       "f6_gourmet": "Gourmet Archive",
