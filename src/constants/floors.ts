@@ -9,6 +9,7 @@ export const FLOORS = [
             { id: 'meeting-room', label: '회의실' },
             { id: 'destiny-room', label: '신당' },
             { id: 'audio-room', label: '오디션' },
+            { id: 'interview-room', label: '면접실' },
         ]
     },
     {
