@@ -7,6 +7,8 @@ export const FLOORS = [
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
             { id: 'meeting-room', label: '회의실' },
+            { id: 'destiny-room', label: '신당' },
+            { id: 'audio-room', label: '오디션' },
         ]
     },
     {
