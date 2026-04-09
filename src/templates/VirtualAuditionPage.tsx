@@ -6,10 +6,10 @@ import {
     Users, 
     Mic, MicOff, Video, VideoOff, LogOut, Settings,
     ChevronRight,
-    Upload, X, UserMinus,
+    Upload, X, UserMinus, UserPlus,
     Trophy, Play, Square, FileText, ClipboardList,
     Heart, Award, Sun, Zap, ArrowDown, Lamp,
-    SkipForward
+    SkipForward, Lock
 } from 'lucide-react';
 import { AuditionStageEnvironment, LightingConfig } from '../components/gallery/AuditionStageEnvironment';
 import { Text } from '@react-three/drei';
@@ -67,6 +67,15 @@ const VirtualAuditionPage: React.FC = () => {
         diagonal: false
     });
     const [stageFocus, setStageFocus] = useState<'candidate' | 'judge'>('candidate');
+
+    // Security & Auth State
+    const roomKey = `audition_room_token_${roomId}`;
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [showEntryModal, setShowEntryModal] = useState(false);
+    const [entryToken, setEntryToken] = useState('');
+    const [tokenError, setTokenError] = useState('');
+    const [showInviteModal, setShowInviteModal] = useState(false);
+    const [inviteLink, setInviteLink] = useState('');
     
     // Recording Logic
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -96,17 +105,51 @@ const VirtualAuditionPage: React.FC = () => {
     // WebRTC Hook
     const { 
         localStream, 
-        remoteStream, 
+        remoteStreams, 
         startCameraShare,
         stopStream
     } = useWebRTCScreenShare(socket, participants);
 
+    // Smart Stream Selection: Find the most relevant remote stream
+    const activeRemoteStream = activeCandidateId 
+        ? remoteStreams[activeCandidateId] 
+        : Object.values(remoteStreams)[0];
+
     const webrtcStreamToPass = ((stageFocus === 'judge' && localParticipant?.role === 'judge') || (activeCandidateId === localParticipant?.id)) 
         ? localStream 
-        : remoteStream;
+        : activeRemoteStream;
+
+    // Initial Authorization Check
+    useEffect(() => {
+        if (isAdmin || isAgency) {
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Check URL for invite token
+        const params = new URLSearchParams(window.location.search);
+        const inviteToken = params.get('invite');
+        if (inviteToken) {
+            sessionStorage.setItem(roomKey, inviteToken);
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Check SessionStorage
+        const savedToken = sessionStorage.getItem(roomKey);
+        if (savedToken) {
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Otherwise, show professional entry modal
+        setShowEntryModal(true);
+    }, [isAdmin, isAgency, roomId, roomKey]);
 
     // Socket Setup
     useEffect(() => {
+        if (!isAuthorized) return;
+
         const socketUrl = window.location.port === '5173'
             ? window.location.origin.replace('5173', '3000') 
             : window.location.origin;
@@ -115,11 +158,13 @@ const VirtualAuditionPage: React.FC = () => {
         setSocket(newSocket);
         
         newSocket.on('connect', () => {
+            const token = sessionStorage.getItem(roomKey);
             newSocket.emit('join-meeting', { 
                 roomId: roomId || 'audition-room', 
                 name: localParticipant.name,
                 isHost: isAdmin || isAgency,
-                role: currentRole
+                role: currentRole,
+                token: token
             });
         });
 
@@ -169,7 +214,7 @@ const VirtualAuditionPage: React.FC = () => {
         });
 
         return () => { newSocket.disconnect(); };
-    }, [roomId, isAdmin, isAgency]);
+    }, [roomId, isAdmin, isAgency, isAuthorized, roomKey]);
 
     // Handle Role Sync with Socket and Local State
     useEffect(() => {
@@ -205,16 +250,38 @@ const VirtualAuditionPage: React.FC = () => {
     };
 
     const handleNameUpdate = (newName: string) => {
-        const cleanName = newName.trim().slice(0, 12);
-        if (cleanName && cleanName !== localParticipant.name) {
-            setLocalParticipant(prev => ({ ...prev, name: cleanName }));
-            localStorage.setItem('audition_user_name', cleanName);
-            if (socket) {
-                socket.emit('update-participant', { name: cleanName });
-            }
+        setLocalParticipant(prev => ({ ...prev, name: newName }));
+        localStorage.setItem('audition_user_name', newName);
+        if (socket) {
+            socket.emit('update-name', { name: newName });
         }
     };
 
+    const handleTokenSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!entryToken.trim()) {
+            setTokenError('Please enter a valid access token.');
+            return;
+        }
+        
+        sessionStorage.setItem(roomKey, entryToken.trim());
+        setIsAuthorized(true);
+        setShowEntryModal(false);
+        setTokenError('');
+    };
+
+    const handleGenerateInvite = () => {
+        if (!isAdmin && !isAgency) return;
+        
+        // Mock token generation matching the interview pattern
+        const token = Math.random().toString(36).substring(2, 10);
+        const inviteUrl = `${window.location.origin}${window.location.pathname}?invite=${token}`;
+        
+        if (socket) socket.emit('register-invite-token', { roomId: roomId || 'audition-room', token });
+        
+        setInviteLink(inviteUrl);
+        setShowInviteModal(true);
+    };
     const handleScoreChange = (type: keyof ScoreState, val: number) => {
         setScores(prev => ({ ...prev, [type]: val }));
     };
@@ -310,11 +377,11 @@ const VirtualAuditionPage: React.FC = () => {
 
     // Recording Functions
     const startRecording = async () => {
-        if (!remoteStream && !localStream) {
+        if (!webrtcStreamToPass && !localStream) {
             alert('녹화할 스트림이 없습니다.');
             return;
         }
-        const stream = (currentRole === 'candidate' ? localStream : remoteStream);
+        const stream = (currentRole === 'candidate' ? localStream : webrtcStreamToPass);
         if (!stream) return;
 
         recordedChunksRef.current = [];
@@ -798,6 +865,14 @@ const VirtualAuditionPage: React.FC = () => {
                                 <button onClick={() => setShowParticipants(!showParticipants)} className={`p-3 rounded-xl transition-all ${showParticipants ? 'bg-[#00D2FF] text-black' : 'bg-white/5 hover:bg-white/10'}`}>
                                     <Users size={20} />
                                 </button>
+                                {(isAdmin || isAgency) && (
+                                    <button 
+                                        onClick={handleGenerateInvite}
+                                        className="p-3 bg-[#FFD700] hover:bg-[#FFD700]/80 text-black rounded-xl transition-all shadow-lg shadow-[#FFD700]/20"
+                                    >
+                                        <UserPlus size={20} />
+                                    </button>
+                                )}
                                 <button onClick={() => setShowQueue(!showQueue)} className={`p-3 rounded-xl transition-all ${showQueue ? 'bg-[#FFD700] text-black' : 'bg-white/5 hover:bg-white/10'}`}>
                                     <ClipboardList size={20} />
                                 </button>
@@ -908,6 +983,123 @@ const VirtualAuditionPage: React.FC = () => {
                                 ))}
                             </div>
                         </motion.div>
+                    )}
+                </AnimatePresence>
+                {/* Entry Token Modal (Meeting Style) */}
+                <AnimatePresence>
+                    {showEntryModal && (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 z-[150] flex items-center justify-center bg-[#050505]/80 backdrop-blur-3xl p-6"
+                        >
+                            <motion.div 
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                className="w-full max-w-md p-12 bg-white/5 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-10"
+                            >
+                                <div className="w-24 h-24 bg-yellow-500/10 rounded-3xl flex items-center justify-center text-yellow-400 border border-yellow-500/20 rotate-12">
+                                    <Lock size={48} className="-rotate-12" />
+                                </div>
+                                
+                                <div className="space-y-3">
+                                    <h2 className="text-4xl font-black tracking-tight uppercase text-white">보안 입장</h2>
+                                    <p className="text-white/40 text-sm font-medium leading-relaxed">
+                                        이 오디션 룸은 초대된 지원자만 접근할 수 있습니다.<br />
+                                        초대장에 기재된 고유 토큰을 입력해 주세요.
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleTokenSubmit} className="w-full space-y-6">
+                                    <div className="relative group">
+                                        <input 
+                                            type="text" 
+                                            autoFocus
+                                            value={entryToken}
+                                            onChange={(e) => setEntryToken(e.target.value)}
+                                            placeholder="ENTER TOKEN"
+                                            className="w-full h-20 bg-white/5 border border-white/10 rounded-2xl px-8 font-mono tracking-[0.5em] text-center text-2xl text-white focus:outline-none focus:border-yellow-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
+                                        />
+                                        {tokenError && (
+                                            <p className="absolute -bottom-6 left-0 right-0 text-[#FF4757] text-[10px] font-black uppercase tracking-widest">{tokenError}</p>
+                                        )}
+                                    </div>
+
+                                    <button 
+                                        type="submit"
+                                        className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-[0.2em] transition-all hover:bg-yellow-500 hover:text-white active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                                    >
+                                        오디션장 입장하기
+                                    </button>
+                                </form>
+                                
+                                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] cursor-pointer hover:text-white/40 transition-colors" onClick={() => navigate('/')}>
+                                    또는 메인 페이지로 돌아가기
+                                </p>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Invite Token Management Modal */}
+                <AnimatePresence>
+                    {showInviteModal && (
+                        <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-12 relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]"
+                            >
+                                <button 
+                                    onClick={() => setShowInviteModal(false)}
+                                    className="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors group flex items-center justify-center text-white/40 hover:text-white"
+                                >
+                                    <X size={20} className="group-active:scale-90 transition-transform" />
+                                </button>
+                                
+                                <div className="flex flex-col items-center text-center gap-10">
+                                    <div className="w-24 h-24 bg-yellow-500/10 rounded-3xl flex items-center justify-center rotate-12">
+                                        <UserPlus size={48} className="text-yellow-500 -rotate-12" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-3xl font-black tracking-tight text-white">지원자 초대하기</h3>
+                                        <p className="text-sm text-white/40 font-medium">지원자에게 보낼 보안 링크가 생성되었습니다.</p>
+                                    </div>
+                                    
+                                    <div className="w-full bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col gap-4 group hover:border-yellow-500/30 transition-colors">
+                                        <div className="overflow-hidden">
+                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block text-left">Secure Invite URL</span>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="text-xs font-mono text-yellow-500 truncate block flex-1 text-left">
+                                                    {inviteLink}
+                                                </span>
+                                                <button 
+                                                    onClick={() => {
+                                                        if (inviteLink) {
+                                                            navigator.clipboard.writeText(inviteLink)
+                                                                .then(() => alert('초대 링크가 복사되었습니다!'))
+                                                                .catch(() => alert('복사에 실패했습니다.'));
+                                                        }
+                                                    }}
+                                                    className="px-6 py-3 bg-yellow-500 text-black rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,215,0,0.3)] whitespace-nowrap"
+                                                >
+                                                    COPY LINK
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={() => setShowInviteModal(false)}
+                                        className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
+                                    >
+                                        닫기
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
                     )}
                 </AnimatePresence>
             </div>

@@ -11,15 +11,15 @@ const ICE_SERVERS = {
 export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
     // Media flow states
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+    const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
     const [isSharing, setIsSharing] = useState(false);
     const [sharingType, setSharingType] = useState<'screen' | 'camera' | 'none'>('none');
 
     // Track RTCPeerConnections per participant (for presenter broadcasting to everyone)
     const peerConnections = useRef<{ [socketId: string]: RTCPeerConnection }>({});
     
-    // For viewers: The single connection receiving the broadcast
-    const viewerConnection = useRef<RTCPeerConnection | null>(null);
+    // For viewers: Connections receiving broadcasts from multiple participants
+    const viewerConnections = useRef<{ [socketId: string]: RTCPeerConnection }>({});
     const isMounted = useRef(true);
 
     useEffect(() => {
@@ -30,7 +30,9 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
     }, []);
 
     const safeSetLocalStream = (stream: MediaStream | null) => isMounted.current && setLocalStream(stream);
-    const safeSetRemoteStream = (stream: MediaStream | null) => isMounted.current && setRemoteStream(stream);
+    const safeSetRemoteStreams = (update: (prev: Record<string, MediaStream>) => Record<string, MediaStream>) => {
+        if (isMounted.current) setRemoteStreams(update);
+    };
     const safeSetIsSharing = (sharing: boolean) => isMounted.current && setIsSharing(sharing);
     const safeSetSharingType = (type: 'screen' | 'camera' | 'none') => isMounted.current && setSharingType(type);
 
@@ -81,20 +83,10 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
                 audio: true
             });
             
-            // Ensure all tracks are explicitly enabled and STAY enabled during startup period
-            const forceEnableTracks = () => {
-                stream.getTracks().forEach(track => {
-                    if (!track.enabled) track.enabled = true;
-                });
-            };
-
-            // Initial burst of activation prompts
-            forceEnableTracks();
-            for (let i = 1; i <= 10; i++) {
-                setTimeout(forceEnableTracks, i * 150);
-            }
-
-            console.log(`[WebRTC] Stream acquired with ${stream.getVideoTracks().length} video tracks.`);
+            // Ensure all tracks are explicitly enabled
+            stream.getTracks().forEach(track => {
+                track.enabled = true;
+            });
             
             safeSetLocalStream(stream);
             safeSetIsSharing(true);
@@ -114,6 +106,8 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
 
     // Helper: Presenter creates Offer
     const createAndSendOffer = async (targetId: string, stream: MediaStream) => {
+        if (!socket) return;
+        
         const pc = new RTCPeerConnection(ICE_SERVERS);
         peerConnections.current[targetId] = pc;
 
@@ -158,12 +152,12 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
     useEffect(() => {
         if (!socket) return;
 
-        // 2. Viewer Flow: Receive an Offer
+        // 2. Viewer Flow: Receive an Offer from a specific peer
         const handleReceiveOffer = async ({ senderId, offer }: { senderId: string, offer: RTCSessionDescriptionInit }) => {
             console.log('[WebRTC] Received offer from', senderId);
             
             const pc = new RTCPeerConnection(ICE_SERVERS);
-            viewerConnection.current = pc;
+            viewerConnections.current[senderId] = pc;
 
             pc.onicecandidate = (event) => {
                 if (event.candidate) {
@@ -174,10 +168,14 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
                 }
             };
 
-            // When a track arrives from Presenter, store it in remoteStream
+            // When a track arrives from a specific sender, store it in remoteStreams record
             pc.ontrack = (event) => {
-                console.log('[WebRTC] Track received!', event.streams[0]);
-                safeSetRemoteStream(event.streams[0]);
+                console.log('[WebRTC] Track received from', senderId);
+                const receivedStream = event.streams[0];
+                safeSetRemoteStreams(prev => ({
+                    ...prev,
+                    [senderId]: receivedStream
+                }));
             };
 
             try {
@@ -193,7 +191,6 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
 
         // 3. Presenter Flow: Receive Answer from Viewers
         const handleReceiveAnswer = async ({ senderId, answer }: { senderId: string, answer: RTCSessionDescriptionInit }) => {
-            console.log('[WebRTC] Received answer from', senderId);
             const pc = peerConnections.current[senderId];
             if (pc) {
                 await pc.setRemoteDescription(new RTCSessionDescription(answer));
@@ -202,17 +199,16 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
 
         // 4. Common Flow: Exchange ICE Candidate (P2P routing path logic)
         const handleReceiveIceCandidate = async ({ senderId, candidate }: { senderId: string, candidate: RTCIceCandidateInit }) => {
-            const pc = peerConnections.current[senderId] || viewerConnection.current;
+            const pc = peerConnections.current[senderId] || viewerConnections.current[senderId];
             if (pc) {
                 try {
                     await pc.addIceCandidate(new RTCIceCandidate(candidate));
                 } catch (e) {
-                    console.error('[WebRTC] Error adding received ice candidate', e);
+                    // Ignore transient errors before remote description is set
                 }
             }
         };
 
-        // Listeners attached to socket
         socket.on('webrtc-offer', handleReceiveOffer);
         socket.on('webrtc-answer', handleReceiveAnswer);
         socket.on('webrtc-ice-candidate', handleReceiveIceCandidate);
@@ -224,12 +220,33 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
         };
     }, [socket]);
 
+    // Handle participant list changes: Remove streams of players who left
+    useEffect(() => {
+        const participantIds = new Set(participants.map(p => p.id));
+        
+        safeSetRemoteStreams(prev => {
+            const newStreams = { ...prev };
+            let changed = false;
+            Object.keys(newStreams).forEach(id => {
+                if (!participantIds.has(id)) {
+                    delete newStreams[id];
+                    changed = true;
+                    // Also close connection if exists
+                    if (viewerConnections.current[id]) {
+                        viewerConnections.current[id].close();
+                        delete viewerConnections.current[id];
+                    }
+                }
+            });
+            return changed ? newStreams : prev;
+        });
+    }, [participants]);
+
     // Handle sudden participant joins mid-presentation: Presenter needs to send offer to new participant
     useEffect(() => {
-        if (isSharing && localStream && participants.length > 0) {
-            const remoteParticipants = participants.filter(p => p.id !== socket?.id);
+        if (isSharing && localStream && participants.length > 0 && socket) {
+            const remoteParticipants = participants.filter(p => p.id !== socket.id);
             remoteParticipants.forEach(p => {
-                // If we haven't created a connection to this user yet, send them an offer
                 if (!peerConnections.current[p.id]) {
                     createAndSendOffer(p.id, localStream);
                 }
@@ -237,18 +254,18 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
         }
     }, [participants, isSharing, localStream, socket]);
 
-    // Cleanup memory on hook unmount
+    // Cleanup resources
     useEffect(() => {
         return () => {
             Object.values(peerConnections.current).forEach(pc => pc.close());
-            if (viewerConnection.current) viewerConnection.current.close();
+            Object.values(viewerConnections.current).forEach(pc => pc.close());
             if (localStream) localStream.getTracks().forEach(t => t.stop());
         };
     }, []);
 
     return {
         localStream,
-        remoteStream,
+        remoteStreams,
         isSharing,
         sharingType,
         startScreenShare,

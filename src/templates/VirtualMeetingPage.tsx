@@ -97,7 +97,7 @@ const VirtualMeetingPage: React.FC = () => {
     // WebRTC Screen Sharing Hook
     const { 
         localStream, 
-        remoteStream, 
+        remoteStreams, 
         isSharing, 
         startScreenShare, 
         stopStream 
@@ -302,7 +302,7 @@ const VirtualMeetingPage: React.FC = () => {
                                 onSeatSelect={handleSeatSelect}
                                 meetingMode={meetingMode}
                                 screenData={screenData}
-                                webrtcStream={(screenData.type === 'webrtc' && isSharing) ? localStream : remoteStream}
+                                webrtcStream={(screenData.type === 'webrtc' && isSharing) ? localStream : (Object.values(remoteStreams)[0] || null)}
                             />
                         </Suspense>
                     </Canvas>
@@ -742,7 +742,7 @@ const VirtualMeetingPage: React.FC = () => {
                                         muted
                                         className="w-full h-full object-contain"
                                         ref={(video) => {
-                                            const stream = isSharing ? localStream : remoteStream;
+                                            const stream = isSharing ? localStream : (Object.values(remoteStreams)[0] || null);
                                             if (video && stream && video.srcObject !== stream) {
                                                 video.srcObject = stream;
                                             }

@@ -26,7 +26,8 @@ export const Layout: React.FC = () => {
         const meeting = normalizedPath.endsWith('/meeting');
         const sindang = normalizedPath.endsWith('/sindang');
         const audition = normalizedPath.endsWith('/audition');
-        const shouldHideHeader = landing || inspiration || meeting || sindang || audition;
+        const interview = normalizedPath.endsWith('/interview');
+        const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview;
         
         return {
             isLandingPage: landing,
@@ -34,6 +35,7 @@ export const Layout: React.FC = () => {
             isMeetingPage: meeting,
             isSindangPage: sindang,
             isAuditionPage: audition,
+            isInterviewPage: interview,
             hideHeader: shouldHideHeader
         };
     }, [location.pathname]);
