@@ -18,12 +18,25 @@ export const Layout: React.FC = () => {
     const isRTL = ['ar', 'fa', 'he'].includes(i18n.language);
     const location = useLocation();
     const { isImmersive, isUiVisible } = useNavigationState();
-    const normalizedPath = location.pathname.replace(/\/$/, '');
-    const isLandingPage = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
-    const isInspirationPage = normalizedPath === '/inspiration' || normalizedPath.endsWith('/inspiration');
-    const isMeetingPage = normalizedPath.endsWith('/meeting');
-    const isSindangPage = normalizedPath.endsWith('/sindang');
-    const hideHeader = isLandingPage || isInspirationPage || isMeetingPage || isSindangPage; // Hide on portal, floor guidance, meeting, and sindang
+    
+    const { isLandingPage, isInspirationPage, hideHeader } = React.useMemo(() => {
+        const normalizedPath = location.pathname.replace(/\/$/, '');
+        const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
+        const inspiration = normalizedPath.endsWith('/inspiration');
+        const meeting = normalizedPath.endsWith('/meeting');
+        const sindang = normalizedPath.endsWith('/sindang');
+        const audition = normalizedPath.endsWith('/audition');
+        const shouldHideHeader = landing || inspiration || meeting || sindang || audition;
+        
+        return {
+            isLandingPage: landing,
+            isInspirationPage: inspiration,
+            isMeetingPage: meeting,
+            isSindangPage: sindang,
+            isAuditionPage: audition,
+            hideHeader: shouldHideHeader
+        };
+    }, [location.pathname]);
 
     // State to toggle between 2D Canvas, 3D WebGL, and no effect
     const [activeEffect, setActiveEffect] = useState<MouseEffectType>('none');

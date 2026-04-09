@@ -39,7 +39,7 @@ const roomTokens = new Map(); // roomId -> Set of valid invite tokens
 io.on('connection', (socket) => {
   console.log(`[Socket] New connection: ${socket.id}`);
 
-  socket.on('join-meeting', ({ roomId, name, inviteToken, isHost }) => {
+  socket.on('join-meeting', ({ roomId, name, inviteToken, isHost, role }) => {
     // 1. Check if room exists or create it
     if (!rooms.has(roomId)) {
       rooms.set(roomId, new Map());
@@ -73,7 +73,8 @@ io.on('connection', (socket) => {
       position: [0, 0, 0],
       isMuted: false,
       isVideoOff: false,
-      isHost: !!isHost
+      isHost: !!isHost,
+      role: role || 'audience'
     });
 
     console.log(`[Socket] ${name} (${socket.id}) joined ${roomId} (Host: ${!!isHost})`);
@@ -131,6 +132,51 @@ io.on('connection', (socket) => {
     io.to(targetId).emit('webrtc-ice-candidate', { senderId: socket.id, candidate });
   });
 
+
+  socket.on('audition-start', ({ candidateId }) => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        io.to(roomId).emit('audition-start', { candidateId });
+        break;
+      }
+    }
+  });
+
+  socket.on('submit-score', ({ candidateId, scores }) => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        io.to(roomId).emit('score-update', { candidateId, scores });
+        break;
+      }
+    }
+  });
+
+  socket.on('share-materials', ({ url }) => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        io.to(roomId).emit('materials-update', url);
+        break;
+      }
+    }
+  });
+
+  socket.on('share-teleprompter', ({ text }) => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        io.to(roomId).emit('teleprompter-update', text);
+        break;
+      }
+    }
+  });
+
+  socket.on('audition-cheer', ({ candidateId }) => {
+    for (const [roomId, participants] of rooms.entries()) {
+      if (participants.has(socket.id)) {
+        io.to(roomId).emit('cheer-received', { candidateId, senderId: socket.id });
+        break;
+      }
+    }
+  });
 
   socket.on('kick-participant', ({ participantId, roomId }) => {
     console.log(`[Socket] Kick request: From ${socket.id} for target ${participantId} in room ${roomId}`);

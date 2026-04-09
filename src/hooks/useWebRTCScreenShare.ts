@@ -13,35 +13,48 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [isSharing, setIsSharing] = useState(false);
+    const [sharingType, setSharingType] = useState<'screen' | 'camera' | 'none'>('none');
 
     // Track RTCPeerConnections per participant (for presenter broadcasting to everyone)
     const peerConnections = useRef<{ [socketId: string]: RTCPeerConnection }>({});
     
     // For viewers: The single connection receiving the broadcast
     const viewerConnection = useRef<RTCPeerConnection | null>(null);
+    const isMounted = useRef(true);
 
-    // 1. Presenter Flow: Start sharing local screen
+    useEffect(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+
+    const safeSetLocalStream = (stream: MediaStream | null) => isMounted.current && setLocalStream(stream);
+    const safeSetRemoteStream = (stream: MediaStream | null) => isMounted.current && setRemoteStream(stream);
+    const safeSetIsSharing = (sharing: boolean) => isMounted.current && setIsSharing(sharing);
+    const safeSetSharingType = (type: 'screen' | 'camera' | 'none') => isMounted.current && setSharingType(type);
+
     const startScreenShare = async () => {
         try {
+            if (localStream) stopStream();
+
             const stream = await navigator.mediaDevices.getDisplayMedia({
                 video: {
                     width: { ideal: 1920, max: 1920 },
                     height: { ideal: 1080, max: 1080 },
                     frameRate: { max: 30 }
                 },
-                audio: false // Screen sharing audio can be tricky, skipping for simple visual PT
+                audio: false
             });
             
-            setLocalStream(stream);
-            setIsSharing(true);
+            safeSetLocalStream(stream);
+            safeSetIsSharing(true);
+            safeSetSharingType('screen');
 
-            // Handle when user hits "Stop sharing" via native browser built-in UI
             stream.getVideoTracks()[0].onended = () => {
-                stopScreenShare();
+                stopStream();
             };
 
-            // Initiate P2P Connection to everyone currently in the room
-            // Only non-local participants
             const remoteParticipants = participants.filter(p => p.id !== socket.id);
             for (const participant of remoteParticipants) {
                 createAndSendOffer(participant.id, stream);
@@ -50,6 +63,51 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
             return stream;
         } catch (err) {
             console.error('[WebRTC] Error starting display media:', err);
+            return null;
+        }
+    };
+
+    // New: Start Camera Share
+    const startCameraShare = async () => {
+        try {
+            if (localStream) stopStream();
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: { ideal: 1280, max: 1280 },
+                    height: { ideal: 720, max: 720 },
+                    frameRate: { max: 30 }
+                },
+                audio: true
+            });
+            
+            // Ensure all tracks are explicitly enabled and STAY enabled during startup period
+            const forceEnableTracks = () => {
+                stream.getTracks().forEach(track => {
+                    if (!track.enabled) track.enabled = true;
+                });
+            };
+
+            // Initial burst of activation prompts
+            forceEnableTracks();
+            for (let i = 1; i <= 10; i++) {
+                setTimeout(forceEnableTracks, i * 150);
+            }
+
+            console.log(`[WebRTC] Stream acquired with ${stream.getVideoTracks().length} video tracks.`);
+            
+            safeSetLocalStream(stream);
+            safeSetIsSharing(true);
+            safeSetSharingType('camera');
+
+            const remoteParticipants = participants.filter(p => p.id !== socket.id);
+            for (const participant of remoteParticipants) {
+                createAndSendOffer(participant.id, stream);
+            }
+
+            return stream;
+        } catch (err) {
+            console.error('[WebRTC] Error starting user media:', err);
             return null;
         }
     };
@@ -81,19 +139,20 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
     };
 
     // Stop Sharing (Cleanup all P2P connections)
-    const stopScreenShare = () => {
+    const stopStream = () => {
         if (localStream) {
             localStream.getTracks().forEach(track => track.stop());
-            setLocalStream(null);
+            safeSetLocalStream(null);
         }
-        setIsSharing(false);
+        safeSetIsSharing(false);
+        safeSetSharingType('none');
 
         // Close all presenter outbound connections
         Object.values(peerConnections.current).forEach(pc => pc.close());
         peerConnections.current = {};
         
-        // Let the socket room know screen is cleared via normal share-screen event
-        socket.emit('share-screen', { url: '', type: 'none' });
+        // Let the socket room know stream is cleared
+        socket?.emit('share-screen', { url: '', type: 'none' });
     };
 
     useEffect(() => {
@@ -118,7 +177,7 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
             // When a track arrives from Presenter, store it in remoteStream
             pc.ontrack = (event) => {
                 console.log('[WebRTC] Track received!', event.streams[0]);
-                setRemoteStream(event.streams[0]);
+                safeSetRemoteStream(event.streams[0]);
             };
 
             try {
@@ -191,7 +250,9 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
         localStream,
         remoteStream,
         isSharing,
+        sharingType,
         startScreenShare,
-        stopScreenShare
+        startCameraShare,
+        stopStream
     };
 };

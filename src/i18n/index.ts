@@ -151,6 +151,37 @@ const resources = {
                 "back": "뒤로",
                 "price": "금액",
                 "loading_content": "콘텐츠를 불러오는 중입니다..."
+            },
+            "audition": {
+                "title": "실시간 화상 오디션",
+                "judge": "심사위원",
+                "candidate": "참가자",
+                "audience": "관람객",
+                "score": {
+                    "vocal": "보컬",
+                    "dance": "댄스",
+                    "acting": "연기",
+                    "visual": "비주얼",
+                    "total": "합계",
+                    "submit": "채점 완료"
+                },
+                "record": {
+                    "start": "녹화 시작",
+                    "stop": "녹화 중지",
+                    "saving": "녹화 파일 저장 중..."
+                },
+                "materials": {
+                    "title": "오디션 자료",
+                    "attachment": "대본/악보 첨부",
+                    "share": "무대 공유"
+                },
+                "teleprompter": "프롬프터 (대본 출력)",
+                "queue": "오디션 대기열",
+                "next": "다음 참가자 시작",
+                "performing": "현재 진행 중",
+                "take_stage": "무대 화면 점유",
+                "release_stage": "무대 점유 해제",
+                "judge_on_screen": "심사위원 발언 중"
             }
         }
     },
@@ -161,6 +192,37 @@ const resources = {
             },
             "subcategory": {
                 ...categoriesJson.en.subcategory
+            },
+            "audition": {
+                "title": "Real-time Virtual Audition",
+                "judge": "Judge",
+                "candidate": "Candidate",
+                "audience": "Audience",
+                "score": {
+                    "vocal": "Vocal",
+                    "dance": "Dance",
+                    "acting": "Acting",
+                    "visual": "Visual",
+                    "total": "Total",
+                    "submit": "Submit Score"
+                },
+                "record": {
+                    "start": "Start Record",
+                    "stop": "Stop Record",
+                    "saving": "Saving Record..."
+                },
+                "materials": {
+                    "title": "Audition Materials",
+                    "attachment": "Attach Script/Music",
+                    "share": "Share to Stage"
+                },
+                "teleprompter": "Teleprompter",
+                "queue": "Performance Queue",
+                "next": "Start Next",
+                "performing": "Performing",
+                "take_stage": "Take over Stage",
+                "release_stage": "Release Stage",
+                "judge_on_screen": "Judge Speaking"
             }
         }
     }

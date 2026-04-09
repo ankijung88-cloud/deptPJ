@@ -182,33 +182,34 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
                     return;
                 }
 
-                const ai = new GoogleGenAI({
-                    apiKey,
-                    apiVersion: 'v1beta'
-                });
+                // @google/genai usage pattern
+                const ai = new GoogleGenAI({ apiKey });
 
                 const prompt = `Translate the following short product title to ${targetLangName}. 
                 Output ONLY the translated text without any quotes or explanations.
                 If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${text}`;
 
-                // Try Gemini 1.5 Flash latest, then 1.5 Flash as fallback
                 let translated = '';
                 try {
-                    const response: any = await ai.models.generateContent({
-                        model: 'gemini-1.5-flash-latest',
-                        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                    });
-                    
-                    // The SDK uses a getter for .text
-                    translated = response.text;
-                } catch (e) {
-                    console.warn('[AutoTranslate] Gemini 1.5 Latest failed, trying specific version:', e);
-                    const response: any = await ai.models.generateContent({
+                    const result = await ai.models.generateContent({
                         model: 'gemini-1.5-flash',
                         contents: [{ role: 'user', parts: [{ text: prompt }] }],
                     });
-                    translated = response.text;
+                    
+                    // @google/genai standard: Use text() method if available, or navigate the structure
+                    if (result && (typeof result.text === 'function' || typeof result.text === 'string')) {
+                        translated = await result.text;
+                    } else if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                        translated = result.candidates[0].content.parts[0].text;
+                    }
+                } catch (e: any) {
+                    // Suppress 404 if it's a known model availability issue
+                    if (e?.status === 404 || e?.message?.includes('404')) {
+                        console.warn('[AutoTranslate] Model might not be available yet or endpoint is wrong.');
+                    } else {
+                        console.warn('[AutoTranslate] Gemini request failed:', e);
+                    }
                 }
 
                 if (translated) {
@@ -250,15 +251,22 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
         if (!apiKey) return textToTranslate;
 
         try {
-            const ai = new GoogleGenAI({ apiKey, apiVersion: 'v1beta' });
-            const prompt = `Translate to ${langNames[short] || short}. Output ONLY translated text.\nText: ${textToTranslate}`;
-            const response: any = await ai.models.generateContent({
-                model: 'gemini-1.5-flash-latest',
-                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            const ai = new GoogleGenAI({ apiKey });
+            const result = await ai.models.generateContent({
+                model: 'gemini-1.5-flash',
+                contents: [{ role: 'user', parts: [{ text: `Translate "${textToTranslate}" to ${short}. Return ONLY the translation.` }] }],
             });
-            const result = response.text?.trim().replace(/^["']|["']$/g, '') || textToTranslate;
-            translationCache.set(cacheKey, result);
-            return result;
+            
+            let resultStr = textToTranslate;
+            if (result && (typeof result.text === 'function' || typeof result.text === 'string')) {
+                resultStr = await result.text;
+            } else if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                resultStr = result.candidates[0].content.parts[0].text;
+            }
+            
+            resultStr = resultStr.trim().replace(/^["']|["']$/g, '') || textToTranslate;
+            translationCache.set(cacheKey, resultStr);
+            return resultStr;
         } catch (e) {
             console.error('[translateAsync] failed:', e);
             return textToTranslate;

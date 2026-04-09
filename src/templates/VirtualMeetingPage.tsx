@@ -100,7 +100,7 @@ const VirtualMeetingPage: React.FC = () => {
         remoteStream, 
         isSharing, 
         startScreenShare, 
-        stopScreenShare 
+        stopStream 
     } = useWebRTCScreenShare(socket, participants);
 
     // Initial Authorization Check
@@ -249,7 +249,7 @@ const VirtualMeetingPage: React.FC = () => {
         if (url === '') {
             type = 'none';
             // If we are broadcasting WebRTC, ensure we stop local streams too
-            if (isSharing) stopScreenShare();
+            if (isSharing) stopStream();
         } else if (!manualType && (url.includes('.mp4') || url.includes('youtube.com') || url.includes('youtu.be'))) {
             type = 'video';
         }

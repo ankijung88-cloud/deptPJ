@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text, Float, MeshDistortMaterial } from '@react-three/drei';
+import { Text, Float, MeshDistortMaterial, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface AvatarModelProps {
@@ -8,6 +8,7 @@ interface AvatarModelProps {
     name: string;
     color?: string;
     isLocal?: boolean;
+    onNameChange?: (name: string) => void;
     avatarType?: 'premium' | 'modern' | 'classic';
 }
 
@@ -16,9 +17,16 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
     name, 
     color = '#00D2FF', 
     isLocal = false,
+    onNameChange,
     avatarType = 'premium' 
 }) => {
     const meshRef = React.useRef<THREE.Group>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [internalName, setInternalName] = useState(name);
+
+    useEffect(() => {
+        setInternalName(name);
+    }, [name]);
 
     // Floating animation
     useFrame((state) => {
@@ -38,19 +46,62 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
         }
     }, [color]);
 
+    const handleUpdate = () => {
+        if (onNameChange) onNameChange(internalName);
+        setIsEditing(false);
+    };
+
     return (
-        <group ref={meshRef} position={position}>
-            {/* Name Tag */}
+        <group 
+            ref={meshRef} 
+            position={position}
+            onPointerOver={() => isLocal && (document.body.style.cursor = 'pointer')}
+            onPointerOut={() => isLocal && (document.body.style.cursor = 'default')}
+            onClick={(e) => {
+                if (isLocal) {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                }
+            }}
+        >
+            {/* Name Tag or Input */}
             <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                <Text
-                    position={[0, 1.2, 0]}
-                    fontSize={0.15}
-                    color="white"
-                    anchorX="center"
-                    anchorY="middle"
-                >
-                    {name} {isLocal ? '(You)' : ''}
-                </Text>
+                {isEditing ? (
+                    <Html position={[0, 1.2, 0]} center distanceFactor={10}>
+                        <input 
+                            autoFocus
+                            value={internalName}
+                            onChange={(e) => setInternalName(e.target.value.slice(0, 12))}
+                            onBlur={handleUpdate}
+                            onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
+                            style={{
+                                background: 'rgba(0, 0, 0, 0.8)',
+                                border: '2px solid #FFD700',
+                                borderRadius: '8px',
+                                padding: '4px 12px',
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '900',
+                                fontStyle: 'italic',
+                                outline: 'none',
+                                width: '120px',
+                                textAlign: 'center',
+                                boxShadow: '0 0 20px rgba(255, 215, 0, 0.3)',
+                                backdropFilter: 'blur(10px)'
+                            }}
+                        />
+                    </Html>
+                ) : (
+                    <Text
+                        position={[0, 1.2, 0]}
+                        fontSize={0.15}
+                        color="white"
+                        anchorX="center"
+                        anchorY="middle"
+                    >
+                        {name} {isLocal ? '(You)' : ''}
+                    </Text>
+                )}
             </Float>
 
             {/* Avatar Body - Stylized Capsule/Person */}
