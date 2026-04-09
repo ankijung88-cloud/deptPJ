@@ -138,9 +138,9 @@ const VirtualMeetingPage: React.FC = () => {
     useEffect(() => {
         if (!isAuthorized) return;
 
-        const socketUrl = window.location.origin.includes('5173') 
+        const socketUrl = window.location.port === '5173'
             ? window.location.origin.replace('5173', '3000') 
-            : window.location.origin.replace(window.location.port, '3000');
+            : window.location.origin;
 
         console.log(`[Socket] Connecting to: ${socketUrl}`);
         

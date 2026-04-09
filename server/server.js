@@ -132,6 +132,33 @@ io.on('connection', (socket) => {
   });
 
 
+  socket.on('kick-participant', ({ participantId, roomId }) => {
+    const participants = rooms.get(roomId);
+    if (!participants) return;
+
+    const requester = participants.get(socket.id);
+    if (requester && requester.isHost) {
+      if (participants.has(participantId)) {
+        console.log(`[Socket] Host ${socket.id} is kicking ${participantId} from room ${roomId}`);
+        
+        // Notify the target first
+        io.to(participantId).emit('kicked');
+        
+        // Make the target socket leave the room
+        const targetSocket = io.sockets.sockets.get(participantId);
+        if (targetSocket) {
+          targetSocket.leave(roomId);
+        }
+        
+        // Remove from our internal state
+        participants.delete(participantId);
+        
+        // Broadcast updated list to remaining participants
+        io.to(roomId).emit('participants-update', Array.from(participants.values()));
+      }
+    }
+  });
+
   socket.on('disconnect', () => {
     for (const [roomId, participants] of rooms.entries()) {
       if (participants.has(socket.id)) {
