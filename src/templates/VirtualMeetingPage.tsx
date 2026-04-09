@@ -177,6 +177,15 @@ const VirtualMeetingPage: React.FC = () => {
             alert('Host has removed you from the meeting.');
             navigate(-1);
         });
+        
+        // Broadcast kick listener (More reliable for Vercel/Proxies)
+        newSocket.on('member-kicked', (data: { targetId: string }) => {
+            console.log('[Socket] Member-kicked broadcast received:', data);
+            if (data.targetId === newSocket.id) {
+                alert('호스트가 귀하를 회의에서 퇴장시켰습니다.');
+                navigate(-1);
+            }
+        });
 
         newSocket.on('participants-update', (data: Participant[]) => {
             console.log('[Socket] Participants update:', data);

@@ -146,26 +146,27 @@ io.on('connection', (socket) => {
 
     if (requester && requester.isHost) {
       if (participants.has(participantId)) {
-        console.log(`[Socket] Host verified. Kicking target ${participantId}`);
+        console.log(`[Socket] Host verified. Initiating broadcast-kick for target: ${participantId}`);
         
-        // Notify the target first
+        // 1. Direct Emit (Fast Path)
         io.to(participantId).emit('kicked');
+
+        // 2. Broadcast Kick to Room (Reliable Path for Proxy/Polling)
+        // Clients will check if targetId === socket.id
+        io.to(roomId).emit('member-kicked', { targetId: participantId });
         
-        // Make the target socket leave the room
+        // 3. Force leave if possible
         const targetSocket = io.sockets.sockets.get(participantId);
         if (targetSocket) {
-          console.log(`[Socket] Command: targetSocket.leave(${roomId}) for ${participantId}`);
           targetSocket.leave(roomId);
-        } else {
-          console.log(`[Socket] Warn: Target socket ${participantId} not found in io.sockets.sockets`);
         }
         
-        // Remove from our internal state
+        // 4. Update Internal State
         participants.delete(participantId);
         
-        // Broadcast updated list to remaining participants
+        // 5. Broadcast updated list
         io.to(roomId).emit('participants-update', Array.from(participants.values()));
-        console.log(`[Socket] Kick sequence complete for ${participantId}`);
+        console.log(`[Socket] Broadcast-kick complete for ${participantId} in room ${roomId}`);
       } else {
         console.log(`[Socket] Kick failed: Target ${participantId} not in room participants`);
       }
