@@ -231,9 +231,9 @@ export const getFloorBySubId = (subId: string): string | undefined => {
     if (subId.startsWith('f1_') || ['car-care', 'window', 'global'].includes(subId)) return '1';
     if (subId.startsWith('f2_') || ['skincare', 'hair', 'p_surgery', 'inner-beauty', 'body-care'].includes(subId)) return '2';
     if (subId.startsWith('f3_') || ['performance', 'exhibit', 'f3_media', 'f3_lounge', 'f3_audio'].includes(subId)) return '3';
-    if (subId.startsWith('f4_') || ['b2b-mall', 'interview', 'talk'].includes(subId)) return '6';
+    if (subId.startsWith('f4_') || ['b2b-mall', 'interview', 'talk', 'travel'].includes(subId)) return '6';
     if (subId.startsWith('f5_') || ['archive', 'collection'].includes(subId)) return '5';
-    if (subId.startsWith('f6_') || ['heritage', 'travel'].includes(subId)) return '4';
+    if (subId.startsWith('f6_') || ['heritage'].includes(subId)) return '4';
     if (subId.startsWith('f7_') || ['meeting-room'].includes(subId)) return '7';
     return undefined;
 };

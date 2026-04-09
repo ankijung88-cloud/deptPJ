@@ -14,14 +14,17 @@ export const FLOORS = [
     },
     {
         level: 6,
-        title: '로컬 헤리티지',
+        title: '게더 몰',
         label: '6F',
-        color: '#00A8FF',
-        videoUrl: '/uploads/festival.mp4',
+        color: '#FF4757',
+        videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'heritage', label: '로컬' },
-            { id: 'f6_gourmet', label: '음식' },
-            { id: 'f6_craft', label: '참여 ' },
+            { id: 'talk', label: 'B2B 몰' },
+            { id: 'travel', label: '여행' },
+            { id: 'interview', label: '아티스트 인터뷰' },
+            { id: 'f4_plus', label: '토크 플러스' },
+            { id: 'f4_book', label: '도서관 섹션' },
+            { id: 'f4_seminar', label: '세미나 룸' },
         ]
     },
     {
@@ -38,17 +41,14 @@ export const FLOORS = [
     },
     {
         level: 4,
-        title: '게더 몰',
+        title: '로컬 헤리티지',
         label: '4F',
-        color: '#FF4757',
-        videoUrl: '/uploads/travel.mp4',
+        color: '#00A8FF',
+        videoUrl: '/uploads/festival.mp4',
         subcategories: [
-            { id: 'talk', label: 'B2B 몰' },
-            { id: 'travel', label: '여행' },
-            { id: 'interview', label: '아티스트 인터뷰' },
-            { id: 'f4_plus', label: '토크 플러스' },
-            { id: 'f4_book', label: '도서관 섹션' },
-            { id: 'f4_seminar', label: '세미나 룸' },
+            { id: 'heritage', label: '로컬' },
+            { id: 'f6_gourmet', label: '음식' },
+            { id: 'f6_craft', label: '참여 ' },
         ]
     },
     {
