@@ -16,16 +16,18 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
     {
         id: 'floor-6',
         floor: '6F',
-        title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
+        title: { ko: '게더 몰', en: 'GATHER MALL' },
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
-        videoUrl: '/uploads/festival.mp4',
-        color: '#00A8FF', // 6F - Vibrant Blue (Heritage)
+        videoUrl: '/uploads/travel.mp4',
+        color: '#FF4757', // 6F - Vibrant Red (Culture)
         content: [],
         subitems: [
-            { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage' } },
-            { id: 'f6_gourmet', label: { ko: '미식 아카이브', en: 'Gourmet Archive' } },
-            { id: 'f6_craft', label: { ko: '지역 공예관', en: 'Local Craft' } },
-            { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } }
+            { id: 'travel', label: { ko: '여행', en: 'Travel' } },
+            { id: 'b2b-mall', label: { ko: 'B2B 몰', en: 'B2B Mall' } },
+            { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview' } },
+            { id: 'f4_plus', label: { ko: '토크 플러스', en: 'Talk Plus' } },
+            { id: 'f4_book', label: { ko: '도서관 섹션', en: 'Book Section' } },
+            { id: 'f4_seminar', label: { ko: '세미나 룸', en: 'Seminar Room' } }
         ]
     },
     {
@@ -45,20 +47,18 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         ]
     },
     {
-        id: 'floor-gather-mall',
+        id: 'floor-4',
         floor: '4F',
-        title: { ko: '게더 몰', en: 'GATHER MALL' },
+        title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
-        videoUrl: '/uploads/travel.mp4',
-        color: '#FF4757', // 4F - Vibrant Red (Culture)
+        videoUrl: '/uploads/festival.mp4',
+        color: '#00A8FF', // 4F - Vibrant Blue (Heritage)
         content: [],
         subitems: [
-            { id: 'travel', label: { ko: '여행', en: 'Travel' } },
-            { id: 'b2b-mall', label: { ko: 'B2B 몰', en: 'B2B Mall' } },
-            { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview' } },
-            { id: 'f4_plus', label: { ko: '토크 플러스', en: 'Talk Plus' } },
-            { id: 'f4_book', label: { ko: '도서관 섹션', en: 'Book Section' } },
-            { id: 'f4_seminar', label: { ko: '세미나 룸', en: 'Seminar Room' } }
+            { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage' } },
+            { id: 'f6_gourmet', label: { ko: '미식 아카이브', en: 'Gourmet Archive' } },
+            { id: 'f6_craft', label: { ko: '지역 공예관', en: 'Local Craft' } },
+            { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } }
         ]
     },
     {
@@ -153,6 +153,7 @@ export const FALLBACK_PRODUCTS: any[] = [
     { id: 'p4-1', subcategory: 'b2b-mall', category: 'floor-6', title: { ko: '명사 초청 문화 담론 티켓', en: 'VIP Cultural Discourse Ticket' }, description: { ko: '당대 최고의 지성들과 나누는 깊이 있는 대화입니다.', en: 'In-depth conversations with the greatest minds of our time.' }, image_url: '/via_station_logo_portal.png', price: '50,000₩' },
     { id: 'p4-2', subcategory: 'interview', category: 'floor-6', title: { ko: '아티스트 인터뷰 영상 아카이브', en: 'Artist Interview Video Archive' }, description: { ko: '작가의 철학을 날것 그대로 담아낸 독점 인터뷰입니다.', en: 'Exclusive interviews capturing the artist\'s philosophy in its raw form.' }, image_url: '/via_station_logo_portal.png', price: '15,000₩' },
     { id: 'p4-3', subcategory: 'f4_book', category: 'floor-6', title: { ko: '디자인 총서 화보집', en: 'Design Series Art Book' }, description: { ko: '수동적 독서를 넘어 영감을 주는 시각 예술 도서입니다.', en: 'A visual art book that goes beyond passive reading and provides inspiration.' }, image_url: '/via_station_logo_portal.png', price: '95,000₩' },
+    { id: 'p4-4', subcategory: 'f4_seminar', category: 'floor-6', title: { ko: '스마트 에듀케이션 세미나 실', en: 'Smart Education Seminar Room' }, description: { ko: '최신 교육 기술이 접목된 지능형 학습 공간입니다.', en: 'An intelligent learning space integrated with latest educational technology.' }, image_url: '/via_station_logo_portal.png', price: '200,000₩' },
 
     // 3F Lifestyle Curation
     { id: 'p3-1', subcategory: 'performance', category: 'floor-3', title: { ko: '미디어 융합 실감 공연 티켓', en: 'Media Convergence Immersive Performance Ticket' }, description: { ko: '무대와 기술이 하나되는 압도적 공연의 순간입니다.', en: 'A moment of overwhelming performance where the stage and technology become one.' }, image_url: '/via_station_logo_portal.png', price: '110,000₩' },
@@ -171,12 +172,12 @@ export const FALLBACK_PRODUCTS: any[] = [
 ];
 
 export const FALLBACK_STORIES: any[] = [
-    { id: 's6-1', subcategory: 'heritage', title: '잊혀진 궁궐의 노래', content: '서울의 중심에서 잠자고 있던 옛 이야기들을 현대적으로 발굴해냅니다.', image_url: '/via_station_logo_portal.png' },
-    { id: 's5-1', subcategory: 'archive', title: '실을 잣는 마음', content: '전통 섬유 소재가 현대 패션의 주역이 되기까지의 긴 여정을 담았습니다.', image_url: '/via_station_logo_portal.png' },
-    { id: 's4-1', subcategory: 'b2b-mall', title: '목소리의 파동', content: '담론과 대화가 어떻게 세상을 바꾸는지 작가들의 목소리로 들어봅니다.', image_url: '/via_station_logo_portal.png' },
-    { id: 's3-1', subcategory: 'performance', title: '무대의 확장', content: '공연이 끝난 후에도 남는 여운, 그 이상의 감동을 가공공간에서 이어갑니다.', image_url: '/via_station_logo_portal.png' },
-    { id: 's2-1', subcategory: 'skincare', title: '아름다움의 본질을 찾아서', content: '스킨케어 기초부터 시작하는 건강한 피부 변화의 기록을 담았습니다.', image_url: '/via_station_logo_portal.png' },
-    { id: 's1-1', subcategory: 'car-care', title: '혁신적 디테일링의 세계', content: '자동차를 아끼는 마음에서 시작된 기술의 정점, 새로운 케어 패러다임을 제안합니다.', image_url: '/via_station_logo_portal.png' }
+    { id: 's6-1', subcategory: 'heritage', category: 'floor-4', title: '잊혀진 궁궐의 노래', content: '서울의 중심에서 잠자고 있던 옛 이야기들을 현대적으로 발굴해냅니다.', image_url: '/via_station_logo_portal.png' },
+    { id: 's5-1', subcategory: 'archive', category: 'floor-5', title: '실을 잣는 마음', content: '전통 섬유 소재가 현대 패션의 주역이 되기까지의 긴 여정을 담았습니다.', image_url: '/via_station_logo_portal.png' },
+    { id: 's4-1', subcategory: 'b2b-mall', category: 'floor-6', title: '목소리의 파동', content: '담론과 대화가 어떻게 세상을 바꾸는지 작가들의 목소리로 들어봅니다.', image_url: '/via_station_logo_portal.png' },
+    { id: 's3-1', subcategory: 'performance', category: 'floor-3', title: '무대의 확장', content: '공연이 끝난 후에도 남는 여운, 그 이상의 감동을 가공공간에서 이어갑니다.', image_url: '/via_station_logo_portal.png' },
+    { id: 's2-1', subcategory: 'skincare', category: 'floor-2', title: '아름다움의 본질을 찾아서', content: '스킨케어 기초부터 시작하는 건강한 피부 변화의 기록을 담았습니다.', image_url: '/via_station_logo_portal.png' },
+    { id: 's1-1', subcategory: 'car-care', category: 'floor-tech-care', title: '혁신적 디테일링의 세계', content: '자동차를 아끼는 마음에서 시작된 기술의 정점, 새로운 케어 패러다임을 제안합니다.', image_url: '/via_station_logo_portal.png' }
 ];
 
 export const FALLBACK_NOTICES: Notice[] = [

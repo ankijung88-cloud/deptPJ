@@ -11,9 +11,8 @@ export const getNormalizedFloorId = (id: string): string => {
     if (!id) return '';
     const s = id.toLowerCase();
     if (s === 'floor-1' || s === 'floor-tech-care') return 'floor-tech-care';
-    if (s === 'floor-local-heritage' || s === 'floor-4') return 'floor-4';
-    if (s === 'floor-6') return 'floor-6'; // Now Gather Mall
-    if (s === 'floor-gather-mall') return 'floor-6';
+    if (s === 'floor-4' || s === 'floor-local-heritage') return 'floor-4';
+    if (s === 'floor-6' || s === 'floor-gather-mall') return 'floor-6';
     return id;
 };
 
