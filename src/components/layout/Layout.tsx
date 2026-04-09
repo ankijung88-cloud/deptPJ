@@ -33,12 +33,9 @@ export const Layout: React.FC = () => {
         const ticket = normalizedPath.endsWith('/ticket');
         const inquiry = normalizedPath.endsWith('/inquiry');
         const reservation = normalizedPath.endsWith('/reservation');
-        const category = normalizedPath.includes('/category/');
-        const articles = normalizedPath.includes('/articles');
         
         const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation || 
-                                category || articles;
+                                museum || store || cinema || ticket || inquiry || reservation;
         
         return {
             isLandingPage: landing,
@@ -49,7 +46,6 @@ export const Layout: React.FC = () => {
             isInterviewPage: interview,
             isMuseumPage: museum,
             isStorePage: store,
-            isCategoryPage: category,
             hideHeader: shouldHideHeader
         };
     }, [location.pathname]);
