@@ -15,7 +15,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
     },
     {
         id: 'floor-6',
-        floor: '4F',
+        floor: '6F',
         title: { ko: '로컬 헤리티지', en: 'LOCAL HERITAGE' },
         description: { ko: '서울의 전경이 빌딩 숲 사이로 펼쳐지는 루프탑 가든과 글로벌 문화 교류를 위한 라운지입니다.', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
         videoUrl: '/uploads/festival.mp4',
@@ -23,7 +23,6 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         content: [],
         subitems: [
             { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage' } },
-            { id: 'travel', label: { ko: '전략적 앵커', en: 'Strategic Anchor' } },
             { id: 'f6_gourmet', label: { ko: '미식 아카이브', en: 'Gourmet Archive' } },
             { id: 'f6_craft', label: { ko: '지역 공예관', en: 'Local Craft' } },
             { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } }
@@ -47,13 +46,14 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
     },
     {
         id: 'floor-gather-mall',
-        floor: '6F',
+        floor: '4F',
         title: { ko: '게더 몰', en: 'GATHER MALL' },
         description: { ko: '한국 전역의 엄선된 로컬 식재료와 장인의 손길이 닿은 미식의 세계를 경험해보세요.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
         videoUrl: '/uploads/travel.mp4',
         color: '#FF4757', // 4F - Vibrant Red (Culture)
         content: [],
         subitems: [
+            { id: 'travel', label: { ko: '여행', en: 'Travel' } },
             { id: 'b2b-mall', label: { ko: 'B2B 몰', en: 'B2B Mall' } },
             { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview' } },
             { id: 'f4_plus', label: { ko: '토크 플러스', en: 'Talk Plus' } },
@@ -138,7 +138,7 @@ export const FALLBACK_NAV: NavItem[] = [
 export const FALLBACK_PRODUCTS: any[] = [
     // 6F Local Heritage
     { id: 'p6-1', subcategory: 'heritage', category: 'floor-6', title: { ko: '경복궁 근정전 축소 모형', en: 'Gyeongbokgung Geunjeongjeon Scale Model' }, description: { ko: '정교한 세공으로 완성된 조선 왕실 건축의 정수입니다.', en: 'The essence of Joseon royal architecture completed with exquisite craftsmanship.' }, image_url: '/via_station_logo_portal.png', price: '2,500,000₩' },
-    { id: 'p6-2', subcategory: 'travel', category: 'floor-6', title: { ko: '서울 골목길 가상 투어 패키지', en: 'Seoul Alleyway Virtual Tour Package' }, description: { ko: '숨겨진 서울의 매력을 VR로 탐험하는 프리미엄 투어입니다.', en: 'A premium VR tour exploring the hidden charms of Seoul.' }, image_url: '/via_station_logo_portal.png', price: '45,000₩' },
+    { id: 'p6-2', subcategory: 'travel', category: 'floor-gather-mall', title: { ko: '서울 골목길 가상 투어 패키지', en: 'Seoul Alleyway Virtual Tour Package' }, description: { ko: '숨겨진 서울의 매력을 VR로 탐험하는 프리미엄 투어입니다.', en: 'A premium VR tour exploring the hidden charms of Seoul.' }, image_url: '/via_station_logo_portal.png', price: '45,000₩' },
     { id: 'p6-3', subcategory: 'f6_gourmet', category: 'floor-6', title: { ko: '궁중 다과 한정판 세트', en: 'Royal Tea & Sweets Limited Set' }, description: { ko: '천년의 역사를 담은 명인의 손길로 빚은 다과 세트입니다.', en: 'A tea and sweets set crafted by a master with a thousand years of history.' }, image_url: '/via_station_logo_portal.png', price: '85,000₩' },
     { id: 'p6-4', subcategory: 'f6_craft', category: 'floor-6', title: { ko: '방짜유기 장인 식기 세트', en: 'Hand-forged Bronzeware Tableware Set' }, description: { ko: '은은한 광택과 살균 효과가 탁월한 한국 전통 식기입니다.', en: 'Traditional Korean tableware with a subtle luster and excellent sterilization effects.' }, image_url: '/via_station_logo_portal.png', price: '580,000₩' },
     { id: 'p6-5', subcategory: 'f6_tour', category: 'floor-6', title: { ko: '한양도성 달빛 탐방권', en: 'Hanyangdoseong Moonlight Exploration Pass' }, description: { ko: '성곽길을 따라 걷는 로맨틱한 야경 투어 프로그램입니다.', en: 'A romantic night tour program walking along the fortress walls.' }, image_url: '/via_station_logo_portal.png', price: '30,000₩' },
