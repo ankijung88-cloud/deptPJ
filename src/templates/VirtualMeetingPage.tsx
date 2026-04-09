@@ -21,11 +21,13 @@ import {
     Link,
     X,
     Maximize,
-    Minimize
+    Minimize,
+    UserMinus,
+    Lock
 } from 'lucide-react';
 import { MeetingRoomEnvironment } from '../components/gallery/MeetingRoomEnvironment';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { useAdmin } from '../hooks/useAdmin';
@@ -46,12 +48,21 @@ const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'
 
 const VirtualMeetingPage: React.FC = () => {
     const navigate = useNavigate();
+    const { id: roomId } = useParams<{ id: string }>();
+    const roomKey = `meeting_token_${roomId || 'default'}`;
     
     const [socket, setSocket] = useState<Socket | null>(null);
     const [meetingMode] = useState<'1:1' | 'Group'>('Group');
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [showParticipants, setShowParticipants] = useState(false);
+    
+    // Authorization States
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [entryToken, setEntryToken] = useState('');
+    const [showTokenModal, setShowTokenModal] = useState(false);
+    const [tokenError, setTokenError] = useState('');
+    
     const { resetUiTimer } = useNavigationState();
     useImmersiveMode(true);
     
@@ -84,7 +95,8 @@ const VirtualMeetingPage: React.FC = () => {
     }, [screenData.type]);
     
     const { isAdmin, isAgency } = useAdmin();
-    const hasScreenControl = isAdmin || isAgency;
+    const isHost = isAdmin || isAgency;
+    const hasScreenControl = isHost;
 
     // WebRTC Screen Sharing Hook
     const { 
@@ -95,8 +107,37 @@ const VirtualMeetingPage: React.FC = () => {
         stopScreenShare 
     } = useWebRTCScreenShare(socket, participants);
 
-    // Real-time Socket Setup
+    // Initial Authorization Check
     useEffect(() => {
+        if (isHost) {
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Check URL for invite token
+        const params = new URLSearchParams(window.location.search);
+        const inviteToken = params.get('invite');
+        if (inviteToken) {
+            sessionStorage.setItem(roomKey, inviteToken);
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Check SessionStorage
+        const savedToken = sessionStorage.getItem(roomKey);
+        if (savedToken) {
+            setIsAuthorized(true);
+            return;
+        }
+
+        // Otherwise, show modal
+        setShowTokenModal(true);
+    }, [isHost, roomId, roomKey]);
+
+    // Real-time Socket Setup - Only connect if authorized
+    useEffect(() => {
+        if (!isAuthorized) return;
+
         const socketUrl = window.location.origin.includes('5173') 
             ? window.location.origin.replace('5173', '3000') 
             : window.location.origin.replace(window.location.port, '3000');
@@ -111,28 +152,30 @@ const VirtualMeetingPage: React.FC = () => {
         
         setSocket(newSocket);
         
-        // Extract invite token from URL
-        const params = new URLSearchParams(window.location.search);
-        const inviteToken = params.get('invite');
+        const token = sessionStorage.getItem(roomKey);
 
         newSocket.on('connect', () => {
             console.log('[Socket] Connected!', newSocket.id);
-            // Re-check host status at connection time
-            const isHost = isAdmin || isAgency;
             newSocket.emit('join-meeting', { 
-                roomId: 'default-room', 
+                roomId: roomId || 'default-room', 
                 name: localParticipant.name,
-                inviteToken,
+                inviteToken: token,
                 isHost
             });
         });
 
         newSocket.on('meeting-error', (data: { message: string }) => {
             alert(data.message);
-            // Redirect back if unauthorized
             if (data.message.includes('토큰') || data.message.includes('정원')) {
-                navigate(-1);
+                sessionStorage.removeItem(roomKey);
+                setIsAuthorized(false);
+                setShowTokenModal(true);
             }
+        });
+
+        newSocket.on('kicked', () => {
+            alert('Host has removed you from the meeting.');
+            navigate(-1);
         });
 
         newSocket.on('participants-update', (data: Participant[]) => {
@@ -150,7 +193,7 @@ const VirtualMeetingPage: React.FC = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, [isAdmin, isAgency]);
+    }, [isAuthorized, isAdmin, isAgency, roomId, roomKey]);
 
     const handleSeatSelect = useCallback((seatId: number) => {
         setLocalParticipant(prev => ({ ...prev, seatId }));
@@ -167,6 +210,27 @@ const VirtualMeetingPage: React.FC = () => {
     const toggleVideo = () => {
         setIsVideoOff(!isVideoOff);
         if (socket) socket.emit('toggle-video', !isVideoOff);
+    };
+
+    const handleKickParticipant = (participantId: string) => {
+        if (!isHost || !socket) return;
+        if (window.confirm('Are you sure you want to remove this participant?')) {
+            socket.emit('kick-participant', { participantId, roomId: roomId || 'default-room' });
+        }
+    };
+
+    const handleTokenSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!entryToken.trim()) {
+            setTokenError('Please enter a token.');
+            return;
+        }
+        
+        // Store and attempt entry
+        sessionStorage.setItem(roomKey, entryToken.trim());
+        setIsAuthorized(true);
+        setShowTokenModal(false);
+        setTokenError('');
     };
 
     const handleShareScreen = (url: string, manualType?: string) => {
@@ -423,6 +487,18 @@ const VirtualMeetingPage: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
+                                            {isHost && (
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleKickParticipant(p.id);
+                                                    }}
+                                                    className="p-1.5 hover:bg-[#FF4757]/20 text-white/20 hover:text-[#FF4757] rounded-lg transition-all"
+                                                    title="Kick Member"
+                                                >
+                                                    <UserMinus size={14} />
+                                                </button>
+                                            )}
                                             {p.isMuted && <MicOff size={14} className="opacity-40" />}
                                             {p.isVideoOff && <VideoOff size={14} className="opacity-40" />}
                                         </div>
@@ -667,6 +743,65 @@ const VirtualMeetingPage: React.FC = () => {
                                     <img src={screenData.url} alt="Presentation" className="w-full h-full object-contain" />
                                 )}
                             </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                {/* Secure Entry Modal */}
+                <AnimatePresence>
+                    {showTokenModal && (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/80 backdrop-blur-3xl"
+                        >
+                            <motion.div 
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                className="w-full max-w-md p-10 bg-white/5 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-8"
+                            >
+                                <div className="w-20 h-20 bg-emerald-500/20 rounded-3xl flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                                    <Lock size={40} />
+                                </div>
+                                
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-3xl font-black tracking-tight"><AutoTranslatedText text="보안 입장" /></h2>
+                                    <p className="text-white/40 text-sm tracking-wide">
+                                        <AutoTranslatedText text="이 회의실은 승인된 사용자만 입장 가능합니다. 에이전시 또는 관리자에게 받은 토큰을 입력해주세요." />
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleTokenSubmit} className="w-full flex flex-col gap-4">
+                                    <div className="relative group">
+                                        <input 
+                                            type="text" 
+                                            autoFocus
+                                            value={entryToken}
+                                            onChange={(e) => setEntryToken(e.target.value)}
+                                            placeholder="Enter Access Token"
+                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/20"
+                                        />
+                                        {tokenError && (
+                                            <p className="absolute -bottom-6 left-0 right-0 text-[#FF4757] text-xs font-bold uppercase tracking-widest">{tokenError}</p>
+                                        )}
+                                    </div>
+
+                                    <button 
+                                        type="submit"
+                                        className="h-16 bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#050505] font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(16,185,129,0.3)] mt-2"
+                                    >
+                                        <AutoTranslatedText text="입장하기" />
+                                    </button>
+
+                                    <button 
+                                        type="button"
+                                        onClick={() => navigate(-1)}
+                                        className="text-white/20 hover:text-white/60 text-xs font-bold uppercase tracking-[0.2em] mt-2 transition-all"
+                                    >
+                                        <AutoTranslatedText text="돌아가기" />
+                                    </button>
+                                </form>
+                            </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
