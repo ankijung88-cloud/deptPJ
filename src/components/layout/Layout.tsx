@@ -87,8 +87,8 @@ export const Layout: React.FC = () => {
         >
             {activeEffect === '2d' && <CustomCursor />}
             {activeEffect === '3d' && <MouseTrail3D />}
-            {!hideHeader && <Header />}
-            {hideHeader && (
+            {!hideHeader && !isImmersive && <Header />}
+            {(hideHeader || isImmersive) && (
                 <div className={`transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
                     <LanguageSelector variant="floating" />
                 </div>
