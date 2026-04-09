@@ -19,8 +19,8 @@ export const FLOORS = [
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'talk', label: 'B2B 몰' },
             { id: 'travel', label: '여행' },
+            { id: 'b2b-mall', label: 'B2B 몰' },
             { id: 'interview', label: '아티스트 인터뷰' },
             { id: 'f4_plus', label: '토크 플러스' },
             { id: 'f4_book', label: '도서관 섹션' },
@@ -46,9 +46,10 @@ export const FLOORS = [
         color: '#00A8FF',
         videoUrl: '/uploads/festival.mp4',
         subcategories: [
-            { id: 'heritage', label: '로컬' },
-            { id: 'f6_gourmet', label: '음식' },
-            { id: 'f6_craft', label: '참여 ' },
+            { id: 'heritage', label: '지역 문화 유산' },
+            { id: 'f6_gourmet', label: '미식 아카이브' },
+            { id: 'f6_craft', label: '지역 공예관' },
+            { id: 'f6_tour', label: '헤리티지 투어' },
         ]
     },
     {
@@ -84,11 +85,23 @@ export const FLOORS = [
         color: '#FFD32A',
         videoUrl: '/uploads/k-culture.mp4',
         subcategories: [
-            { id: 'car-care', label: 'CAR 케어' },
+            { id: 'global', label: 'CAR 케어' },
             { id: 'window', label: '디지털 쇼윈도' },
             { id: 'f1_kpop', label: 'K-팝 스테이지' },
             { id: 'f1_library', label: '트렌드 라이브러리' },
             { id: 'f1_tech', label: '한류 테크존' },
+        ]
+    },
+    {
+        level: 1,
+        title: '테크 앤 케어',
+        label: '1F',
+        color: '#FFD32A',
+        videoUrl: '/uploads/k-culture.mp4',
+        subcategories: [
+            { id: 'car-care', label: 'CAR 케어' },
+            { id: 'f1_tech', label: '한류 테크존' },
+            { id: 'cat-1775227156624', label: '테스트' },
         ]
     },
 ];
