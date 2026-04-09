@@ -27,7 +27,18 @@ export const Layout: React.FC = () => {
         const sindang = normalizedPath.endsWith('/sindang');
         const audition = normalizedPath.endsWith('/audition');
         const interview = normalizedPath.endsWith('/interview');
-        const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview;
+        const museum = normalizedPath.endsWith('/museum');
+        const store = normalizedPath.endsWith('/store');
+        const cinema = normalizedPath.endsWith('/cinema');
+        const ticket = normalizedPath.endsWith('/ticket');
+        const inquiry = normalizedPath.endsWith('/inquiry');
+        const reservation = normalizedPath.endsWith('/reservation');
+        const category = normalizedPath.includes('/category/');
+        const articles = normalizedPath.includes('/articles');
+        
+        const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
+                                museum || store || cinema || ticket || inquiry || reservation || 
+                                category || articles;
         
         return {
             isLandingPage: landing,
@@ -36,6 +47,9 @@ export const Layout: React.FC = () => {
             isSindangPage: sindang,
             isAuditionPage: audition,
             isInterviewPage: interview,
+            isMuseumPage: museum,
+            isStorePage: store,
+            isCategoryPage: category,
             hideHeader: shouldHideHeader
         };
     }, [location.pathname]);
