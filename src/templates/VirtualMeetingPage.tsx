@@ -213,9 +213,15 @@ const VirtualMeetingPage: React.FC = () => {
     };
 
     const handleKickParticipant = (participantId: string) => {
-        if (!isHost || !socket) return;
-        if (window.confirm('Are you sure you want to remove this participant?')) {
-            socket.emit('kick-participant', { participantId, roomId: roomId || 'default-room' });
+        if (!isHost || !socket) {
+            console.warn('[Meeting] Kick blocked: Not host or socket disconnected', { isHost, socketId: socket?.id });
+            return;
+        }
+        
+        const finalRoomId = roomId || 'default-room';
+        if (window.confirm('해당 참가자를 내보내시겠습니까?')) {
+            console.log(`[Meeting] Emitting kick-participant: room=${finalRoomId}, target=${participantId}`);
+            socket.emit('kick-participant', { participantId, roomId: finalRoomId });
         }
     };
 

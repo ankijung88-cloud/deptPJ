@@ -133,13 +133,20 @@ io.on('connection', (socket) => {
 
 
   socket.on('kick-participant', ({ participantId, roomId }) => {
+    console.log(`[Socket] Kick request: From ${socket.id} for target ${participantId} in room ${roomId}`);
+    
     const participants = rooms.get(roomId);
-    if (!participants) return;
+    if (!participants) {
+      console.log(`[Socket] Kick failed: Room ${roomId} not found`);
+      return;
+    }
 
     const requester = participants.get(socket.id);
+    console.log(`[Socket] Requester ${socket.id} info in room:`, requester);
+
     if (requester && requester.isHost) {
       if (participants.has(participantId)) {
-        console.log(`[Socket] Host ${socket.id} is kicking ${participantId} from room ${roomId}`);
+        console.log(`[Socket] Host verified. Kicking target ${participantId}`);
         
         // Notify the target first
         io.to(participantId).emit('kicked');
@@ -147,7 +154,10 @@ io.on('connection', (socket) => {
         // Make the target socket leave the room
         const targetSocket = io.sockets.sockets.get(participantId);
         if (targetSocket) {
+          console.log(`[Socket] Command: targetSocket.leave(${roomId}) for ${participantId}`);
           targetSocket.leave(roomId);
+        } else {
+          console.log(`[Socket] Warn: Target socket ${participantId} not found in io.sockets.sockets`);
         }
         
         // Remove from our internal state
@@ -155,7 +165,13 @@ io.on('connection', (socket) => {
         
         // Broadcast updated list to remaining participants
         io.to(roomId).emit('participants-update', Array.from(participants.values()));
+        console.log(`[Socket] Kick sequence complete for ${participantId}`);
+      } else {
+        console.log(`[Socket] Kick failed: Target ${participantId} not in room participants`);
       }
+    } else {
+      console.log(`[Socket] Kick blocked: Requester ${socket.id} is NOT a host`);
+      socket.emit('meeting-error', { message: '멤버 내보내기 권한이 없습니다. (호스트 전용)' });
     }
   });
 
