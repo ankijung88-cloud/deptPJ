@@ -76,11 +76,7 @@ const VirtualMeetingPage: React.FC = () => {
         isVideoOff: false
     });
     
-    const [participants, setParticipants] = useState<Participant[]>([
-        // Mock remote participants
-        { id: 'p1', name: 'Alex Rivera', seatId: 1, color: '#FF4757', position: [0,0,0], isMuted: true, isVideoOff: false },
-        { id: 'p2', name: 'Mila Chen', seatId: 4, color: '#2ECC71', position: [0,0,0], isMuted: false, isVideoOff: true },
-    ]);
+    const [participants, setParticipants] = useState<Participant[]>([]);
     const [screenData, setScreenData] = useState<{ url: string; type: string }>({ url: '', type: 'none' });
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isScreenMaximized, setIsScreenMaximized] = useState(false);
