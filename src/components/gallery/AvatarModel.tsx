@@ -1,6 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Float, MeshDistortMaterial, Html } from '@react-three/drei';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 
 interface AvatarModelProps {
@@ -10,6 +11,8 @@ interface AvatarModelProps {
     isLocal?: boolean;
     onNameChange?: (name: string) => void;
     avatarType?: 'premium' | 'modern' | 'classic';
+    chatMessage?: string;
+    chatTime?: number;
 }
 
 export const AvatarModel: React.FC<AvatarModelProps> = ({ 
@@ -18,21 +21,39 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
     color = '#00D2FF', 
     isLocal = false,
     onNameChange,
-    avatarType = 'premium' 
+    avatarType = 'premium',
+    chatMessage,
+    chatTime
 }) => {
-    const meshRef = React.useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Group>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [internalName, setInternalName] = useState(name);
+    const [visibleMessage, setVisibleMessage] = useState<string | null>(null);
 
     useEffect(() => {
         setInternalName(name);
     }, [name]);
 
-    // Floating animation
-    useFrame((state) => {
-        if (meshRef.current && position) {
+    useEffect(() => {
+        if (chatMessage && chatMessage.trim()) {
+            setVisibleMessage(chatMessage);
+            const timer = setTimeout(() => setVisibleMessage(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [chatMessage, chatTime]);
+
+    // Smooth movement and floating animation
+    useFrame((state, delta) => {
+        if (meshRef.current) {
+            // Lerp to target position for smooth movement
+            if (position) {
+                const target = new THREE.Vector3(...position);
+                meshRef.current.position.lerp(target, 10 * delta);
+            }
+
             const speedMultiplier = avatarType === 'premium' ? 1.5 : 1;
-            meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 * speedMultiplier) * 0.05;
+            const floatOffset = Math.sin(state.clock.elapsedTime * 2 * speedMultiplier) * 0.05;
+            meshRef.current.position.y += floatOffset;
             meshRef.current.rotation.y += 0.01;
         }
     });
@@ -103,6 +124,24 @@ export const AvatarModel: React.FC<AvatarModelProps> = ({
                     </Text>
                 )}
             </Float>
+
+            {/* Chat Bubble */}
+            <AnimatePresence>
+                {visibleMessage && (
+                    <Html position={[0, 1.8, 0]} center distanceFactor={10}>
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            className="bg-white text-black px-4 py-2 rounded-2xl shadow-xl font-bold min-w-[100px] text-center relative pointer-events-none"
+                        >
+                            {visibleMessage}
+                            {/* Speech bubble tail */}
+                            <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white" />
+                        </motion.div>
+                    </Html>
+                )}
+            </AnimatePresence>
 
             {/* Avatar Body - Stylized Capsule/Person */}
             <mesh position={[0, 0.4, 0]}>

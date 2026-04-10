@@ -33,9 +33,10 @@ export const Layout: React.FC = () => {
         const ticket = normalizedPath.endsWith('/ticket');
         const inquiry = normalizedPath.endsWith('/inquiry');
         const reservation = normalizedPath.endsWith('/reservation');
+        const square = normalizedPath.endsWith('/square');
         
         const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation;
+                                museum || store || cinema || ticket || inquiry || reservation || square;
         
         return {
             isLandingPage: landing,

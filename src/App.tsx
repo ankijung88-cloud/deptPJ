@@ -21,6 +21,7 @@ const VirtualMeetingPage = lazy(() => import('./templates/VirtualMeetingPage'));
 const VirtualSindangPage = lazy(() => import('./templates/VirtualSindangPage'));
 const VirtualAuditionPage = lazy(() => import('./templates/VirtualAuditionPage'));
 const VirtualInterviewPage = lazy(() => import('./templates/VirtualInterviewPage'));
+const VirtualSquarePage = lazy(() => import('./templates/VirtualSquarePage'));
 const AgencyRegisterPage = lazy(() => import('./pages/AgencyRegisterPage'));
 import NoticePage from './pages/NoticePage';
 import FAQPage from './pages/FAQPage';
@@ -66,6 +67,7 @@ function App() {
                                         <Route path="/detail/:id/sindang" element={<VirtualSindangPage />} />
                                         <Route path="/detail/:id/audition" element={<VirtualAuditionPage />} />
                                         <Route path="/detail/:id/interview" element={<VirtualInterviewPage />} />
+                                        <Route path="/detail/:id/square" element={<VirtualSquarePage />} />
                                     </Route>
 
                                     {/* Presentation Pages (No Layout/Navbar) */}

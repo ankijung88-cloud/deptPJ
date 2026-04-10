@@ -228,7 +228,8 @@ export const DetailPage: React.FC = () => {
         meeting: `/detail/${item.id}/meeting`,
         sindang: `/detail/${item.id}/sindang`,
         audition: `/detail/${item.id}/audition`,
-        interview: `/detail/${item.id}/interview`
+        interview: `/detail/${item.id}/interview`,
+        square: `/detail/${item.id}/square`
     };
                 navigate(routes[templateType], { 
                     state: { 
@@ -499,7 +500,8 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
                                                 { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
                                                 { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
-                                                { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' }
+                                                { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
+                                                { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' }
                                             ].find(t => t.id === tpl.id);
                                             
                                             if (!tplInfo) return null;
@@ -547,7 +549,8 @@ export const DetailPage: React.FC = () => {
                                             { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
                                             { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
                                             { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
-                                            { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' }
+                                            { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
+                                            { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' }
                                         ].map((tpl) => {
                                             const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
                                             const isSelected = !!selectedTpl;
