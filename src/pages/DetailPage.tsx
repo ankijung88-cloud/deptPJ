@@ -326,14 +326,6 @@ export const DetailPage: React.FC = () => {
                         backgroundColor: theme.bgColor 
                     }}
                 >
-                    {/* Fallback pattern if image fails (CSS pattern) */}
-                    <div 
-                        className="absolute inset-0 opacity-20" 
-                        style={{ 
-                            backgroundImage: `radial-gradient(circle at 2px 2px, ${theme.highlightColor}de 1px, transparent 0)`,
-                            backgroundSize: '40px 40px' 
-                        }} 
-                    />
                     <div className="absolute inset-0 z-10" style={{ background: `linear-gradient(to top, ${theme.bgColor}, ${theme.bgColor}33, transparent)` }} />
                 </motion.div>
 
