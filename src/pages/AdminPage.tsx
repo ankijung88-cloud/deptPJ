@@ -2434,7 +2434,9 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const { floors } = useFloors();
     const { isAdmin, isAuthenticated, logout } = useAdmin();
 
     useEffect(() => {
@@ -2470,8 +2472,8 @@ export const AdminPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0D17] flex relative">
-            {/* Mobile Sidebar Overlay */}
+        <div className="min-h-screen bg-[#0A0D17] lg:flex relative overflow-x-hidden">
+            {/* Mobile Sidebar Overlay (Left) */}
             <AnimatePresence>
                 {isSidebarOpen && (
                     <motion.div 
@@ -2484,11 +2486,73 @@ export const AdminPage: React.FC = () => {
                 )}
             </AnimatePresence>
 
+            {/* Global Category Menu Overlay (Right) */}
+            <AnimatePresence>
+                {isGlobalMenuOpen && (
+                    <>
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsGlobalMenuOpen(false)}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[120]"
+                        />
+                        <motion.div 
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="fixed inset-y-0 right-0 w-80 bg-[#1A2420] border-l border-white/10 z-[130] flex flex-col shadow-2xl"
+                        >
+                            <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                                <h2 className="text-lg font-serif font-bold text-white">Category Menu</h2>
+                                <button 
+                                    onClick={() => setIsGlobalMenuOpen(false)}
+                                    className="p-2 text-white/40 hover:text-white transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                                {floors.map(floor => (
+                                    <div key={floor.id} className="space-y-3">
+                                        <div className="flex items-center gap-2 text-[#00FFC2] font-bold text-sm tracking-widest uppercase opacity-80">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2]" />
+                                            {floor.floor} | {displayLocalized(floor.title)}
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-2 pl-4">
+                                            {(floor.subitems || []).map(sub => (
+                                                <button
+                                                    key={sub.id}
+                                                    onClick={() => navigate(`/category/${sub.id}`)}
+                                                    className="w-full text-left px-4 py-3 rounded-xl bg-white/5 text-white/60 text-sm hover:text-white hover:bg-[#00FFC2]/10 transition-all border border-transparent hover:border-[#00FFC2]/20"
+                                                >
+                                                    {displayLocalized(sub.label)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="p-4 border-t border-white/5">
+                                <button
+                                    onClick={() => navigate('/')}
+                                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 text-white/80 font-bold hover:bg-white/10 transition-all"
+                                >
+                                    Go to Front Page
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
             {/* Sidebar */}
             <aside className={`
-                fixed inset-y-0 left-0 w-72 border-r border-white/5 bg-[#1A2420] flex flex-col z-[110] transition-transform duration-300 transform
-                lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                h-screen sticky top-0 overflow-y-auto
+                fixed inset-y-0 left-0 w-72 border-r border-white/5 bg-[#1A2420] flex flex-col z-[110] 
+                transition-transform duration-300 transform
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                lg:relative lg:translate-x-0 lg:h-screen lg:sticky lg:top-0 overflow-y-auto
             `}>
                 <div className="p-8 border-b border-white/5">
                     <div className="flex items-center gap-3 mb-2">
@@ -2555,6 +2619,13 @@ export const AdminPage: React.FC = () => {
                             </h3>
                         </div>
                     </div>
+                    <button 
+                        onClick={() => setIsGlobalMenuOpen(true)}
+                        className="p-3 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2 font-bold text-xs"
+                    >
+                        <span className="hidden sm:inline opacity-60">CATEGORIES</span>
+                        <Menu size={24} />
+                    </button>
                 </header>
 
                 <div className="p-10">
