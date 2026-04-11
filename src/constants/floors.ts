@@ -7,9 +7,10 @@ export const FLOORS = [
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
             { id: 'meeting-room', label: '회의실' },
-            { id: 'destiny-room', label: '신당' },
             { id: 'audio-room', label: '오디션' },
             { id: 'interview-room', label: '면접실' },
+            { id: 'square', label: '모두의 광장' },
+            { id: 'office', label: '오피스' },
         ]
     },
     {
@@ -19,12 +20,9 @@ export const FLOORS = [
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'travel', label: '여행' },
             { id: 'b2b-mall', label: 'B2B 몰' },
-            { id: 'interview', label: '아티스트 인터뷰' },
-            { id: 'f4_plus', label: '토크 플러스' },
-            { id: 'f4_book', label: '도서관 섹션' },
             { id: 'f4_seminar', label: '세미나 룸' },
+            { id: 'b2c-mall', label: 'B2C 몰' },
         ]
     },
     {
@@ -50,6 +48,7 @@ export const FLOORS = [
             { id: 'f6_gourmet', label: '미식 아카이브' },
             { id: 'f6_craft', label: '지역 공예관' },
             { id: 'f6_tour', label: '헤리티지 투어' },
+            { id: 'shaman', label: '무속신당' },
         ]
     },
     {
