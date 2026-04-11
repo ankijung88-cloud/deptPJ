@@ -315,7 +315,7 @@ export const DetailPage: React.FC = () => {
     return (
         <article className="min-h-screen text-white" style={{ backgroundColor: theme.bgColor }}>
             {/* Magazine Hero */}
-            <div className="relative h-[80vh] w-full group overflow-hidden">
+            <div className="relative h-[60vh] w-full group overflow-hidden">
                 <motion.div 
                     initial={{ scale: 1.1 }}
                     animate={{ scale: 1 }}

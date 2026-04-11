@@ -207,7 +207,7 @@ const SubCategoryPage: React.FC = () => {
             {/* Back Navigation Bar */}
 
             {/* Editorial Header */}
-            <header className="relative w-full min-h-[60vh] flex items-center pt-8 pb-10 overflow-hidden">
+            <header className="relative w-full min-h-[45vh] flex items-center pt-24 pb-10 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     {(subcategoryData?.bgImage || parentFloor?.bgImage) && (
                         <img

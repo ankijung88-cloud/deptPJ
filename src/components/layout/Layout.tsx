@@ -33,23 +33,13 @@ export const Layout: React.FC = () => {
         const ticket = normalizedPath.endsWith('/ticket');
         const inquiry = normalizedPath.endsWith('/inquiry');
         const reservation = normalizedPath.endsWith('/reservation');
-        const square = normalizedPath.endsWith('/square');
-        const office = normalizedPath.endsWith('/office');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
-        
         const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation || square || office || admin;
+                                museum || store || cinema || ticket || inquiry || reservation || admin;
         
         return {
             isLandingPage: landing,
             isInspirationPage: inspiration,
-            isMeetingPage: meeting,
-            isSindangPage: sindang,
-            isAuditionPage: audition,
-            isInterviewPage: interview,
-            isMuseumPage: museum,
-            isStorePage: store,
-            isOfficePage: office,
             hideHeader: shouldHideHeader
         };
     }, [location.pathname]);
