@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Play, Briefcase } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Play, Briefcase, LayoutGrid } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -229,7 +229,8 @@ export const DetailPage: React.FC = () => {
         sindang: `/detail/${item.id}/sindang`,
         audition: `/detail/${item.id}/audition`,
         interview: `/detail/${item.id}/interview`,
-        square: `/detail/${item.id}/square`
+        square: `/detail/${item.id}/square`,
+        office: `/detail/${item.id}/office`
     };
                 navigate(routes[templateType], { 
                     state: { 
@@ -501,7 +502,8 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
                                                 { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                                 { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                                { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' }
+                                                { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },
+                                                { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
                                             ].find(t => t.id === tpl.id);
                                             
                                             if (!tplInfo) return null;
@@ -550,7 +552,8 @@ export const DetailPage: React.FC = () => {
                                             { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
                                             { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                             { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                            { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' }
+                                            { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },
+                                            { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
                                         ].map((tpl) => {
                                             const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
                                             const isSelected = !!selectedTpl;

@@ -39,10 +39,17 @@ const roomTokens = new Map(); // roomId -> Set of valid invite tokens
 io.on('connection', (socket) => {
   console.log(`[Socket] New connection: ${socket.id}`);
 
-  socket.on('join-meeting', ({ roomId, name, inviteToken, isHost, role }) => {
+  socket.on('join-room', ({ roomId, user, inviteToken, isHost, role }) => {
     // 1. Check if room exists or create it
     if (!rooms.has(roomId)) {
       rooms.set(roomId, new Map());
+      roomTokens.set(roomId, new Set());
+    }
+    const participants = rooms.get(roomId);
+    
+    // Extract name from user object or fallback
+    const name = user?.name || user?.displayName || 'Anonymous';
+    const id = user?.uid || user?.id || socket.id;
       roomScreens.set(roomId, { url: '', type: 'none' });
       roomTokens.set(roomId, new Set());
     }
@@ -66,11 +73,11 @@ io.on('connection', (socket) => {
     // 3. Register Participant
     socket.join(roomId);
     participants.set(socket.id, {
-      id: socket.id,
+      id: id, // Use permanent UID/ID if available
       name,
       seatId: null,
       color: '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
-      position: [0, 0, 0],
+      position: [0, 0, 15],
       isMuted: false,
       isVideoOff: false,
       isHost: !!isHost,
@@ -222,11 +229,67 @@ io.on('connection', (socket) => {
     }
   });
 
+  // NEW: Generic Room Join (for Office/Square)
+  socket.on('join-room', ({ roomId, user }) => {
+    socket.join(roomId);
+    if (!rooms.has(roomId)) {
+      rooms.set(roomId, {
+        participants: new Map(),
+        seats: [] // Store seats in memory
+      });
+    }
+    const room = rooms.get(roomId);
+    room.participants.set(socket.id, { 
+      id: socket.id, 
+      ...user, 
+      position: user.position || [0, 0, 0],
+      color: user.color || '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
+    });
+    console.log(`[Socket] User ${user?.name || socket.id} joined room ${roomId}`);
+    
+    // Broadcast updated participants and current seats to the new joiner
+    io.to(roomId).emit('participants-update', Array.from(room.participants.values()));
+    socket.emit('office-seats-update', room.seats);
+  });
+
+  // NEW: Office Specific Logic
+  socket.on('office-chat-send', ({ roomId, msg }) => {
+    console.log(`[Socket] Office Chat in ${roomId}: ${msg.content}`);
+    io.to(roomId).emit('office-chat-received', msg);
+  });
+
+  socket.on('office-status-update', ({ roomId, status }) => {
+    const room = rooms.get(roomId);
+    if (room && room.participants.has(socket.id)) {
+      room.participants.get(socket.id).status = status;
+      io.to(roomId).emit('office-status-update', { participantId: socket.id, status });
+      io.to(roomId).emit('participants-update', Array.from(room.participants.values()));
+    }
+  });
+
+  socket.on('office-move-user', ({ roomId, position }) => {
+    const room = rooms.get(roomId);
+    if (room && room.participants.has(socket.id)) {
+      room.participants.get(socket.id).position = position;
+      room.participants.get(socket.id).seatId = null; // Standing up when moving
+      io.to(roomId).emit('participants-update', Array.from(room.participants.values()));
+    }
+  });
+
+  socket.on('office-seats-update-request', ({ roomId, seats }) => {
+    const room = rooms.get(roomId);
+    if (room) {
+      room.seats = seats; // Store the seats
+      console.log(`[Socket] Office Seats updated in ${roomId}`);
+      io.to(roomId).emit('office-seats-update', seats);
+    }
+  });
+
   socket.on('disconnect', () => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
-        participants.delete(socket.id);
-        io.to(roomId).emit('participants-update', Array.from(participants.values()));
+    for (const [roomId, room] of rooms.entries()) {
+      if (room.participants.has(socket.id)) {
+        room.participants.delete(socket.id);
+        io.to(roomId).emit('participants-update', Array.from(room.participants.values()));
         console.log(`[Socket] ${socket.id} left room ${roomId}`);
         break;
       }

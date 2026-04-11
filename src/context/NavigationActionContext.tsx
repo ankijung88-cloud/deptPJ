@@ -130,6 +130,7 @@ export const useNavigationState = () => {
         action: context?.action || null,
         breadcrumbTitle: context?.breadcrumbTitle || null,
         isImmersive: context?.isImmersive || false,
+        setIsImmersive: context?.setIsImmersive || (() => {}),
         isUiVisible: context?.isUiVisible ?? true,
         resetUiTimer: context?.resetUiTimer || (() => {}),
         breadcrumbPath: context?.breadcrumbPath || []

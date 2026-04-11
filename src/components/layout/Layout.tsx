@@ -34,10 +34,11 @@ export const Layout: React.FC = () => {
         const inquiry = normalizedPath.endsWith('/inquiry');
         const reservation = normalizedPath.endsWith('/reservation');
         const square = normalizedPath.endsWith('/square');
+        const office = normalizedPath.endsWith('/office');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
         
         const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation || square || admin;
+                                museum || store || cinema || ticket || inquiry || reservation || square || office || admin;
         
         return {
             isLandingPage: landing,
@@ -48,6 +49,7 @@ export const Layout: React.FC = () => {
             isInterviewPage: interview,
             isMuseumPage: museum,
             isStorePage: store,
+            isOfficePage: office,
             hideHeader: shouldHideHeader
         };
     }, [location.pathname]);
