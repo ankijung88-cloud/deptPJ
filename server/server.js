@@ -44,17 +44,13 @@ io.on('connection', (socket) => {
     if (!rooms.has(roomId)) {
       rooms.set(roomId, new Map());
       roomTokens.set(roomId, new Set());
+      roomScreens.set(roomId, { url: '', type: 'none' });
     }
     const participants = rooms.get(roomId);
     
     // Extract name from user object or fallback
     const name = user?.name || user?.displayName || 'Anonymous';
     const id = user?.uid || user?.id || socket.id;
-      roomScreens.set(roomId, { url: '', type: 'none' });
-      roomTokens.set(roomId, new Set());
-    }
-
-    const participants = rooms.get(roomId);
 
     // 2. Validate Access (Only Host can enter without token, others need a valid token)
     if (!isHost) {
