@@ -23,21 +23,9 @@ export const Layout: React.FC = () => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
         const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
         const inspiration = normalizedPath.endsWith('/inspiration');
-        const meeting = normalizedPath.endsWith('/meeting');
-        const sindang = normalizedPath.endsWith('/sindang');
-        const audition = normalizedPath.endsWith('/audition');
-        const interview = normalizedPath.endsWith('/interview');
         const museum = normalizedPath.endsWith('/museum');
-        const store = normalizedPath.endsWith('/store');
-        const cinema = normalizedPath.endsWith('/cinema');
-        const ticket = normalizedPath.endsWith('/ticket');
-        const inquiry = normalizedPath.endsWith('/inquiry');
-        const reservation = normalizedPath.endsWith('/reservation');
-        const square = normalizedPath.endsWith('/square');
-        const office = normalizedPath.endsWith('/office');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
-        const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation || square || office || admin;
+        const shouldHideHeader = landing || inspiration || admin;
         
         return {
             isLandingPage: landing,
