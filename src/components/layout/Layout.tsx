@@ -19,11 +19,12 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive, isUiVisible } = useNavigationState();
     
-    const { isLandingPage, isInspirationPage, hideHeader, isAdminPage, isMuseumPage } = React.useMemo(() => {
+    const { isLandingPage, isInspirationPage, hideHeader, isAdminPage, isMuseumPage, isSquarePage } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
         const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
         const inspiration = normalizedPath.endsWith('/inspiration');
         const museum = normalizedPath.endsWith('/museum');
+        const square = normalizedPath.endsWith('/square');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
         const shouldHideHeader = landing || inspiration || admin;
         
@@ -32,7 +33,8 @@ export const Layout: React.FC = () => {
             isInspirationPage: inspiration,
             hideHeader: shouldHideHeader,
             isAdminPage: admin,
-            isMuseumPage: museum
+            isMuseumPage: museum,
+            isSquarePage: square
         };
     }, [location.pathname]);
 
@@ -74,7 +76,7 @@ export const Layout: React.FC = () => {
             {activeEffect === '2d' && <CustomCursor />}
             {activeEffect === '3d' && <MouseTrail3D />}
             {!hideHeader && !isImmersive && <Header />}
-            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && (
+            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && !isSquarePage && (
                 <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
                     <LanguageSelector variant="floating" />
                 </div>
