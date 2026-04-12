@@ -19,7 +19,7 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive, isUiVisible } = useNavigationState();
     
-    const { isLandingPage, isInspirationPage, hideHeader } = React.useMemo(() => {
+    const { isLandingPage, isInspirationPage, hideHeader, isAdminPage, isMuseumPage } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
         const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
         const inspiration = normalizedPath.endsWith('/inspiration');
@@ -42,7 +42,9 @@ export const Layout: React.FC = () => {
         return {
             isLandingPage: landing,
             isInspirationPage: inspiration,
-            hideHeader: shouldHideHeader
+            hideHeader: shouldHideHeader,
+            isAdminPage: admin,
+            isMuseumPage: museum
         };
     }, [location.pathname]);
 
@@ -84,7 +86,7 @@ export const Layout: React.FC = () => {
             {activeEffect === '2d' && <CustomCursor />}
             {activeEffect === '3d' && <MouseTrail3D />}
             {!hideHeader && !isImmersive && <Header />}
-            {(hideHeader || isImmersive) && (
+            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && (
                 <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
                     <LanguageSelector variant="floating" />
                 </div>
