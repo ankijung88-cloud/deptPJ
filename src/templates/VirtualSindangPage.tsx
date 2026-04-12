@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
@@ -24,6 +25,7 @@ import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { useAdmin } from '../hooks/useAdmin';
 import { useNavigationState, useImmersiveMode } from '../context/NavigationActionContext';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 interface Participant {
     id: string;
@@ -40,6 +42,8 @@ const COLORS = ['#FFD700', '#FF5252', '#FFEB3B', '#E91E63', '#9C27B0', '#FF9800'
 const VirtualSindangPage: React.FC = () => {
     const navigate = useNavigate();
     const { id: roomId } = useParams<{ id: string }>();
+    const { t } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const roomKey = `sindang_token_${roomId || 'default'}`;
     
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -58,7 +62,7 @@ const VirtualSindangPage: React.FC = () => {
     
     const [localParticipant, setLocalParticipant] = useState<Participant>({
         id: 'local',
-        name: 'Guest_' + Math.floor(Math.random() * 1000),
+        name: t('Guest') + '_' + Math.floor(Math.random() * 1000),
         seatId: null,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         position: [0, 0, 0],
@@ -138,14 +142,16 @@ const VirtualSindangPage: React.FC = () => {
             }
         });
 
-        newSocket.on('kicked', () => {
-            alert('상담이 종료되었습니다. 상세 페이지로 이동합니다.');
+        newSocket.on('kicked', async () => {
+            const msg = await translateAsync('상담이 종료되었습니다. 상세 페이지로 이동합니다.');
+            alert(msg);
             navigate(-1);
         });
 
-        newSocket.on('member-kicked', (data: { targetId: string }) => {
+        newSocket.on('member-kicked', async (data: { targetId: string }) => {
             if (data.targetId === newSocket.id) {
-                alert('상담이 종료되었습니다. 상세 페이지로 이동합니다.');
+                const msg = await translateAsync('상담이 종료되었습니다. 상세 페이지로 이동합니다.');
+                alert(msg);
                 navigate(-1);
             }
         });
@@ -178,11 +184,11 @@ const VirtualSindangPage: React.FC = () => {
         if (socket) socket.emit('toggle-video', !isVideoOff);
     };
 
-    const handleEndConsultation = () => {
+    const handleEndConsultation = async () => {
         if (!socket || !isHost) return;
         
-        const confirmEnd = window.confirm('상담을 종료하시겠습니까? 클라이언트가 퇴장 처리됩니다.');
-        if (!confirmEnd) return;
+        const confirmMsg = await translateAsync('상담을 종료하시겠습니까? 클라이언트가 퇴장 처리됩니다.');
+        if (!window.confirm(confirmMsg)) return;
 
         // Kick the other participant (the client)
         if (participants.length > 0) {
@@ -228,7 +234,8 @@ const VirtualSindangPage: React.FC = () => {
             });
         } catch (error) {
             console.error('Image upload error:', error);
-            alert('이미지 업로드에 실패했습니다.');
+            const msg = await translateAsync('이미지 업로드에 실패했습니다.');
+            alert(msg);
         }
     };
 
@@ -264,7 +271,9 @@ const VirtualSindangPage: React.FC = () => {
                                         <div className="w-20 h-20 border-4 border-[#FFD700]/10 border-t-[#FFD700] rounded-full animate-spin" />
                                         <div className="absolute inset-0 w-20 h-20 border-4 border-[#FFD700]/5 rounded-full animate-pulse shadow-[0_0_20px_#FFD70022]" />
                                     </div>
-                                    <p className="text-[#FFD700] font-black tracking-[0.4em] uppercase animate-pulse">Entering Shaman House</p>
+                                    <p className="text-[#FFD700] font-black tracking-[0.4em] uppercase animate-pulse">
+                                        <AutoTranslatedText text="Entering Shaman House" />
+                                    </p>
                                 </div>
                             </Html>
                         }>
@@ -294,7 +303,9 @@ const VirtualSindangPage: React.FC = () => {
                                     <AutoTranslatedText text="신점 상담소" />
                                     <Sparkles size={20} className="text-[#FFD700]" />
                                 </h1>
-                                <p className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-40 text-[#FF5252]">Spiritual Consultation Room</p>
+                                <p className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-40 text-[#FF5252]">
+                                    <AutoTranslatedText text="Spiritual Consultation Room" />
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -302,7 +313,9 @@ const VirtualSindangPage: React.FC = () => {
                     <div className="flex items-center gap-4 pointer-events-auto">
                         <div className="bg-black/60 backdrop-blur-2xl px-6 py-3 rounded-2xl border border-[#FFD700]/20 flex items-center gap-8">
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">Consultation</span>
+                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">
+                                    <AutoTranslatedText text="Consultation" />
+                                </span>
                                 <div className="flex items-center gap-2">
                                     <Users size={14} className="text-[#FFD700]" />
                                     <span className="text-xl font-black">{participants.length + 1} <span className="text-sm opacity-40">/ 2</span></span>
@@ -310,8 +323,10 @@ const VirtualSindangPage: React.FC = () => {
                             </div>
                             <div className="w-[1px] h-8 bg-white/10" />
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">Aura Level</span>
-                                <span className="text-sm font-bold text-[#FFD700]">Divine</span>
+                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">
+                                    <AutoTranslatedText text="Aura Level" />
+                                </span>
+                                <span className="text-sm font-bold text-[#FFD700]"><AutoTranslatedText text="Divine" /></span>
                             </div>
                         </div>
                     </div>
@@ -357,7 +372,7 @@ const VirtualSindangPage: React.FC = () => {
                             >
                                 <UserPlus size={20} />
                                 <span className="text-sm uppercase tracking-widest hidden md:block">
-                                    {participants.length >= 1 ? 'Room Full' : 'Invite'}
+                                    {participants.length >= 1 ? <AutoTranslatedText text="Room Full" /> : <AutoTranslatedText text="Invite" />}
                                 </span>
                             </button>
 
@@ -367,7 +382,9 @@ const VirtualSindangPage: React.FC = () => {
                                     className="flex items-center gap-3 px-6 py-4 font-black rounded-2xl bg-gradient-to-r from-[#FF5252] to-[#8B0000] text-white shadow-[0_10px_20px_rgba(255,82,82,0.3)] hover:scale-105 transition-all"
                                 >
                                     <LogOut size={20} />
-                                    <span className="text-sm uppercase tracking-widest hidden md:block">상담 끝내기</span>
+                                    <span className="text-sm uppercase tracking-widest hidden md:block">
+                                        <AutoTranslatedText text="상담 끝내기" />
+                                    </span>
                                 </button>
                             )}
 
@@ -383,10 +400,12 @@ const VirtualSindangPage: React.FC = () => {
                                     <button 
                                         onClick={() => fileInputRef.current?.click()}
                                         className="flex items-center gap-3 px-6 py-4 font-black rounded-2xl bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white shadow-[0_10px_20px_rgba(99,102,241,0.3)] hover:scale-105 transition-all"
-                                        title="신당 배경 이미지 업로드"
+                                        title={t("신당 배경 이미지 업로드")}
                                     >
                                         <ImageIcon size={20} />
-                                        <span className="text-sm uppercase tracking-widest hidden md:block">배경 업로드</span>
+                                        <span className="text-sm uppercase tracking-widest hidden md:block">
+                                            <AutoTranslatedText text="배경 업로드" />
+                                        </span>
                                     </button>
                                 </>
                             )}
@@ -420,14 +439,14 @@ const VirtualSindangPage: React.FC = () => {
                                         autoFocus
                                         value={entryToken}
                                         onChange={(e) => setEntryToken(e.target.value)}
-                                        placeholder="Access Code"
+                                        placeholder={t("Access Code")}
                                         className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-[#FFD700]/50 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
                                     />
                                     <button 
                                         type="submit"
                                         className="w-full py-5 bg-[#FFD700] text-black font-black rounded-2xl transition-all hover:scale-[1.02] shadow-[0_10px_30px_rgba(255,215,0,0.3)]"
                                     >
-                                        ENTER THE SHRINE
+                                        <AutoTranslatedText text="ENTER THE SHRINE" />
                                     </button>
                                 </form>
                             </motion.div>
@@ -448,23 +467,34 @@ const VirtualSindangPage: React.FC = () => {
                                     <div className="w-20 h-20 bg-[#FFD700]/10 rounded-3xl flex items-center justify-center rotate-12">
                                         <UserPlus size={40} className="text-[#FFD700] -rotate-12" />
                                     </div>
-                                    <h3 className="text-3xl font-black tracking-tight">Invite Client</h3>
+                                    <h3 className="text-3xl font-black tracking-tight">
+                                        <AutoTranslatedText text="Invite Client" />
+                                    </h3>
                                     
                                     <div className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl flex items-center justify-between gap-4 overflow-hidden group">
                                         <div className="flex-1 overflow-hidden">
-                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block text-left">Secure Invite Link</span>
+                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block text-left">
+                                                <AutoTranslatedText text="Secure Invite Link" />
+                                            </span>
                                             <span className="text-xs font-mono text-[#FFD700] truncate block text-left">{inviteLink}</span>
                                         </div>
                                         <button 
-                                            onClick={() => {
-                                                if (inviteLink) navigator.clipboard.writeText(inviteLink).then(() => alert('초대 링크가 복사되었습니다!'));
+                                            onClick={async () => {
+                                                if (inviteLink) {
+                                                    navigator.clipboard.writeText(inviteLink).then(async () => {
+                                                        const msg = await translateAsync('초대 링크가 복사되었습니다!');
+                                                        alert(msg);
+                                                    });
+                                                }
                                             }}
                                             className="px-5 py-3 bg-[#FFD700] text-black rounded-xl text-xs font-black transition-all hover:scale-105"
                                         >
-                                            COPY
+                                            <AutoTranslatedText text="COPY" />
                                         </button>
                                     </div>
-                                    <button onClick={() => setShowInviteModal(false)} className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all">DONE</button>
+                                    <button onClick={() => setShowInviteModal(false)} className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all">
+                                        <AutoTranslatedText text="DONE" />
+                                    </button>
                                 </div>
                             </motion.div>
                         </div>

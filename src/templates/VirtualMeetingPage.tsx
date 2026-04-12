@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { 
     Users, 
     UserPlus,
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react';
 import { MeetingRoomEnvironment } from '../components/gallery/MeetingRoomEnvironment';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -48,6 +50,8 @@ const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'
 
 const VirtualMeetingPage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const { id: roomId } = useParams<{ id: string }>();
     const roomKey = `meeting_token_${roomId || 'default'}`;
     
@@ -68,7 +72,7 @@ const VirtualMeetingPage: React.FC = () => {
     
     const [localParticipant, setLocalParticipant] = useState<Participant>({
         id: 'local',
-        name: 'User_' + Math.floor(Math.random() * 1000),
+        name: t('User') + '_' + Math.floor(Math.random() * 1000),
         seatId: null,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         position: [0, 0, 0],
@@ -169,8 +173,9 @@ const VirtualMeetingPage: React.FC = () => {
             }
         });
 
-        newSocket.on('kicked', () => {
-            alert('Host has removed you from the meeting.');
+        newSocket.on('kicked', async () => {
+            const msg = t('meeting.kicked_msg', 'Host has removed you from the meeting.');
+            alert(msg);
             navigate(-1);
         });
         
@@ -178,7 +183,8 @@ const VirtualMeetingPage: React.FC = () => {
         newSocket.on('member-kicked', (data: { targetId: string }) => {
             console.log('[Socket] Member-kicked broadcast received:', data);
             if (data.targetId === newSocket.id) {
-                alert('호스트가 귀하를 회의에서 퇴장시켰습니다.');
+                const msg = t('meeting.kicked_msg', '호스트가 귀하를 회의에서 퇴장시켰습니다.');
+                alert(msg);
                 navigate(-1);
             }
         });
@@ -224,7 +230,8 @@ const VirtualMeetingPage: React.FC = () => {
         }
         
         const finalRoomId = roomId || 'default-room';
-        if (window.confirm('해당 참가자를 내보내시겠습니까?')) {
+        const confirmMsg = t('meeting.kick_confirm', '해당 참가자를 내보내시겠습니까?');
+        if (window.confirm(confirmMsg)) {
             console.log(`[Meeting] Emitting kick-participant: room=${finalRoomId}, target=${participantId}`);
             socket.emit('kick-participant', { participantId, roomId: finalRoomId });
         }
@@ -264,7 +271,8 @@ const VirtualMeetingPage: React.FC = () => {
         if (stream) {
             handleShareScreen('live-broadcast', 'webrtc');
         } else {
-            alert('화면 캡처 권한을 얻지 못했습니다.');
+            const msg = t('common.capture_error', '화면 캡처 권한을 얻지 못했습니다.');
+            alert(msg);
         }
     };
 
@@ -290,8 +298,8 @@ const VirtualMeetingPage: React.FC = () => {
                                         <div className="absolute inset-0 w-20 h-20 border-4 border-[#00D2FF]/5 rounded-full animate-pulse shadow-[0_0_20px_#00D2FF22]" />
                                     </div>
                                     <div className="flex flex-col items-center gap-2">
-                                        <p className="text-[#00D2FF] font-black tracking-[0.4em] uppercase animate-pulse text-lg">Initializing Virtual Space</p>
-                                        <p className="text-[#00D2FF]/40 text-xs tracking-widest uppercase">Preparing high-fidelity environment</p>
+                                        <p className="text-[#00D2FF] font-black tracking-[0.4em] uppercase animate-pulse text-lg">{t('common.loading_space')}</p>
+                                        <p className="text-[#00D2FF]/40 text-xs tracking-widest uppercase">{t('common.loading_content')}</p>
                                     </div>
                                 </div>
                             </Html>
@@ -336,8 +344,8 @@ const VirtualMeetingPage: React.FC = () => {
                                 <LogOut size={20} className="rotate-180 group-hover:text-[#FF4757]" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-black tracking-tight"><AutoTranslatedText text="회의실" /></h1>
-                                <p className="text-xs font-bold tracking-[0.2em] uppercase opacity-40 text-[#00D2FF]">7F Communication Lounge</p>
+                                <h1 className="text-2xl font-black tracking-tight"><AutoTranslatedText text={t('meeting.meeting_room')} /></h1>
+                                <p className="text-xs font-bold tracking-[0.2em] uppercase opacity-40 text-[#00D2FF]"><AutoTranslatedText text={t('meeting.lounge_desc')} /></p>
                             </div>
                         </div>
                     </div>
@@ -345,7 +353,7 @@ const VirtualMeetingPage: React.FC = () => {
                     <div className="flex items-center gap-4 pointer-events-auto">
                         <div className="bg-black/40 backdrop-blur-2xl px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-8">
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">Active Members</span>
+                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest"><AutoTranslatedText text={t('meeting.active_members')} /></span>
                                 <div className="flex items-center gap-2">
                                     <Users size={14} className="text-[#00D2FF]" />
                                     <span className="text-xl font-black">{participants.length + 1} <span className="text-sm opacity-40">/ 10</span></span>
@@ -353,7 +361,7 @@ const VirtualMeetingPage: React.FC = () => {
                             </div>
                             <div className="w-[1px] h-8 bg-white/10" />
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">Room Quality</span>
+                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">{t('meeting.room_quality')}</span>
                                 <span className="text-sm font-bold text-[#2ECC71]">Ultra HD</span>
                             </div>
                         </div>
@@ -397,7 +405,7 @@ const VirtualMeetingPage: React.FC = () => {
                             {screenData.type !== 'none' && (
                                 <button 
                                     onClick={() => setIsScreenMaximized(true)}
-                                    title="전체화면으로 보기"
+                                    title={t("전체화면으로 보기")}
                                     className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-transparent hover:border-[#00D2FF]/30 active:scale-95 text-[#00D2FF]"
                                 >
                                     <Maximize size={24} />
@@ -421,7 +429,7 @@ const VirtualMeetingPage: React.FC = () => {
                             >
                                 <UserPlus size={20} />
                                 <span className="text-sm uppercase tracking-widest hidden md:block">
-                                    {participants.length >= 9 ? 'Room Full' : 'Invite'}
+                                    {participants.length >= 9 ? t('common.full', 'Room Full') : t('common.invite')}
                                 </span>
                             </button>
                             <button 
@@ -429,12 +437,12 @@ const VirtualMeetingPage: React.FC = () => {
                                 className={`flex items-center gap-3 px-6 py-4 rounded-2xl transition-all ${showParticipants ? 'bg-white/20 text-white font-black' : 'bg-white/5 hover:bg-white/10'}`}
                             >
                                 <Users size={20} />
-                                <span className="text-sm uppercase tracking-widest hidden md:block">Participants</span>
+                                <span className="text-sm uppercase tracking-widest hidden md:block">{t('common.participants')}</span>
                             </button>
                             {hasScreenControl && (
                                 <button 
                                     onClick={() => setIsShareModalOpen(true)}
-                                    title="PT Management"
+                                    title={t("PT Management")}
                                     className={`p-4 rounded-2xl transition-all border ${screenData.type !== 'none' ? 'bg-[#00D2FF]/20 border-[#00D2FF] text-[#00D2FF]' : 'bg-white/5 hover:bg-white/10 border-transparent hover:border-[#00D2FF]/30 active:scale-95'}`}
                                 >
                                     <Settings size={24} />
@@ -454,7 +462,7 @@ const VirtualMeetingPage: React.FC = () => {
                             className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-black/40 backdrop-blur-3xl border-l border-white/10 p-8 flex flex-col gap-8 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-black tracking-tight">Members</h3>
+                                <h3 className="text-xl font-black tracking-tight">{t('common.participants')}</h3>
                                 <button onClick={() => setShowParticipants(false)} className="p-2 hover:bg-white/10 rounded-lg transition-all"><ChevronRight size={24} /></button>
                             </div>
 
@@ -462,7 +470,7 @@ const VirtualMeetingPage: React.FC = () => {
                                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search members..." 
+                                    placeholder={t("common.search_placeholder")} 
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:border-[#00D2FF]/50 transition-all font-sans"
                                 />
                             </div>
@@ -475,8 +483,8 @@ const VirtualMeetingPage: React.FC = () => {
                                             {localParticipant.name[0].toUpperCase()}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-sm tracking-tight">{localParticipant.name} (You)</p>
-                                            <p className="text-[10px] uppercase tracking-widest text-[#00D2FF]">Host</p>
+                                            <p className="font-bold text-sm tracking-tight">{localParticipant.name} ({t('common.me')})</p>
+                                            <p className="text-[10px] uppercase tracking-widest text-[#00D2FF]">{t('meeting.host')}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -494,7 +502,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             </div>
                                             <div>
                                                 <p className="font-bold text-sm tracking-tight">{p.name}</p>
-                                                <p className="text-[10px] uppercase opacity-30 tracking-widest">{p.seatId !== null ? `Seat ${p.seatId + 1}` : 'Observing'}</p>
+                                                <p className="text-[10px] uppercase opacity-30 tracking-widest">{p.seatId !== null ? <>{t('meeting.seat')} {p.seatId + 1}</> : t('meeting.observing')}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -505,7 +513,7 @@ const VirtualMeetingPage: React.FC = () => {
                                                         handleKickParticipant(p.id);
                                                     }}
                                                     className="p-1.5 hover:bg-[#FF4757]/20 text-white/20 hover:text-[#FF4757] rounded-lg transition-all"
-                                                    title="Kick Member"
+                                                    title={t("Kick Member")}
                                                 >
                                                     <UserMinus size={14} />
                                                 </button>
@@ -524,7 +532,7 @@ const VirtualMeetingPage: React.FC = () => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
                     <div className="flex flex-col items-center gap-4 animate-bounce">
                         <div className="w-1.5 h-1.5 bg-[#00D2FF] rounded-full shadow-[0_0_15px_#00D2FF]" />
-                        <span className="text-[10px] font-black tracking-[0.4em] uppercase opacity-20">3D Interaction Active</span>
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase opacity-20">{t('common.interaction_active')}</span>
                     </div>
                 </div>
 
@@ -553,8 +561,8 @@ const VirtualMeetingPage: React.FC = () => {
                                 </button>
                                 
                                 <div>
-                                    <h2 className="text-2xl font-black mb-2">프레젠테이션 업로드</h2>
-                                    <p className="text-sm text-white/50">3D 스크린에 공유할 미디어를 선택하세요.</p>
+                                    <h2 className="text-2xl font-black mb-2">{t('meeting.upload_pt')}</h2>
+                                    <p className="text-sm text-white/50">{t('meeting.select_media_desc')}</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -579,11 +587,13 @@ const VirtualMeetingPage: React.FC = () => {
                                                             handleShareScreen(data.url);
                                                         } else {
                                                             const errData = await res.json();
-                                                            alert(`업로드 실패: ${errData.message || '알 수 없는 오류'}`);
+                                                            const msg = await translateAsync(`업로드 실패: ${errData.message || '알 수 없는 오류'}`);
+                                                            alert(msg);
                                                         }
                                                     } catch (err) {
                                                         console.error('Upload failed', err);
-                                                        alert('업로드 중 네트워크 오류가 발생했습니다.');
+                                                        const msg = await translateAsync('업로드 중 네트워크 오류가 발생했습니다.');
+                                                        alert(msg);
                                                     }
                                                 }
                                             };
@@ -595,8 +605,8 @@ const VirtualMeetingPage: React.FC = () => {
                                             <Upload size={32} className="text-[#00D2FF]" />
                                         </div>
                                         <div className="text-center">
-                                            <p className="font-bold text-white mb-1">PC에서 파일 업로드</p>
-                                            <p className="text-xs text-white/40">JPG, PNG, MP4 지원</p>
+                                            <p className="font-bold text-white mb-1">{t('common.upload_pc')}</p>
+                                            <p className="text-xs text-white/40">{t('common.supported_formats')}</p>
                                         </div>
                                     </button>
 
@@ -610,7 +620,7 @@ const VirtualMeetingPage: React.FC = () => {
                                         className="w-full bg-[#111] hover:bg-[#222] border border-[#00D2FF]/30 text-[#00D2FF] font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-colors"
                                     >
                                         <MonitorUp size={20} />
-                                        <span>내 PC 화면 실시간 라이브 방송</span>
+                                        <span>{t('meeting.live_broadcast')}</span>
                                     </button>
 
                                     <div className="relative flex items-center justify-center my-4">
@@ -629,7 +639,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             <input 
                                                 name="url"
                                                 type="url"
-                                                placeholder="유튜브 링크 또는 이미지/영상 URL" 
+                                                placeholder={t("common.link_placeholder")} 
                                                 className="w-full bg-[#050505] border border-white/10 hover:border-white/20 focus:border-[#00D2FF] outline-none rounded-xl py-4 pl-12 pr-4 transition-colors"
                                             />
                                         </div>
@@ -637,7 +647,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             type="submit"
                                             className="w-full mt-4 bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl transition-colors"
                                         >
-                                            외부 링크 송출하기
+                                            {t('meeting.stream_external')}
                                         </button>
                                     </form>
                                     
@@ -646,7 +656,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             onClick={() => handleShareScreen('')}
                                             className="w-full mt-2 border border-[#FF4757]/30 hover:bg-[#FF4757]/10 text-[#FF4757] font-bold py-4 rounded-xl transition-colors"
                                         >
-                                            화면 공유 종료 (스크린 끄기)
+                                            {t('meeting.stop_sharing')}
                                         </button>
                                     )}
                                 </div>
@@ -677,13 +687,13 @@ const VirtualMeetingPage: React.FC = () => {
                                         <UserPlus size={40} className="text-[#00D2FF] -rotate-12" />
                                     </div>
                                     <div className="space-y-2">
-                                        <h3 className="text-3xl font-black tracking-tight">Invite Participant</h3>
-                                        <p className="text-sm text-white/40 font-medium">Share this secure link with your guest</p>
+                                        <h3 className="text-3xl font-black tracking-tight">{t('common.invite')}</h3>
+                                        <p className="text-sm text-white/40 font-medium">{t('common.invite_desc')}</p>
                                     </div>
                                     
                                     <div className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl flex items-center justify-between gap-4 overflow-hidden group hover:border-[#00D2FF]/30 transition-colors">
                                         <div className="flex-1 overflow-hidden">
-                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block">Secure Link</span>
+                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block">{t('common.secure_link')}</span>
                                             <span className="text-xs font-mono text-[#00D2FF] truncate block">
                                                 {inviteLink}
                                             </span>
@@ -692,25 +702,31 @@ const VirtualMeetingPage: React.FC = () => {
                                             onClick={() => {
                                                 if (inviteLink) {
                                                     navigator.clipboard.writeText(inviteLink)
-                                                        .then(() => alert('초대 링크가 복사되었습니다!'))
-                                                        .catch(() => alert('복사에 실패했습니다.'));
+                                                        .then(async () => {
+                                                            const msg = t('common.copy_success');
+                                                            alert(msg);
+                                                        })
+                                                        .catch(async () => {
+                                                            const msg = t('common.copy_fail');
+                                                            alert(msg);
+                                                        });
                                                 }
                                             }}
                                             className="px-5 py-3 bg-[#00D2FF] text-black rounded-xl text-xs font-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
                                         >
-                                            COPY
+                                            {t('common.copy')}
                                         </button>
                                     </div>
                                     
                                     <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
-                                        This link is valid for one session only
+                                        {t('common.invite_validity')}
                                     </p>
                                     
                                     <button 
                                         onClick={() => setShowInviteModal(false)}
                                         className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
                                     >
-                                        DONE
+                                        {t('common.confirm')}
                                     </button>
                                 </div>
                             </motion.div>
@@ -776,9 +792,9 @@ const VirtualMeetingPage: React.FC = () => {
                                 </div>
                                 
                                 <div className="flex flex-col gap-2">
-                                    <h2 className="text-3xl font-black tracking-tight"><AutoTranslatedText text="보안 입장" /></h2>
+                                    <h2 className="text-3xl font-black tracking-tight">{t('common.secure_entry')}</h2>
                                     <p className="text-white/40 text-sm tracking-wide">
-                                        <AutoTranslatedText text="이 회의실은 승인된 사용자만 입장 가능합니다. 에이전시 또는 관리자에게 받은 토큰을 입력해주세요." />
+                                        {t('common.entry_desc')}
                                     </p>
                                 </div>
 
@@ -789,7 +805,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             autoFocus
                                             value={entryToken}
                                             onChange={(e) => setEntryToken(e.target.value)}
-                                            placeholder="Enter Access Token"
+                                            placeholder={t("Enter Access Token")}
                                             className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/20"
                                         />
                                         {tokenError && (

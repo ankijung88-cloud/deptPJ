@@ -455,7 +455,7 @@ const Header: React.FC = () => {
                                         onMouseLeave={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.05)')}
                                     >
                                         <LogOut size={13} />
-                                        <AutoTranslatedText text="로그아웃" />
+                                        <AutoTranslatedText text="Logout" />
                                     </button>
                                 </div>
                             )}
@@ -577,7 +577,7 @@ const Header: React.FC = () => {
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <Shield size={16} />
-                                        <AutoTranslatedText text="Admin 관리자 페이지" />
+                                        <AutoTranslatedText text="Admin Management Page" />
                                     </Link>
                                 ) : (
                                     <Link
@@ -587,7 +587,7 @@ const Header: React.FC = () => {
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <Shield size={16} />
-                                        <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency 에이전시'} />
+                                        <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency'} />
                                     </Link>
                                 )}
                                 <button
@@ -596,7 +596,7 @@ const Header: React.FC = () => {
                                     style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
                                 >
                                     <LogOut size={16} />
-                                    <AutoTranslatedText text="로그아웃" />
+                                    <AutoTranslatedText text="Logout" />
                                 </button>
                             </div>
                         )}

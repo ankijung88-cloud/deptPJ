@@ -15,6 +15,8 @@ import { useAdmin } from '../hooks/useAdmin';
 import { useWebRTCScreenShare } from '../hooks/useWebRTCScreenShare';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { useTranslation } from 'react-i18next';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 interface Participant {
     id: string;
@@ -31,9 +33,10 @@ interface Participant {
 const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'];
 
 const VirtualInterviewPage: React.FC = () => {
-    useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { id: roomId } = useParams<{ id: string }>();
+    const { translateAsync } = useAutoTranslate('');
     
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isMuted, setIsMuted] = useState(false);
@@ -66,7 +69,7 @@ const VirtualInterviewPage: React.FC = () => {
     const savedName = localStorage.getItem('interview_user_name');
     const [localParticipant, setLocalParticipant] = useState<Participant>({
         id: 'local',
-        name: savedName || '면접위원_' + Math.floor(Math.random() * 100),
+        name: savedName || (t('interview.interviewer_prefix') || 'Interviewer_') + Math.floor(Math.random() * 100),
         seatId: null,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         role: currentRole,
@@ -194,10 +197,11 @@ const VirtualInterviewPage: React.FC = () => {
         }
     };
 
-    const handleTokenSubmit = (e: React.FormEvent) => {
+    const handleTokenSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!entryToken.trim()) {
-            setTokenError('Please enter a valid access token.');
+            const errorMsg = await translateAsync('Please enter a valid access token.');
+            setTokenError(errorMsg);
             return;
         }
         
@@ -340,10 +344,10 @@ const VirtualInterviewPage: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <h1 className="text-xl font-black tracking-tighter text-white uppercase group">
-                                <span className="text-white/40 group-hover:text-[#00D2FF] transition-colors">Virtual</span> Interview
+                                <span className="text-white/40 group-hover:text-[#00D2FF] transition-colors"><AutoTranslatedText text="Virtual" /></span> <AutoTranslatedText text="Interview" />
                             </h1>
                         </div>
-                        <p className="text-[10px] text-white/20 font-bold tracking-[0.3em] uppercase pl-5">Namsan Premium Suite</p>
+                        <p className="text-[10px] text-white/20 font-bold tracking-[0.3em] uppercase pl-5"><AutoTranslatedText text="Namsan Premium Suite" /></p>
                     </div>
 
                     <div className="flex items-center gap-3 pl-6 border-l border-white/10">
@@ -355,7 +359,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 className="flex items-center gap-3 px-6 py-4 bg-[#00D2FF] hover:bg-[#00D2FF]/80 text-black font-black rounded-2xl transition-all shadow-[0_5px_15px_rgba(0,210,255,0.3)]"
                             >
                                 <UserPlus size={20} />
-                                <span className="text-sm uppercase tracking-widest hidden md:block">초대링크</span>
+                                <span className="text-sm uppercase tracking-widest hidden md:block"><AutoTranslatedText text="초대링크" /></span>
                             </motion.button>
                         )}
                         <motion.button
@@ -372,7 +376,7 @@ const VirtualInterviewPage: React.FC = () => {
                             onClick={() => navigate(-1)}
                             className="px-6 py-4 bg-[#FF4757]/10 hover:bg-[#FF4757]/20 border border-[#FF4757]/20 rounded-2xl text-[#FF4757] font-black text-xs tracking-widest flex items-center gap-3 transition-all"
                         >
-                            <LogOut size={16} /> EXIT ROOM
+                            <LogOut size={16} /> <AutoTranslatedText text="EXIT ROOM" />
                         </motion.button>
                     </div>
                 </div>
@@ -388,7 +392,7 @@ const VirtualInterviewPage: React.FC = () => {
                         <ControlBtn 
                             active={!isVideoOff} 
                             onClick={toggleCamera} 
-                            label={isVideoOff ? "카메라 켜기" : "카메라 끄기"}
+                            label={isVideoOff ? t('audition.control.camera_on') : t('audition.control.camera_off')}
                             icon={isVideoOff ? <VideoOff size={22} /> : <Video size={22} />} 
                         />
                         <div className="w-px h-8 bg-white/10 mx-2" />
@@ -402,7 +406,7 @@ const VirtualInterviewPage: React.FC = () => {
                             }`}
                         >
                             <Monitor size={24} className={!isVideoOff ? 'animate-pulse' : ''} />
-                            <span className="text-[9px] font-black uppercase tracking-tighter">스크린 연동</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="스크린 연동" /></span>
                         </motion.button>
 
                         <div className="w-px h-8 bg-white/10 mx-2" />
@@ -426,7 +430,7 @@ const VirtualInterviewPage: React.FC = () => {
                                     }`}
                                 >
                                     <Upload size={24} />
-                                    <span className="text-[9px] font-black uppercase tracking-tighter">이력서 공유</span>
+                                    <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="이력서 공유" /></span>
                                 </motion.button>
                                 <div className="w-px h-8 bg-white/10 mx-2" />
                             </>
@@ -451,7 +455,7 @@ const VirtualInterviewPage: React.FC = () => {
                                     }`}
                                 >
                                     <FileText size={24} />
-                                    <span className="text-[9px] font-black uppercase tracking-tighter">참고자료 공유</span>
+                                    <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="참고자료 공유" /></span>
                                 </motion.button>
                                 <div className="w-px h-8 bg-white/10 mx-2" />
                             </>
@@ -493,7 +497,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 className="px-6 h-14 bg-emerald-500 rounded-full flex items-center gap-2 group border border-emerald-400/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                             >
                                 <ChevronRight size={18} className="text-white group-hover:translate-x-1 transition-transform" />
-                                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">다음 지원자 호출</span>
+                                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none"><AutoTranslatedText text="다음 지원자 호출" /></span>
                             </motion.button>
                         )}
                     </div>
@@ -507,7 +511,7 @@ const VirtualInterviewPage: React.FC = () => {
                             animate={{ opacity: 1, x: 0 }}
                             className="bg-[#00D2FF] text-black px-6 py-4 rounded-2xl font-black text-xs tracking-tighter shadow-[0_0_30px_rgba(0,210,255,0.3)]"
                         >
-                            원하시는 좌석을 선택하여 착석해주세요
+                            <AutoTranslatedText text="원하시는 좌석을 선택하여 착석해주세요" />
                         </motion.div>
                     )}
                 </div>
@@ -534,12 +538,12 @@ const VirtualInterviewPage: React.FC = () => {
                                     <RoleBtn 
                                         active={currentRole === 'interviewer'} 
                                         onClick={() => setCurrentRole('interviewer')} 
-                                        label="면접위원" 
+                                        label={<AutoTranslatedText text="면접위원" />} 
                                     />
                                     <RoleBtn 
                                         active={currentRole === 'candidate'} 
                                         onClick={() => setCurrentRole('candidate')} 
-                                        label="지원자" 
+                                        label={<AutoTranslatedText text="지원자" />} 
                                     />
                                 </div>
                             </div>
@@ -558,7 +562,9 @@ const VirtualInterviewPage: React.FC = () => {
                         className="absolute top-0 left-0 w-80 h-full bg-black/60 backdrop-blur-3xl border-r border-white/10 p-10 z-50 flex flex-col gap-6"
                     >
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">Participants</h2>
+                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
+                                <AutoTranslatedText text="Participants" />
+                            </h2>
                             <button onClick={() => setShowParticipants(false)} className="text-white/20 hover:text-white"><X size={24} /></button>
                         </div>
                         
@@ -573,7 +579,9 @@ const VirtualInterviewPage: React.FC = () => {
 
                             {participants.length === 0 && (
                                 <div className="py-20 text-center">
-                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">대기 중인 참가자가 없습니다</p>
+                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">
+                                        <AutoTranslatedText text="대기 중인 참가자가 없습니다" />
+                                    </p>
                                 </div>
                             )}
                         </div>
@@ -591,7 +599,9 @@ const VirtualInterviewPage: React.FC = () => {
                         className="absolute top-0 left-0 w-80 h-full bg-black/60 backdrop-blur-3xl border-r border-white/10 p-10 z-50 flex flex-col gap-6"
                     >
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">Shared Files</h2>
+                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
+                                <AutoTranslatedText text="Shared Files" />
+                            </h2>
                             <button onClick={() => setShowMaterials(false)} className="text-white/20 hover:text-white"><X size={24} /></button>
                         </div>
                         
@@ -617,7 +627,7 @@ const VirtualInterviewPage: React.FC = () => {
                                         <div className="min-w-0 flex-1">
                                             <p className="text-[11px] font-black text-white truncate uppercase tracking-tight">{m.name}</p>
                                             <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider mt-0.5">
-                                                {m.ownerName} • {m.type === 'resume' ? '이력서' : '참고자료'}
+                                                {m.ownerName} • {m.type === 'resume' ? <AutoTranslatedText text="이력서" /> : <AutoTranslatedText text="참고자료" />}
                                             </p>
                                         </div>
                                         <ChevronRight size={14} className="text-white/20 mt-1" />
@@ -627,7 +637,9 @@ const VirtualInterviewPage: React.FC = () => {
 
                             {sharedMaterials.length === 0 && (
                                 <div className="py-20 text-center">
-                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">공유된 자료가 없습니다</p>
+                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">
+                                        <AutoTranslatedText text="공유된 자료가 없습니다" />
+                                    </p>
                                 </div>
                             )}
                         </div>
@@ -655,10 +667,10 @@ const VirtualInterviewPage: React.FC = () => {
                             </div>
                             <div className="space-y-1">
                                 <h4 className="text-lg font-black tracking-tight flex items-center gap-2 text-white">
-                                    면접 진행 중 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <AutoTranslatedText text="면접 진행 중" /> <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 </h4>
                                 <p className="text-xs text-white/40 font-bold uppercase tracking-widest whitespace-nowrap">
-                                    준비가 완료되면 면접관이 귀하를 호출할 것입니다. 잠시만 기다려 주십시오.
+                                    <AutoTranslatedText text="준비가 완료되면 면접관이 귀하를 호출할 것입니다. 잠시만 기다려 주십시오." />
                                 </p>
                             </div>
                         </div>
@@ -679,7 +691,7 @@ const VirtualInterviewPage: React.FC = () => {
                         <div className="flex justify-between items-center mb-10">
                             <div className="space-y-1">
                                 <h2 className="text-3xl font-black tracking-tighter uppercase text-[#00D2FF]">
-                                    {activeMaterial.type === 'resume' ? '면접 자료 확인' : '참고 자료 확인'}
+                                    {activeMaterial.type === 'resume' ? <AutoTranslatedText text="면접 자료 확인" /> : <AutoTranslatedText text="참고 자료 확인" />}
                                 </h2>
                                 <div className="flex items-center gap-3">
                                     <p className="text-[10px] text-white/40 font-bold tracking-[0.3em] uppercase">Document Viewer</p>
@@ -708,7 +720,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                         <div className="mt-8 flex justify-center">
                             <div className="px-8 py-3 bg-white/5 rounded-full border border-white/10 text-[10px] text-white/40 font-black uppercase tracking-widest">
-                                {activeMaterial.name} - 마우스를 굴려 확대/축소할 수 있습니다 (준비 중)
+                                {activeMaterial.name} - <AutoTranslatedText text="마우스를 굴려 확대/축소할 수 있습니다 (준비 중)" />
                             </div>
                         </div>
                     </motion.div>
@@ -734,10 +746,12 @@ const VirtualInterviewPage: React.FC = () => {
                             </div>
                             
                             <div className="space-y-3">
-                                <h2 className="text-4xl font-black tracking-tight uppercase text-white">보안 입장</h2>
+                                <h2 className="text-4xl font-black tracking-tight uppercase text-white">
+                                    <AutoTranslatedText text="보안 입장" />
+                                </h2>
                                 <p className="text-white/40 text-sm font-medium leading-relaxed">
-                                    이 인터뷰 룸은 승인된 지원자만 접근할 수 있습니다.<br />
-                                    초대장에 기재된 고유 토큰을 입력해 주세요.
+                                    <AutoTranslatedText text="이 인터뷰 룸은 승인된 지원자만 접근할 수 있습니다." /><br />
+                                    <AutoTranslatedText text="초대장에 기재된 고유 토큰을 입력해 주세요." />
                                 </p>
                             </div>
 
@@ -748,7 +762,7 @@ const VirtualInterviewPage: React.FC = () => {
                                         autoFocus
                                         value={entryToken}
                                         onChange={(e) => setEntryToken(e.target.value)}
-                                        placeholder="ENTER TOKEN"
+                                        placeholder={t('interview.token_placeholder') || "ENTER TOKEN"}
                                         className="w-full h-20 bg-white/5 border border-white/10 rounded-2xl px-8 font-mono tracking-[0.5em] text-center text-2xl text-white focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
                                     />
                                     {tokenError && (
@@ -760,12 +774,12 @@ const VirtualInterviewPage: React.FC = () => {
                                     type="submit"
                                     className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-[0.2em] transition-all hover:bg-emerald-500 hover:text-white active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
                                 >
-                                    면접장 입장하기
+                                    <AutoTranslatedText text="Enter Interview Room" />
                                 </button>
                             </form>
                             
                             <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] cursor-pointer hover:text-white/40 transition-colors" onClick={() => navigate('/')}>
-                                또는 메인 페이지로 돌아가기
+                                <AutoTranslatedText text="Or return to Home" />
                             </p>
                         </motion.div>
                     </motion.div>
@@ -794,8 +808,12 @@ const VirtualInterviewPage: React.FC = () => {
                                     <UserPlus size={48} className="text-[#00D2FF] -rotate-12" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black tracking-tight text-white">지원자 초대하기</h3>
-                                    <p className="text-sm text-white/40 font-medium">지원자에게 보낼 보안 링크가 생성되었습니다.</p>
+                                    <h3 className="text-3xl font-black tracking-tight text-white">
+                                        <AutoTranslatedText text="Invite Candidate" />
+                                    </h3>
+                                    <p className="text-sm text-white/40 font-medium">
+                                        <AutoTranslatedText text="A secure invitation link has been generated." />
+                                    </p>
                                 </div>
                                 
                                 <div className="w-full bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col gap-4 group hover:border-[#00D2FF]/30 transition-colors">
@@ -809,13 +827,19 @@ const VirtualInterviewPage: React.FC = () => {
                                                 onClick={() => {
                                                     if (inviteLink) {
                                                         navigator.clipboard.writeText(inviteLink)
-                                                            .then(() => alert('초대 링크가 복사되었습니다!'))
-                                                            .catch(() => alert('복사에 실패했습니다.'));
+                                                            .then(async () => {
+                                                                const msg = await translateAsync('초대 링크가 복사되었습니다!');
+                                                                alert(msg);
+                                                            })
+                                                            .catch(async () => {
+                                                                const msg = await translateAsync('복사에 실패했습니다.');
+                                                                alert(msg);
+                                                            });
                                                     }
                                                 }}
                                                 className="px-6 py-3 bg-[#00D2FF] text-black rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)] whitespace-nowrap"
                                             >
-                                                COPY LINK
+                                                <AutoTranslatedText text="COPY LINK" />
                                             </button>
                                         </div>
                                     </div>
@@ -825,7 +849,7 @@ const VirtualInterviewPage: React.FC = () => {
                                     onClick={() => setShowInviteModal(false)}
                                     className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
                                 >
-                                    닫기
+                                    <AutoTranslatedText text="Close" />
                                 </button>
                             </div>
                         </motion.div>
@@ -838,9 +862,9 @@ const VirtualInterviewPage: React.FC = () => {
 
 const ParticipantItem: React.FC<{ participant: Participant; isSelf?: boolean }> = ({ participant, isSelf }) => {
     const statusConfig = {
-        'waiting': { label: '대기중', color: 'text-white/40', bg: 'bg-white/5' },
-        'in-progress': { label: '진행중', color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
-        'completed': { label: '완료', color: 'text-white/10', bg: 'bg-white/5 opacity-30' }
+        'waiting': { label: <AutoTranslatedText text="Waiting" />, color: 'text-white/40', bg: 'bg-white/5' },
+        'in-progress': { label: <AutoTranslatedText text="In Progress" />, color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
+        'completed': { label: <AutoTranslatedText text="Completed" />, color: 'text-white/10', bg: 'bg-white/5 opacity-30' }
     };
     const config = statusConfig[participant.status] || statusConfig['waiting'];
 
@@ -853,7 +877,7 @@ const ParticipantItem: React.FC<{ participant: Participant; isSelf?: boolean }> 
                 <div>
                     <p className="text-xs font-black text-white flex items-center gap-2">
                         {participant.name}
-                        {isSelf && <span className="text-[9px] text-[#00D2FF] font-medium">(ME)</span>}
+                        {isSelf && <span className="text-[9px] text-[#00D2FF] font-medium">(<AutoTranslatedText text="ME" />)</span>}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
                         <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">{participant.role}</p>
@@ -889,7 +913,7 @@ const ControlBtn: React.FC<{ active: boolean; onClick: () => void; icon: React.R
     </div>
 );
 
-const RoleBtn: React.FC<{ active: boolean; onClick: () => void; label: string }> = ({ active, onClick, label }) => (
+const RoleBtn: React.FC<{ active: boolean; onClick: () => void; label: React.ReactNode }> = ({ active, onClick, label }) => (
     <button
         onClick={onClick}
         className={`px-4 py-3 rounded-xl text-[10px] font-black transition-all ${

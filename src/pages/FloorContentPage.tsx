@@ -128,7 +128,7 @@ const FloorContentPage: React.FC = () => {
                             <div className="space-y-2 font-mono text-sm tracking-[0.2em] opacity-60" style={{ color: theme.accentColor }}>
                                 <div className="flex justify-between">
                                     <AutoTranslatedText text="구조 입면도" />
-                                    <span>STRUCTURAL ELEVATION</span>
+                                    <span><AutoTranslatedText text="STRUCTURAL ELEVATION" /></span>
                                 </div>
                                 <div className="flex justify-between border-t border-white/5 pt-2">
                                     <AutoTranslatedText text="스케일" />
@@ -177,7 +177,7 @@ const FloorContentPage: React.FC = () => {
 
                                 <div className="absolute top-6 left-6 flex gap-2">
                                     <span className="bg-black/80 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 select-none">
-                                        {getLocalizedText(floorData.subitems?.find(s => s.id === item.subcategory)?.label, i18n.language) || t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))}
+                                        <AutoTranslatedText text={(getLocalizedText(floorData.subitems?.find(s => s.id === item.subcategory)?.label, i18n.language) || t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))) as string} />
                                     </span>
                                 </div>
                             </div>
@@ -208,7 +208,7 @@ const FloorContentPage: React.FC = () => {
                                     style={{ borderBottomColor: theme.accentColor }}
                                 >
                                     <BookOpen size={20} />
-                                    {t('common.read_article', 'Read Article')}
+                                    <AutoTranslatedText text="Read Article" />
                                     <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                                 </Link>
                             </div>

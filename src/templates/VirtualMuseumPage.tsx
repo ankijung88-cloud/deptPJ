@@ -128,7 +128,7 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
 };
 
 const VirtualMuseumPage: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
@@ -203,8 +203,8 @@ const VirtualMuseumPage: React.FC = () => {
 
                     const museumMeta = templates.find((t: any) => t.id === 'museum');
                     // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || "가상 박물관");
-                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || "전 세계의 진귀한 유물과 예술품을 고해상도 3D로 감상하세요. 역사의 숨결을 생생하게 느낄 수 있는 디지털 전시관입니다.");
+                    setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || t("가상 박물관"));
+                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || t("전 세계의 진귀한 유물과 예술품을 고해상도 3D로 감상하세요. 역사의 숨결을 생생하게 느낄 수 있는 디지털 전시관입니다."));
                 }
             }
         };
@@ -613,9 +613,9 @@ const VirtualMuseumPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-32">
                     {[
-                        { icon: Info, title: "인터랙티브 전람", desc: "앞면의 제목을 확인하고 뒤집어서 유물의 실물을 만나보세요." },
-                        { icon: Compass, title: "고해상도 뷰어", desc: "이미지를 클릭하면 실제 박물관 부럽지 않은 선명한 화질을 경험할 수 있습니다." },
-                        { icon: Plus, title: "콘텐츠 확장", desc: "언제든지 새로운 유물을 추가하여 나만의 가상 전시장을 꾸며보세요." }
+                        { icon: Info, title: t("인터랙티브 전람"), desc: t("앞면의 제목을 확인하고 뒤집어서 유물의 실물을 만나보세요.") },
+                        { icon: Compass, title: t("고해상도 뷰어"), desc: t("이미지를 클릭하면 실제 박물관 부럽지 않은 선명한 화질을 경험할 수 있습니다.") },
+                        { icon: Plus, title: t("콘텐츠 확장"), desc: t("언제든지 새로운 유물을 추가하여 나만의 가상 전시장을 꾸며보세요.") }
                     ].map((feature, idx) => (
                         <div key={idx} className="p-8 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-sm group hover:bg-white/10 transition-all duration-500">
                              <feature.icon className="mb-6 opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentColor }} size={32} />
@@ -659,7 +659,7 @@ const VirtualMuseumPage: React.FC = () => {
                                         <textarea 
                                             value={newTitle}
                                             onChange={(e) => setNewTitle(e.target.value)}
-                                            placeholder="예: 금동향로"
+                                            placeholder={i18n.t("예: 금동향로")}
                                             rows={2}
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all resize-none text-sm"
                                         />
@@ -684,14 +684,14 @@ const VirtualMuseumPage: React.FC = () => {
                                                         setPreviewUrl(null);
                                                     }
                                                 }}
-                                                placeholder="/via_station_logo_portal.png"
+                                                placeholder={i18n.t("/via_station_logo_portal.png")}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                             />
                                         </div>
 
                                         <div className="flex items-center gap-4">
                                             <div className="h-[1px] flex-grow bg-white/5" />
-                                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">or</span>
+                                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest"><AutoTranslatedText text="or" /></span>
                                             <div className="h-[1px] flex-grow bg-white/5" />
                                         </div>
 
@@ -776,7 +776,7 @@ const VirtualMuseumPage: React.FC = () => {
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ type: "spring", damping: 25 }}
                             src={selectedImage} 
-                            alt="Artifact Preview" 
+                            alt={i18n.t("Artifact Preview")}
                             className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
                         />
                     </motion.div>

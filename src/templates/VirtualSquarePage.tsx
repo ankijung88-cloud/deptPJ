@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
@@ -7,8 +8,10 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { io, Socket } from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Send, Users, ArrowLeft, Info, MessageSquare } from 'lucide-react';
+import { useImmersiveMode } from '../context/NavigationActionContext';
 import { SquareEnvironment } from '../components/gallery/SquareEnvironment';
 import { useWebRTCScreenShare } from '../hooks/useWebRTCScreenShare';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 
 // Multi-user participation logic
 interface Participant {
@@ -21,8 +24,10 @@ interface Participant {
 }
 
 const VirtualSquarePage: React.FC = () => {
+    useImmersiveMode(true);
     const { id: productId } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [localParticipant, setLocalParticipant] = useState<Participant>({
@@ -132,14 +137,15 @@ const VirtualSquarePage: React.FC = () => {
                 <div className="flex items-center gap-3 pointer-events-auto">
                     <button 
                         onClick={() => navigate(-1)}
-                        className="h-12 w-12 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-2xl text-white transition-all flex items-center justify-center group border border-white/10 shadow-lg shrink-0"
-                        title="돌아가기"
+                        title="Back"
                     >
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     </button>
                     <div className="h-12 bg-black/40 backdrop-blur-md px-6 rounded-2xl border border-white/5 flex items-center gap-3 shadow-2xl">
                         <div className="w-2.5 h-2.5 bg-[#00FFC2] rounded-full animate-pulse" />
-                        <h1 className="text-white text-base font-black tracking-tight leading-none">광화문 광장 (Gwanghwamun Square)</h1>
+                        <h1 className="text-white text-base font-black tracking-tight leading-none">
+                            <AutoTranslatedText text="광화문 광장 (Gwanghwamun Square)" />
+                        </h1>
                     </div>
                 </div>
 
@@ -166,7 +172,7 @@ const VirtualSquarePage: React.FC = () => {
                     </div>
                     <input 
                         className="flex-1 bg-transparent border-none outline-none text-white py-3 px-2 text-sm placeholder:text-white/20"
-                        placeholder="이곳에 의견을 입력하세요 (바닥을 클릭하면 이동합니다)..."
+                        placeholder={t('square.chat_placeholder') || t('이곳에 의견을 입력하세요 (바닥을 클릭하면 이동합니다)...')}
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
@@ -201,7 +207,7 @@ const VirtualSquarePage: React.FC = () => {
                         className="absolute top-0 right-0 w-80 h-full bg-black/80 backdrop-blur-3xl border-l border-white/10 p-8 z-50 shadow-2xl"
                     >
                         <div className="flex justify-between items-center mb-8">
-                            <h2 className="text-white text-xl font-black">참여자 목록</h2>
+                            <h2 className="text-white text-xl font-black"><AutoTranslatedText text="참여자 목록" /></h2>
                             <button onClick={() => setIsSidebarOpen(false)} className="text-white/40 hover:text-white transition-colors">
                                 <ArrowLeft size={20} className="rotate-180" />
                             </button>
@@ -214,7 +220,7 @@ const VirtualSquarePage: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-white font-bold">{localParticipant.name}</span>
-                                    <span className="text-white/40 text-xs">나</span>
+                                    <span className="text-white/40 text-xs"><AutoTranslatedText text="나" /></span>
                                 </div>
                             </div>
                             
@@ -227,7 +233,7 @@ const VirtualSquarePage: React.FC = () => {
                                         <span className="text-white font-bold">{p.name}</span>
                                         <div className="flex items-center gap-1">
                                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                            <span className="text-white/40 text-xs">접속중</span>
+                                            <span className="text-white/40 text-xs"><AutoTranslatedText text="접속중" /></span>
                                         </div>
                                     </div>
                                 </div>
@@ -237,10 +243,10 @@ const VirtualSquarePage: React.FC = () => {
                         <div className="absolute bottom-10 left-8 right-8 p-6 bg-[#00FFC2]/10 rounded-3xl border border-[#00FFC2]/20">
                             <div className="flex items-center gap-2 mb-2">
                                 <Info size={16} className="text-[#00FFC2]" />
-                                <span className="text-[#00FFC2] font-black text-xs uppercase tracking-wider">안내</span>
+                                <span className="text-[#00FFC2] font-black text-xs uppercase tracking-wider"><AutoTranslatedText text="안내" /></span>
                             </div>
                             <p className="text-white/60 text-[11px] leading-relaxed">
-                                바닥을 마우스로 클릭하여 원하는 위치로 이동할 수 있습니다. 입력된 대화 내용은 아바타 머리 위에 말풍선으로 표시됩니다.
+                                <AutoTranslatedText text="바닥을 마우스로 클릭하여 원하는 위치로 이동할 수 있습니다. 입력된 대화 내용은 아바타 머리 위에 말풍선으로 표시됩니다." />
                             </p>
                         </div>
                     </motion.aside>

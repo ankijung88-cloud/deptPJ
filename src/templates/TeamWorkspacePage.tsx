@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
+    Search,
     Users, 
     MessageCircle, 
     Plus, 
@@ -26,12 +27,35 @@ import ErrorBoundary from '../components/common/ErrorBoundary';
 
 const socket = io();
 
-// Initial Departments & Seats Logic
 const DEPARTMENTS = [
-    { id: 'dev', name: 'Development', color: '#00D2FF', offset: [-12, 0, -4] },
-    { id: 'design', name: 'Design', color: '#FF00D2', offset: [-4, 0, -4] },
-    { id: 'admin', name: 'Administration', color: '#7000FF', offset: [4, 0, -4] },
-    { id: 'exec', name: 'Executive', color: '#FFD700', offset: [12, 0, -4] }
+    { 
+        id: 'dev', 
+        name: 'Development', 
+        desc: 'Planning & Logic System', 
+        color: '#00D2FF', 
+        offset: [-12, 0, -4] 
+    },
+    { 
+        id: 'design', 
+        name: 'Design', 
+        desc: 'Visual & UX Research', 
+        color: '#FF00D2', 
+        offset: [-4, 0, -4] 
+    },
+    { 
+        id: 'admin', 
+        name: 'Administration', 
+        desc: 'Business & Operations', 
+        color: '#7000FF', 
+        offset: [4, 0, -4] 
+    },
+    { 
+        id: 'exec', 
+        name: 'Executive', 
+        desc: 'Leadership & Strategy', 
+        color: '#FFD700', 
+        offset: [12, 0, -4] 
+    }
 ];
 
 const TeamWorkspacePage: React.FC = () => {
@@ -84,6 +108,8 @@ const TeamWorkspacePage: React.FC = () => {
     const handleSit = useCallback((seatId: string) => {
         const targetSeat = seats.find(s => s.id === seatId);
         if (targetSeat?.assignedUser && targetSeat.assignedUser.id !== user?.id && !isManagement) {
+            // Using a simple alert for now, but the string can be wrapped if we had a toast system. 
+            // For now, let's keep it but wrap the content if it was a UI element.
             alert(`Reserved for ${targetSeat.assignedUser.name}`);
             return;
         }
@@ -302,14 +328,27 @@ const TeamWorkspacePage: React.FC = () => {
                         >
                             <h3 className="text-xl font-black mb-6 flex items-center gap-3">
                                 <Plus className="text-[#00D2FF]" />
-                                DESIGNATE SEAT
+                                <AutoTranslatedText text="DESIGNATE SEAT" />
                             </h3>
-                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar pointer-events-auto">
+                            <div className="flex flex-col mb-6">
+                                <span className="text-[10px] font-black tracking-[0.4em] opacity-30 text-white uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></span>
+                                <h1 className="text-2xl font-black tracking-tight"><AutoTranslatedText text="Team Workspace" /></h1>
+                            </div>
+                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-xl focus-within:border-[#00D2FF]/50 transition-all mb-4">
+                                <Search size={16} className="opacity-40" />
+                                <input 
+                                    type="text" 
+                                    placeholder={_t("Search members...")} 
+                                    className="bg-transparent border-none outline-none text-sm w-full font-medium"
+                                />
+                            </div>
+                            <span className="text-[10px] font-bold opacity-30 tracking-widest uppercase"><AutoTranslatedText text="Member Search" /></span>
+                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar pointer-events-auto mt-2">
                                 <button 
                                     onClick={() => handleAssignUser(assigningSeatId, null)}
                                     className="w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 text-left transition-all"
                                 >
-                                    <div className="text-sm font-bold opacity-40">REMOVE ASSIGNMENT</div>
+                                    <div className="text-sm font-bold opacity-40"><AutoTranslatedText text="REMOVE ASSIGNMENT" /></div>
                                 </button>
                                 {participants.map(p => (
                                     <button 
@@ -333,7 +372,7 @@ const TeamWorkspacePage: React.FC = () => {
                                 onClick={() => setAssigningSeatId(null)}
                                 className="w-full mt-6 py-4 rounded-2xl bg-white/5 font-bold hover:bg-white/10 transition-all pointer-events-auto"
                             >
-                                CANCEL
+                                <AutoTranslatedText text="CANCEL" />
                             </button>
                         </motion.div>
                     </div>
@@ -350,7 +389,7 @@ const TeamWorkspacePage: React.FC = () => {
                             <LogOut className="w-5 h-5 text-white/60 group-hover:text-white transition-colors rotate-180" />
                         </button>
                         <div>
-                            <h1 className="text-xl font-black tracking-tighter text-[#00D2FF]">VIRTUAL OFFICE</h1>
+                            <h1 className="text-xl font-black tracking-tighter text-[#00D2FF]"><AutoTranslatedText text="VIRTUAL OFFICE" /></h1>
                             <div className="flex items-center gap-2 text-[10px] text-white/40 uppercase tracking-widest font-bold">
                                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 {participants.length} <AutoTranslatedText text="Members Active" />
@@ -362,7 +401,7 @@ const TeamWorkspacePage: React.FC = () => {
                         {DEPARTMENTS.map(dept => (
                             <div key={dept.id} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white/60">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dept.color }} />
-                                {dept.name}
+                                <AutoTranslatedText text={dept.name} />
                             </div>
                         ))}
                     </div>
@@ -373,16 +412,16 @@ const TeamWorkspacePage: React.FC = () => {
                     <div className="px-6 py-4 rounded-3xl bg-black/40 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6">
                         <div className="flex items-center gap-4 border-r border-white/10 pr-6 mr-2">
                             {[
-                                { id: 'working', icon: Monitor, color: '#00D2FF', label: 'Working' },
-                                { id: 'break', icon: Coffee, color: '#FF9500', label: 'Break' },
-                                { id: 'smoking', icon: Wind, color: '#FF3B30', label: 'Smoking' },
-                                { id: 'toilet', icon: Users, color: '#AF52DE', label: 'Away' }
+                                { id: 'working', icon: Monitor, color: '#00D2FF', label: <AutoTranslatedText text="Working" /> },
+                                { id: 'break', icon: Coffee, color: '#FF9500', label: <AutoTranslatedText text="Break" /> },
+                                { id: 'smoking', icon: Wind, color: '#FF3B30', label: <AutoTranslatedText text="Smoking" /> },
+                                { id: 'toilet', icon: Users, color: '#AF52DE', label: <AutoTranslatedText text="Away" /> }
                             ].map(status => (
                                 <button
                                     key={status.id}
                                     onClick={() => setUserStatus(status.id)}
                                     className={`relative group p-2 rounded-xl transition-all ${userStatus === status.id ? 'bg-white/10' : 'hover:bg-white/5'}`}
-                                    title={status.label}
+                                    title={typeof status.label === 'string' ? status.label : ''}
                                 >
                                     <status.icon className={`w-5 h-5 ${userStatus === status.id ? '' : 'opacity-40'}`} style={{ color: status.color }} />
                                     {userStatus === status.id && (
@@ -421,7 +460,7 @@ const TeamWorkspacePage: React.FC = () => {
                             className="absolute right-8 top-24 bottom-32 w-80 bg-black/40 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col overflow-hidden"
                         >
                             <div className="p-4 border-b border-white/10 flex justify-between items-center">
-                                <h3 className="font-bold text-xs uppercase tracking-widest text-white/40">Office Chat</h3>
+                                <h3 className="font-bold text-xs uppercase tracking-widest text-white/40"><AutoTranslatedText text="Office Chat" /></h3>
                                 <button onClick={() => setIsChatOpen(false)} className="text-white/20 hover:text-white transition-colors">
                                     <MoreVertical size={16} />
                                 </button>
@@ -445,7 +484,7 @@ const TeamWorkspacePage: React.FC = () => {
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                                        placeholder="Send a message..."
+                                        placeholder={_t("Send a message...")}
                                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm outline-none focus:border-[#00D2FF]/50 transition-all"
                                     />
                                     <button 

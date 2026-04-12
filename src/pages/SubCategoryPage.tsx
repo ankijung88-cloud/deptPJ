@@ -184,14 +184,14 @@ const SubCategoryPage: React.FC = () => {
                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto" style={{ border: `1px solid ${theme.accentColor}44` }}>
                         <BookOpen size={32} style={{ color: theme.accentColor, opacity: 0.4 }} />
                     </div>
-                    <h2 className="text-2xl font-serif font-bold tracking-tight">{t('common.not_found')}</h2>
-                    <p className="text-white/50 font-light">{t('common.not_found_desc')}</p>
+                    <h2 className="text-2xl font-serif font-bold tracking-tight"><AutoTranslatedText text={t('common.not_found') as string} /></h2>
+                    <p className="text-white/50 font-light"><AutoTranslatedText text={t('common.not_found_desc') as string} /></p>
                     <Link
                         to="/inspiration"
                         className="inline-flex items-center gap-2 px-8 py-3 text-white rounded-full font-medium hover:opacity-90 transition-all active:scale-95"
                         style={theme.bgHighlightStyle}
                     >
-                        {t('common.go_inspiration')}
+                        <AutoTranslatedText text={t('common.go_inspiration') as string} />
                     </Link>
                 </motion.div>
             </div>
@@ -248,7 +248,7 @@ const SubCategoryPage: React.FC = () => {
                                         color: theme.highlightColor, 
                                         textShadow: `0 0 40px ${theme.glowColor}44` 
                                     }}>
-                                    {getLocalizedText(subcategoryData?.label, i18n.language) || t(`subcategory.${targetSubId}`, t('common.no_info'))}
+                                    <AutoTranslatedText text={(getLocalizedText(subcategoryData?.label, i18n.language) || t(`subcategory.${targetSubId}`, t('common.no_info'))) as string} />
                                 </h1>
 
                                 <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 
@@ -286,7 +286,7 @@ const SubCategoryPage: React.FC = () => {
                                                 <span className="text-xl font-serif font-black" style={{ color: theme.highlightColor }}>
                                                     {items.length + stories.length}
                                                 </span>
-                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-white">RECORDS</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-white"><AutoTranslatedText text="RECORDS" /></span>
                                             </div>
                                         </div>
                                         
@@ -353,7 +353,7 @@ const SubCategoryPage: React.FC = () => {
                         <div className="flex flex-col items-center gap-6 py-20">
                             <div className="w-16 h-16 border-2 border-white/10 rounded-full animate-spin" style={{ borderTopColor: theme.accentColor }} />
                             <p className="opacity-60 font-medium tracking-[0.2em] animate-pulse" style={theme.accentStyle}>
-                                {t('common.loading_content')}
+                                <AutoTranslatedText text={t('common.loading_content') as string} />
                             </p>
                         </div>
                     </div>
@@ -442,7 +442,7 @@ const SubCategoryPage: React.FC = () => {
                     <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-[2010] flex flex-col items-center">
                         <div className="flex items-center gap-8 mb-4">
                             <div className="w-24 h-[1px] bg-gradient-to-r from-transparent to-white/40" />
-                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/40 uppercase">Scroll to Proceed</div>
+                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/40 uppercase"><AutoTranslatedText text="Scroll to Proceed" /></div>
                             <div className="w-24 h-[1px] bg-gradient-to-l from-transparent to-white/40" />
                         </div>
                     </div>

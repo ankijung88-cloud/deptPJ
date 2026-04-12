@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { BrandLogo } from '../components/common/BrandLogo';
+import { LanguageSelector } from '../components/common/LanguageSelector';
 import { Users, Target, Layers, Box, Activity, Globe, Code2, Cpu, Layout, Play, Server, Award, Palette, Heart, ShieldCheck, Calendar, TrendingUp, Home } from 'lucide-react';
 
 const Slide = ({ children, className = "", bgColor = "transparent", id, title, icon: Icon }: { children: React.ReactNode, className?: string, bgColor?: string, id?: string, title?: string, icon?: any }) => (
@@ -76,10 +77,11 @@ const AboutPage: React.FC = () => {
 
     return (
         <div ref={containerRef} className="h-[100dvh] w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory bg-[#1A2420] text-white font-sans selection:bg-dancheong-red/30 relative scroll-smooth">
+            <LanguageSelector variant="floating" />
 
             <button
                 onClick={() => navigate('/')}
-                className="fixed top-6 right-6 md:top-10 md:right-10 z-[100] p-4 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white/50 hover:text-white hover:bg-black/60 hover:border-white/30 transition-all shadow-lg group"
+                className="fixed top-6 left-6 md:top-10 md:left-10 z-[100] p-4 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white/50 hover:text-white hover:bg-black/60 hover:border-white/30 transition-all shadow-lg group"
                 aria-label={t('common.back_home')}
             >
                 <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -206,7 +208,7 @@ const AboutPage: React.FC = () => {
                     transition={{ delay: 2.5, duration: 2 }}
                     className="absolute bottom-12 left-10 hidden md:flex flex-col items-center gap-6 opacity-20 hover:opacity-100 transition-opacity"
                 >
-                    <span className="text-[10px] tracking-[1em] uppercase [writing-mode:vertical-lr] font-black rotate-180">VISIONARY REPORT</span>
+                    <span className="text-[10px] tracking-[1em] uppercase [writing-mode:vertical-lr] font-black rotate-180"><AutoTranslatedText text="VISIONARY REPORT" /></span>
                     <div className="w-[1px] h-24 bg-gradient-to-b from-dancheong-gold to-transparent"></div>
                 </motion.div>
                 
@@ -271,7 +273,7 @@ const AboutPage: React.FC = () => {
                             <div className="space-y-3 font-mono text-sm tracking-[0.2em] text-white/50">
                                 <div className="flex justify-between">
                                     <AutoTranslatedText text="공간 기획안" />
-                                    <span>SPATIAL BLUEPRINT</span>
+                                    <span><AutoTranslatedText text="SPATIAL BLUEPRINT" /></span>
                                 </div>
                                 <div className="flex justify-between border-t border-white/5 pt-3">
                                     <AutoTranslatedText text="프로젝트 버전" />
@@ -602,7 +604,7 @@ const AboutPage: React.FC = () => {
                                 <path d="M15 240L35 240 M165 240L185 240" stroke="#C5A15A" strokeWidth="0.8" />
                             </svg>
                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#111] via-[#111]/90 to-transparent pt-32 pb-8 flex justify-center backdrop-blur-[1px]">
-                                <span className="font-bold tracking-[0.4em] text-dancheong-gold/80 text-[10px] md:text-xs uppercase">Architecture Concept</span>
+                                <span className="font-bold tracking-[0.4em] text-dancheong-gold/80 text-[10px] md:text-xs uppercase"><AutoTranslatedText text="Architecture Concept" /></span>
                             </div>
                         </div>
                     </div>

@@ -28,7 +28,7 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
         if (uiTimerRef.current) clearTimeout(uiTimerRef.current);
         uiTimerRef.current = setTimeout(() => {
             setIsUiVisible(false);
-        }, 3000);
+        }, 7000);
     };
 
     useEffect(() => {
@@ -115,10 +115,17 @@ export const useSetBreadcrumbPath = (path: any[]) => {
     const context = useContext(NavigationActionContext);
     if (!context) return;
 
+    // Sanitize path for dependency tracking to avoid circular JSON errors on React Elements (e.g. <AutoTranslatedText />)
+    const pathKey = JSON.stringify(path.map(p => ({
+        id: p.id,
+        type: p.type,
+        label: typeof p.label === 'string' ? p.label : ''
+    })));
+
     useEffect(() => {
         context.setBreadcrumbPath(path);
         return () => context.setBreadcrumbPath([]);
-    }, [JSON.stringify(path), context.setBreadcrumbPath]);
+    }, [pathKey, context.setBreadcrumbPath]);
 };
 
 /**

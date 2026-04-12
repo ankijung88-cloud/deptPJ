@@ -48,9 +48,9 @@ export const VirtualInquiryPage: React.FC = () => {
     useSetBreadcrumbPath(item ? [
         { id: item.category, label: item.category, type: 'floor' },
         { id: item.subcategory, label: item.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
-        { id: item.id, label: item.title, type: 'detail' },
-        { id: 'inquiry', label: '문의하기', type: 'template' }
+        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
+        { id: item.id, label: getLocalizedText(item.title, i18n.language), type: 'detail' },
+        { id: 'inquiry', label: <AutoTranslatedText text="문의하기" />, type: 'template' }
     ] : []);
 
     const handleBack = () => {
@@ -250,7 +250,9 @@ export const VirtualInquiryPage: React.FC = () => {
                                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
                                 </div>
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-black tracking-widest text-[#00FFC2] uppercase">Inquiring About</span>
+                                    <span className="text-[10px] font-black tracking-widest text-[#00FFC2] uppercase">
+                                        <AutoTranslatedText text="Inquiring About" />
+                                    </span>
                                     <h4 className="text-lg font-bold line-clamp-1"><AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} /></h4>
                                     <p className="text-xs text-white/40">{item.id}</p>
                                 </div>

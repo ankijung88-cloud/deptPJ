@@ -218,7 +218,7 @@ export const GlobalMiniMap: React.FC<{
                         >
                             <div className="flex items-center gap-2">
                                 <span className="font-black tracking-[0.2em] uppercase" style={{ color: compColor }}>
-                                    <AutoTranslatedText text="층별 안내" />
+                                    <AutoTranslatedText text="Floor Guide" />
                                 </span>
                             </div>
                             {/* Speech Bubble Arrow */}

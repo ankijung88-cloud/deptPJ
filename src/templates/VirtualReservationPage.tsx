@@ -10,12 +10,14 @@ import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { updateProduct } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 export const VirtualReservationPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const { isAdmin, isAgency, user: currentUser } = useAdmin();
+    const { translateAsync } = useAutoTranslate('');
     
     const [item, setItem] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -74,9 +76,9 @@ export const VirtualReservationPage: React.FC = () => {
     useSetBreadcrumbPath(item ? [
         { id: item.category, label: item.category, type: 'floor' },
         { id: item.subcategory, label: item.subcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
-        { id: item.id, label: item.title, type: 'detail' },
-        { id: 'reservation', label: '예약하기', type: 'template' }
+        { id: 'detail', label: <AutoTranslatedText text="Details" />, type: 'detail' },
+        { id: item.id, label: getLocalizedText(item.title, i18n.language), type: 'detail' },
+        { id: 'reservation', label: <AutoTranslatedText text="Reservation" />, type: 'template' }
     ] : []);
 
     const handleBack = () => {
@@ -87,9 +89,10 @@ export const VirtualReservationPage: React.FC = () => {
         }
     };
 
-    const handleBook = () => {
+    const handleBook = async () => {
         if (!selectedTime) {
-            alert('시간을 선택해주세요.');
+            const msg = await translateAsync('시간을 선택해주세요.');
+            alert(msg);
             return;
         }
         setBooking(true);
@@ -132,7 +135,8 @@ export const VirtualReservationPage: React.FC = () => {
             setIsManageModalOpen(false);
         } catch (error) {
             console.error('Failed to save reservation settings:', error);
-            alert('저장에 실패했습니다.');
+            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            alert(errorMsg);
         } finally {
             setIsSaving(false);
         }
@@ -161,7 +165,7 @@ export const VirtualReservationPage: React.FC = () => {
                         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-[#00FFC2] hover:text-black text-white/60 transition-all font-bold text-[10px] uppercase tracking-widest border border-white/10 focus:outline-none"
                     >
                         <Settings2 size={16} />
-                        <AutoTranslatedText text="설정 관리" />
+                        <AutoTranslatedText text="Manage Settings" />
                     </button>
                 )}
             </header>
@@ -174,10 +178,10 @@ export const VirtualReservationPage: React.FC = () => {
                         </div>
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.8] tracking-tighter uppercase whitespace-pre-wrap break-keep" style={{ color: theme.highlightColor }}>
-                         <AutoTranslatedText text="예약하기" />
+                         <AutoTranslatedText text="Reservation" />
                     </h1>
                     <p className="text-xl md:text-2xl font-serif italic opacity-40 max-w-2xl leading-relaxed border-l-4 pl-8" style={{ borderColor: theme.accentColor }}>
-                        <AutoTranslatedText text="장인의 숨결이 깃든 특별한 순간을 직접 마주해보세요. 당신만을 위한 프리미엄 세션이 준비되어 있습니다." />
+                        <AutoTranslatedText text="Encounter the special moments where the artisan's breath dwells. A premium session is prepared just for you." />
                     </p>
                 </div>
 
@@ -202,7 +206,7 @@ export const VirtualReservationPage: React.FC = () => {
                                         <div className="space-y-4">
                                             <h2 className="text-4xl font-black uppercase tracking-tighter"><AutoTranslatedText text="Reservation Confirmed" /></h2>
                                             <p className="text-white/40 leading-relaxed max-w-md mx-auto">
-                                                <AutoTranslatedText text="예약이 성공적으로 완료되었습니다. 선택하신 일정에 맞춰 정중히 모시겠습니다." />
+                                                <AutoTranslatedText text="Your reservation has been successfully completed. We will serve you politely according to your selected schedule." />
                                             </p>
                                         </div>
                                         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 w-full max-w-sm space-y-4">
@@ -382,14 +386,14 @@ export const VirtualReservationPage: React.FC = () => {
                                          <MapPin className="text-[#00FFC2] shrink-0" size={24} />
                                          <div>
                                             <h4 className="text-sm font-bold mb-1 uppercase"><AutoTranslatedText text="Location" /></h4>
-                                            <p className="text-xs text-white/40 leading-relaxed font-light"><AutoTranslatedText text="프리미엄 라운지 3층 전용 부스 (자세한 위치는 예약 확인 문자로 전송됩니다.)" /></p>
+                                            <p className="text-xs text-white/40 leading-relaxed font-light"><AutoTranslatedText text="Premium Lounge 3F Exclusive Booth (Detailed location will be sent via reservation confirmation text.)" /></p>
                                          </div>
                                     </div>
                                     <div className="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
                                          <Info className="text-[#00FFC2] shrink-0" size={24} />
                                          <div>
                                             <h4 className="text-sm font-bold mb-1 uppercase"><AutoTranslatedText text="Notice" /></h4>
-                                            <p className="text-xs text-white/40 leading-relaxed font-light"><AutoTranslatedText text="원활한 진행을 위해 예약 시간 10분 전까지 도착해 주시기 바랍니다. 노쇼 시 향후 예약에 제한이 있을 수 있습니다." /></p>
+                                            <p className="text-xs text-white/40 leading-relaxed font-light"><AutoTranslatedText text="For smooth progress, please arrive 10 minutes before the reservation time. No-shows may restrict future reservations." /></p>
                                          </div>
                                     </div>
                                 </div>
@@ -445,14 +449,14 @@ export const VirtualReservationPage: React.FC = () => {
                             exit={{ opacity: 0, y: 50, scale: 0.9 }}
                             className="w-full max-w-4xl bg-[#0A0D17] border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl relative z-10 flex flex-col max-h-[85vh]"
                         >
-                            <div className="p-8 md:p-12 border-b border-white/5 flex justify-between items-center shrink-0">
+                                                            <div className="p-8 md:p-12 border-b border-white/5 flex justify-between items-center shrink-0">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-2xl bg-[#00FFC2]/10 flex items-center justify-center text-[#00FFC2]">
                                         <Settings2 size={24} />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-black uppercase tracking-tight">Reservation Settings</h2>
-                                        <p className="text-xs text-white/40 uppercase tracking-widest font-bold">Manage Programs & Time Slots</p>
+                                        <h2 className="text-2xl font-black uppercase tracking-tight"><AutoTranslatedText text="Reservation Settings" /></h2>
+                                        <p className="text-xs text-white/40 uppercase tracking-widest font-bold"><AutoTranslatedText text="Manage Programs & Time Slots" /></p>
                                     </div>
                                 </div>
                                 <button onClick={() => setIsManageModalOpen(false)} className="p-4 rounded-2xl hover:bg-white/5 transition-colors opacity-40 hover:opacity-100">
@@ -483,6 +487,7 @@ const ManageReservationContent: React.FC<{
     onSave: (programs: any[], slots: string[]) => void,
     isSaving: boolean
 }> = ({ initialPrograms, initialSlots, onSave, isSaving }) => {
+    const { i18n } = useTranslation();
     const [programs, setPrograms] = useState<any[]>(initialPrograms.length > 0 ? initialPrograms : [{ id: 'p1', title: { ko: '', en: '' }, description: { ko: '', en: '' }, price: '' }]);
     const [slots, setSlots] = useState<string[]>(initialSlots.length > 0 ? initialSlots : ['10:00', '11:00', '13:00', '14:00', '15:00', '16:30', '18:00', '19:30']);
 
@@ -492,13 +497,13 @@ const ManageReservationContent: React.FC<{
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Layers size={18} className="text-[#00FFC2]" />
-                        <h3 className="text-sm font-black uppercase tracking-widest">Programs</h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest"><AutoTranslatedText text="Programs" /></h3>
                     </div>
                     <button 
                         onClick={() => setPrograms([...programs, { id: `prog-${Date.now()}`, title: { ko: '', en: '' }, description: { ko: '', en: '' }, price: '' }])}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00FFC2]/10 text-[#00FFC2] hover:bg-[#00FFC2]/20 transition-all font-bold text-[10px] uppercase tracking-widest"
                     >
-                        <Plus size={14} /> Add Program
+                        <Plus size={14} /> <AutoTranslatedText text="Add Program" />
                     </button>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -513,7 +518,7 @@ const ManageReservationContent: React.FC<{
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <input 
-                                        placeholder="Program Title (KO)"
+                                        placeholder={getLocalizedText({ ko: "프로그램 명 (한글)", en: "Program Title (KO)" }, i18n.language)}
                                         value={prog.title?.ko || ''}
                                         onChange={e => {
                                             const updated = [...programs];
@@ -523,7 +528,7 @@ const ManageReservationContent: React.FC<{
                                         className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm focus:border-[#00FFC2]"
                                     />
                                     <input 
-                                        placeholder="Price (e.g. 50,000원)"
+                                        placeholder={getLocalizedText({ ko: "가격 (예: 50,000원)", en: "Price (e.g. 50,000 KRW)" }, i18n.language)}
                                         value={prog.price || ''}
                                         onChange={e => {
                                             const updated = [...programs];
@@ -534,7 +539,7 @@ const ManageReservationContent: React.FC<{
                                     />
                                 </div>
                                 <textarea 
-                                    placeholder="Program Description (KO)"
+                                    placeholder={getLocalizedText({ ko: "프로그램 설명 (한글)", en: "Program Description (KO)" }, i18n.language)}
                                     rows={4}
                                     value={prog.description?.ko || ''}
                                     onChange={e => {
@@ -554,13 +559,13 @@ const ManageReservationContent: React.FC<{
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Check size={18} className="text-[#00FFC2]" />
-                        <h3 className="text-sm font-black uppercase tracking-widest">Time Slots</h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest"><AutoTranslatedText text="Time Slots" /></h3>
                     </div>
                     <button 
                         onClick={() => setSlots([...slots, "10:00"])}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00FFC2]/10 text-[#00FFC2] hover:bg-[#00FFC2]/20 transition-all font-bold text-[10px] uppercase tracking-widest"
                     >
-                        <Plus size={14} /> Add Slot
+                        <Plus size={14} /> <AutoTranslatedText text="Add Slot" />
                     </button>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -592,7 +597,7 @@ const ManageReservationContent: React.FC<{
                     disabled={isSaving}
                     className="px-10 py-4 rounded-2xl bg-[#00FFC2] text-black font-black uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all text-sm disabled:opacity-50"
                 >
-                    {isSaving ? <Loader2 className="animate-spin" size={18} /> : 'Save All Settings'}
+                    {isSaving ? <Loader2 className="animate-spin" size={18} /> : <AutoTranslatedText text="Save All Settings" />}
                 </button>
             </div>
         </div>

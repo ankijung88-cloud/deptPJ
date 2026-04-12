@@ -9,8 +9,8 @@ import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
-import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
+import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
 
 // --- Sub-components for Broadway Billboard ---
 
@@ -23,6 +23,7 @@ const BroadwayTicketCard: React.FC<{
     onDelete?: () => void,
     onClick: () => void 
 }> = ({ ticket, theme, lang, isAdmin, onEdit, onDelete, onClick }) => {
+    const { t } = useTranslation();
     const getLoc = (val: any, l: string): string => {
         if (!val) return '';
         if (typeof val === 'string') return val;
@@ -54,7 +55,9 @@ const BroadwayTicketCard: React.FC<{
                 
                 {/* Category Badge */}
                 <div className="absolute top-8 left-6 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30 backdrop-blur-md">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-yellow-500">Live Show</span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-yellow-500">
+                        {t('ticket.live_show')}
+                    </span>
                 </div>
             </div>
 
@@ -72,14 +75,18 @@ const BroadwayTicketCard: React.FC<{
 
                 <div className="flex justify-between items-end pt-4 border-t border-white/10">
                     <div className="space-y-1">
-                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">Performance Date</span>
+                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">
+                            {t('ticket.performance_date')}
+                        </span>
                         <div className="flex items-center gap-2 text-white/60">
                             <Calendar size={12} />
                             <span className="text-[10px] font-bold uppercase">{getLoc(ticket.date, lang)}</span>
                         </div>
                     </div>
                     <div className="text-right">
-                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">Entry Fee</span>
+                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">
+                            {t('ticket.entry_fee')}
+                        </span>
                         <div className="text-lg font-black text-yellow-500">{getLoc(ticket.price, lang)}</div>
                     </div>
                 </div>
@@ -124,6 +131,7 @@ const ReservationModal: React.FC<{
     reservationComplete: boolean,
     lang: string
 }> = ({ ticket, isOpen, onClose, quantity, setQuantity, onConfirm, isReserving, reservationComplete, lang }) => {
+    const { t } = useTranslation();
     if (!ticket) return null;
 
     const getLoc = (val: any, l: string): string => {
@@ -164,7 +172,9 @@ const ReservationModal: React.FC<{
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
                             
                             <div className="absolute bottom-12 left-12 right-12">
-                                <span className="text-[10px] font-black tracking-[0.4em] text-yellow-500 uppercase mb-4 block">Official Selection</span>
+                                <span className="text-[10px] font-black tracking-[0.4em] text-yellow-500 uppercase mb-4 block">
+                                    {t('ticket.official_selection')}
+                                </span>
                                 <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-tight mb-4">
                                     <AutoTranslatedText text={getLoc(ticket.title, lang)} />
                                 </h2>
@@ -185,16 +195,20 @@ const ReservationModal: React.FC<{
                         <div className="w-full md:w-1/2 h-full p-12 flex flex-col justify-between border-l border-white/5">
                             <div className="space-y-10">
                                 <div>
-                                    <span className="text-[10px] font-black tracking-[0.4em] text-white/20 uppercase mb-4 block">Event Details</span>
+                                    <span className="text-[10px] font-black tracking-[0.4em] text-white/20 uppercase mb-4 block">
+                                        {t('ticket.event_details')}
+                                    </span>
                                     <p className="text-sm text-white/60 font-medium leading-[1.8]">
-                                        <AutoTranslatedText text={getLoc(ticket.description, lang) || '장인의 숨결과 전통의 가치가 어우러진 특별한 공연에 여러분을 초대합니다. 최고의 감동을 약속드립니다.'} />
+                                        <AutoTranslatedText text={getLoc(ticket.description, lang) || 'We invite you to a special performance where artisan breath and traditional values harmonize. We promise the best impression.'} />
                                     </p>
                                 </div>
 
                                 {/* Ticket Selection */}
                                 <div className="p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">Ticket Quantity</span>
+                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                            {t('ticket.ticket_quantity')}
+                                        </span>
                                         <div className="flex items-center gap-6 bg-black border border-white/10 rounded-full px-6 py-3">
                                             <button 
                                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -211,7 +225,9 @@ const ReservationModal: React.FC<{
                                     <div className="h-[1px] w-full bg-white/5" />
 
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">Total Payable</span>
+                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
+                                            {t('ticket.total_payable')}
+                                        </span>
                                         <div className="text-3xl font-black text-yellow-500">
                                             ₩{totalPrice.toLocaleString()}
                                         </div>
@@ -229,23 +245,23 @@ const ReservationModal: React.FC<{
                                         {isReserving ? (
                                             <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                <AutoTranslatedText text="Processing..." />
+                                                {t('common.processing')}
                                             </motion.div>
                                         ) : reservationComplete ? (
                                             <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <Check size={18} />
-                                                <AutoTranslatedText text="Reservation Complete" />
+                                                {t('ticket.reservation_complete')}
                                             </motion.div>
                                         ) : (
                                             <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <Ticket size={18} />
-                                                <AutoTranslatedText text="Confirm Reservation" />
+                                                {t('ticket.confirm_reservation')}
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
                                 </button>
                                 <p className="text-center text-[8px] font-bold text-white/20 uppercase tracking-[0.3em]">
-                                    Secure SSL Encryption Enabled • Digital Delivery
+                                    {t('ticket.security_delivery_msg')}
                                 </p>
                             </div>
                         </div>
@@ -256,7 +272,8 @@ const ReservationModal: React.FC<{
     );
 };
 const VirtualTicketPage: React.FC = () => {
-    const { i18n } = useTranslation();
+    useImmersiveMode(true);
+    const { t, i18n } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     const location = useLocation();
@@ -290,9 +307,9 @@ const VirtualTicketPage: React.FC = () => {
     useSetBreadcrumbPath(parentProduct ? [
         { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
-        { id: 'detail', label: <AutoTranslatedText text="상세" />, type: 'detail' },
+        { id: 'detail', label: t('common.details'), type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'ticket', label: <AutoTranslatedText text="가상 티켓" />, type: 'template' }
+        { id: 'ticket', label: t('ticket.virtual_ticket'), type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -321,8 +338,8 @@ const VirtualTicketPage: React.FC = () => {
 
                     const ticketMeta = templates.find((t: any) => t.id === 'ticket');
                     // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(ticketMeta?.title?.ko || (typeof ticketMeta?.title === 'string' ? ticketMeta.title : '') || "3D 가상 티켓 부스");
-                    setTempDesc(ticketMeta?.description?.ko || (typeof ticketMeta?.description === 'string' ? ticketMeta.description : '') || "공연과 행사의 감동을 미리 만나보세요. 디지털 티켓으로 간직하는 특별한 순간들이 당신을 기다립니다.");
+                    setTempTitle(ticketMeta?.title?.ko || (typeof ticketMeta?.title === 'string' ? ticketMeta.title : '') || t("ticket.ticket_booth"));
+                    setTempDesc(ticketMeta?.description?.ko || (typeof ticketMeta?.description === 'string' ? ticketMeta.description : '') || t("ticket.booth_desc"));
                 }
             }
         };
@@ -414,7 +431,7 @@ const VirtualTicketPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        const confirmMsg = t('common.delete_confirm');
         if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
@@ -423,17 +440,17 @@ const VirtualTicketPage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (response.ok) {
-                const successMsg = await translateAsync('삭제되었습니다.');
+                const successMsg = t('common.deleted_msg');
                 alert(successMsg);
                 fetchItems();
             } else {
                 const err = await response.json();
-                const failMsg = await translateAsync('삭제 실패');
+                const failMsg = t('common.delete_failed');
                 alert(`${failMsg}: ${err.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Delete failed:', error);
-            const errorMsg = await translateAsync('연결 오류가 발생했습니다.');
+            const errorMsg = t('common.server_error');
             alert(errorMsg);
         }
     };
@@ -609,7 +626,7 @@ return (
                             style={{ color: theme.highlightColor }}
                         >
                             <ArrowLeft size={16} />
-                            <AutoTranslatedText text="Back" />
+                            <AutoTranslatedText text={t('common.back')} />
                         </button>
 
                         {isManagementAllowed && (
@@ -626,7 +643,7 @@ return (
                                     style={{ color: theme.highlightColor, borderColor: `${theme.highlightColor}44` }}
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
-                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                    <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
                                 </button>
                                 {isEditingMetadata && (
                                     <button 
@@ -642,7 +659,7 @@ return (
                                     style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
                                 >
                                     <Plus size={14} />
-                                    <AutoTranslatedText text="Add Event" />
+                                    <AutoTranslatedText text={t('ticket.add_event')} />
                                 </button>
                             </div>
                         )}
@@ -655,7 +672,7 @@ return (
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
                                     className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all uppercase relative z-[60]" 
                                      style={{ color: theme.highlightColor }}>
-                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
+                                    {t('common.archive')} {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-20 bg-white/10" />
                             </div>
@@ -700,7 +717,9 @@ return (
                                 <div className="relative z-10 flex flex-col items-center gap-2">
                                      <Ticket size={24} className="mb-2 opacity-40 group-hover:scale-110 transition-transform" style={{ color: theme.highlightColor }} />
                                      <span className="text-3xl font-black tracking-tighter" style={{ color: theme.highlightColor }}>{ticketItems.length.toString().padStart(2, '0')}</span>
-                                     <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">Running Events</span>
+                                     <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">
+                                         {t('ticket.running_events')}
+                                     </span>
                                 </div>
                             </button>
                         </div>
@@ -722,18 +741,20 @@ return (
                              <Calendar size={28} />
                          </div>
                          <div>
-                            <h2 className="text-3xl font-black uppercase tracking-tight"><AutoTranslatedText text="Live Availability" /></h2>
-                            <p className="text-[10px] font-bold tracking-[0.4em] opacity-30 uppercase mt-1">Real-time Ticket Inventory</p>
+                            <h2 className="text-3xl font-black uppercase tracking-tight">{t('ticket.live_availability')}</h2>
+                            <p className="text-[10px] font-bold tracking-[0.4em] opacity-30 uppercase mt-1">
+                                {t('ticket.realtime_inventory')}
+                            </p>
                          </div>
                     </div>
                     
                     <div className="flex items-center gap-6 px-10 py-4 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
                         <div className="flex items-center gap-3">
                              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                             <span className="text-[11px] font-black tracking-widest uppercase"><AutoTranslatedText text="Server Online" /></span>
+                             <span className="text-[11px] font-black tracking-widest uppercase">{t('ticket.server_online')}</span>
                         </div>
                         <div className="h-4 w-[1px] bg-white/20" />
-                        <span className="text-[11px] font-black tracking-widest uppercase opacity-40">Secure Transaction</span>
+                        <span className="text-[11px] font-black tracking-widest uppercase opacity-40">{t('ticket.secure_transaction')}</span>
                     </div>
                 </div>
 
@@ -746,7 +767,7 @@ return (
                     </div>
                 ) : ticketItems.length === 0 ? (
                     <div className="flex items-center justify-center p-20 bg-white/5 rounded-3xl border border-white/10 opacity-40">
-                         <AutoTranslatedText text="예약 가능한 행사가 없습니다." />
+                         {t('ticket.no_events')}
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -787,7 +808,7 @@ return (
                                 <Plus size={18} className="text-white" />
                             </div>
                             <span className="text-xs font-black tracking-[0.2em] uppercase text-white/60 group-hover:text-white transition-colors">
-                                <AutoTranslatedText text="행사 추가 (Add Event)" />
+                                <AutoTranslatedText text="Add Event" />
                             </span>
                         </button>
                     </div>
@@ -796,10 +817,10 @@ return (
                 {/* Ticketing Info Sections */}
                 <div className="mt-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {[
-                        { icon: MapPin, title: "위치 안내", desc: "각 행사장별 상세 위치와 오시는 길을 안내해 드립니다." },
-                        { icon: Clock, title: "관람 시간", desc: "회차별 관람 시간 및 대기 동선을 확인하실 수 있습니다." },
-                        { icon: CreditCard, title: "간편 결제", desc: "각종 간편 결제 및 카드사 할부 혜택을 제공합니다." },
-                        { icon: Info, title: "유의 사항", desc: "취소 및 환불 규정, 반입 금지 물품 등을 확인하세요." }
+                        { icon: MapPin, title: "Location Info", desc: "Detailed location and directions to each venue." },
+                        { icon: Clock, title: "Viewing Hours", desc: "Check performance times and waiting lines for each session." },
+                        { icon: CreditCard, title: "Easy Payment", desc: "We provide various easy payment and card installment benefits." },
+                        { icon: Info, title: "Notice", desc: "Check cancellation and refund policies, prohibited items, etc." }
                     ].map((info, idx) => (
                         <div key={idx} className="p-10 rounded-[2.5rem] bg-white/5 border border-white/5 hover:border-white/20 transition-all duration-700 group hover:-translate-y-2">
                              <info.icon className="mb-6 opacity-30 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentColor }} size={24} />
@@ -830,7 +851,7 @@ return (
                                 <div className="flex justify-between items-center mb-10">
                                     <div>
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-1">
-                                            <AutoTranslatedText text={isEditMode ? "행사 정보 수정" : "신규 행사 등록"} />
+                                            <AutoTranslatedText text={isEditMode ? "Edit Event Info" : "Register New Event"} />
                                         </h3>
                                         <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">{isEditMode ? "Edit Event Info" : "Add New Event"}</p>
                                     </div>
@@ -845,14 +866,14 @@ return (
                                 <div className="space-y-8">
                                     <div>
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                            <AutoTranslatedText text="행사 명칭 (Title)" />
+                                            <AutoTranslatedText text="Event Title" />
                                         </label>
                                         <div className="relative">
                                             <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
                                             <textarea 
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
-                                                placeholder="Enter event title..."
+                                                placeholder={t("Enter event title...")}
                                                 rows={2}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
                                             />
@@ -860,7 +881,7 @@ return (
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                            <AutoTranslatedText text="행사 일정 (Schedule)" />
+                                            <AutoTranslatedText text="Event Schedule" />
                                         </label>
                                         <div className="relative">
                                             <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
@@ -868,7 +889,7 @@ return (
                                                 type="text"
                                                 value={newEventDate}
                                                 onChange={(e) => setNewEventDate(e.target.value)}
-                                                placeholder="e.g. 2026.04.15 ~ 2026.04.30"
+                                                placeholder={t("e.g. 2026.04.15 ~ 2026.04.30")}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                             />
                                         </div>
@@ -876,7 +897,7 @@ return (
 
                                     <div>
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                            <AutoTranslatedText text="행사 썸네일 (Thumbnail)" />
+                                            <AutoTranslatedText text="Event Thumbnail" />
                                         </label>
                                         
                                         <div className="space-y-4">
@@ -889,7 +910,7 @@ return (
                                                         setNewImageUrl(e.target.value);
                                                         if (previewUrl) setPreviewUrl(null);
                                                     }}
-                                                    placeholder="Thumbnail URL..."
+                                                    placeholder={t("Thumbnail URL...")}
                                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                                 />
                                             </div>
@@ -898,13 +919,13 @@ return (
                                             {!previewUrl ? (
                                                 <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
                                                     <UploadCloud size={32} className="text-white/20 group-hover:text-white/40 mb-3 transition-colors" />
-                                                    <span className="text-xs font-bold text-white/40 group-hover:text-white/60"><AutoTranslatedText text="파일 업로드" /></span>
+                                                    <span className="text-xs font-bold text-white/40 group-hover:text-white/60"><AutoTranslatedText text="Upload File" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group">
                                                     <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                                                        <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 rounded-lg bg-red-500/80 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-500">Remove</button>
+                                                        <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 rounded-lg bg-red-500/80 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-500"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -920,10 +941,10 @@ return (
                                         {isUploading ? (
                                             <>
                                                 <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                <AutoTranslatedText text="업로드 중..." />
+                                                <AutoTranslatedText text="Uploading..." />
                                             </>
                                         ) : (
-                                            <AutoTranslatedText text={isEditMode ? "수정하기 (Update Event)" : "등록하기 (Register Event)"} />
+                                            <AutoTranslatedText text={isEditMode ? "Update Event" : "Register Event"} />
                                         )}
                                     </button>
                                 </div>
@@ -939,7 +960,7 @@ return (
                     <div className="flex flex-col gap-6">
                         <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">VIA STATION TICKETS</div>
                         <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase max-w-sm leading-loose">
-                            Certified Virtual Ticketing Infrastructure for premium cultural heritage events.
+                            <AutoTranslatedText text="Certified Virtual Ticketing Infrastructure for premium cultural heritage events." />
                         </p>
                     </div>
                     
@@ -950,7 +971,7 @@ return (
                         <div className="w-14 h-14 rounded-full border border-white/5 flex items-center justify-center group-hover:bg-white/5 transition-colors">
                              <div className="w-1 h-1 rounded-full bg-white opacity-40 group-hover:h-8 transition-all" />
                         </div>
-                        <span className="text-[9px] font-black tracking-widest uppercase opacity-40 group-hover:opacity-100 transition-opacity">Back to Top</span>
+                        <span className="text-[9px] font-black tracking-widest uppercase opacity-40 group-hover:opacity-100 transition-opacity"><AutoTranslatedText text="Back to Top" /></span>
                     </button>
                 </div>
             </footer>

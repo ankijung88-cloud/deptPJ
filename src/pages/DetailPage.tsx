@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, L
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { getProductById } from '../api/products';
 import { FeaturedItem, SelectedTemplate } from '../types';
 import { useFloors } from '../context/FloorContext';
@@ -15,6 +16,7 @@ import { useAdmin } from '../hooks/useAdmin';
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { t, i18n } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
     
     const [item, setItem] = useState<FeaturedItem | null>(null);
@@ -51,12 +53,12 @@ export const DetailPage: React.FC = () => {
     const currentCategory = currentFloor?.subitems?.find(s => s.id === effectiveSubcategory);
     
     // Refined floor label logic to match the new theme expectation
-    const floorLabel = floorNum ? `바닥-${floorNum}` : (currentFloor?.floor || effectiveCategory || '');
+    const floorLabel = floorNum ? `${t('common.floor', 'Floor')} ${floorNum}` : (currentFloor?.floor || effectiveCategory || '');
 
     useSetBreadcrumbPath(item ? [
         { id: currentFloor?.floor || effectiveCategory, label: floorLabel, type: 'floor' },
         { id: currentCategory?.id || effectiveSubcategory, label: currentCategory?.label || effectiveSubcategory, type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: 'detail', label: t('common.detail', 'Detail'), type: 'detail' },
         { id: item.id, label: item.title, type: 'detail' }
     ] : []);
 
@@ -240,11 +242,13 @@ export const DetailPage: React.FC = () => {
                     } 
                 });
             } else {
-                alert('템플릿 적용에 실패했습니다.');
+                const msg = await translateAsync('템플릿 적용에 실패했습니다.');
+                alert(msg);
             }
         } catch (error) {
             console.error('Failed to apply template:', error);
-            alert('오류가 발생했습니다.');
+            const msg = await translateAsync('오류가 발생했습니다.');
+            alert(msg);
         } finally {
             setApplyingTemplate(null);
         }
@@ -337,7 +341,7 @@ export const DetailPage: React.FC = () => {
                             style={{ color: `${theme.highlightColor}de` }}
                         >
                             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                            <span className="font-bold tracking-widest uppercase text-sm">{t('common.back')}</span>
+                            <span className="font-bold tracking-widest uppercase text-sm"><AutoTranslatedText text="Back" /></span>
                         </button>
 
                         <motion.div
@@ -509,8 +513,6 @@ export const DetailPage: React.FC = () => {
                                                 >
                                                     {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
                                                     <AutoTranslatedText text={tplInfo.label} />
-                                                    {/* DEBUG MARKER - To verify update */}
-                                                    <span className="sr-only">v2</span>
                                                 </button>
                                             );
                                         })}
@@ -572,10 +574,10 @@ export const DetailPage: React.FC = () => {
                                                         <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
                                                             isSelected ? 'text-white' : 'text-white/40'
                                                         }`}>
-                                                            {tpl.label}
+                                                            <AutoTranslatedText text={tpl.label} />
                                                         </span>
                                                         {isHidden && (
-                                                            <span className="absolute top-2 left-2 bg-red-500 text-[8px] px-1 rounded uppercase font-bold">Hidden</span>
+                                                            <span className="absolute top-2 left-2 bg-red-500 text-[8px] px-1 rounded uppercase font-bold"><AutoTranslatedText text="Hidden" /></span>
                                                         )}
                                                     </button>
                                                     

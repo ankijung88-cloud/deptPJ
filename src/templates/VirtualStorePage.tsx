@@ -16,8 +16,8 @@ import { getProductById, updateProduct } from '../api/products';
 import { createOrder } from '../api/orders';
 import { useFloors } from '../context/FloorContext';
 import { useCart } from '../context/CartContext';
-import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
+import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
 
 // --- Sub-components for 3D Viewer ---
 
@@ -85,10 +85,11 @@ const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
 };
 
 const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
+    const { t } = useTranslation();
     if (!item) return (
         <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-4">
             <ShoppingBag size={48} strokeWidth={1} />
-            <AutoTranslatedText text="상품을 선택하여 3D로 확인하세요" />
+            {t('store.select_item_3d')}
         </div>
     );
 
@@ -109,7 +110,7 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
                         className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
                     />
                     <div className="absolute top-8 right-8 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">2D Preview Mode</span>
+                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">{t('store.preview_mode_2d')}</span>
                     </div>
                 </motion.div>
             </div>
@@ -148,7 +149,7 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl">
                 <div className="w-2 h-2 rounded-full bg-orange-500 animate-[pulse_2s_infinite]" />
-                <span className="text-[10px] font-black uppercase text-white tracking-[0.3em]">Holographic Engine Active</span>
+                <span className="text-[10px] font-black uppercase text-white tracking-[0.3em]">{t('store.holographic_engine_active')}</span>
             </div>
         </div>
     );
@@ -158,7 +159,8 @@ const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
 // --- Main Page Component ---
 
 const VirtualStorePage: React.FC = () => {
-    const { i18n } = useTranslation();
+    useImmersiveMode(true);
+    const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const { id: routeId } = useParams();
     const location = useLocation();
@@ -242,11 +244,11 @@ const VirtualStorePage: React.FC = () => {
     const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: String(floorLabel), type: 'floor' },
-        { id: currentCategory?.id || parentProduct.subcategory, label: String(currentCategory?.label || parentProduct.subcategory), type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
+        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
+        { id: 'detail', label: t('common.details'), type: 'detail' },
         { id: parentProduct.id, label: getLoc(parentProduct.title, i18n.language), type: 'detail' },
-        { id: 'store', label: '가상 스토어', type: 'template' }
+        { id: 'store', label: t('store.store_title'), type: 'template' }
     ] : []);
 
 
@@ -280,9 +282,9 @@ const VirtualStorePage: React.FC = () => {
                         }
 
                         const storeMeta = templates.find((t: any) => t.id === 'store');
-                        // Always load Korean for the editable fields to ensure consistency
-                        setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || "가상 스토어");
-                        setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || "브랜드의 스토리와 제품을 혁신적인 3D 공간에서 경험하세요. 오감을 자극하는 특별한 쇼핑 여정이 시작됩니다.");
+                        // Always load English for the editable fields fallbacks to ensure consistency with AutoTranslatedText
+                        setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || t("store.store_title"));
+                        setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || t("store.store_desc"));
                     }
                 } catch (error) {
                     console.error("Failed to fetch parent product:", error);
@@ -303,7 +305,7 @@ const VirtualStorePage: React.FC = () => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState('');
     const [newPrice, setNewPrice] = useState('');
-    const [newShortDescription, setNewShortDescription] = useState('장인의 손길이 닿은 프리미엄 전통 공예품입니다.');
+    const [newShortDescription, setNewShortDescription] = useState('Premium traditional craft product completed with the touch of an artisan.');
     const [newLongDescription, setNewLongDescription] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
     const [newDetailImageUrl, setNewDetailImageUrl] = useState('');
@@ -457,7 +459,7 @@ const VirtualStorePage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
+        const confirmMsg = t('common.delete_confirm');
         if (!window.confirm(confirmMsg)) return;
         try {
             const adminToken = sessionStorage.getItem('admin_token');
@@ -466,7 +468,7 @@ const VirtualStorePage: React.FC = () => {
                 headers: { 'Authorization': `Bearer ${adminToken}` }
             });
             if (res.ok) {
-                const successMsg = await translateAsync('삭제되었습니다.');
+                const successMsg = t('store.deleted_success');
                 alert(successMsg);
                 fetchItems();
                 if (selectedItem?.id === id) setSelectedItem(null);
@@ -475,7 +477,7 @@ const VirtualStorePage: React.FC = () => {
             }
         } catch (error) {
             console.error('Delete error:', error);
-            const errorMsg = await translateAsync('삭제에 실패했습니다.');
+            const errorMsg = t('store.delete_fail');
             alert(errorMsg);
         }
     };
@@ -498,7 +500,7 @@ const VirtualStorePage: React.FC = () => {
 
     const handleAddItem = async () => {
         if (!newTitle) {
-            const msg = await translateAsync('상품 명칭을 입력해주세요.');
+            const msg = t('store.enter_title');
             alert(msg);
             return;
         }
@@ -533,7 +535,7 @@ const VirtualStorePage: React.FC = () => {
             if (backFileInputRef.current?.files?.[0]) finalBackImageUrl = await uploadFile(backFileInputRef.current.files[0]);
 
             if (!finalImageUrl) {
-                const msg = await translateAsync('기본 상품 이미지를 등록해주세요.');
+                const msg = t('store.register_image');
                 alert(msg);
                 return;
             }
@@ -573,12 +575,12 @@ const VirtualStorePage: React.FC = () => {
             });
 
             if (res.ok) {
-                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
+                const successMsg = t(isEditMode ? 'store.update_success' : 'store.register_success');
                 alert(successMsg);
                 await fetchItems();
                 setNewTitle('');
                 setNewPrice('');
-                setNewShortDescription('장인의 손길이 닿은 프리미엄 전통 공예품입니다.');
+                setNewShortDescription('Premium traditional craft product completed with the touch of an artisan.');
                 setNewLongDescription('');
                 setNewImageUrl('');
                 setNewDetailImageUrl('');
@@ -595,12 +597,12 @@ const VirtualStorePage: React.FC = () => {
                 setEditingId(null);
             } else {
                 const errorData = await res.json();
-                const failMsg = await translateAsync('처리 실패');
+                const failMsg = t('store.process_fail');
                 alert(`${failMsg}: ${errorData.message || 'Error'}`);
             }
         } catch (error) {
             console.error('Operation failed:', error);
-            const errorMsg = await translateAsync('서버 연결에 실패했습니다.');
+            const errorMsg = t('common.server_error');
             alert(errorMsg);
         } finally {
             setIsUploading(false);
@@ -651,11 +653,11 @@ const VirtualStorePage: React.FC = () => {
             await updateProduct(parentId, updatedProduct);
             setParentProduct(updatedProduct as any);
             setIsEditingMetadata(false);
-            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
+            const successMsg = t('common.save_success');
             alert(successMsg);
         } catch (error) {
             console.error('Failed to save metadata:', error);
-            const errorMsg = await translateAsync('저장에 실패했습니다.');
+            const errorMsg = t('common.save_fail');
             alert(errorMsg);
         }
     };
@@ -669,7 +671,7 @@ const VirtualStorePage: React.FC = () => {
 
     const handleCompletePayment = async () => {
         if (!orderInfo.name || !orderInfo.phone || !orderInfo.address) {
-            const msg = await translateAsync('주문 정보를 모두 입력해주세요.');
+            const msg = t('store.enter_order_info');
             alert(msg);
             return;
         }
@@ -707,19 +709,19 @@ const VirtualStorePage: React.FC = () => {
             setPurchaseComplete(true);
             setTimeout(() => setPurchaseComplete(false), 3000);
 
-            const successMsg = await translateAsync('주문이 완료되었습니다.');
+            const successMsg = await translateAsync('Order has been completed.');
             alert(successMsg);
         } catch (error) {
             console.error('Payment failed:', error);
             setIsProcessingPayment(false);
-            const errorMsg = await translateAsync('결제 처리에 실패했습니다.');
+            const errorMsg = await translateAsync('Payment processing failed.');
             alert(errorMsg);
         }
     };
 
     const handleLookupOrder = async () => {
         if (!orderLookupInfo.name || !orderLookupInfo.phone) {
-            const msg = await translateAsync('조회를 위해 이름과 연락처를 입력해주세요.');
+            const msg = t('store.enter_lookup_info');
             alert(msg);
             return;
         }
@@ -776,7 +778,7 @@ const VirtualStorePage: React.FC = () => {
                             style={{ color: theme.highlightColor }}
                         >
                             <ArrowLeft size={14} />
-                            <AutoTranslatedText text="Back" />
+                            <AutoTranslatedText text={t('common.back')} />
                         </button>
 
                         {isManagementAllowed && (
@@ -793,7 +795,7 @@ const VirtualStorePage: React.FC = () => {
                                     style={{ color: theme.highlightColor, borderColor: `${theme.highlightColor}44` }}
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
-                                    <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
+                                    <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
                                 </button>
                                 {isEditingMetadata && (
                                     <button
@@ -822,10 +824,10 @@ const VirtualStorePage: React.FC = () => {
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
                                     className="px-3 py-1 rounded-full text-[9px] font-black tracking-[0.2em] uppercase shadow-lg hover:brightness-110 transition-all relative z-[60]"
                                     style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor, border: `1px solid ${theme.color3}33` }}>
-                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
+                                    <AutoTranslatedText text="Archive" /> {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-12 bg-white/10" />
-                                <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20">Virtual Commerce V2</span>
+                                <span className="text-[9px] font-bold tracking-[0.4em] uppercase opacity-20"><AutoTranslatedText text="Virtual Commerce V2" /></span>
                             </div>
 
                             {isEditingMetadata ? (
@@ -864,7 +866,7 @@ const VirtualStorePage: React.FC = () => {
                         >
                             <div className="px-6 py-4 flex flex-col items-center border-r border-white/10">
                                 <span className="text-xl font-black" style={{ color: theme.highlightColor }}>{totalItems}</span>
-                                <span className="text-[8px] font-bold tracking-widest uppercase opacity-30">In Bag</span>
+                                <span className="text-[8px] font-bold tracking-widest uppercase opacity-30"><AutoTranslatedText text="In Bag" /></span>
                             </div>
                             <div className="px-6 py-4 flex items-center justify-center relative">
                                 <ShoppingCart size={20} className="opacity-40 group-hover:opacity-100 transition-opacity" />
@@ -952,7 +954,9 @@ const VirtualStorePage: React.FC = () => {
                             className="space-y-8"
                         >
                             <div>
-                                <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase mb-4 block">Product Identification</span>
+                                <h2 className="text-[11px] font-black tracking-[0.3em] uppercase text-white/40 mb-2">
+                                    <AutoTranslatedText text="Product Identification" />
+                                </h2>
                                 <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-tight mb-4" style={{ color: theme.highlightColor }}>
                                     {selectedItem ? <AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} /> : "---"}
                                 </h2>
@@ -960,7 +964,9 @@ const VirtualStorePage: React.FC = () => {
                                     <div className="px-4 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-500 font-black text-xl">
                                         {selectedItem ? getLoc(selectedItem.price, i18n.language) : "₩0"}
                                     </div>
-                                    <div className="text-[10px] font-bold tracking-widest uppercase opacity-40">Tax Included / Global Shipping</div>
+                                    <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest bg-emerald-500/5 px-3 py-1.5 rounded-full border border-emerald-500/10">
+                                        <AutoTranslatedText text="Tax Included / Global Shipping" />
+                                    </span>
                                 </div>
                             </div>
 
@@ -971,9 +977,9 @@ const VirtualStorePage: React.FC = () => {
                                 </h5>
                                 <p className="text-sm text-white/60 leading-relaxed font-medium">
                                     {selectedItem ? (
-                                        <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || '최고급 소재를 사용하고 한국 전통 공예 전문가의 손길로 완성된 명품 제품입니다.'} />
+                                        <AutoTranslatedText text={getLoc(selectedItem.description, i18n.language) || 'This is a premium product completed with the touch of a Korean traditional craft expert using the highest quality materials.'} />
                                     ) : (
-                                        <AutoTranslatedText text="상품 정보가 선택되지 않았습니다." />
+                                        <AutoTranslatedText text="No product info selected." />
                                     )}
                                 </p>
                             </div>
@@ -984,7 +990,7 @@ const VirtualStorePage: React.FC = () => {
                                     disabled={!selectedItem}
                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
                                 >
-                                    <AutoTranslatedText text="상세설명보기 (View Details)" />
+                                    <AutoTranslatedText text="View Details" />
                                 </button>
 
                                 <button
@@ -1007,7 +1013,7 @@ const VirtualStorePage: React.FC = () => {
                                         ) : (
                                             <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                 <CreditCard size={18} />
-                                                <AutoTranslatedText text="결제 진행하기 (Checkout)" />
+                                                <AutoTranslatedText text="Checkout" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -1028,7 +1034,7 @@ const VirtualStorePage: React.FC = () => {
                                         ) : (
                                             <motion.div key="add" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2">
                                                 <ShoppingBag size={18} />
-                                                <AutoTranslatedText text="장바구니 담기 (Add to Bag)" />
+                                                <AutoTranslatedText text="Add to Bag" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -1044,7 +1050,7 @@ const VirtualStorePage: React.FC = () => {
                                             className="py-6 rounded-2xl bg-white/5 border border-white/10 text-white/60 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 disabled:opacity-20"
                                         >
                                             <Pencil size={14} />
-                                            <AutoTranslatedText text="수정 (Edit)" />
+                                            <AutoTranslatedText text="Edit" />
                                         </button>
                                         <button
                                             onClick={() => selectedItem && handleDelete(selectedItem.id)}
@@ -1052,7 +1058,7 @@ const VirtualStorePage: React.FC = () => {
                                             className="py-6 rounded-2xl bg-white/5 border border-white/10 text-red-500/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 transition-all flex items-center justify-center gap-2 disabled:opacity-20"
                                         >
                                             <Trash2 size={14} />
-                                            <AutoTranslatedText text="삭제 (Delete)" />
+                                            <AutoTranslatedText text="Delete" />
                                         </button>
                                     </div>
                                 )}
@@ -1062,7 +1068,7 @@ const VirtualStorePage: React.FC = () => {
                                     disabled={!selectedItem}
                                     className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 hover:text-white transition-all disabled:opacity-20"
                                 >
-                                    <AutoTranslatedText text="주문/배송확인 (CHECK ORDER/DELIVERY)" />
+                                    <AutoTranslatedText text="CHECK ORDER/DELIVERY" />
                                 </button>
 
                             </div>
@@ -1080,7 +1086,7 @@ const VirtualStorePage: React.FC = () => {
                                 <Plus size={18} className="text-white" />
                             </div>
                             <span className="text-xs font-black tracking-[0.2em] uppercase text-white/60 group-hover:text-white transition-colors">
-                                <AutoTranslatedText text="새 상품 등록 (Manager)" />
+                                <AutoTranslatedText text="Register Product (Manager)" />
                             </span>
                         </button>
                     </div>
@@ -1105,7 +1111,7 @@ const VirtualStorePage: React.FC = () => {
                             <div className="p-10">
                                 <div className="flex justify-between items-center mb-10">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
-                                        <AutoTranslatedText text={isEditMode ? '상품 정보 수정' : '신규 상품 등록'} />
+                                        <AutoTranslatedText text={isEditMode ? 'Edit Product Info' : 'Register New Product'} />
                                     </h3>
                                     <button onClick={() => { setShowAddModal(false); setIsEditMode(false); }} className="p-2 hover:bg-white/5 rounded-full text-white/40"><X size={20} /></button>
                                 </div>
@@ -1114,72 +1120,72 @@ const VirtualStorePage: React.FC = () => {
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                                <AutoTranslatedText text="상품 명칭" />
+                                                <AutoTranslatedText text="Product Title" />
                                             </label>
                                             <input
                                                 type="text"
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
-                                                placeholder="Enter title..."
+                                                placeholder={t("Enter title...")}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                                <AutoTranslatedText text="판매 금액" />
+                                                <AutoTranslatedText text="Price" />
                                             </label>
                                             <input
                                                 type="text"
                                                 value={newPrice}
                                                 onChange={(e) => setNewPrice(e.target.value)}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
-                                                placeholder="₩0,000"
+                                                placeholder={t("₩0,000")}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                            <AutoTranslatedText text="상품 한줄 설명" />
+                                            <AutoTranslatedText text="Short Description" />
                                         </label>
                                         <input
                                             type="text"
                                             value={newShortDescription}
                                             onChange={(e) => setNewShortDescription(e.target.value)}
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
-                                            placeholder="Enter short description (shown on card)..."
+                                            placeholder={t("Enter short description (shown on card)...")}
                                         />
                                     </div>
 
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                            <AutoTranslatedText text="세부 상세 설명" />
+                                            <AutoTranslatedText text="Detailed Description" />
                                         </label>
                                         <textarea
                                             value={newLongDescription}
                                             onChange={(e) => setNewLongDescription(e.target.value)}
                                             rows={4}
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none resize-none"
-                                            placeholder="Enter detailed description (shown on detail modal)..."
+                                            placeholder={t("Enter detailed description (shown on detail modal)...")}
                                         />
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="메인 이미지 (3D 정면)" />
+                                                <AutoTranslatedText text="Main Image (Front View)" />
                                             </label>
                                             <input type="file" ref={fileInputRef} onChange={(e) => handleFileChange(e, 'main')} accept="image/*" className="hidden" />
                                             {!previewUrl ? (
                                                 <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Front Image</span>
+                                                    <span className="text-[10px] font-bold"><AutoTranslatedText text="Front Image" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
                                                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1187,19 +1193,19 @@ const VirtualStorePage: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="좌측 이미지 (3D 좌측)" />
+                                                <AutoTranslatedText text="Left Image (Side View)" />
                                             </label>
                                             <input type="file" ref={leftSideFileInputRef} onChange={(e) => handleFileChange(e, 'left')} accept="image/*" className="hidden" />
                                             {!leftSidePreviewUrl ? (
                                                 <button onClick={() => leftSideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Left Side Image</span>
+                                                    <span className="text-[10px] font-bold"><AutoTranslatedText text="Left Side Image" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
                                                     <img src={leftSidePreviewUrl} alt="Left Side Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setLeftSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setLeftSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1207,19 +1213,19 @@ const VirtualStorePage: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="우측 이미지 (3D 우측)" />
+                                                <AutoTranslatedText text="Right Image (Side View)" />
                                             </label>
                                             <input type="file" ref={rightSideFileInputRef} onChange={(e) => handleFileChange(e, 'right')} accept="image/*" className="hidden" />
                                             {!rightSidePreviewUrl ? (
                                                 <button onClick={() => rightSideFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Right Side Image</span>
+                                                    <span className="text-[10px] font-bold"><AutoTranslatedText text="Right Side Image" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
                                                     <img src={rightSidePreviewUrl} alt="Right Side Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setRightSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setRightSidePreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1229,19 +1235,19 @@ const VirtualStorePage: React.FC = () => {
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="후면 이미지 (3D 후면)" />
+                                                <AutoTranslatedText text="Back Image (Back View)" />
                                             </label>
                                             <input type="file" ref={backFileInputRef} onChange={(e) => handleFileChange(e, 'back')} accept="image/*" className="hidden" />
                                             {!backPreviewUrl ? (
                                                 <button onClick={() => backFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Back Image</span>
+                                                    <span className="text-[10px] font-bold"><AutoTranslatedText text="Back Image" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
                                                     <img src={backPreviewUrl} alt="Back Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setBackPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setBackPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1249,19 +1255,19 @@ const VirtualStorePage: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase block">
-                                                <AutoTranslatedText text="상세 정보용 이미지" />
+                                                <AutoTranslatedText text="Detail Image (For Info)" />
                                             </label>
                                             <input type="file" ref={detailFileInputRef} onChange={(e) => handleFileChange(e, 'detail')} accept="image/*" className="hidden" />
                                             {!detailPreviewUrl ? (
                                                 <button onClick={() => detailFileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 h-40 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-white/40">
                                                     <UploadCloud size={24} className="mb-2" />
-                                                    <span className="text-[10px] font-bold">Detail Image</span>
+                                                    <span className="text-[10px] font-bold"><AutoTranslatedText text="Detail Image" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group h-40">
                                                     <img src={detailPreviewUrl} alt="Detail Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                                                        <button onClick={() => setDetailPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white">Remove</button>
+                                                        <button onClick={() => setDetailPreviewUrl(null)} className="px-4 py-2 bg-red-500 rounded-lg text-[10px] font-black uppercase text-white"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -1277,7 +1283,7 @@ const VirtualStorePage: React.FC = () => {
                                         {isUploading ? (
                                             <>
                                                 <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                <AutoTranslatedText text="업로드 중..." />
+                                                <AutoTranslatedText text="Uploading..." />
                                             </>
                                         ) : (
                                             <AutoTranslatedText text={isEditMode ? 'Update Product' : 'Register Product'} />
@@ -1315,14 +1321,16 @@ const VirtualStorePage: React.FC = () => {
                             <div className="w-full md:w-1/2 h-full bg-black flex items-center justify-center p-12">
                                 <img
                                     src={detailItem.thumbnailUrl || detailItem.imageUrl}
-                                    alt="Detail view"
+                                    alt={t("Detail view")}
                                     className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
                                 />
                             </div>
 
                             <div className="w-full md:w-1/2 h-full p-12 flex flex-col justify-center gap-8 border-l border-white/5 overflow-y-auto">
                                 <div className="space-y-4">
-                                    <span className="text-[10px] font-black tracking-[0.4em] text-orange-500 uppercase">Product Archives</span>
+                                    <h2 className="text-[11px] font-black tracking-[0.4em] uppercase text-white/30 mb-2">
+                                        <AutoTranslatedText text="Product Archives" />
+                                    </h2>
                                     <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-tight">
                                         <AutoTranslatedText text={getLoc(detailItem.title, i18n.language)} />
                                     </h2>
@@ -1333,17 +1341,17 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="space-y-6">
                                     <h5 className="text-[10px] font-black uppercase tracking-widest text-white/20"><AutoTranslatedText text="상세 스토리 & 설명" /></h5>
                                     <p className="text-lg text-white/60 leading-relaxed font-medium">
-                                        <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || '해당 상품의 상세 설명이 등록되지 않았습니다.'} />
+                                        <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || 'Detailed description for this product has not been registered.'} />
                                     </p>
                                 </div>
 
                                 <div className="pt-8 grid grid-cols-2 gap-4">
                                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Category</span>
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2"><AutoTranslatedText text="Category" /></span>
                                         <span className="text-xs font-bold text-white uppercase">{detailItem.category}</span>
                                     </div>
                                     <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2">Pricing</span>
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20 block mb-2"><AutoTranslatedText text="Pricing" /></span>
                                         <span className="text-xs font-bold text-white uppercase">{getLoc(detailItem.price, i18n.language)}</span>
                                     </div>
                                 </div>
@@ -1368,7 +1376,7 @@ const VirtualStorePage: React.FC = () => {
                                             ) : (
                                                 <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
                                                     <CreditCard size={18} />
-                                                    <AutoTranslatedText text="지금 결제하기 (Purchase Now)" />
+                                                    <AutoTranslatedText text="Purchase Now" />
                                                 </motion.div>
                                             )}
                                         </AnimatePresence>
@@ -1399,7 +1407,7 @@ const VirtualStorePage: React.FC = () => {
                             <div className="p-10">
                                 <div className="flex justify-between items-center mb-8">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
-                                        <AutoTranslatedText text="주문 정보 입력" />
+                                        <AutoTranslatedText text="Order Information" />
                                     </h3>
                                     <button onClick={() => setShowCheckoutModal(false)} className="p-2 hover:bg-white/5 rounded-full text-white/40"><X size={20} /></button>
                                 </div>
@@ -1409,7 +1417,7 @@ const VirtualStorePage: React.FC = () => {
                                         <div className="flex justify-between items-end">
                                             <div className="space-y-1">
                                                 <span className="text-[10px] font-black tracking-widest text-white/20 uppercase">
-                                                    {checkoutMode === 'single' ? 'Product' : 'Items Summary'}
+                                                    <AutoTranslatedText text={checkoutMode === 'single' ? 'Product' : 'Items Summary'} />
                                                 </span>
                                                 <div className="text-xl font-bold text-white uppercase tracking-tighter">
                                                     {checkoutMode === 'single' ? (
@@ -1417,14 +1425,14 @@ const VirtualStorePage: React.FC = () => {
                                                     ) : (
                                                         <div className="text-sm">
                                                             {cart.length > 0 && (
-                                                                <AutoTranslatedText text={`${getLoc(cart[0].title, i18n.language)} 외 ${totalItems - cart[0].quantity}개`} />
+                                                                <AutoTranslatedText text={`${getLoc(cart[0].title, i18n.language)} and ${totalItems - cart[0].quantity} more items`} />
                                                             )}
                                                         </div>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-[10px] font-black tracking-widest text-[#D4AF37] uppercase block mb-1">Total Amount</span>
+                                                <span className="text-[10px] font-black tracking-widest text-[#D4AF37] uppercase block mb-1"><AutoTranslatedText text="Total Amount" /></span>
                                                 <div className="text-2xl font-black text-white tracking-tighter">
                                                     {checkoutMode === 'single' 
                                                         ? getLoc(selectedItem?.price, i18n.language)
@@ -1437,19 +1445,19 @@ const VirtualStorePage: React.FC = () => {
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                                <AutoTranslatedText text="주문자 성함" />
+                                                <AutoTranslatedText text="Orderer Name" />
                                             </label>
                                             <input
                                                 type="text"
                                                 value={orderInfo.name}
                                                 onChange={(e) => setOrderInfo({ ...orderInfo, name: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none"
-                                                placeholder="Orderer Name"
+                                                placeholder={t("Orderer Name")}
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                                <AutoTranslatedText text="연락처" />
+                                                <AutoTranslatedText text="Contact Number" />
                                             </label>
                                             <input
                                                 type="text"
@@ -1461,14 +1469,14 @@ const VirtualStorePage: React.FC = () => {
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                                <AutoTranslatedText text="배송 주소" />
+                                                <AutoTranslatedText text="Shipping Address" />
                                             </label>
                                             <textarea
                                                 value={orderInfo.address}
                                                 onChange={(e) => setOrderInfo({ ...orderInfo, address: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-white text-sm focus:border-white/30 outline-none resize-none"
                                                 rows={3}
-                                                placeholder="Shipping Address"
+                                                placeholder={t("Shipping Address")}
                                             />
                                         </div>
                                     </div>
@@ -1487,7 +1495,7 @@ const VirtualStorePage: React.FC = () => {
                                         ) : (
                                             <>
                                                 <CreditCard size={18} />
-                                                <AutoTranslatedText text="결제 완료하기" />
+                                                <AutoTranslatedText text="Complete Order" />
                                             </>
                                         )}
                                     </button>
@@ -1516,7 +1524,7 @@ const VirtualStorePage: React.FC = () => {
                             <div className="p-10">
                                 <div className="flex justify-between items-center mb-10">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
-                                        <AutoTranslatedText text="주문/배송 조회 (Order Tracking)" />
+                                        <AutoTranslatedText text="Order Tracking" />
                                     </h3>
                                     <button
                                         onClick={() => {
@@ -1535,19 +1543,19 @@ const VirtualStorePage: React.FC = () => {
                                         <div className="space-y-5">
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black tracking-widest text-white/30 uppercase pl-1">
-                                                    <AutoTranslatedText text="주문자 성함" />
+                                                    <AutoTranslatedText text="Orderer Name" />
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={orderLookupInfo.name}
                                                     onChange={(e) => setOrderLookupInfo({ ...orderLookupInfo, name: e.target.value })}
                                                     className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 px-6 text-white text-sm focus:border-white/30 focus:bg-white/5 outline-none transition-all"
-                                                    placeholder="Enter your name"
+                                                    placeholder={t("Enter your name")}
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black tracking-widest text-white/30 uppercase pl-1">
-                                                    <AutoTranslatedText text="연락처" />
+                                                    <AutoTranslatedText text="Contact Number" />
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1570,7 +1578,7 @@ const VirtualStorePage: React.FC = () => {
                                             ) : (
                                                 <>
                                                     <Search size={16} />
-                                                    <AutoTranslatedText text="조회하기 (Search)" />
+                                                    <AutoTranslatedText text="Search" />
                                                 </>
                                             )}
                                         </button>
@@ -1580,13 +1588,13 @@ const VirtualStorePage: React.FC = () => {
                                         <div className="p-6 rounded-[2rem] bg-white/5 border border-white/10 space-y-6">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <span className="text-[9px] font-black tracking-widest text-white/20 uppercase block mb-1">Status</span>
+                                                    <span className="text-[9px] font-black tracking-widest text-white/20 uppercase block mb-1"><AutoTranslatedText text="Status" /></span>
                                                     <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-widest">
                                                         <AutoTranslatedText text={lookupResult.status} />
                                                     </span>
                                                 </div>
                                                 <div className="text-right">
-                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Order ID</div>
+                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1"><AutoTranslatedText text="Order ID" /></div>
                                                     <div className="text-[11px] font-bold text-white/60 tracking-tighter">{lookupResult.id}</div>
                                                 </div>
                                             </div>
@@ -1595,16 +1603,16 @@ const VirtualStorePage: React.FC = () => {
 
                                             <div className="space-y-4">
                                                 <div>
-                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Product</div>
+                                                    <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1"><AutoTranslatedText text="Product" /></div>
                                                     <div className="text-sm font-bold text-white"><AutoTranslatedText text={lookupResult.productName} /></div>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Date</div>
+                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1"><AutoTranslatedText text="Date" /></div>
                                                         <div className="text-[11px] text-white/60">{lookupResult.date}</div>
                                                     </div>
                                                     <div>
-                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1">Price</div>
+                                                        <div className="text-[9px] font-black tracking-widest text-white/20 uppercase mb-1"><AutoTranslatedText text="Price" /></div>
                                                         <div className="text-[11px] text-white/60">{lookupResult.price}</div>
                                                     </div>
                                                 </div>
@@ -1615,7 +1623,7 @@ const VirtualStorePage: React.FC = () => {
                                             onClick={() => setLookupResult(null)}
                                             className="w-full py-5 rounded-2xl bg-white/5 border border-white/10 text-white/40 font-black text-[10px] uppercase tracking-[0.2em] hover:text-white hover:bg-white/10 transition-all"
                                         >
-                                            <AutoTranslatedText text="다시 조회 (Search Again)" />
+                                            <AutoTranslatedText text="Search Again" />
                                         </button>
                                     </div>
                                 )}
@@ -1629,9 +1637,9 @@ const VirtualStorePage: React.FC = () => {
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
                 <div className="container mx-auto flex flex-col items-center gap-6">
-                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">VIA STATION IMMERSIVE</div>
+                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase"><AutoTranslatedText text="VIA STATION IMMERSIVE" /></div>
                     <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
-                        The convergence of traditional aesthetics and cutting-edge virtual commerce technology.
+                        <AutoTranslatedText text="The convergence of traditional aesthetics and cutting-edge virtual commerce technology." />
                     </p>
                 </div>
             </footer>
@@ -1730,7 +1738,7 @@ const VirtualStorePage: React.FC = () => {
                                 <div className="p-8 bg-white/[0.02] border-t border-white/10 space-y-6">
                                     <div className="flex justify-between items-end">
                                         <div className="space-y-1">
-                                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Subtotal Estimate</span>
+                                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest"><AutoTranslatedText text="Subtotal Estimate" /></span>
                                             <div className="text-3xl font-black text-white tracking-tighter">
                                                 {formatPrice(cartTotal)}
                                             </div>

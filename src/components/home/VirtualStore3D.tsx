@@ -166,7 +166,7 @@ const GlassFragment = ({ category, position, color, i18nLanguage, onClick, produ
                                 color: 'white',
                                 transform: hovered ? 'scale(1.1)' : 'scale(1)'
                             }}>
-                            {getLocalizedText(category.label, i18nLanguage) || t(`subcategory.${category.id}`)}
+                            <AutoTranslatedText text={(getLocalizedText(category.label, i18nLanguage) || t(`subcategory.${category.id}`)) as string} />
                         </span>
                     </div>
                 </Html>
@@ -246,12 +246,12 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                     {activeFloorData.floor}
                                 </span>
                                 <span className="text-7xl font-black text-white tracking-widest leading-none text-center">
-                                    {getLocalizedText(activeFloorData.title, i18nLanguage) || t(`nav.${activeFloorData.id}`)}
+                                    <AutoTranslatedText text={(getLocalizedText(activeFloorData.title, i18nLanguage) || t(`nav.${activeFloorData.id}`)) as string} />
                                 </span>
                             </div>
                             <p className="text-white/70 font-sans text-2xl font-medium leading-relaxed mb-4 tracking-[0.2em] uppercase text-center max-w-[800px]">
-                                <AutoTranslatedText text={`선택된 ${activeFloorData.floor}층의 스페이스 다이어그램입니다.`} /><br />
-                                <AutoTranslatedText text="각 파편화된 다목적 조닝(Zoning) 블록을 확인하세요." />
+                                <AutoTranslatedText text={`Space diagram for the selected ${activeFloorData.floor}.`} /><br />
+                                <AutoTranslatedText text="Check each fragmented multipurpose zoning block." />
                             </p>
 
                             {/* Hovered Category Sub-items (Expanding Layout) */}
@@ -896,7 +896,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                             <span style={{ fontSize: isMobile ? '12px' : '18px', fontWeight: '900', color: activeFloorData.color }}>F</span>
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <span style={{ fontSize: '10px', color: activeFloorData.color, letterSpacing: '0.3em', fontWeight: '900', marginBottom: '2px' }}>FLOOR TITLE</span>
+                                            <span style={{ fontSize: '10px', color: activeFloorData.color, letterSpacing: '0.3em', fontWeight: '900', marginBottom: '2px' }}><AutoTranslatedText text="FLOOR TITLE" /></span>
                                             <h4 style={{ color: '#fff', fontSize: isMobile ? '16px' : '22px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.2 }}>
                                                 <AutoTranslatedText text={getLocalizedText(activeFloorData.title, lang)} />
                                             </h4>
@@ -913,7 +913,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                                 }}
                                             >
                                                 <Play size={isMobile ? 10 : 12} fill={activeFloorData.color} stroke="none" />
-                                                <span>영상보러가기</span>
+                                                <span><AutoTranslatedText text="Watch Video" /></span>
                                             </motion.div>
                                         </div>
                                     </div>
@@ -960,12 +960,12 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <div className="flex flex-col gap-1">
-                                        <span style={{ fontSize: '7px', color: '#fff', fontWeight: '900', letterSpacing: '0.4em' }}>STRUCTURAL FRAGMENT</span>
+                                        <span style={{ fontSize: '7px', color: '#fff', fontWeight: '900', letterSpacing: '0.4em' }}><AutoTranslatedText text="STRUCTURAL FRAGMENT" /></span>
                                         <span style={{ fontSize: '8px', color: activeFloorData.color, fontWeight: 'bold' }}>CODE: DEPT_FR_0{activeFloorData.floor}</span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: activeFloorData.color, fontWeight: '900', fontSize: '12px', whiteSpace: 'nowrap' }}>
                                         <span style={{ fontSize: '18px', lineHeight: 1 }}>→</span>
-                                        <span style={{ letterSpacing: '0.1em' }}>CLOSE</span>
+                                        <span style={{ letterSpacing: '0.1em' }}><AutoTranslatedText text="CLOSE" /></span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -1122,7 +1122,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                             {activeFloorData.floor}
                         </span>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-mono font-bold text-[#00FFC2] tracking-[0.3em] uppercase opacity-70">Floor Title</span>
+                            <span className="text-[10px] font-mono font-bold text-[#00FFC2] tracking-[0.3em] uppercase opacity-70"><AutoTranslatedText text="Floor Title" /></span>
                             <h2 className="text-2xl font-black text-white uppercase leading-tight">
                                 <AutoTranslatedText text={getLocalizedText(activeFloorData.title, i18n.language)} />
                             </h2>
@@ -1135,7 +1135,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                         className="flex items-center gap-2 text-[#00FFC2] hover:text-[#00FFC2]/80 transition-colors mt-2"
                     >
                         <Play size={14} fill="currentColor" />
-                        <span className="text-[10px] font-bold tracking-widest uppercase"><AutoTranslatedText text="영상보러가기" /></span>
+                        <span className="text-[10px] font-bold tracking-widest uppercase"><AutoTranslatedText text="Watch Video" /></span>
                     </button>
                 </div>
 
@@ -1165,7 +1165,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                 {/* Footer: Metadata & Close */}
                 <div className="mt-4 pt-8 border-t border-white/10 flex items-center justify-between">
                     <div className="flex flex-col gap-1 opacity-50">
-                        <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase">Structural Fragment</span>
+                        <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase"><AutoTranslatedText text="Structural Fragment" /></span>
                         <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
                     </div>
 
@@ -1178,7 +1178,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                                 <ArrowRight size={18} />
                             </motion.div>
                         </div>
-                        <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:tracking-[0.4em] transition-all">Close</span>
+                        <span className="text-sm font-black tracking-[0.2em] uppercase group-hover:tracking-[0.4em] transition-all"><AutoTranslatedText text="Close" /></span>
                     </button>
                 </div>
             </motion.div>
@@ -1295,7 +1295,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
 
             {/* 3D Immersive Explorer - Force Desktop Precedence Marker v1.0.2 */}
             <div className="absolute top-4 right-4 text-[8px] font-mono text-white/10 pointer-events-none uppercase tracking-widest z-[10000]">
-                3D Immersive Engine v1.0.2 (Desktop Only)
+                <AutoTranslatedText text="3D Immersive Engine v1.0.2 (Desktop Only)" />
             </div>
             {/* 3D Background Space - Enabled Pointer Events for OrbitControls */}
             <div className="absolute inset-0 z-0 pointer-events-auto">
@@ -1338,7 +1338,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                     className="absolute top-12 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
                 >
                     <ChevronUp size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:-translate-y-1 transition-all" />
-                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Forward</span>
+                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all"><AutoTranslatedText text="Move Forward" /></span>
                 </button>
 
                 {/* Move Backward (Bottom) */}
@@ -1349,7 +1349,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                     }}
                     className="absolute bottom-32 left-1/2 -translate-x-1/2 p-6 pointer-events-auto flex flex-col items-center gap-2 group transition-all duration-300"
                 >
-                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all">Move Backward</span>
+                    <span className="text-[#00FFC2] font-mono text-[10px] tracking-[0.4em] uppercase opacity-0 group-hover:opacity-40 transition-all"><AutoTranslatedText text="Move Backward" /></span>
                     <ChevronDown size={28} className="text-[#00FFC2] opacity-40 group-hover:opacity-100 group-hover:translate-y-1 transition-all" />
                 </button>
 
@@ -1810,7 +1810,7 @@ export const VirtualStore3D: React.FC = () => {
             {isAtInspiration && (
                 <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-3 md:gap-6 select-none w-[90vw] md:w-max max-w-full px-4 text-center justify-center" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
                     <div className="text-white/40 font-mono text-[9px] md:text-sm tracking-[0.1em] md:tracking-[0.3em] uppercase font-black break-keep leading-relaxed">
-                        <AutoTranslatedText text="[드래그하여 회전] • [층버튼을 클릭하여 선택]" />
+                        <AutoTranslatedText text="[DRAG TO ROTATE] • [CLICK BUTTONS TO SELECT FLOOR]" />
                     </div>
 
                     <button
@@ -1819,7 +1819,7 @@ export const VirtualStore3D: React.FC = () => {
                     >
                         <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2] group-hover:shadow-[0_0_8px_#00FFC2] transition-all" />
                         <span className="text-[#00FFC2] font-bold text-[10px] md:text-sm tracking-widest uppercase">
-                            <AutoTranslatedText text="원위치" />
+                            <AutoTranslatedText text="RESET VIEW" />
                         </span>
                     </button>
                 </div>

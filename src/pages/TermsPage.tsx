@@ -5,7 +5,7 @@ import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FileText, Shield } from 'lucide-react';
 
 const TermsPage: React.FC = () => {
-    const { t } = useTranslation();
+    useTranslation();
 
     return (
         <div className="min-h-screen bg-dancheong-deep-bg text-white pb-20">
@@ -26,7 +26,7 @@ const TermsPage: React.FC = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-serif font-bold mb-6 tracking-tight"
                     >
-                        {t('footer.terms')}
+                        <AutoTranslatedText text="이용약관" />
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

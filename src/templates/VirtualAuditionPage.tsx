@@ -20,6 +20,8 @@ import { useAdmin } from '../hooks/useAdmin';
 import { useWebRTCScreenShare } from '../hooks/useWebRTCScreenShare';
 import { useNavigationState, useImmersiveMode } from '../context/NavigationActionContext';
 import { useTranslation } from 'react-i18next';
+import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 interface Participant {
     id: string;
@@ -44,6 +46,7 @@ const VirtualAuditionPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { id: roomId } = useParams<{ id: string }>();
+    const { translateAsync } = useAutoTranslate('');
     
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isMuted, setIsMuted] = useState(false);
@@ -173,11 +176,12 @@ const VirtualAuditionPage: React.FC = () => {
             setParticipants(remoteParticipants);
         });
 
-        newSocket.on('audition-start', ({ candidateId }) => {
+        newSocket.on('audition-start', async ({ candidateId }) => {
             setActiveCandidateId(candidateId);
             if (candidateId === newSocket.id) {
                 // I am the active candidate!
-                alert('당신의 오디션이 시작되었습니다! 무대로 이동합니다.');
+                const msg = t('audition.start_notice', '당신의 오디션이 시작되었습니다! 무대로 이동합니다.');
+                alert(msg);
                 setCurrentRole('candidate');
             }
         });
@@ -260,7 +264,8 @@ const VirtualAuditionPage: React.FC = () => {
     const handleTokenSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!entryToken.trim()) {
-            setTokenError('Please enter a valid access token.');
+            const errorMsg = t('common.token_error', 'Please enter a valid access token.');
+            setTokenError(errorMsg);
             return;
         }
         
@@ -300,14 +305,16 @@ const VirtualAuditionPage: React.FC = () => {
         } else {
             // End of queue
             socket.emit('audition-start', { candidateId: null });
-            alert('모든 대기 참가자의 오디션이 완료되었습니다.');
+            const msg = t('audition.complete_notice', '모든 대기 참가자의 오디션이 완료되었습니다.');
+            alert(msg);
         }
     };
 
     const submitTotalScore = () => {
         if (socket && activeCandidateId) {
             socket.emit('submit-score', { candidateId: activeCandidateId, scores });
-            alert('채점이 완료되었습니다.');
+            const msg = t('audition.score_submitted', '채점이 완료되었습니다.');
+            alert(msg);
             setShowScoring(false);
         }
     };
@@ -378,7 +385,8 @@ const VirtualAuditionPage: React.FC = () => {
     // Recording Functions
     const startRecording = async () => {
         if (!webrtcStreamToPass && !localStream) {
-            alert('녹화할 스트림이 없습니다.');
+            const msg = t('audition.no_stream', '녹화할 스트림이 없습니다.');
+            alert(msg);
             return;
         }
         const stream = (currentRole === 'candidate' ? localStream : webrtcStreamToPass);
@@ -459,7 +467,9 @@ const VirtualAuditionPage: React.FC = () => {
                         onPointerMove={resetUiTimer}
                         onPointerDown={resetUiTimer}
                     >
-                        <Suspense fallback={<Text position={[0, 1.5, -5]} color="white" fontSize={0.5}>Loading Stage...</Text>}>
+                        <Suspense fallback={<Text position={[0, 1.5, -5]} color="white" fontSize={0.5}>
+                            {t('common.loading_content')}
+                        </Text>}>
                             <AuditionStageEnvironment 
                                 participants={participants as any}
                                 localParticipant={localParticipant as any}
@@ -498,11 +508,13 @@ const VirtualAuditionPage: React.FC = () => {
 
                                         <div className="text-left flex flex-col gap-1">
                                             <h1 className="text-2xl font-black tracking-tighter uppercase italic text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40">
-                                                {t('audition.title')}
+                                                <AutoTranslatedText text={t('audition.title')} />
                                             </h1>
                                             <div className="flex items-center justify-start gap-2 text-yellow-500">
                                                 <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#FFD700]" />
-                                                <span className="text-[10px] font-black tracking-[0.3em] uppercase opacity-60">Live Audition Session</span>
+                                                <span className="text-[10px] font-black tracking-[0.3em] uppercase opacity-60">
+                                                    <AutoTranslatedText text={t('audition.live_session', 'Live Audition Session')} />
+                                                </span>
                                             </div>
                                         </div>
 
@@ -513,7 +525,9 @@ const VirtualAuditionPage: React.FC = () => {
                                                 className="px-4 py-2 bg-[#FF4757] rounded-full flex items-center gap-2 shadow-[0_0_20px_rgba(255,71,87,0.4)]"
                                             >
                                                 <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-white">RECORDING</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                                                    {t('common.recording', 'RECORDING')}
+                                                </span>
                                             </motion.div>
                                         )}
 
@@ -569,7 +583,9 @@ const VirtualAuditionPage: React.FC = () => {
                                 </div>
                                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {queue.length === 0 ? (
-                                        <p className="text-[10px] text-white/20 uppercase tracking-widest text-center py-8 italic font-bold">Waiting for candidates...</p>
+                                        <p className="text-center text-white/50 text-xs py-4">
+                                            {t('audition.waiting_candidates', 'Waiting for candidates...')}
+                                        </p>
                                     ) : (
                                         queue.map((p, idx) => (
                                             <motion.div 
@@ -610,12 +626,12 @@ const VirtualAuditionPage: React.FC = () => {
                                             >
                                                 {activeCandidateId ? (
                                                     <>
-                                                        <span>Next Candidate</span>
+                                                        <span>{t('audition.next_candidate', 'Next Candidate')}</span>
                                                         <SkipForward size={14} fill="black" />
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <span>Start Audition</span>
+                                                        <span>{t('audition.start_audition', 'Start Audition')}</span>
                                                         <Play size={14} fill="black" />
                                                     </>
                                                 )}
@@ -625,7 +641,7 @@ const VirtualAuditionPage: React.FC = () => {
                                                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all"
                                                 onClick={() => setShowScoring(!showScoring)}
                                             >
-                                                {showScoring ? "Close Evaluation" : "Judge Evaluation"}
+                                                {showScoring ? t('audition.close_evaluation', 'Close Evaluation') : t('audition.judge_evaluation', 'Judge Evaluation')}
                                             </button>
                                         </>
                                     )}
@@ -654,7 +670,9 @@ const VirtualAuditionPage: React.FC = () => {
                                 
                                 <div className="flex items-center gap-2">
                                     <Award size={16} className="text-[#FF4757]" />
-                                    <h3 className="text-[11px] font-black uppercase tracking-widest">Grading Tool</h3>
+                                    <h3 className="text-[11px] font-black uppercase tracking-widest">
+                                        {t('audition.grading_tool')}
+                                    </h3>
                                 </div>
 
                                 <div className="space-y-2.5">
@@ -694,7 +712,9 @@ const VirtualAuditionPage: React.FC = () => {
                             <div className="pointer-events-auto bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-4 flex flex-col gap-2 shadow-xl">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Settings size={14} className="text-white/40" />
-                                    <h4 className="text-[9px] font-black uppercase tracking-widest text-white/40">Tool Hub</h4>
+                                    <h4 className="text-[9px] font-black uppercase tracking-widest text-white/40">
+                                        {t('audition.tool_box')}
+                                    </h4>
                                 </div>
                                 
                                 <button 
@@ -709,7 +729,9 @@ const VirtualAuditionPage: React.FC = () => {
                                 <div className="p-3 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2">
                                     <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                                         <div className="w-1 h-3 bg-[#FFD700] rounded-full" />
-                                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#FFD700]">Lighting</h4>
+                                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#FFD700]">
+                                            {t('common.lighting')}
+                                        </h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <button 
@@ -717,28 +739,36 @@ const VirtualAuditionPage: React.FC = () => {
                                             className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${lightingConfig.stage ? 'bg-[#FFD700]/20 border-[#FFD700]/40 text-[#FFD700]' : 'bg-white/5 border-white/10 opacity-40 grayscale'}`}
                                         >
                                             <Lamp size={14} />
-                                            <span className="text-[7px] font-bold uppercase tracking-widest">Stage</span>
+                                            <span className="text-[10px] font-bold mt-1">
+                                                {t('audition.stage', 'Stage')}
+                                            </span>
                                         </button>
                                         <button 
                                             onClick={() => toggleLight('ambient')}
                                             className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${lightingConfig.ambient ? 'bg-[#00D2FF]/20 border-[#00D2FF]/40 text-[#00D2FF]' : 'bg-white/5 border-white/10 opacity-40 grayscale'}`}
                                         >
                                             <Sun size={14} />
-                                            <span className="text-[7px] font-bold uppercase tracking-widest">Ambient</span>
+                                            <span className="text-[10px] font-bold mt-1">
+                                                {t('audition.ambient', 'Ambient')}
+                                            </span>
                                         </button>
                                         <button 
                                             onClick={() => toggleLight('top')}
                                             className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${lightingConfig.top ? 'bg-white/20 border-white/40 text-white' : 'bg-white/5 border-white/10 opacity-40 grayscale'}`}
                                         >
                                             <ArrowDown size={14} />
-                                            <span className="text-[7px] font-bold uppercase tracking-widest">Top-Down</span>
+                                            <span className="text-[10px] font-bold mt-1">
+                                                {t('audition.top_down', 'Top-Down')}
+                                            </span>
                                         </button>
                                         <button 
                                             onClick={() => toggleLight('diagonal')}
                                             className={`py-2 px-1 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${lightingConfig.diagonal ? 'bg-[#FF4757]/20 border-[#FF4757]/40 text-[#FF4757]' : 'bg-white/5 border-white/10 opacity-40 grayscale'}`}
                                         >
                                             <Zap size={14} />
-                                            <span className="text-[7px] font-bold uppercase tracking-widest">Diagonal</span>
+                                            <span className="text-[10px] font-bold mt-1">
+                                                {t('audition.diagonal', 'Diagonal')}
+                                            </span>
                                         </button>
                                     </div>
                                 </div>
@@ -756,7 +786,9 @@ const VirtualAuditionPage: React.FC = () => {
                                         className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex flex-col items-center gap-1.5 group transition-all"
                                     >
                                         <Users size={14} className="group-hover:text-[#00FF88]" />
-                                        <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100">Participants</span>
+                                        <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100">
+                                            {t('common.participants')}
+                                        </span>
                                     </button>
                                 </div>
 
@@ -777,7 +809,9 @@ const VirtualAuditionPage: React.FC = () => {
                                                 : t('audition.take_stage')}
                                         </span>
                                         {stageFocus === 'judge' && (
-                                            <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-0.5">Focus: Judge</span>
+                                            <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest mt-0.5">
+                                                <AutoTranslatedText text="Focus: Judge" />
+                                            </span>
                                         )}
                                     </div>
                                 </button>
@@ -817,7 +851,9 @@ const VirtualAuditionPage: React.FC = () => {
                                     ) : (
                                         <div className="h-full flex flex-col items-center justify-center gap-4 opacity-20">
                                             <ClipboardList size={40} />
-                                            <p className="text-xs font-bold uppercase tracking-[0.2em] italic">Waiting for script from Judge...</p>
+                                            <p className="text-xs font-bold uppercase tracking-[0.2em] italic">
+                                                <AutoTranslatedText text="Waiting for script from Judge..." />
+                                            </p>
                                         </div>
                                     )}
                                 </div>
@@ -825,12 +861,14 @@ const VirtualAuditionPage: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-2">
                                             <div className={`w-2 h-2 rounded-full ${isMuted ? 'bg-[#FF4757]' : 'bg-[#00FF88] shadow-[0_0_10px_#00FF88]'}`} />
-                                            <span className="text-[9px] font-black uppercase tracking-widest opacity-40">{isMuted ? 'Muted' : 'Mic Live'}</span>
+                                            <span className="text-[9px] font-black uppercase tracking-widest opacity-40">
+                                                {isMuted ? <AutoTranslatedText text="Muted" /> : <AutoTranslatedText text="Mic Live" />}
+                                            </span>
                                         </div>
                                     </div>
                                     {activeCandidateId === socket?.id && (
                                         <div className="bg-[#FFD700] text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest animate-pulse">
-                                            On Stage Now
+                                            <AutoTranslatedText text="On Stage Now" />
                                         </div>
                                     )}
                                 </div>
@@ -905,7 +943,9 @@ const VirtualAuditionPage: React.FC = () => {
                                 <div className="flex flex-col gap-8">
                                     <div className="text-center">
                                         <h3 className="text-3xl font-black mb-2 uppercase tracking-tight">{t('audition.materials.title')}</h3>
-                                        <p className="text-white/40 text-xs font-black tracking-widest uppercase">Upload scripts or visual materials</p>
+                                        <p className="text-white/40 text-xs font-black tracking-widest uppercase">
+                                            <AutoTranslatedText text="Upload scripts or visual materials" />
+                                        </p>
                                     </div>
                                     <div className="space-y-4">
                                         <label className="w-full h-48 border-2 border-dashed border-white/10 hover:border-[#FFD700]/50 bg-white/5 rounded-3xl flex flex-col items-center justify-center gap-4 cursor-pointer group transition-all">
@@ -914,24 +954,29 @@ const VirtualAuditionPage: React.FC = () => {
                                             </div>
                                             <div className="text-center capitalize">
                                                 <p className="text-sm font-bold">{t('audition.materials.attachment')}</p>
-                                                <p className="text-[10px] opacity-30 mt-1">PDF, Image or Docs supported</p>
+                                                <p className="text-[10px] opacity-30 mt-1">
+                                                    <AutoTranslatedText text="PDF, Image or Docs supported" />
+                                                </p>
                                             </div>
                                             <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*,.pdf" />
                                         </label>
                                         <div className="flex flex-col gap-4">
-                                            <p className="text-[9px] font-black uppercase tracking-widest opacity-20 text-center">Script Text (Direct Input)</p>
+                                            <p className="text-[9px] font-black uppercase tracking-widest opacity-20 text-center">
+                                                <AutoTranslatedText text="Script Text (Direct Input)" />
+                                            </p>
                                             <textarea 
                                                 value={teleprompterText}
                                                 onChange={(e) => setTeleprompterText(e.target.value)}
-                                                placeholder="Type script here to display on Candidate's teleprompter..."
+                                                placeholder={t('audition.materials.placeholder') || "Type script here to display on Candidate's teleprompter..."}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-xs font-medium outline-none h-32 focus:border-[#FFD700]/50 transition-all font-sans"
                                             />
                                         </div>
                                         <button 
-                                            onClick={() => {
+                                            onClick={async () => {
                                                 if (socket && teleprompterText) {
                                                     socket.emit('share-teleprompter', { roomId: roomId || 'audition-room', text: teleprompterText });
-                                                    alert('대본이 전송되었습니다.');
+                                                    const msg = await translateAsync('대본이 전송되었습니다.');
+                                                    alert(msg);
                                                 }
                                                 setShowMaterials(false);
                                             }}
@@ -954,7 +999,9 @@ const VirtualAuditionPage: React.FC = () => {
                             className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-black/40 backdrop-blur-3xl border-l border-white/10 p-10 flex flex-col gap-10"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-2xl font-black italic tracking-tighter">PARTICIPANTS</h3>
+                                <h3 className="text-2xl font-black italic tracking-tighter">
+                                    <AutoTranslatedText text="PARTICIPANTS" />
+                                </h3>
                                 <button onClick={() => setShowParticipants(false)} className="p-2 hover:bg-white/10 rounded-lg"><ChevronRight size={24} /></button>
                             </div>
                             <div className="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar">
@@ -962,7 +1009,7 @@ const VirtualAuditionPage: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: localParticipant.color }}>{localParticipant.name[0]}</div>
                                         <div>
-                                            <p className="font-bold text-sm tracking-tight">{localParticipant.name} (You)</p>
+                                            <p className="font-bold text-sm tracking-tight">{localParticipant.name} (<AutoTranslatedText text="You" />)</p>
                                             <p className="text-[10px] uppercase tracking-widest text-[#FFD700]">{t(`audition.${currentRole}`)}</p>
                                         </div>
                                     </div>
@@ -1004,10 +1051,12 @@ const VirtualAuditionPage: React.FC = () => {
                                 </div>
                                 
                                 <div className="space-y-3">
-                                    <h2 className="text-4xl font-black tracking-tight uppercase text-white">보안 입장</h2>
+                                    <h2 className="text-4xl font-black tracking-tight uppercase text-white">
+                                        <AutoTranslatedText text="Secure Access" />
+                                    </h2>
                                     <p className="text-white/40 text-sm font-medium leading-relaxed">
-                                        이 오디션 룸은 초대된 지원자만 접근할 수 있습니다.<br />
-                                        초대장에 기재된 고유 토큰을 입력해 주세요.
+                                        <AutoTranslatedText text="This audition room is restricted to invited candidates." /><br />
+                                        <AutoTranslatedText text="Please enter your unique invitation token." />
                                     </p>
                                 </div>
 
@@ -1018,7 +1067,7 @@ const VirtualAuditionPage: React.FC = () => {
                                             autoFocus
                                             value={entryToken}
                                             onChange={(e) => setEntryToken(e.target.value)}
-                                            placeholder="ENTER TOKEN"
+                                            placeholder={t('audition.entry.token_placeholder') || "ENTER TOKEN"}
                                             className="w-full h-20 bg-white/5 border border-white/10 rounded-2xl px-8 font-mono tracking-[0.5em] text-center text-2xl text-white focus:outline-none focus:border-yellow-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
                                         />
                                         {tokenError && (
@@ -1030,12 +1079,12 @@ const VirtualAuditionPage: React.FC = () => {
                                         type="submit"
                                         className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-[0.2em] transition-all hover:bg-yellow-500 hover:text-white active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
                                     >
-                                        오디션장 입장하기
+                                        <AutoTranslatedText text="Enter Audition Room" />
                                     </button>
                                 </form>
                                 
                                 <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] cursor-pointer hover:text-white/40 transition-colors" onClick={() => navigate('/')}>
-                                    또는 메인 페이지로 돌아가기
+                                    <AutoTranslatedText text="Or return to Home" />
                                 </p>
                             </motion.div>
                         </motion.div>
@@ -1064,8 +1113,12 @@ const VirtualAuditionPage: React.FC = () => {
                                         <UserPlus size={48} className="text-yellow-500 -rotate-12" />
                                     </div>
                                     <div className="space-y-2">
-                                        <h3 className="text-3xl font-black tracking-tight text-white">지원자 초대하기</h3>
-                                        <p className="text-sm text-white/40 font-medium">지원자에게 보낼 보안 링크가 생성되었습니다.</p>
+                                        <h3 className="text-3xl font-black tracking-tight text-white">
+                                            <AutoTranslatedText text="Invite Candidate" />
+                                        </h3>
+                                        <p className="text-sm text-white/40 font-medium">
+                                            <AutoTranslatedText text="A secure invitation link has been generated." />
+                                        </p>
                                     </div>
                                     
                                     <div className="w-full bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col gap-4 group hover:border-yellow-500/30 transition-colors">
@@ -1076,16 +1129,22 @@ const VirtualAuditionPage: React.FC = () => {
                                                     {inviteLink}
                                                 </span>
                                                 <button 
-                                                    onClick={() => {
+                                                    onClick={async () => {
                                                         if (inviteLink) {
                                                             navigator.clipboard.writeText(inviteLink)
-                                                                .then(() => alert('초대 링크가 복사되었습니다!'))
-                                                                .catch(() => alert('복사에 실패했습니다.'));
+                                                                .then(async () => {
+                                                                    const msg = await translateAsync('초대 링크가 복사되었습니다!');
+                                                                    alert(msg);
+                                                                })
+                                                                .catch(async () => {
+                                                                    const msg = await translateAsync('복사에 실패했습니다.');
+                                                                    alert(msg);
+                                                                });
                                                         }
                                                     }}
                                                     className="px-6 py-3 bg-yellow-500 text-black rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,215,0,0.3)] whitespace-nowrap"
                                                 >
-                                                    COPY LINK
+                                                    <AutoTranslatedText text="COPY LINK" />
                                                 </button>
                                             </div>
                                         </div>
@@ -1095,7 +1154,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         onClick={() => setShowInviteModal(false)}
                                         className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
                                     >
-                                        닫기
+                                        <AutoTranslatedText text="Close" />
                                     </button>
                                 </div>
                             </motion.div>

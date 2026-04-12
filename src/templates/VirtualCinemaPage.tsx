@@ -14,7 +14,7 @@ import { useFloors } from '../context/FloorContext';
 import { useAdmin } from '../hooks/useAdmin';
 
 const VirtualCinemaPage: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const { id: routeId } = useParams();
     const location = useLocation();
@@ -61,11 +61,11 @@ const VirtualCinemaPage: React.FC = () => {
     const floorLabel = floorNum ? `Floor-${floorNum}` : (currentFloor?.floor || parentProduct?.category || '');
 
     useSetBreadcrumbPath(parentProduct ? [
-        { id: currentFloor?.floor || parentProduct.category, label: String(floorLabel), type: 'floor' },
-        { id: currentCategory?.id || parentProduct.subcategory, label: String(currentCategory?.label || parentProduct.subcategory), type: 'category' },
-        { id: 'detail', label: '상세', type: 'detail' },
-        { id: parentProduct.id, label: String(typeof parentProduct.title === 'string' ? parentProduct.title : (parentProduct.title.ko || parentProduct.title.en)), type: 'detail' },
-        { id: 'cinema', label: '가상 시네마', type: 'template' }
+        { id: currentFloor?.floor || parentProduct.category, label: floorLabel, type: 'floor' },
+        { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
+        { id: 'detail', label: t('상세'), type: 'detail' },
+        { id: parentProduct.id, label: typeof parentProduct.title === 'string' ? parentProduct.title : (parentProduct.title.ko || parentProduct.title.en), type: 'detail' },
+        { id: 'cinema', label: t('가상 시네마'), type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -505,7 +505,7 @@ const VirtualCinemaPage: React.FC = () => {
                                     <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </Link>
                                 <div className="h-4 w-[1px] bg-white/20" />
-                                <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Now Streaming in 4K</span>
+                                <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40"><AutoTranslatedText text="Now Streaming in 4K" /></span>
                             </div>
 
                             {isEditingMetadata ? (
@@ -601,6 +601,10 @@ const VirtualCinemaPage: React.FC = () => {
                     {/* Fullscreen Toggle Button */}
                     {!isLoading && cinemaItems.length > 0 && (
                         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-black tracking-[0.5em] text-[#00D2FF] opacity-40 uppercase"><AutoTranslatedText text="VIRTUAL CINEMA EXPERIENCE" /></span>
+                                <h1 className="text-3xl font-black tracking-tight text-white uppercase"><AutoTranslatedText text="Cinema Content" /></h1>
+                            </div>
                             <button
                                 onClick={() => setIsExplorationMode(true)}
                                 className="flex items-center gap-3 px-8 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
@@ -733,8 +737,8 @@ const VirtualCinemaPage: React.FC = () => {
                             }}
                             transition={{ duration: 0.5 }}
                         >
-                            <div className="text-[10px] font-black tracking-[0.5em] text-white/30 uppercase mb-2">Theater Immersion</div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter">Cinematic Space</h2>
+                            <div className="text-[10px] font-black tracking-[0.5em] text-white/30 uppercase mb-2"><AutoTranslatedText text="Theater Immersion" /></div>
+                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter"><AutoTranslatedText text="Cinematic Space" /></h2>
                         </motion.div>
 
                         <motion.div
@@ -748,7 +752,7 @@ const VirtualCinemaPage: React.FC = () => {
                             <button
                                 onClick={() => setIsZoomed(!isZoomed)}
                                 className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl active:scale-95"
-                                title={isZoomed ? "Exit Zoom" : "Zoom to Screen"}
+                                title={isZoomed ? t("Exit Zoom") : t("Zoom to Screen")}
                             >
                                 {isZoomed ? <Minimize size={24} /> : <Maximize size={24} />}
                             </button>
@@ -783,7 +787,7 @@ const VirtualCinemaPage: React.FC = () => {
                         {/* Scrolling HUD */}
                         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-[1010] flex flex-col items-center">
                             <div className="w-[2px] h-12 bg-gradient-to-t from-white/40 to-transparent mb-4" />
-                            <div className="text-[10px] font-black tracking-[0.6em] text-white/40 uppercase">Navigate Theater</div>
+                            <div className="text-[10px] font-black tracking-[0.6em] text-white/40 uppercase"><AutoTranslatedText text="Navigate Theater" /></div>
                         </div>
                     </motion.div>
                 )}
@@ -810,7 +814,16 @@ const VirtualCinemaPage: React.FC = () => {
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-1">
                                             <AutoTranslatedText text={isEditMode ? "영상 정보 수정" : "신규 영상 등록"} />
                                         </h3>
-                                        <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">{isEditMode ? "Edit Video Info" : "Add New Cinematic Content"}</p>
+                                        <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">
+                                            {isEditMode ? <AutoTranslatedText text="Edit Video Info" /> : <AutoTranslatedText text="Add New Cinematic Content" />}
+                                            <button 
+                                                onClick={() => setShowAddModal(false)}
+                                                className="p-3 hover:bg-white/10 rounded-full transition-all group border border-white/5"
+                                                title={t("Close")}
+                                            >
+                                                <X size={24} className="opacity-40 group-hover:opacity-100" />
+                                            </button>
+                                        </p>
                                     </div>
                                     <button
                                         onClick={() => {
@@ -835,7 +848,7 @@ const VirtualCinemaPage: React.FC = () => {
                                             <textarea
                                                 value={newTitle}
                                                 onChange={(e) => setNewTitle(e.target.value)}
-                                                placeholder="Enter video title..."
+                                                placeholder={t("Enter video title...")}
                                                 rows={2}
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
                                             />
@@ -855,7 +868,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                         setNewThumbnailUrl(e.target.value);
                                                         if (previewUrl) setPreviewUrl(null);
                                                     }}
-                                                    placeholder="Thumbnail Image URL..."
+                                                    placeholder={t("Thumbnail Image URL...")}
                                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
                                                 />
                                                 <input type="file" ref={fileInputRef} onChange={(e) => handleFileChange(e, 'image')} accept="image/*" className="hidden" />
@@ -882,9 +895,15 @@ const VirtualCinemaPage: React.FC = () => {
                                                     type="text"
                                                     value={newVideoUrl}
                                                     onChange={(e) => setNewVideoUrl(e.target.value)}
-                                                    placeholder="Video Content URL (mp4, webm)..."
+                                                    placeholder={t("Video Content URL (mp4, webm)...")}
                                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
                                                 />
+                                                <div className="flex items-center gap-3">
+                                                    <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
+                                                        <AutoTranslatedText text="Screening Now" />
+                                                    </span>
+                                                    <span className="text-white/30 text-[10px] font-black uppercase tracking-widest border border-white/10 px-3 py-1 rounded-full"><AutoTranslatedText text="Theatrical Release" /></span>
+                                                </div>
                                                 <input type="file" ref={videoInputRef} onChange={(e) => handleFileChange(e, 'video')} accept="video/*" className="hidden" />
                                                 {!newVideoUrl && !videoPreviewUrl ? (
                                                     <button onClick={() => videoInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
@@ -901,7 +920,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                             }}
                                                         />
                                                         <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Preview Loaded</span>
+                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm"><AutoTranslatedText text="Preview Loaded" /></span>
                                                         <button
                                                             onClick={() => {
                                                                 setNewVideoUrl('');
@@ -945,10 +964,10 @@ const VirtualCinemaPage: React.FC = () => {
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="text-3xl font-black tracking-tighter uppercase">VIA STATION CINEMA</div>
                     <div className="flex gap-10 text-[10px] font-black tracking-widest uppercase">
-                        <a href="#">Showtimes</a>
-                        <a href="#">Archives</a>
-                        <a href="#">Technical</a>
-                        <a href="#">Access</a>
+                        <a href="#"><AutoTranslatedText text="Showtimes" /></a>
+                        <a href="#"><AutoTranslatedText text="Archives" /></a>
+                        <a href="#"><AutoTranslatedText text="Technical" /></a>
+                        <a href="#"><AutoTranslatedText text="Access" /></a>
                     </div>
                 </div>
             </footer>

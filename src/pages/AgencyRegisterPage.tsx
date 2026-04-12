@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone } from 'lucide-react';
 import { registerAgency } from '../api/auth';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
@@ -14,6 +15,7 @@ declare global {
 
 const AgencyRegisterPage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -124,7 +126,7 @@ const AgencyRegisterPage: React.FC = () => {
                                     <input
                                         type="text"
                                         required
-                                        placeholder="Agency Name"
+                                        placeholder={t('agency.name_placeholder', 'Agency Name')}
                                         className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
                                             !formData.agencyName && formData.agencyName !== '' ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
                                         }`}
@@ -145,7 +147,7 @@ const AgencyRegisterPage: React.FC = () => {
                                     <input
                                         type="email"
                                         required
-                                        placeholder="Email Address"
+                                        placeholder={t('agency.email_placeholder', 'Email Address')}
                                         className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
                                             formData.username && !formData.username.includes('@') ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
                                         }`}
@@ -166,7 +168,7 @@ const AgencyRegisterPage: React.FC = () => {
                                     <input
                                         type="password"
                                         required
-                                        placeholder="Password"
+                                        placeholder={t('agency.password_placeholder', 'Password')}
                                         className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
                                             formData.password && formData.password.length < 8 ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
                                         }`}

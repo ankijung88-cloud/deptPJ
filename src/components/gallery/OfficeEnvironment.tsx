@@ -8,6 +8,7 @@ import {
   Environment
 } from "@react-three/drei";
 import { AvatarModel } from "./AvatarModel";
+import { useAutoTranslate } from "../../hooks/useAutoTranslate";
 
 
 const DepartmentRoom = ({ dept, onEnter }: { dept: any, onEnter: (id: string) => void }) => {
@@ -15,6 +16,7 @@ const DepartmentRoom = ({ dept, onEnter }: { dept: any, onEnter: (id: string) =>
   const doorPos = useRef(0);
   const leftDoorRef = useRef<any>();
   const rightDoorRef = useRef<any>();
+  const { translatedText: deptName } = useAutoTranslate(dept.name);
 
   useFrame((_state, delta) => {
     const target = isOpen ? 1 : 0;
@@ -101,7 +103,7 @@ const DepartmentRoom = ({ dept, onEnter }: { dept: any, onEnter: (id: string) =>
         fontWeight="bold"
         anchorX="center"
       >
-        {dept.name.toUpperCase()}
+        {deptName.toUpperCase()}
       </Text>
     </group>
   );
@@ -110,6 +112,10 @@ const DepartmentRoom = ({ dept, onEnter }: { dept: any, onEnter: (id: string) =>
 
 const DeskGroup = ({ position, rotation = [0, 0, 0], color, participant, assignedUser, isManager, onSit, onRemove, onAssign, isAdmin, isAgency }: any) => {
   const isManagement = isAdmin || isAgency;
+  const { translatedText: directorLabel } = useAutoTranslate("DIRECTOR");
+  const { translatedText: idLabel } = useAutoTranslate("ID");
+  const { translatedText: assignLabel } = useAutoTranslate("ASSIGN");
+
   return (
     <group position={position} rotation={rotation}>
       {/* Chair */}
@@ -217,7 +223,7 @@ const DeskGroup = ({ position, rotation = [0, 0, 0], color, participant, assigne
             anchorY="middle"
             fontWeight="black"
           >
-            DIRECTOR
+            {directorLabel}
           </Text>
           <mesh position={[0, -0.1, -0.01]}>
             <planeGeometry args={[1.2, 0.4]} />
@@ -244,8 +250,8 @@ const DeskGroup = ({ position, rotation = [0, 0, 0], color, participant, assigne
               <sphereGeometry args={[0.12, 16, 16]} />
               <meshStandardMaterial color="#00D2FF" emissive="#0088aa" emissiveIntensity={0.5} />
             </mesh>
-            <Text position={[0, 0, 0.13]} fontSize={0.12} color="white">ID</Text>
-            <Text position={[0, -0.25, 0]} fontSize={0.1} color="white">ASSIGN</Text>
+            <Text position={[0, 0, 0.13]} fontSize={0.12} color="white">{idLabel}</Text>
+            <Text position={[0, -0.25, 0]} fontSize={0.1} color="white">{assignLabel}</Text>
           </group>
         </group>
       )}
@@ -287,6 +293,7 @@ export const OfficeEnvironment = ({
   isAdmin, 
   isAgency 
 }: any) => {
+  const { translatedText: anonymousLabel } = useAutoTranslate("Anonymous");
   return (
     <group>
       {/* Lighting & Environment */}
@@ -320,7 +327,7 @@ export const OfficeEnvironment = ({
         <AvatarModel 
           key={p.id}
           position={p.position || [0, 0, 15]} 
-          name={p.name || 'Anonymous'} 
+          name={p.name || anonymousLabel} 
           color={p.color} 
           isLocal={p.id === user?.uid || p.id === user?.id}
         />

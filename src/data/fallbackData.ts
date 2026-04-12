@@ -10,7 +10,11 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         color: '#FF3B30', // 7F - Vibrant Red (Meeting/Action)
         content: [],
         subitems: [
-            { id: 'meeting-room', label: { ko: '회의실', en: 'Meeting Room' } }
+            { id: 'meeting-room', label: { ko: '회의실', en: 'Meeting Room' } },
+            { id: 'audio-room', label: { ko: '오디오룸', en: 'Audio Room' } },
+            { id: 'interview-room', label: { ko: '면접실', en: 'Interview Room' } },
+            { id: 'square', label: { ko: '모두의 광장', en: 'Square' } },
+            { id: 'office', label: { ko: '오피스', en: 'Office' } }
         ]
     },
     {
@@ -22,28 +26,23 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         color: '#FF4757', // 6F - Vibrant Red (Culture)
         content: [],
         subitems: [
-            { id: 'travel', label: { ko: '여행', en: 'Travel' } },
             { id: 'b2b-mall', label: { ko: 'B2B 몰', en: 'B2B Mall' } },
-            { id: 'interview', label: { ko: '아티스트 인터뷰', en: 'Artist Interview' } },
-            { id: 'f4_plus', label: { ko: '토크 플러스', en: 'Talk Plus' } },
-            { id: 'f4_book', label: { ko: '도서관 섹션', en: 'Book Section' } },
-            { id: 'f4_seminar', label: { ko: '세미나 룸', en: 'Seminar Room' } }
+            { id: 'f4_seminar', label: { ko: '세미나 룸', en: 'Seminar Room' } },
+            { id: 'b2c-mall', label: { ko: 'B2C 몰', en: 'B2C Mall' } }
         ]
     },
     {
         id: 'floor-5',
         floor: '5F',
         title: { ko: '패션 아카이브', en: 'FASHION ARCHIVE' },
-        description: { ko: '도심 속에서 진정한 휴식과 건강을 찾는 공간입니다. 자연에서 온 소재들로 꾸며진 웰니스 존입니다.', en: 'A space for true relaxation and health in the city, themed with natural materials.' },
+        description: { ko: '한국 패션사의 어제와 오늘을 한눈에 볼 수 있는 아카이브입니다.', en: 'An archive where you can see the past and present of Korean fashion history at a glance.' },
         videoUrl: '/uploads/modern_tradition.mp4',
         color: '#00D2FF', // 5F - Bright Cyan (Fashion/White-adjacent)
         content: [],
         subitems: [
             { id: 'archive', label: { ko: '패션 아카이브', en: 'Fashion Archive' } },
             { id: 'collection', label: { ko: '시즌 컬렉션', en: 'Season Collection' } },
-            { id: 'f5_material', label: { ko: '소재 도서관', en: 'Material Library' } },
-            { id: 'f5_fitting', label: { ko: '피팅 스튜디오', en: 'Fitting Studio' } },
-            { id: 'f5_textile', label: { ko: '텍스타일 룸', en: 'Textile Room' } }
+            { id: 'f5_fitting', label: { ko: '피팅 스튜디오', en: 'Fitting Studio' } }
         ]
     },
     {
@@ -58,7 +57,8 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
             { id: 'heritage', label: { ko: '지역 문화 유산', en: 'Local Heritage' } },
             { id: 'f6_gourmet', label: { ko: '미식 아카이브', en: 'Gourmet Archive' } },
             { id: 'f6_craft', label: { ko: '지역 공예관', en: 'Local Craft' } },
-            { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } }
+            { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } },
+            { id: 'shaman', label: { ko: '무속신당', en: 'Shamanic Shrine' } }
         ]
     },
     {
@@ -72,9 +72,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         subitems: [
             { id: 'performance', label: { ko: '공연 실황', en: 'Live Performance' } },
             { id: 'exhibit', label: { ko: '가상 전시', en: 'Virtual Exhibit' } },
-            { id: 'f3_media', label: { ko: '미디어 아트 홀', en: 'Media Art Hall' } },
-            { id: 'f3_lounge', label: { ko: '아티스트 라운지', en: 'Artist Lounge' } },
-            { id: 'f3_audio', label: { ko: '사운드 아카이브', en: 'Sound Archive' } }
+            { id: 'movement', label: { ko: '무브먼트 아카이브', en: 'Movement Archive' } }
         ]
     },
     {
@@ -89,7 +87,7 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
             { id: 'skincare', label: { ko: '스킨케어', en: 'Skincare' } },
             { id: 'hair', label: { ko: '헤어케어', en: 'Hair Care' } },
             { id: 'p_surgery', label: { ko: '뷰티성형', en: 'Plastic Surgery' } },
-            { id: 'inner-beauty', label: { ko: '이너 뷰티', en: 'Inner Beauty' } },
+            { id: 'inner-beauty', label: { ko: '이너뷰티', en: 'Inner Beauty' } },
             { id: 'body-care', label: { ko: '바디케어', en: 'Body Care' } }
         ]
     },
@@ -103,10 +101,8 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
         content: [],
         subitems: [
             { id: 'car-care', label: { ko: 'CAR 케어', en: 'CAR Care' } },
-            { id: 'window', label: { ko: '디지털 쇼윈도', en: 'Digital Window' } },
-            { id: 'f1_kpop', label: { ko: 'K-팝 스테이지', en: 'K-Pop Stage' } },
-            { id: 'f1_library', label: { ko: '트렌드 라이브러리', en: 'Trend Library' } },
-            { id: 'f1_tech', label: { ko: '한류 테크존', en: 'K-Tech Zone' } }
+            { id: 'f1_tech', label: { ko: '한류 테크존', en: 'K-Tech Zone' } },
+            { id: 'cat-1775227156624', label: { ko: '테스트', en: 'Test' } }
         ]
     }
 ];

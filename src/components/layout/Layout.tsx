@@ -33,9 +33,11 @@ export const Layout: React.FC = () => {
         const ticket = normalizedPath.endsWith('/ticket');
         const inquiry = normalizedPath.endsWith('/inquiry');
         const reservation = normalizedPath.endsWith('/reservation');
+        const square = normalizedPath.endsWith('/square');
+        const office = normalizedPath.endsWith('/office');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
         const shouldHideHeader = landing || inspiration || meeting || sindang || audition || interview || 
-                                museum || store || cinema || ticket || inquiry || reservation || admin;
+                                museum || store || cinema || ticket || inquiry || reservation || square || office || admin;
         
         return {
             isLandingPage: landing,
@@ -83,8 +85,10 @@ export const Layout: React.FC = () => {
             {activeEffect === '3d' && <MouseTrail3D />}
             {!hideHeader && !isImmersive && <Header />}
             {(hideHeader || isImmersive) && (
-                <div className={`transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'}`}>
-                    <LanguageSelector variant="floating" />
+                <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                    <div className="pointer-events-auto h-full w-full relative">
+                        <LanguageSelector variant="floating" />
+                    </div>
                 </div>
             )}
             

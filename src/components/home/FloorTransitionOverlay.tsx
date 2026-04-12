@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { useTranslation } from 'react-i18next';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 interface FloorTransitionOverlayProps {
     floorNumber: number;
@@ -418,7 +419,7 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             >
                                 <div className="text-[12vw] font-black text-[#00FFC2]/20 italic leading-none">{floorNumber}F</div>
                                 <h2 className="text-5xl font-black text-white uppercase tracking-[0.2em] mb-4">
-                                    {safeTitle}
+                                    <AutoTranslatedText text={safeTitle} />
                                 </h2>
                             </motion.div>
                         )}
@@ -430,9 +431,9 @@ export const FloorTransitionOverlay: React.FC<FloorTransitionOverlayProps> = ({
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                                 <div className="text-[12vw] font-black text-[#00FFC2]/10 italic leading-none">{floorNumber}F</div>
                                 <h2 className="text-5xl font-black text-white uppercase tracking-[0.2em] mb-4">
-                                    {safeTitle}
+                                    <AutoTranslatedText text={safeTitle} />
                                 </h2>
-                                <p className="text-[#00FFC2] tracking-[0.3em] font-medium animate-pulse">PREPARING 3D GATE...</p>
+                                <p className="text-[#00FFC2] tracking-[0.3em] font-medium animate-pulse"><AutoTranslatedText text="PREPARING 3D GATE..." /></p>
                             </div>
                         }>
                             <Canvas flat dpr={[1, 2]} gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}>

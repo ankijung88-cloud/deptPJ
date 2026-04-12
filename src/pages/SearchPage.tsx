@@ -214,7 +214,7 @@ const SearchPage: React.FC = () => {
                             <AutoTranslatedText text="통합 검색 결과" />
                         </h1>
                         <p className="text-sm text-white/40 font-light tracking-[0.3em] uppercase">
-                             ARCHIVE • NOTICE • FAQ • INFO • PAGES
+                             <AutoTranslatedText text="ARCHIVE • NOTICE • FAQ • INFO • PAGES" />
                         </p>
                         <div className="mt-8 inline-block px-8 py-2 rounded-full bg-white/5 border border-white/10 text-dancheong-gold font-serif italic text-xl">
                             "{query}"
@@ -233,18 +233,18 @@ const SearchPage: React.FC = () => {
                         </span>
                     </div>
                     <div className="flex items-center gap-6 text-[9px] font-bold tracking-widest text-white/20 uppercase overflow-x-auto no-scrollbar pb-2 md:pb-0">
-                        <span className={floors.length > 0 ? 'text-green-400' : ''}>Info ({floors.length})</span>
-                        <span className={products.length > 0 ? 'text-dancheong-gold' : ''}>Archive ({products.length})</span>
-                        <span className={notices.length > 0 ? 'text-dancheong-red' : ''}>Notice ({notices.length})</span>
-                        <span className={faqs.length > 0 ? 'text-blue-400' : ''}>FAQ ({faqs.length})</span>
-                        <span className={pages.length > 0 ? 'text-purple-400' : ''}>Pages ({pages.length})</span>
+                        <span className={floors.length > 0 ? 'text-green-400' : ''}><AutoTranslatedText text="Info" /> ({floors.length})</span>
+                        <span className={products.length > 0 ? 'text-dancheong-gold' : ''}><AutoTranslatedText text="Archive" /> ({products.length})</span>
+                        <span className={notices.length > 0 ? 'text-dancheong-red' : ''}><AutoTranslatedText text="Notice" /> ({notices.length})</span>
+                        <span className={faqs.length > 0 ? 'text-blue-400' : ''}><AutoTranslatedText text="FAQ" /> ({faqs.length})</span>
+                        <span className={pages.length > 0 ? 'text-purple-400' : ''}><AutoTranslatedText text="Pages" /> ({pages.length})</span>
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-40 space-y-4">
                         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2" style={{ borderColor: theme.accentColor }}></div>
-                        <p className="text-white/10 uppercase tracking-[0.3em] text-[10px] font-black">Syncing all archives...</p>
+                        <p className="text-white/10 uppercase tracking-[0.3em] text-[10px] font-black"><AutoTranslatedText text="Syncing all archives..." /></p>
                     </div>
                 ) : allResults.length > 0 ? (
                     <div className="space-y-4">

@@ -20,7 +20,7 @@ export const Footer: React.FC = () => {
                         <div className="flex items-center gap-6 mb-4">
                             <BrandLogo size={60} color="white" className="opacity-80" />
                             <div className="space-y-4">
-                                <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="본질" /></span>
+                                <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="Essence" /></span>
                                 <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">
                                     <AutoTranslatedText text="VIA STATION" />
                                 </h2>
@@ -70,7 +70,7 @@ export const Footer: React.FC = () => {
                                 href="mailto:support@viastation.com"
                                 className="inline-block text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-vibrant-red/10 hover:bg-dancheong-vibrant-red/20 text-white px-8 py-4 rounded-full border border-dancheong-vibrant-red/30 transition-all shadow-[0_0_20_rgba(161,45,39,0.2)] text-center"
                             >
-                                <AutoTranslatedText text="문의 보내기" />
+                                <AutoTranslatedText text="Send Inquiry" />
                             </a>
                         </div>
                     </div>
