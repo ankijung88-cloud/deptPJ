@@ -21,8 +21,9 @@ export const FLOORS = [
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
             { id: 'b2b-mall', label: 'B2B 몰' },
-            { id: 'f4_seminar', label: '세미나 룸' },
             { id: 'b2c-mall', label: 'B2C 몰' },
+            { id: 'share-mall', label: '공동구매' },
+            { id: 'funding-mall', label: '펀딩 몰' },
         ]
     },
     {
@@ -73,7 +74,7 @@ export const FLOORS = [
             { id: 'skincare', label: '스킨케어' },
             { id: 'hair', label: '헤어케어' },
             { id: 'p_surgery', label: '뷰티성형' },
-            { id: 'inner-beauty', label: '이너 뷰티' },
+            { id: 'inner-beauty', label: '이너뷰티' },
             { id: 'body-care', label: '바디케어' },
         ]
     },
@@ -98,7 +99,7 @@ export const FLOORS = [
         color: '#FFD32A',
         videoUrl: '/uploads/k-culture.mp4',
         subcategories: [
-            { id: 'car-care', label: 'CAR 케어' },
+            { id: 'car-care', label: '자동차' },
             { id: 'f1_tech', label: '한류 테크존' },
             { id: 'cat-1775227156624', label: '테스트' },
         ]
