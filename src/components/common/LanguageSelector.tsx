@@ -46,7 +46,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const isFloating = variant === 'floating';
 
     return (
-        <div className={`lang-selector-container ${isFloating ? 'fixed top-6 right-0 z-[10000]' : 'relative'}`}>
+        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed top-6 right-0 z-[10000]' : 'relative'}`}>
             <button
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${isFloating

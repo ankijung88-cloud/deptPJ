@@ -86,9 +86,7 @@ export const Layout: React.FC = () => {
             {!hideHeader && !isImmersive && <Header />}
             {(hideHeader || isImmersive) && (
                 <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
-                    <div className="pointer-events-auto h-full w-full relative">
-                        <LanguageSelector variant="floating" />
-                    </div>
+                    <LanguageSelector variant="floating" />
                 </div>
             )}
             
