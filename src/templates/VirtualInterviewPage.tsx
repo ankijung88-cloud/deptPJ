@@ -124,7 +124,7 @@ const VirtualInterviewPage: React.FC = () => {
             ? window.location.origin.replace('5173', '3000') 
             : window.location.origin;
         
-        const newSocket = io(socketUrl, { transports: ['websocket'] });
+        const newSocket = io(socketUrl, { transports: ['polling', 'websocket'] });
         setSocket(newSocket);
         
         newSocket.on('connect', () => {

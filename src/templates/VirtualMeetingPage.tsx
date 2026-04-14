@@ -145,7 +145,7 @@ const VirtualMeetingPage: React.FC = () => {
         console.log(`[Socket] Connecting to: ${socketUrl}`);
         
         const newSocket = io(socketUrl, {
-            transports: ['websocket'],
+            transports: ['polling', 'websocket'],
             autoConnect: true,
             reconnectionAttempts: 5
         });

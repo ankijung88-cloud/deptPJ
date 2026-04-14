@@ -110,7 +110,7 @@ const VirtualSindangPage: React.FC = () => {
             : window.location.origin;
         
         const newSocket = io(socketUrl, {
-            transports: ['websocket'],
+            transports: ['polling', 'websocket'],
             autoConnect: true
         });
         
