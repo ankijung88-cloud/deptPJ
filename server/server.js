@@ -39,18 +39,18 @@ const roomTokens = new Map(); // roomId -> Set of valid invite tokens
 io.on('connection', (socket) => {
   console.log(`[Socket] New connection: ${socket.id}`);
 
-  socket.on('join-room', ({ roomId, user, inviteToken, isHost, role }) => {
+  socket.on('join-meeting', ({ roomId, user, name: directName, id: directId, inviteToken, isHost, role }) => {
     // 1. Check if room exists or create it
     if (!rooms.has(roomId)) {
-      rooms.set(roomId, new Map());
+      rooms.set(roomId, { participants: new Map() });
       roomTokens.set(roomId, new Set());
       roomScreens.set(roomId, { url: '', type: 'none' });
     }
-    const participants = rooms.get(roomId);
+    const participants = rooms.get(roomId).participants;
     
     // Extract name from user object or fallback
-    const name = user?.name || user?.displayName || 'Anonymous';
-    const id = user?.uid || user?.id || socket.id;
+    const name = directName || user?.name || user?.displayName || 'Anonymous';
+    const id = directId || user?.uid || user?.id || socket.id;
 
     // 2. Validate Access (Only Host can enter without token, others need a valid token)
     if (!isHost) {
@@ -93,8 +93,9 @@ io.on('connection', (socket) => {
 
   socket.on('select-seat', ({ seatId }) => {
     // Find room the socket is in
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         participants.get(socket.id).seatId = seatId;
         io.to(roomId).emit('participants-update', Array.from(participants.values()));
         break;
@@ -103,8 +104,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('toggle-mute', (isMuted) => {
-    for (const participants of rooms.values()) {
-      if (participants.has(socket.id)) {
+    for (const roomData of rooms.values()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         participants.get(socket.id).isMuted = isMuted;
         break;
       }
@@ -112,8 +114,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('share-screen', ({ url, type }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         console.log(`[Socket] ${socket.id} started sharing PT on screen in room ${roomId}: ${url} (${type})`);
         roomScreens.set(roomId, { url, type });
         io.to(roomId).emit('screen-update', { url, type });
@@ -137,8 +140,9 @@ io.on('connection', (socket) => {
 
 
   socket.on('audition-start', ({ candidateId }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         io.to(roomId).emit('audition-start', { candidateId });
         break;
       }
@@ -146,8 +150,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('submit-score', ({ candidateId, scores }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         io.to(roomId).emit('score-update', { candidateId, scores });
         break;
       }
@@ -155,8 +160,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('share-materials', ({ url }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         io.to(roomId).emit('materials-update', url);
         break;
       }
@@ -164,8 +170,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('share-teleprompter', ({ text }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         io.to(roomId).emit('teleprompter-update', text);
         break;
       }
@@ -173,8 +180,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('audition-cheer', ({ candidateId }) => {
-    for (const [roomId, participants] of rooms.entries()) {
-      if (participants.has(socket.id)) {
+    for (const [roomId, roomData] of rooms.entries()) {
+      const participants = roomData?.participants;
+      if (participants && participants.has(socket.id)) {
         io.to(roomId).emit('cheer-received', { candidateId, senderId: socket.id });
         break;
       }
@@ -184,7 +192,8 @@ io.on('connection', (socket) => {
   socket.on('kick-participant', ({ participantId, roomId }) => {
     console.log(`[Socket] Kick request: From ${socket.id} for target ${participantId} in room ${roomId}`);
     
-    const participants = rooms.get(roomId);
+    const roomData = rooms.get(roomId);
+    const participants = roomData?.participants;
     if (!participants) {
       console.log(`[Socket] Kick failed: Room ${roomId} not found`);
       return;
@@ -283,7 +292,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     for (const [roomId, room] of rooms.entries()) {
-      if (room.participants.has(socket.id)) {
+      if (room?.participants && room.participants.has(socket.id)) {
         room.participants.delete(socket.id);
         io.to(roomId).emit('participants-update', Array.from(room.participants.values()));
         console.log(`[Socket] ${socket.id} left room ${roomId}`);

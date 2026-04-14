@@ -47,7 +47,7 @@ const ScreenImageContent: React.FC<{ url: string }> = ({ url }) => {
     const texture = useTexture(url || '');
     return (
         <meshBasicMaterial 
-            color="#000"
+            color="#ffffff"
             map={texture} 
             toneMapped={false} 
         />
@@ -62,13 +62,15 @@ const ScreenContent: React.FC<{ screenData?: { url: string; type: string }; webr
     React.useEffect(() => {
         if (!videoRef.current) {
             const video = document.createElement('video');
-            video.crossOrigin = "Anonymous";
+            // Do NOT set crossOrigin globally; it blocks WebRTC
             video.muted = true;
             video.loop = true;
             video.playsInline = true;
             video.autoplay = true;
             (videoRef as any).current = video;
-            setVideoTexture(new THREE.VideoTexture(video));
+            const tex = new THREE.VideoTexture(video);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            setVideoTexture(tex);
         }
     }, []);
 
@@ -79,14 +81,20 @@ const ScreenContent: React.FC<{ screenData?: { url: string; type: string }; webr
 
         if (screenData?.type === 'webrtc' && webrtcStream) {
             if (video.srcObject !== webrtcStream) {
+                video.removeAttribute('crossOrigin');
                 video.srcObject = webrtcStream;
-                video.play().catch(console.error);
+                video.onloadedmetadata = () => {
+                    video.play().catch(console.error);
+                };
             }
         } else if (screenData?.type === 'video' && screenData.url) {
             if (video.src !== screenData.url) {
                 video.srcObject = null;
+                video.crossOrigin = "Anonymous";
                 video.src = screenData.url;
-                video.play().catch(console.error);
+                video.onloadedmetadata = () => {
+                    video.play().catch(console.error);
+                };
             }
         } else {
             video.pause();
@@ -129,7 +137,7 @@ const ScreenContent: React.FC<{ screenData?: { url: string; type: string }; webr
                 </React.Suspense>
             ) : (
                 <meshBasicMaterial 
-                    color="#000"
+                    color="#ffffff"
                     map={videoTexture} 
                     toneMapped={false} 
                 />
