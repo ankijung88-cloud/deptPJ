@@ -2564,7 +2564,7 @@ export const AdminPage: React.FC = () => {
                         </h1>
                     </div>
                     <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-bold">
-                        HXVA ARCADE Management v1.0
+                        HXVARCADE Management v1.0
                     </p>
                 </div>
 

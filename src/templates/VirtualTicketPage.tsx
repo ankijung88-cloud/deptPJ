@@ -958,7 +958,7 @@ return (
             <footer className="mt-40 border-t py-20 px-6" style={{ borderColor: `${theme.accentColor}11` }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
                     <div className="flex flex-col gap-6">
-                        <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">HXVA ARCADE TICKETS</div>
+                        <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">HXVARCADE TICKETS</div>
                         <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase max-w-sm leading-loose">
                             <AutoTranslatedText text="Certified Virtual Ticketing Infrastructure for premium cultural heritage events." />
                         </p>

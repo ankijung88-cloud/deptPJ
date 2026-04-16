@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
                             <div className="space-y-4">
                                 <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="Essence" /></span>
                                 <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">
-                                    <AutoTranslatedText text="HXVA ARCADE" />
+                                    <AutoTranslatedText text="HXVARCADE" />
                                 </h2>
                             </div>
                         </div>

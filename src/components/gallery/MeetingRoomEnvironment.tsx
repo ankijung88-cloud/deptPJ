@@ -114,7 +114,7 @@ const ScreenContent: React.FC<{ screenData?: { url: string; type: string }; webr
                     color="#00D2FF"
                     fillOpacity={0.3}
                 >
-                    HXVA ARCADE
+                    HXVARCADE
                 </Text>
                 <Text
                     position={[0, -0.3, 0.01]}

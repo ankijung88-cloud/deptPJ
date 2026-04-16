@@ -11,7 +11,7 @@ const resources = {
             "floor_guide": "층별 안내",
             "nav": {
                 "login": "로그인",
-                "gallery": "HXVA ARCADE",
+                "gallery": "HXVARCADE",
                 ...categoriesJson.ko.nav,
 
 
@@ -29,18 +29,18 @@ const resources = {
 
             "hero": {
                 "title": "시선과 취향이 만나는 곳",
-                "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, HXVA ARCADE",
+                "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, HXVARCADE",
                 "cta": "층별 안내 보기",
                 "tagline": "새로운 취향을 발견하는 인터랙티브 커넥티드 플랫폼",
-                "title_main": "HXVA ARCADE",
+                "title_main": "HXVARCADE",
                 "title_sub": "THE VIRTUAL GATEWAY",
-                "description": "수많은 브랜드와 당신의 일상을 연결하는 영감의 허브. 당신의 탐험이 의미 있는 발견으로 이어지는 곳, HXVA ARCADE입니다.",
+                "description": "수많은 브랜드와 당신의 일상을 연결하는 영감의 허브. 당신의 탐험이 의미 있는 발견으로 이어지는 곳, HXVARCADE입니다.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
                 "philosophy": "브랜드 철학",
-                "welcome": "Welcome to HXVA ARCADE",
-                "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, HXVA ARCADE입니다.",
+                "welcome": "Welcome to HXVARCADE",
+                "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, HXVARCADE입니다.",
                 "start": "시작하기"
             },
             "subcategory": {
@@ -82,13 +82,13 @@ const resources = {
             },
             "featured": {
                 "title": "추천 & 이벤트",
-                "subtitle": "HXVA ARCADE에서 만나는 특별한 경험",
+                "subtitle": "HXVARCADE에서 만나는 특별한 경험",
                 "no_content": "등록된 콘텐츠가 없습니다."
             },
             "about": {
-                "title": "취향이 살아 숨쉬는 공간, HXVA ARCADE",
+                "title": "취향이 살아 숨쉬는 공간, HXVARCADE",
                 "subtitle": "전통의 깊이와 현대의 감각이 교차하는 아트 갤러리 백화점",
-                "description1": "HXVA ARCADE은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
+                "description1": "HXVARCADE은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
                 "description2": "가장 트렌디한 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
                 "cta": "브랜드 철학 보기"
             },
@@ -111,20 +111,20 @@ const resources = {
             },
             "brand_vision": {
                 "section_id": "VISION",
-                "masthead": "HXVA ARCADE EDITORIAL",
+                "masthead": "HXVARCADE EDITORIAL",
                 "headline": "디지털 문법의 새로운 질서: 공간과 일상의 결합",
                 "subheadline": "우리는 단순한 웹사이트를 넘어, 당신의 일상과 문화를 잇는 필수적인 디지털 항구를 건설합니다.",
                 "metadata": "SPECIAL REPORT | 2026.04.03 | BY BRAND STRATEGY TEAM",
-                "body_intro": "HXVA ARCADE은 단순히 정보를 나열하는 웹사이트가 아닙니다. 우리는 공간을 렌더링하고 문화를 혁신하는 새로운 차원의 디지털 항구를 지향합니다. 기성 웹의 평면적 한계를 부수고, 가장 현대적인 기술 위에 찬란한 문화를 세우는 것. 그것이 우리의 시작입니다.",
+                "body_intro": "HXVARCADE은 단순히 정보를 나열하는 웹사이트가 아닙니다. 우리는 공간을 렌더링하고 문화를 혁신하는 새로운 차원의 디지털 항구를 지향합니다. 기성 웹의 평면적 한계를 부수고, 가장 현대적인 기술 위에 찬란한 문화를 세우는 것. 그것이 우리의 시작입니다.",
                 "body_philosophy": "우리는 사용자의 시선이 머무는 모든 지점에 브랜드의 숨은 가치를 부여합니다. 전통적인 단청의 미학을 현대적인 '글래스모피즘' UI로 재해석하여, 눈에 보이는 것 이상의 감성적 몰입감을 선사합니다. 모든 시선과 행동이 가치 있는 연결로 이어지도록 설계된 감성적 항구입니다.",
                 "body_future": "끊임없이 변화하는 기술과 고유한 아날로그 감성의 균형을 맞추며, 가상의 물리적 한계를 부수는 혁신적 UX를 지향합니다. 우리의 기술은 정적인 도구가 아니라 살아 숨 쉬는 유기적 연결망이자 혁신의 기록입니다.",
-                "body_essential": "정보의 홍수 속에서 우리는 길을 잃기도 합니다. HXVA ARCADE은 수직적 공간 메타포를 통해 가장 직관적이고 예술적인 방식으로 당신의 취향을 찾아주는 '디지털 항구'이자 필수적인 라이프스타일 큐레이션입니다.",
+                "body_essential": "정보의 홍수 속에서 우리는 길을 잃기도 합니다. HXVARCADE은 수직적 공간 메타포를 통해 가장 직관적이고 예술적인 방식으로 당신의 취향을 찾아주는 '디지털 항구'이자 필수적인 라이프스타일 큐레이션입니다.",
                 "pull_quote": "기술과 예술의 경계를 허무는 가장 혁신적이고 아름다운 큐레이션.",
-                "body_conclusion": "결국 HXVA ARCADE은 당신의 취향이 완성되는 마지막 기착지이자, 새로운 탐험이 시작되는 출발점입니다. 현대인에게 반드시 필요한 이 디지털 허브는 당신의 라이프스타일을 완성하는 마지막 조각이 될 것입니다."
+                "body_conclusion": "결국 HXVARCADE은 당신의 취향이 완성되는 마지막 기착지이자, 새로운 탐험이 시작되는 출발점입니다. 현대인에게 반드시 필요한 이 디지털 허브는 당신의 라이프스타일을 완성하는 마지막 조각이 될 것입니다."
             },
             "footer": {
                 "address": "서울특별시 중구 소공로 123",
-                "copyright": "© 2026 HXVA ARCADE. All rights reserved.",
+                "copyright": "© 2026 HXVARCADE. All rights reserved.",
                 "privacy": "개인정보처리방침",
                 "terms": "이용약관",
                 "shop": "SHOP",
@@ -366,17 +366,17 @@ const resources = {
             },
             "hero": {
                 "title": "Where Gaze and Taste Meet",
-                "subtitle": "Experience the process where the world at the end of your gaze is completed with your taste, HXVA ARCADE",
+                "subtitle": "Experience the process where the world at the end of your gaze is completed with your taste, HXVARCADE",
                 "cta": "View Floor Guide",
                 "tagline": "An interactive connected platform to discover new tastes",
-                "title_main": "HXVA ARCADE",
+                "title_main": "HXVARCADE",
                 "title_sub": "THE VIRTUAL GATEWAY",
-                "description": "An inspiration hub connecting numerous brands with your daily life. Where your exploration leads to meaningful discovery, HXVA ARCADE.",
+                "description": "An inspiration hub connecting numerous brands with your daily life. Where your exploration leads to meaningful discovery, HXVARCADE.",
                 "warping": "Warping...",
                 "explore": "Explore",
                 "story": "Partner Login",
                 "philosophy": "Philosophy",
-                "welcome": "Welcome to HXVA ARCADE",
+                "welcome": "Welcome to HXVARCADE",
                 "start": "Get Started"
             },
             "subcategory": {
