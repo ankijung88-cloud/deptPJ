@@ -57,7 +57,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     // Wordmark (Minimalist Type)
     return (
         <div className={`flex flex-col items-start leading-none tracking-tighter ${className}`} style={{ height: size }}>
-            <span className="text-xl font-black uppercase" style={{ color }}>VIA STATION</span>
+            <span className="text-xl font-black uppercase" style={{ color }}>BUSINESS ARCHIVE</span>
             <div className="h-[2px] w-full mt-1 opacity-50" style={{ backgroundColor: color }} />
             <span className="text-[0.4rem] font-mono mt-1 opacity-40 uppercase tracking-widest" style={{ color }}>Connected Archive Platform</span>
         </div>

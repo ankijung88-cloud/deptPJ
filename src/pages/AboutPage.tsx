@@ -265,7 +265,7 @@ const AboutPage: React.FC = () => {
                         <span className="text-dancheong-red text-sm font-bold tracking-[0.5em] uppercase block mb-4 drop-shadow-lg"><AutoTranslatedText text="01. 프로젝트 발표" /></span>
                         
                         <h1 className="text-6xl md:text-[9rem] font-serif font-black mb-8 tracking-tighter leading-[0.85] drop-shadow-2xl">
-                             <span className="text-dancheong-red"><AutoTranslatedText text="VIA STATION" /></span><br /><AutoTranslatedText text="OF K-CULTURE" />
+                             <span className="text-dancheong-red"><AutoTranslatedText text="BUSINESS ARCHIVE" /></span><br /><AutoTranslatedText text="OF K-CULTURE" />
                         </h1>
                         
                         <div className="w-full max-w-md">
@@ -369,7 +369,7 @@ const AboutPage: React.FC = () => {
                             <Globe className="absolute -right-20 -bottom-20 w-[30rem] h-[30rem] text-white/5" strokeWidth={1} />
                             <div className="relative z-10">
                                 <h3 className="text-4xl md:text-5xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-dancheong-gold to-white">
-                                    <AutoTranslatedText text="VIA STATION" />
+                                    <AutoTranslatedText text="BUSINESS ARCHIVE" />
                                 </h3>
                                 <p className="text-xl text-white/80 font-light break-keep leading-relaxed max-w-3xl">
                                     <AutoTranslatedText text="1층부터 7층까지 각기 다른 K-테마의 디지털 스토어와 협업 공간을 입체화. 기존의 스크롤 중심 웹페이지에서 벗어나, 층을 이동하는 형태의 탐험 심리를 자극합니다." />
@@ -685,7 +685,7 @@ const AboutPage: React.FC = () => {
                 <FadeInContent>
                     <div className="bg-white/5 backdrop-blur-md rounded-[3rem] p-12 md:p-20 border border-white/10 text-center mt-6 shadow-2xl">
                         <h3 className="text-3xl md:text-5xl font-light italic text-white/90 mb-20 leading-tight">
-                            <AutoTranslatedText text='"기술과 예술의 경계를 허무는' /><br /><AutoTranslatedText text=' 디지털 문법의 새로운 질서, "' /><span className="font-serif font-bold text-dancheong-gold"><AutoTranslatedText text="VIA STATION" /></span><AutoTranslatedText text='"' />
+                            <AutoTranslatedText text='"기술과 예술의 경계를 허무는' /><br /><AutoTranslatedText text=' 디지털 문법의 새로운 질서, "' /><span className="font-serif font-bold text-dancheong-gold"><AutoTranslatedText text="BUSINESS ARCHIVE" /></span><AutoTranslatedText text='"' />
                         </h3>
                         <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 text-left relative">
                             <div className="hidden md:block absolute top-[50%] left-[10%] right-[10%] h-1 bg-gradient-to-r from-white/10 via-dancheong-gold/30 to-white/10 -z-10 blur-sm"></div>
@@ -746,7 +746,7 @@ const AboutPage: React.FC = () => {
                                 <AutoTranslatedText text='"공간을 렌더링하다,' /><br /><AutoTranslatedText text='문화를 혁신하다."' />
                             </h2>
                             <p className="text-2xl text-white/60 font-light break-keep leading-relaxed mb-16">
-                                <AutoTranslatedText text="VIA STATION 프로젝트는 단순한 코딩을 넘어 하나의 하이엔드 브랜드를 런칭하는 마스터피스입니다. 웹 공간의 한계를 부수고, 가장 현대적인 기술 위에 찬란한 문화를 세웁니다." />
+                                <AutoTranslatedText text="BUSINESS ARCHIVE 프로젝트는 단순한 코딩을 넘어 하나의 하이엔드 브랜드를 런칭하는 마스터피스입니다. 웹 공간의 한계를 부수고, 가장 현대적인 기술 위에 찬란한 문화를 세웁니다." />
                             </p>
                             <button onClick={() => window.location.href = '/inspiration'} className="px-16 py-6 border border-dancheong-red/50 bg-dancheong-red/10 text-dancheong-red font-bold tracking-[0.2em] text-lg uppercase rounded-full hover:bg-dancheong-red hover:text-white hover:scale-105 hover:shadow-[0_0_40px_rgba(235,59,45,0.6)] backdrop-blur-md transition-all duration-500">
                                 <AutoTranslatedText text="가상 공간으로 입장하기" />

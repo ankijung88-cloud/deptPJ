@@ -540,7 +540,7 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                                     {displayName?.substring(0, 12) + (displayName?.length > 12 ? '...' : '')}
                                 </DreiText>
                                 <DreiText position={[0, -0.2, 0]} fontSize={0.1} color="white" fillOpacity={0.5}>
-                                    VIA STATION ARCHIVE ITEM
+                                    BUSINESS ARCHIVE ARCHIVE ITEM
                                 </DreiText>
                             </group>
                         </mesh>

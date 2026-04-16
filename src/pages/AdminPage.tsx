@@ -2564,7 +2564,7 @@ export const AdminPage: React.FC = () => {
                         </h1>
                     </div>
                     <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-bold">
-                        VIA STATION Management v1.0
+                        BUSINESS ARCHIVE Management v1.0
                     </p>
                 </div>
 
