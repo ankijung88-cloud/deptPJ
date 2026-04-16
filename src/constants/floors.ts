@@ -50,6 +50,7 @@ export const FLOORS = [
             { id: 'f6_craft', label: '지역 공예관' },
             { id: 'f6_tour', label: '헤리티지 투어' },
             { id: 'shaman', label: '무속신당' },
+            { id: 'saju-room', label: '사주' },
         ]
     },
     {
