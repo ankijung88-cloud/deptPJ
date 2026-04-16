@@ -8,7 +8,7 @@ import { getProductsByCategory } from '../api/products';
 import { getFloorCategories } from '../api/categories';
 import { FeaturedItem, FloorCategory } from '../types';
 import { ArrowRight, BookOpen } from 'lucide-react';
-import { getJoseonThemeById } from '../utils/themeUtils';
+import { JOSEON_THEMES } from '../utils/themeUtils';
 import { BrandLogo } from '../components/common/BrandLogo';
 
 const CATEGORY_FILTERS: Record<string, string[]> = {
@@ -84,8 +84,7 @@ const FloorContentPage: React.FC = () => {
         return () => { mounted = false; };
     }, [categoryId, filter, id]);
 
-    const floorNumber = floorData?.floor?.charAt(0) || '1';
-    const theme = getJoseonThemeById(id || '', floorNumber);
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     if (!floorData) {
         return (
@@ -221,4 +220,5 @@ const FloorContentPage: React.FC = () => {
 };
 
 export default FloorContentPage;
+
 

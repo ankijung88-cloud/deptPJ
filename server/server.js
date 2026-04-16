@@ -14,6 +14,7 @@ import noticeRoutes from './routes/noticeRoutes.js';
 import faqRoutes from './routes/faqRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import sajuRoutes from './routes/saju.js';
 
 dotenv.config();
 
@@ -334,6 +335,7 @@ app.use('/api/notices', noticeRoutes);
 app.use('/api/faqs', faqRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/saju', sajuRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

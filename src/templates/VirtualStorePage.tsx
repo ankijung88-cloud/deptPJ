@@ -296,7 +296,7 @@ const VirtualStorePage: React.FC = () => {
 
 
     // Using "Hunter Amber" (index 4) theme for Store - warm, premium, and commercial
-    const theme = JOSEON_THEMES[4];
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     const [storeItems, setStoreItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);

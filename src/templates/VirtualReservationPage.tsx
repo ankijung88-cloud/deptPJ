@@ -5,7 +5,7 @@ import { ArrowLeft, Check, Loader2, Sparkles, MapPin, Info, Plus, Trash2, X, Set
 import { useNavigate, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getProductById } from '../api/products';
-import { getJoseonTheme } from '../utils/themeUtils';
+import { JOSEON_THEMES } from '../utils/themeUtils';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { updateProduct } from '../api/products';
@@ -36,7 +36,7 @@ export const VirtualReservationPage: React.FC = () => {
     const [isManageModalOpen, setIsManageModalOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    const theme = item?.category ? getJoseonTheme(item.category.replace('floor-', '')) : getJoseonTheme('1');
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     useEffect(() => {
         const fetchItem = async () => {

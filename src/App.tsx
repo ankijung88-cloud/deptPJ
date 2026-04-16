@@ -22,6 +22,10 @@ const VirtualSindangPage = lazy(() => import('./templates/VirtualSindangPage'));
 const VirtualAuditionPage = lazy(() => import('./templates/VirtualAuditionPage'));
 const VirtualInterviewPage = lazy(() => import('./templates/VirtualInterviewPage'));
 const VirtualSquarePage = lazy(() => import('./templates/VirtualSquarePage'));
+const VirtualSajuPage = lazy(() => import('./templates/VirtualSajuPage'));
+
+const VirtualGroupBuyPage = lazy(() => import('./templates/VirtualGroupBuyPage'));
+const VirtualFundingPage = lazy(() => import('./templates/VirtualFundingPage'));
 const TeamWorkspacePage = lazy(() => import('./templates/TeamWorkspacePage'));
 const AgencyRegisterPage = lazy(() => import('./pages/AgencyRegisterPage'));
 import NoticePage from './pages/NoticePage';
@@ -69,6 +73,9 @@ function App() {
                                         <Route path="/detail/:id/audition" element={<VirtualAuditionPage />} />
                                         <Route path="/detail/:id/interview" element={<VirtualInterviewPage />} />
                                         <Route path="/detail/:id/square" element={<VirtualSquarePage />} />
+                                        <Route path="/detail/:id/saju" element={<VirtualSajuPage />} />
+                                        <Route path="/detail/:id/groupbuy" element={<VirtualGroupBuyPage />} />
+                                        <Route path="/detail/:id/funding" element={<VirtualFundingPage />} />
                                         <Route path="/detail/:id/office" element={<TeamWorkspacePage />} />
                                     </Route>
 

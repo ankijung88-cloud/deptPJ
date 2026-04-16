@@ -154,7 +154,7 @@ const VirtualMuseumPage: React.FC = () => {
     const [tempDesc, setTempDesc] = useState('');
 
     // Theme: Scholar Green
-    const theme = JOSEON_THEMES[2]; 
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);; 
 
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);

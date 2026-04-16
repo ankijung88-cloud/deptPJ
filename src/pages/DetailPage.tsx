@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Play, Briefcase, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Play, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -229,6 +229,9 @@ export const DetailPage: React.FC = () => {
         reservation: `/detail/${item.id}/reservation`,
         meeting: `/detail/${item.id}/meeting`,
         sindang: `/detail/${item.id}/sindang`,
+        saju: `/detail/${item.id}/saju`,
+        groupbuy: `/detail/${item.id}/groupbuy`,
+        funding: `/detail/${item.id}/funding`,
         audition: `/detail/${item.id}/audition`,
         interview: `/detail/${item.id}/interview`,
         square: `/detail/${item.id}/square`,
@@ -496,6 +499,9 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
                                                 { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
                                                 { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
+                                                { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
+                                                { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
+                                                { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
                                                 { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                                 { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
                                                 { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },
@@ -544,6 +550,9 @@ export const DetailPage: React.FC = () => {
                                             { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
                                             { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
                                             { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
+                                            { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
+                                            { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
+                                            { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
                                             { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                             { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
                                             { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },

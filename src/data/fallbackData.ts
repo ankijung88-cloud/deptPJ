@@ -58,7 +58,8 @@ export const FALLBACK_FLOORS: FloorCategory[] = [
             { id: 'f6_gourmet', label: { ko: '미식 아카이브', en: 'Gourmet Archive' } },
             { id: 'f6_craft', label: { ko: '지역 공예관', en: 'Local Craft' } },
             { id: 'f6_tour', label: { ko: '헤리티지 투어', en: 'Heritage Tour' } },
-            { id: 'shaman', label: { ko: '무속신당', en: 'Shamanic Shrine' } }
+            { id: 'shaman', label: { ko: '무속신당', en: 'Shamanic Shrine' } },
+            { id: 'saju', label: { ko: '사주상담소', en: 'Saju Reading' } }
         ]
     },
     {

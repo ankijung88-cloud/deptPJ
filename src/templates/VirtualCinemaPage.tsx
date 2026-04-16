@@ -26,7 +26,7 @@ const VirtualCinemaPage: React.FC = () => {
     const parentId = routeId || location.state?.parentId;
 
     // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
-    const theme = JOSEON_THEMES[10];
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [cinemaItems, setCinemaItems] = useState<FeaturedItem[]>([]);

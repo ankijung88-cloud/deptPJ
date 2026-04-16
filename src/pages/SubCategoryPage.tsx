@@ -6,7 +6,7 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
 import { BookOpen, X } from 'lucide-react';
-import { getJoseonThemeById } from '../utils/themeUtils';
+import { JOSEON_THEMES } from '../utils/themeUtils';
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
 import { useImmersiveMode } from '../context/NavigationActionContext';
@@ -151,7 +151,7 @@ const SubCategoryPage: React.FC = () => {
         return () => { mounted = false; };
     }, [targetSubId, parentFloor]);
 
-    const theme = getJoseonThemeById(targetSubId, parentFloor?.floor);
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
 
     // While loading, show spinner (don't flash not-found)

@@ -5,7 +5,7 @@ import { ArrowLeft, MessageCircle, Send, User, Mail, FileText, Check, Loader2 } 
 import { useNavigate, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getProductById } from '../api/products';
-import { getJoseonTheme } from '../utils/themeUtils';
+import { JOSEON_THEMES } from '../utils/themeUtils';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getLocalizedText } from '../utils/i18nUtils';
 
@@ -27,7 +27,7 @@ export const VirtualInquiryPage: React.FC = () => {
         message: ''
     });
 
-    const theme = item?.category ? getJoseonTheme(item.category.replace('floor-', '')) : getJoseonTheme('1');
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     useEffect(() => {
         const fetchItem = async () => {

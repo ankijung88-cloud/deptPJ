@@ -9,7 +9,7 @@ import { getFaqs } from '../api/faqs';
 import { FeaturedItem, Notice, FAQ, FloorCategory, StaticPage } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { getJoseonThemeById } from '../utils/themeUtils';
+import { JOSEON_THEMES } from '../utils/themeUtils';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_FLOORS, FALLBACK_PAGES } from '../data/fallbackData';
 
@@ -38,7 +38,7 @@ const SearchPage: React.FC = () => {
     const [pages, setPages] = useState<StaticPage[]>([]); // New state for static pages
     const [loading, setLoading] = useState(true);
     const { translateAsync } = useAutoTranslate(null);
-    const theme = getJoseonThemeById('search', 'default');
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
 
     useEffect(() => {
         const fetchAll = async () => {

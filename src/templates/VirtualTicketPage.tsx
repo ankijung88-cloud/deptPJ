@@ -350,7 +350,7 @@ const VirtualTicketPage: React.FC = () => {
 
 
     // Using "Royal Guard" (index 0) theme for Ticket Booth - formal, striking, and prestigious
-    const theme = JOSEON_THEMES[0]; 
+    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);; 
 
     const [ticketItems, setTicketItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
