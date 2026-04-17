@@ -118,15 +118,15 @@ const VirtualSajuPage: React.FC = () => {
                 </header>
 
                 {/* Main Content Area */}
-                <div className="absolute inset-0 z-10 flex items-center justify-center pt-24 pb-12 px-6 overflow-y-auto pointer-events-auto custom-scrollbar">
-                    <div className="w-full max-w-[1200px] mx-auto min-h-full flex flex-col md:flex-row items-stretch gap-8 relative">
+                <div className="absolute inset-0 z-10 flex md:items-center justify-center pt-24 pb-32 px-6 overflow-y-auto pointer-events-auto custom-scrollbar">
+                    <div className="w-full max-w-[1200px] mx-auto h-fit md:min-h-full flex flex-col md:flex-row items-stretch gap-8 relative py-8">
                         
                         {/* LEFT: Input Form */}
                         <motion.div 
                             initial={{ x: -30, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="flex-shrink-0 w-full md:w-[400px] bg-black/60 backdrop-blur-3xl border border-white/10 p-8 flex flex-col gap-8 rounded-[2rem] shadow-2xl h-fit sticky top-0"
+                            className="flex-shrink-0 w-full md:w-[400px] bg-black/60 backdrop-blur-3xl border border-white/10 p-8 flex flex-col gap-8 rounded-[2rem] shadow-2xl h-fit relative md:sticky md:top-0"
                         >
                             <div className="flex flex-col gap-2">
                                 <h2 className="text-2xl font-bold tracking-tight text-white"><AutoTranslatedText text="나의 기운 알아보기" /></h2>
