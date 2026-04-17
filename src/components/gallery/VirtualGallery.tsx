@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import type { FeaturedItem } from '../../types';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
-import { Compass, ChevronUp, ChevronDown } from 'lucide-react';
+import { Compass, ChevronUp, ChevronDown, LayoutGrid, Box } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import TheaterEnvironment from './TheaterEnvironment';
@@ -884,6 +884,8 @@ export const VirtualGallery = ({
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [targetIndex, setTargetIndex] = useState(0);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isGridView, setIsGridView] = useState(false);
+    const navigate = useNavigate();
 
     const totalExhibits = (items?.length || 0) + (stories?.length || 0);
 
@@ -955,6 +957,75 @@ export const VirtualGallery = ({
                 .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
                 .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
             `}} />
+            
+            {showUI && (!isTheaterMode) && (
+                <div className="absolute top-6 right-6 z-[60] flex bg-black/40 backdrop-blur-xl border border-white/20 rounded-xl overflow-hidden p-1 shadow-2xl">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setIsGridView(false); setIsActivated(true); }}
+                        className={`flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg transition-all ${!isGridView ? 'bg-white/20 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <Box size={16} />
+                        <span className="text-xs md:text-sm font-bold tracking-wider hidden md:inline">3D VIEW</span>
+                    </button>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setIsGridView(true); setIsActivated(true); }}
+                        className={`flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg transition-all ${isGridView ? 'bg-[#00FFC2]/20 text-[#00FFC2] shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <LayoutGrid size={16} />
+                        <span className="text-xs md:text-sm font-bold tracking-wider hidden md:inline">GRID</span>
+                    </button>
+                </div>
+            )}
+
+            {isGridView ? (
+                <div className="absolute inset-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-md overflow-y-auto custom-scrollbar p-6 pt-24 md:p-12 md:pt-32 cursor-auto" onClick={(e) => e.stopPropagation()}>
+                    <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 pb-24">
+                        {[...items, ...stories].map((ex, i) => {
+                            const isProduct = ex.id?.includes('item-') || ex.id?.startsWith('p') || ex.price || ex.location;
+                            const imageUrl = ex.imageUrl || ex.image_url;
+                            const displayName = getLocalizedText(ex.title, lang);
+                            
+                            return (
+                                <div 
+                                    key={i}
+                                    onClick={() => {
+                                        if (onItemClick) {
+                                            onItemClick(ex);
+                                            setIsGridView(false);
+                                        } else if (isProduct) {
+                                            navigate(`/detail/${ex.id}`);
+                                        } else {
+                                            // Optional: close grid and scroll to this story in 3D
+                                            setTargetIndex(i);
+                                            setTimeout(() => setIsGridView(false), 50);
+                                        }
+                                    }}
+                                    className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-pointer hover:border-[#00FFC2]/50 hover:shadow-[0_0_20px_rgba(0,255,194,0.15)] transition-all duration-300"
+                                >
+                                    {imageUrl ? (
+                                        <img src={imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                                            <Compass className="text-white/20 mb-2 animate-pulse" size={32} />
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 md:p-6">
+                                        <h3 className="text-white font-bold text-sm md:text-base line-clamp-2 drop-shadow-md">
+                                            <AutoTranslatedText text={displayName || "Untitled Item"} />
+                                        </h3>
+                                        <div className="flex justify-between items-center mt-2">
+                                            <span className="text-[#00FFC2] text-xs font-mono uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
+                                                <AutoTranslatedText text="Explore" /> &rarr;
+                                            </span>
+                                            {isProduct && <span className="text-white/40 text-[10px] uppercase border border-white/20 px-2 py-0.5 rounded-full backdrop-blur-sm">ITEM</span>}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            ) : (
             <GalleryErrorBoundary fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center text-white/20 p-12 text-center">
                     <Compass size={48} className="mb-6 opacity-10" />
@@ -1012,10 +1083,11 @@ export const VirtualGallery = ({
                     </Suspense>
                 </Canvas>
             </GalleryErrorBoundary>
+            )}
 
             {showUI && (
                 <>
-                    {!isActivated && !isTheaterMode && (
+                    {!isActivated && !isTheaterMode && !isGridView && (
                         <div className="absolute inset-0 z-[30] flex items-center justify-center bg-black/20 backdrop-blur-[2px] cursor-pointer transition-all hover:bg-black/10">
                             <div className="px-8 py-4 border border-white/20 rounded-full backdrop-blur-xl bg-black/40 shadow-2xl flex flex-col items-center gap-2 group-hover:scale-105 transition-transform duration-500">
                                 <Compass size={24} className="text-white/60 animate-[spin_8s_linear_infinite]" />
@@ -1025,8 +1097,8 @@ export const VirtualGallery = ({
                         </div>
                     )}
 
-                    {!isTheaterMode && (
-                        <div className="absolute top-10 right-10 pointer-events-none z-20 text-right">
+                    {!isTheaterMode && !isGridView && (
+                        <div className="absolute top-10 right-10 pointer-events-none z-20 text-right md:-mt-0 mt-14">
                             <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
                             <div className="text-xl font-serif italic text-white/60">
                                 {isActivated ? (
@@ -1038,7 +1110,7 @@ export const VirtualGallery = ({
                         </div>
                     )}
 
-                    {!isTheaterMode && (
+                    {!isTheaterMode && !isGridView && (
                         <div className="absolute bottom-24 md:bottom-10 left-20 md:left-10 pointer-events-none z-20">
                             <div className="flex items-center gap-4">
                                 <div className="flex flex-col">
@@ -1051,7 +1123,7 @@ export const VirtualGallery = ({
                 </>
             )}
 
-            {isMobile && isActivated && (
+            {isMobile && isActivated && !isGridView && (
                 <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
                     <button
                         onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}

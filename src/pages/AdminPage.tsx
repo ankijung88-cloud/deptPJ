@@ -192,6 +192,7 @@ const normalizeFAQData = (faq: any) => {
 // Components for different sections
 const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const { isAdmin } = useAdmin();
+    const navigate = useNavigate();
     const { floors } = useFloors();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -485,11 +486,22 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     <tbody className="divide-y divide-white/5">
                         {paginatedProducts.map(product => (
                             <tr key={product.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4">
-                                    <img src={product.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover bg-black/20" />
+                                <td 
+                                    className="px-6 py-4 cursor-pointer group"
+                                    onClick={() => navigate(`/detail/${product.id}`)}
+                                >
+                                    <div className="relative inline-block">
+                                        <img src={product.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover bg-black/20 group-hover:opacity-80 transition-opacity" />
+                                        <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#00FFC2] rounded-lg transition-colors pointer-events-none"></div>
+                                    </div>
                                 </td>
-                                <td className="px-6 py-4 text-white font-medium">
-                                    {displayLocalized(product.title)}
+                                <td 
+                                    className="px-6 py-4 text-white font-medium cursor-pointer hover:text-[#00FFC2] transition-colors"
+                                    onClick={() => navigate(`/detail/${product.id}`)}
+                                >
+                                    <span className="border-bottom border-transparent hover:border-[#00FFC2]">
+                                        {displayLocalized(product.title)}
+                                    </span>
                                 </td>
                                 {isAdmin && (
                                     <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
