@@ -192,7 +192,7 @@ export const HeroSection: React.FC = () => {
                             >
                                 <button
                                     onClick={() => navigate('/about')}
-                                    className="px-12 py-3.5 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full font-medium hover:bg-white/10 transition-all min-w-[240px] group relative overflow-hidden"
+                                    className="px-8 py-3 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full font-medium hover:bg-white/10 transition-all duration-300 pointer-events-auto group relative overflow-hidden"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-dancheong-red/0 via-dancheong-red/10 to-dancheong-red/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                                     <AutoTranslatedText text={t('hero.philosophy') || 'BRAND PHILOSOPHY'} />
