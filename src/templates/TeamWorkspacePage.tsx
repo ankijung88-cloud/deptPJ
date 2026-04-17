@@ -54,7 +54,40 @@ const DEPARTMENTS = [
         name: 'Executive', 
         desc: 'Leadership & Strategy', 
         color: '#FFD700', 
-        offset: [12, 0, -4] 
+        offset: [12, 0, -4],
+        rotation: [0, 0, 0] 
+    },
+    { 
+        id: 'pantry', 
+        name: '탕비실', 
+        desc: 'Pantry & Break', 
+        color: '#FFA500', 
+        offset: [-12, 0, 20],
+        rotation: [0, Math.PI, 0] 
+    },
+    { 
+        id: 'restroom', 
+        name: '화장실', 
+        desc: 'Restroom', 
+        color: '#00FA9A', 
+        offset: [-4, 0, 20],
+        rotation: [0, Math.PI, 0] 
+    },
+    { 
+        id: 'meeting', 
+        name: '회의실', 
+        desc: 'Meeting Room', 
+        color: '#FF4500', 
+        offset: [4, 0, 20],
+        rotation: [0, Math.PI, 0] 
+    },
+    { 
+        id: 'consulting', 
+        name: '상담실', 
+        desc: 'Consulting Room', 
+        color: '#1E90FF', 
+        offset: [12, 0, 20],
+        rotation: [0, Math.PI, 0] 
     }
 ];
 
@@ -91,6 +124,16 @@ const TeamWorkspacePage: React.FC = () => {
         { id: 'seat-exec-manager', deptId: 'exec', position: [0, 0, 3], rotation: [0, 0, 0], isManager: true },
         { id: 'seat-exec-1', deptId: 'exec', position: [-0.8, 0, 0.5], rotation: [0, -Math.PI / 2, 0] },
         { id: 'seat-exec-2', deptId: 'exec', position: [0.8, 0, 0.5], rotation: [0, Math.PI / 2, 0] },
+        
+        // Meeting
+        { id: 'seat-meeting-manager', deptId: 'meeting', position: [0, 0, 3], rotation: [0, 0, 0], isManager: true },
+        { id: 'seat-meeting-1', deptId: 'meeting', position: [-0.8, 0, 0.5], rotation: [0, -Math.PI / 2, 0] },
+        { id: 'seat-meeting-2', deptId: 'meeting', position: [0.8, 0, 0.5], rotation: [0, Math.PI / 2, 0] },
+        
+        // Consulting
+        { id: 'seat-consulting-manager', deptId: 'consulting', position: [0, 0, 3], rotation: [0, 0, 0], isManager: true },
+        { id: 'seat-consulting-1', deptId: 'consulting', position: [-0.8, 0, 0.5], rotation: [0, -Math.PI / 2, 0] },
+        { id: 'seat-consulting-2', deptId: 'consulting', position: [0.8, 0, 0.5], rotation: [0, Math.PI / 2, 0] }
     ]);
     const [chatMessages, setChatMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -223,7 +266,7 @@ const TeamWorkspacePage: React.FC = () => {
         });
     };
 
-    const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 0, 0]);
+    const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 0, 8]);
     const [activeDeptId, setActiveDeptId] = useState<string | null>(null);
 
     const handleMove = (point: [number, number, number]) => {
@@ -235,18 +278,20 @@ const TeamWorkspacePage: React.FC = () => {
             const dx = Math.abs(point[0] - currentDept.offset[0]);
             const dz = Math.abs(point[2] - currentDept.offset[2]);
 
-            // EXIT LOGIC: Clicking clearly in the hallway (Z > 9)
-            if (point[2] > 9) {
+            // EXIT LOGIC: Clicking clearly in the hallway
+            const isTopRow = currentDept.offset[2] < 10;
+            const isExit = isTopRow ? point[2] > 6 : point[2] < 10;
+
+            if (isExit) {
                 setActiveDeptId(null);
-                setCameraTarget([0, 0, 0]); // Return to hub view
+                setCameraTarget([0, 0, 8]); // Return to hub view
             } else if (dx > 4.2 || dz > 8.2) {
                 // BLOCKED: Trying to walk through private walls to other rooms
                 return;
             }
         } else {
             // HALLWAY MODE: Block clicking inside rooms directly (must use door)
-            // Anything with Z < 7.5 is considered "Inside room walls"
-            if (point[2] < 7.5) {
+            if (point[2] < 3.5 || point[2] > 12.5) {
                 return;
             }
         }
@@ -273,7 +318,7 @@ const TeamWorkspacePage: React.FC = () => {
             <ErrorBoundary>
                 <div className="absolute inset-0 z-0">
                     <Canvas shadows gl={{ antialias: true, alpha: true }}>
-                        <PerspectiveCamera makeDefault position={[0, 15, 25]} fov={45} />
+                        <PerspectiveCamera makeDefault position={[0, 20, 35]} fov={45} />
                         <OrbitControls 
                             makeDefault 
                             enablePan={true} 

@@ -10,30 +10,11 @@ const resources = {
         translation: {
             "floor_guide": "층별 안내",
             "nav": {
-                "login": "로그인",
-                "gallery": "HXVARCADE",
-                ...categoriesJson.ko.nav,
-
-
-                "tickets": "회사소개",
-                "art": "입점사 로그인",
-                "travel": "브랜드 철학",
-                "membership": "멤버십 클럽",
-                "partnership": "입점/제휴 문의",
-                "offline": "오프라인 가이드",
-                "sound_on": "소리 켜기",
-                "sound_off": "소리 끄기",
-                "search": "검색",
-                "language": "언어"
+                ...categoriesJson.ko.nav
             },
 
             "hero": {
-                "title": "시선과 취향이 만나는 곳",
-                "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, HXVARCADE",
-                "cta": "층별 안내 보기",
-                "tagline": "비즈니스가 즐거움이 되는 곳(Where Business Meets Play)",
                 "title_main": "HXVARCADE",
-                "title_sub": "THE VIRTUAL GATEWAY",
                 "description": "수많은 브랜드와 당신의 일상을 연결하는 영감의 허브. 당신의 탐험이 의미 있는 발견으로 이어지는 곳, HXVARCADE입니다.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
@@ -80,37 +61,7 @@ const resources = {
                 "f6_craft": "장인의 손길과 정성이 깃든 한국 공예의 아름다움을 현대적으로 제안합니다.",
                 "f6_tour": "지역의 숨겨진 보석 같은 이야기들을 따라가는 역사와 문화의 여정입니다."
             },
-            "featured": {
-                "title": "추천 & 이벤트",
-                "subtitle": "HXVARCADE에서 만나는 특별한 경험",
-                "no_content": "등록된 콘텐츠가 없습니다."
-            },
-            "about": {
-                "title": "취향이 살아 숨쉬는 공간, HXVARCADE",
-                "subtitle": "전통의 깊이와 현대의 감각이 교차하는 아트 갤러리 백화점",
-                "description1": "HXVARCADE은 단순한 소비 공간을 넘어, 일상에 영감을 불어넣는 프리미엄 문화 큐레이션 플랫폼입니다.",
-                "description2": "가장 트렌디한 K-컬처부터 세월의 깊이를 품은 헤리티지까지, 당신의 시선을 머물게 할 수준 높은 전시와 예술적 경험을 선사합니다.",
-                "cta": "브랜드 철학 보기"
-            },
-            "auth": {
-                "login": "로그인",
-                "register": "회원가입",
-                "email": "이메일",
-                "password": "비밀번호",
-                "name": "이름",
-                "logout": "로그아웃",
-                "welcome": "환영합니다",
-                "login_title": "로그인",
-                "register_title": "회원가입",
-                "no_account": "계정이 없으신가요?",
-                "have_account": "이미 계정이 있으신가요?",
-                "signup": "가입하기",
-                "submit": "확인",
-                "loading": "처리 중...",
-                "error_generic": "오류가 발생했습니다."
-            },
             "brand_vision": {
-                "section_id": "VISION",
                 "masthead": "HXVARCADE EDITORIAL",
                 "headline": "디지털 문법의 새로운 질서: 공간과 일상의 결합",
                 "subheadline": "우리는 단순한 웹사이트를 넘어, 당신의 일상과 문화를 잇는 필수적인 디지털 항구를 건설합니다.",
@@ -352,25 +303,10 @@ const resources = {
         translation: {
             "floor_guide": "Floor Guide",
             "nav": {
-                ...categoriesJson.en.nav,
-                "tickets": "About Us",
-                "art": "Partner Login",
-                "travel": "Philosophy",
-                "membership": "Membership Club",
-                "partnership": "Partnership",
-                "offline": "Offline Guide",
-                "sound_on": "Sound On",
-                "sound_off": "Sound Off",
-                "search": "Search",
-                "language": "Language"
+                ...categoriesJson.en.nav
             },
             "hero": {
-                "title": "Where Gaze and Taste Meet",
-                "subtitle": "Experience the process where the world at the end of your gaze is completed with your taste, HXVARCADE",
-                "cta": "View Floor Guide",
-                "tagline": "An interactive connected platform to discover new tastes",
                 "title_main": "HXVARCADE",
-                "title_sub": "THE VIRTUAL GATEWAY",
                 "description": "An inspiration hub connecting numerous brands with your daily life. Where your exploration leads to meaningful discovery, HXVARCADE.",
                 "warping": "Warping...",
                 "explore": "Explore",
