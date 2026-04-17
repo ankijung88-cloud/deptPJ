@@ -31,7 +31,7 @@ const resources = {
                 "title": "시선과 취향이 만나는 곳",
                 "subtitle": "시선 끝에 맺힌 세상이 당신의 취향으로 완성되는 과정을 경험해 보십시오, HXVARCADE",
                 "cta": "층별 안내 보기",
-                "tagline": "새로운 취향을 발견하는 인터랙티브 커넥티드 플랫폼",
+                "tagline": "비즈니스가 즐거움이 되는 곳(Where Business Meets Play)",
                 "title_main": "HXVARCADE",
                 "title_sub": "THE VIRTUAL GATEWAY",
                 "description": "수많은 브랜드와 당신의 일상을 연결하는 영감의 허브. 당신의 탐험이 의미 있는 발견으로 이어지는 곳, HXVARCADE입니다.",
