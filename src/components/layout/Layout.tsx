@@ -26,7 +26,8 @@ export const Layout: React.FC = () => {
         const museum = normalizedPath.endsWith('/museum');
         const square = normalizedPath.endsWith('/square');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
-        const shouldHideHeader = landing || inspiration || admin;
+        const about = normalizedPath.endsWith('/about');
+        const shouldHideHeader = landing || inspiration || admin || about;
         
         return {
             isLandingPage: landing,
@@ -84,7 +85,7 @@ export const Layout: React.FC = () => {
             
             {!isImmersive && !isInspirationPage && <GlobalMiniMap key={location.key} />}
             
-            <div className={`flex-grow flex flex-col relative ${!hideHeader ? 'pt-20' : ''}`}>
+            <div className={`flex-grow flex flex-col relative ${(!hideHeader && !isImmersive) ? 'pt-20' : ''}`}>
 
                 <main className="flex-grow">
                     <Outlet />
