@@ -15,11 +15,11 @@ const resources = {
 
             "hero": {
                 "title_main": "HXVARCADE",
-                "description": "수많은 브랜드와 당신의 일상을 연결하는 영감의 허브. 당신의 탐험이 의미 있는 발견으로 이어지는 곳, HXVARCADE입니다.",
+                "description": "별도의 앱 설치 없이 웹 브라우저에서 바로 경험하는 프리미엄 3D 비즈니스 플랫폼. 기업과 브랜드를 위한 통합 가상 오피스 및 쇼룸을 마우스 클릭으로 직관적으로 구축하고 탐험해 보세요.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
-                "philosophy": "브랜드 철학",
+                "philosophy": "모집 공고",
                 "welcome": "Welcome to HXVARCADE",
                 "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, HXVARCADE입니다.",
                 "start": "시작하기"
@@ -62,16 +62,16 @@ const resources = {
                 "f6_tour": "지역의 숨겨진 보석 같은 이야기들을 따라가는 역사와 문화의 여정입니다."
             },
             "brand_vision": {
-                "masthead": "HXVARCADE EDITORIAL",
-                "headline": "디지털 문법의 새로운 질서: 공간과 일상의 결합",
-                "subheadline": "우리는 단순한 웹사이트를 넘어, 당신의 일상과 문화를 잇는 필수적인 디지털 항구를 건설합니다.",
-                "metadata": "SPECIAL REPORT | 2026.04.03 | BY BRAND STRATEGY TEAM",
-                "body_intro": "HXVARCADE은 단순히 정보를 나열하는 웹사이트가 아닙니다. 우리는 공간을 렌더링하고 문화를 혁신하는 새로운 차원의 디지털 항구를 지향합니다. 기성 웹의 평면적 한계를 부수고, 가장 현대적인 기술 위에 찬란한 문화를 세우는 것. 그것이 우리의 시작입니다.",
-                "body_philosophy": "우리는 사용자의 시선이 머무는 모든 지점에 브랜드의 숨은 가치를 부여합니다. 전통적인 단청의 미학을 현대적인 '글래스모피즘' UI로 재해석하여, 눈에 보이는 것 이상의 감성적 몰입감을 선사합니다. 모든 시선과 행동이 가치 있는 연결로 이어지도록 설계된 감성적 항구입니다.",
-                "body_future": "끊임없이 변화하는 기술과 고유한 아날로그 감성의 균형을 맞추며, 가상의 물리적 한계를 부수는 혁신적 UX를 지향합니다. 우리의 기술은 정적인 도구가 아니라 살아 숨 쉬는 유기적 연결망이자 혁신의 기록입니다.",
-                "body_essential": "정보의 홍수 속에서 우리는 길을 잃기도 합니다. HXVARCADE은 수직적 공간 메타포를 통해 가장 직관적이고 예술적인 방식으로 당신의 취향을 찾아주는 '디지털 항구'이자 필수적인 라이프스타일 큐레이션입니다.",
-                "pull_quote": "기술과 예술의 경계를 허무는 가장 혁신적이고 아름다운 큐레이션.",
-                "body_conclusion": "결국 HXVARCADE은 당신의 취향이 완성되는 마지막 기착지이자, 새로운 탐험이 시작되는 출발점입니다. 현대인에게 반드시 필요한 이 디지털 허브는 당신의 라이프스타일을 완성하는 마지막 조각이 될 것입니다."
+                "masthead": "HXVARCADE VISIONARY",
+                "headline": "디지털 비즈니스의 새로운 지평: 시공간을 초월한 혁신",
+                "subheadline": "우리는 단순한 가상 공간을 넘어, 가상융합(XR) 및 첨단기술 창업가들이 직접 모이고 성장하는 압도적인 비즈니스 허브를 구축합니다.",
+                "metadata": "SPECIAL REPORT | HXVARCADE OPERATION TEAM",
+                "body_intro": "HXVARCADE은 단순한 3D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
+                "body_philosophy": "투명하게 비치는 유리 너머로 시야가 확장되듯, HXVARCADE의 글래스모피즘(Glassmorphism) UI는 한계 없는 아이디어의 확장을 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
+                "body_future": "오프라인 지정 사무공간의 효율성과 온라인 가상 플랫폼의 무한한 네트워크를 빈틈없이 동기화하는 '하이브리드 워크플레이스'의 새로운 기준입니다. 기술은 도구를 넘어 살아 숨 쉬는 유기적 성장의 원동력이 될 것입니다.",
+                "body_essential": "빠르게 변화하는 시장 환경 속에서, 스타트업과 창업가들은 오직 혁신에만 집중해야 합니다. 사업자 단위의 비상주 오피스부터 프리미엄 3D 비즈니스 캔버스 지원까지, 우리는 혁신가들의 도약을 위한 가장 완벽한 베이스캠프이자 필수 불가결한 엑셀러레이터입니다.",
+                "pull_quote": "성장하는 기업을 위한 제약 없는 3D 캔버스, 시공간을 초월한 혁신적 비즈니스 생태계.",
+                "body_conclusion": ""
             },
             "footer": {
                 "address": "서울특별시 중구 소공로 123",
@@ -307,7 +307,7 @@ const resources = {
             },
             "hero": {
                 "title_main": "HXVARCADE",
-                "description": "An inspiration hub connecting numerous brands with your daily life. Where your exploration leads to meaningful discovery, HXVARCADE.",
+                "description": "A premium 3D business platform experienced directly in your web browser without installing any apps. Intuitively build and explore integrated virtual offices and showrooms for enterprises and brands with a single click.",
                 "warping": "Warping...",
                 "explore": "Explore",
                 "story": "Partner Login",

@@ -9,7 +9,7 @@ import { Home } from 'lucide-react';
 const AboutPage: React.FC = () => {
     const { t } = useTranslation();
     const containerRef = useRef<HTMLDivElement>(null);
-            const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (containerRef.current) {
@@ -17,8 +17,8 @@ const AboutPage: React.FC = () => {
         }
     }, []);
 
-            return (
-        <div ref={containerRef} className="h-[100dvh] w-full overflow-y-auto overflow-x-hidden snap-y snap-mandatory bg-[#1A2420] text-white font-sans selection:bg-dancheong-red/30 relative scroll-smooth">
+    return (
+        <div ref={containerRef} className="h-[100dvh] w-full overflow-y-auto overflow-x-hidden bg-[#0A100D] text-white font-sans selection:bg-dancheong-red/30 relative">
             <LanguageSelector variant="floating" />
 
             <button
@@ -29,12 +29,12 @@ const AboutPage: React.FC = () => {
                 <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
             </button>
 
-            {/* 00. Brand Vision / Intro Section (Editorial Style) */}
-            <section className="w-full min-h-[100dvh] flex flex-col items-center justify-center snap-start snap-always relative overflow-hidden bg-[#0A100D] py-24 px-6">
+            {/* Unified Page Content */}
+            <main className="w-full relative overflow-hidden bg-[#0A100D] pt-24 pb-32 px-6 md:px-12 flex flex-col items-center">
                 {/* Background Effects */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-dancheong-red/5 to-transparent"></div>
-                    <div className="absolute inset-0" style={{ 
+                    <div className="absolute inset-0" style={{
                         backgroundImage: `linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)`,
                         backgroundSize: '100px 100px'
                     }}></div>
@@ -42,129 +42,125 @@ const AboutPage: React.FC = () => {
                     <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-dancheong-gold/5 blur-[130px] animate-pulse" style={{ animationDelay: '1s' }}></div>
                 </div>
 
-                <div className="w-full max-w-5xl mx-auto relative z-10">
-                    {/* Masthead */}
-                    <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        className="text-center border-b border-white/20 pb-6 mb-16"
-                    >
-                        <span className="text-[10px] md:text-sm font-bold tracking-[0.8em] text-white/40 uppercase">
-                            {t('brand_vision.masthead')}
-                        </span>
-                    </motion.div>
-
-                    {/* Headline Area */}
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 1.2 }}
-                        className="text-center mb-20"
-                    >
-                        <h2 className="text-4xl md:text-[5.5rem] font-serif font-black mb-10 tracking-tighter leading-[1.05] max-w-5xl mx-auto drop-shadow-2xl">
-                            <AutoTranslatedText text={t('brand_vision.headline')} />
-                        </h2>
-                        <div className="flex flex-col items-center gap-8">
-                            <p className="text-xl md:text-3xl font-bold text-dancheong-gold max-w-3xl mx-auto break-keep leading-tight px-4">
-                                <AutoTranslatedText text={t('brand_vision.subheadline')} />
-                            </p>
-                            <div className="flex items-center justify-center gap-6 text-[10px] md:text-xs font-mono tracking-[0.3em] text-white/30 uppercase border-t border-white/5 pt-6 w-full max-w-md">
-                                <span>{t('brand_vision.metadata')}</span>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* Article Content */}
-                    <div className="grid md:grid-cols-2 gap-x-20 gap-y-12 text-white/70 leading-relaxed font-light text-lg md:text-xl">
-                        {/* Column 1 */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: false, amount: 0.3 }}
-                            transition={{ duration: 1, delay: 0.2 }}
-                            className="space-y-10"
-                        >
-                            <div className="relative">
-                                {/* First char drop cap logic handled by i18n or manual extraction if needed */}
-                                <p className="text-justify break-keep">
-                                    <span className="float-left text-7xl md:text-9xl font-serif font-black text-dancheong-red mr-6 mt-3 leading-[0.8] drop-shadow-[0_0_20px_rgba(235,59,45,0.3)]">
-                                        V
-                                    </span>
-                                    <AutoTranslatedText text={t('brand_vision.body_intro').startsWith('V') ? t('brand_vision.body_intro').slice(1) : t('brand_vision.body_intro')} />
-                                </p>
-                            </div>
-                            <div className="bg-white/[0.03] border-l-4 border-dancheong-red p-10 rounded-r-[2rem] shadow-xl">
-                                <p className="italic text-white/90 leading-loose">
-                                    <AutoTranslatedText text={t('brand_vision.body_philosophy')} />
-                                </p>
-                            </div>
-                        </motion.div>
-
-                        {/* Column 2 */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: false, amount: 0.3 }}
-                            transition={{ duration: 1, delay: 0.4 }}
-                            className="space-y-10"
-                        >
-                            <p className="text-justify break-keep">
-                                <AutoTranslatedText text={t('brand_vision.body_future')} />
-                            </p>
-                            
-                            {/* Pull Quote */}
-                            <div className="py-12 border-y border-white/10 my-12 relative group">
-                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-6xl text-dancheong-gold opacity-30 font-serif">"</div>
-                                <p className="text-2xl md:text-4xl font-serif font-bold text-white text-center italic leading-[1.3] px-6">
-                                    <AutoTranslatedText text={t('brand_vision.pull_quote')} />
-                                </p>
-                                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-6xl text-dancheong-gold opacity-30 font-serif">"</div>
-                            </div>
-
-                            <p className="text-justify break-keep">
-                                <AutoTranslatedText text={t('brand_vision.body_essential')} />
-                            </p>
-                        </motion.div>
+                {/* 01. Recruitment Announcement */}
+                <div className="w-full max-w-6xl mx-auto relative z-10">
+                    {/* Background Details */}
+                    <div className="absolute inset-0 opacity-10 pointer-events-none">
+                        <div className="absolute top-[0%] left-[-10%] w-[50%] h-[50%] rounded-full bg-dancheong-gold blur-[150px] animate-pulse"></div>
                     </div>
-
-                    {/* Final Conclusion */}
-                    <motion.div 
-                        initial={{ opacity: 0, y: 30 }}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 1.2, delay: 0.6 }}
-                        className="mt-24 pt-16 border-t border-white/10 text-center max-w-4xl mx-auto"
+                        viewport={{ once: true, amount: 0.2 }}
+                        className="mb-12 border-b border-white/10 pb-8"
                     >
-                        <p className="text-2xl md:text-4xl font-serif font-medium text-white/40 leading-snug italic tracking-tight">
-                            <AutoTranslatedText text={t('brand_vision.body_conclusion')} />
+                        <span className="text-dancheong-gold text-sm md:text-base font-bold tracking-[0.5em] uppercase mb-4 block drop-shadow-md">Operations & Recruitment</span>
+                        <h2 className="text-3xl md:text-5xl font-black text-white leading-tight break-keep drop-shadow-lg">
+                            <AutoTranslatedText text="가상오피스 지원 및 입주기업 모집공고" />
+                        </h2>
+                        <p className="text-white/60 mt-4 max-w-3xl text-sm md:text-lg break-keep leading-relaxed font-medium">
+                            <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. HXVARCADE의 프리미엄 3D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
                         </p>
                     </motion.div>
-                </div>
 
-                {/* Aesthetic Detail: Side Label */}
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 2.5, duration: 2 }}
-                    className="absolute bottom-12 left-10 hidden md:flex flex-col items-center gap-6 opacity-20 hover:opacity-100 transition-opacity"
-                >
-                    <span className="text-[10px] tracking-[1em] uppercase [writing-mode:vertical-lr] font-black rotate-180"><AutoTranslatedText text="VISIONARY REPORT" /></span>
-                    <div className="w-[1px] h-24 bg-gradient-to-b from-dancheong-gold to-transparent"></div>
-                </motion.div>
-                
-                {/* Scroll Indicator */}
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 2.5, duration: 2 }}
-                    className="absolute bottom-12 right-12 hidden md:flex flex-col items-end gap-4 opacity-40 group cursor-pointer"
-                >
-                    <span className="text-[10px] tracking-[0.5em] uppercase text-white/50 group-hover:text-dancheong-gold transition-colors"><AutoTranslatedText text="SCROLL TO EXPLORE" /></span>
-                    <div className="w-16 h-[1px] bg-gradient-to-r from-dancheong-gold/60 to-transparent group-hover:w-24 transition-all duration-500"></div>
-                </motion.div>
-            </section>
+                    <div className="flex flex-col gap-8 md:gap-10">
+                        {/* 모집 개요 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.8 }}
+                            className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl"
+                        >
+                            <h3 className="text-xl md:text-2xl font-black text-white mb-6 border-l-4 border-dancheong-red pl-4 tracking-tight"><AutoTranslatedText text="1. 모집개요 및 신청자격" /></h3>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <h4 className="text-dancheong-gold text-sm md:text-base font-bold tracking-wide"><AutoTranslatedText text="지원 대상" /></h4>
+                                    <ul className="list-disc list-inside text-white/80 space-y-3 text-sm leading-relaxed break-keep">
+                                        <li><AutoTranslatedText text="프라이빗 모임, 촬영, 팝업스토어 기획을 위해 공간을 찾는 개인/기업." /></li>
+                                    </ul>
+                                </div>
+                                <div className="space-y-4">
+                                    <h4 className="text-dancheong-gold text-sm md:text-base font-bold tracking-wide"><AutoTranslatedText text="신청 자격 내용" /></h4>
+                                    <ul className="list-disc list-inside text-white/80 space-y-3 text-sm leading-relaxed break-keep">
+                                        <li><AutoTranslatedText text="개인, 소모임, 프로젝트 팀, 단체 및 기업 등 제한 없이 누구나 신청 가능" /></li>
+                                        <li className="text-dancheong-red/80 font-medium"><AutoTranslatedText text="※ 국세/지방세 체납 기업 및 제재 중인 기업 지원 불가" /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* 지원 규모 및 내용 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
+                            className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl overflow-hidden"
+                        >
+                            <h3 className="text-xl md:text-2xl font-black text-white mb-6 border-l-4 border-[#00FFC2] pl-4 tracking-tight"><AutoTranslatedText text="2. 모집규모 및 주요 지원내용" /></h3>
+                            <div className="overflow-x-auto mix-blend-screen">
+                                <table className="w-full text-left text-sm text-white border-collapse min-w-[700px]">
+                                    <thead>
+                                        <tr className="border-b-2 border-white/20 text-white/60 font-bold tracking-wide bg-white/[0.02]">
+                                            <th className="py-5 px-6 whitespace-nowrap"><AutoTranslatedText text="구분" /></th>
+                                            <th className="py-5 px-6 whitespace-nowrap"><AutoTranslatedText text="모집규모" /></th>
+                                            <th className="py-5 px-6 whitespace-nowrap"><AutoTranslatedText text="비용안내" /></th>
+                                            <th className="py-5 px-6 whitespace-nowrap"><AutoTranslatedText text="지원 혜택" /></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/10">
+                                        <tr className="hover:bg-white/5 transition-colors">
+                                            <td className="py-5 px-6 font-medium whitespace-nowrap"><AutoTranslatedText text="프리미엄 공간지원" /></td>
+                                            <td className="py-5 px-6 text-white/70 whitespace-nowrap"><AutoTranslatedText text="총 4개 호실 (4~8인실)" /></td>
+                                            <td className="py-5 px-6 text-white/70 whitespace-nowrap"><AutoTranslatedText text="저렴한 기본 임차료/VAT" /></td>
+                                            <td className="py-5 px-6 text-white/70 break-keep"><AutoTranslatedText text="HXVARCADE 등의 오프라인 지정 사무공간 지원 (일부 실사용료만 납부)" /></td>
+                                        </tr>
+                                        <tr className="bg-[#00FFC2]/5 hover:bg-[#00FFC2]/10 transition-colors">
+                                            <td className="py-5 px-6 font-bold text-[#00FFC2] whitespace-nowrap"><AutoTranslatedText text="HXVARCADE 가상오피스" /></td>
+                                            <td className="py-5 px-6 text-[#00FFC2]/90 font-medium whitespace-nowrap"><AutoTranslatedText text="10개사 내외" /></td>
+                                            <td className="py-5 px-6 font-black text-dancheong-gold whitespace-nowrap"><AutoTranslatedText text="전액 무상" /></td>
+                                            <td className="py-5 px-6 text-[#00FFC2]/70 break-keep"><AutoTranslatedText text="사업자등록용 비상주 주소지 사용권, 브랜드 전용 3D 가상 스페이스 환경 및 회의실 등 인프라 지원" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </motion.div>
+
+                        {/* 심사 및 일정 */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-white/10 shadow-2xl"
+                        >
+                            <h3 className="text-xl md:text-2xl font-black text-white mb-8 border-l-4 border-dancheong-gold pl-4 tracking-tight"><AutoTranslatedText text="3. 신청방법 및 심사과정" /></h3>
+
+                            <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+                                <div className="bg-black/40 p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-dancheong-gold/10 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
+                                    <div className="text-dancheong-gold text-4xl font-black mb-4 drop-shadow-[0_0_15px_rgba(255,215,0,0.3)]">01</div>
+                                    <h4 className="text-white font-bold mb-3 text-lg"><AutoTranslatedText text="지원서류 이메일 접수" /></h4>
+                                    <p className="text-white/60 text-sm break-keep leading-relaxed"><AutoTranslatedText text="사업계획서 및 구비서류를 압축(ZIP)하여 공고된 이메일로 온라인 제출" /></p>
+                                </div>
+                                <div className="bg-black/40 p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#00FFC2]/10 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
+                                    <div className="text-[#00FFC2] text-4xl font-black mb-4 drop-shadow-[0_0_15px_rgba(0,255,194,0.3)]">02</div>
+                                    <h4 className="text-white font-bold mb-3 text-lg"><AutoTranslatedText text="서류 및 발표 평가" /></h4>
+                                    <p className="text-white/60 text-sm break-keep leading-relaxed"><AutoTranslatedText text="사업성(40점), 시장전망(30점), 공간활용계획(30점)을 종합적으로 심사" /></p>
+                                </div>
+                                <div className="bg-black/40 p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-dancheong-red/10 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
+                                    <div className="text-dancheong-red text-4xl font-black mb-4 drop-shadow-[0_0_15px_rgba(235,59,45,0.3)]">03</div>
+                                    <h4 className="text-white font-bold mb-3 text-lg"><AutoTranslatedText text="결과 통보 및 오리엔테이션" /></h4>
+                                    <p className="text-white/60 text-sm break-keep leading-relaxed"><AutoTranslatedText text="선발 후 개별 안내, 신규 입주사 온라인/오프라인 간담회 진행" /></p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </main>
 
         </div>
     );
