@@ -41,7 +41,7 @@ const DepartmentRoom = ({ dept, onEnter }: { dept: any, onEnter: (id: string) =>
   }, [isOpen]);
 
   return (
-    <group position={dept.offset}>
+    <group position={dept.offset} rotation={dept.rotation || [0, 0, 0]}>
       {/* 4 Walls (Solid/Opaque) - Seamless Side-by-Side (8x16) */}
       {/* Back Wall */}
       <mesh position={[0, 1.5, -8]}>
@@ -340,14 +340,16 @@ export const OfficeEnvironment = ({
           dept={dept} 
           onEnter={(deptId: string) => {
             onEnterRoom(deptId);
-            onMove([dept.offset[0], 0, dept.offset[2] + 4]);
+            const rot = dept.rotation ? dept.rotation[1] : 0;
+            const sign = Math.cos(rot) >= 0 ? 1 : -1;
+            onMove([dept.offset[0], 0, dept.offset[2] + 4 * sign]);
           }} 
         />
       ))}
 
       {/* Seats in departments */}
       {departments.map((dept: any) => (
-        <group key={dept.id} position={dept.offset as any}>
+        <group key={dept.id} position={dept.offset as any} rotation={dept.rotation || [0, 0, 0]}>
           {seats.filter((s: any) => s.deptId === dept.id).map((seat: any, idx: number) => {
             const row = Math.floor(idx / 2);
             const col = idx % 2;

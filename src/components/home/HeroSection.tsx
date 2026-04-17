@@ -95,13 +95,7 @@ export const HeroSection: React.FC = () => {
                                     className="h-32 w-auto drop-shadow-[0_0_25px_rgba(0,242,255,0.4)]"
                                 />
                             </motion.div>
-                            <motion.div
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="inline-block mb-6 px-4 py-1 border border-[#00FFC2]/30 bg-[#00FFC2]/5 backdrop-blur-md rounded-full text-[#00FFC2] text-sm font-medium tracking-widest uppercase"
-                            >
-                                <AutoTranslatedText text={t('hero.tagline')} />
-                            </motion.div>
+
 
                             <motion.h1
                                 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
