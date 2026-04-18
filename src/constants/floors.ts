@@ -6,11 +6,11 @@ export const FLOORS = [
         color: '#FF3B30',
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
-            { id: 'meeting-room', label: '회의실' },
-            { id: 'audio-room', label: '오디션' },
-            { id: 'interview-room', label: '면접실' },
-            { id: 'square', label: '모두의 광장' },
-            { id: 'office', label: '오피스' },
+            { id: 'meeting-room', label: '인사이트 챔' },
+            { id: 'audio-room', label: '넥스트 스타 온에어' },
+            { id: 'interview-room', label: '위너스 라운지' },
+            { id: 'square', label: '오픈 커넥스 스퀘어' },
+            { id: 'office', label: '리얼리티 버추얼 오피스' },
         ]
     },
     {
