@@ -253,7 +253,7 @@ const SubCategoryPage: React.FC = () => {
 
                                 <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 
                                    style={{ borderColor: `${theme.color3}44`, color: theme.color4 }}>
-                                    <AutoTranslatedText text={t(`subcategory_msg.${targetSubId}`) !== `subcategory_msg.${targetSubId}` ? t(`subcategory_msg.${targetSubId}`) : t('subcategory_desc')} />
+                                    <AutoTranslatedText text={(subcategoryData?.description ? getLocalizedText(subcategoryData.description, i18n.language) : (t(`subcategory_msg.${targetSubId}`) !== `subcategory_msg.${targetSubId}` ? t(`subcategory_msg.${targetSubId}`) : t('subcategory_desc'))) as string} />
                                 </p>
 
                                 <p className="mt-4 text-sm md:text-base font-bold tracking-widest opacity-60 flex items-center gap-3 px-8 py-3 bg-white/5 rounded-full w-fit border border-white/5" style={{ color: theme.accentColor }}>

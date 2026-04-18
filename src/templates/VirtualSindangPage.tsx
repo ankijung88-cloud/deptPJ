@@ -52,10 +52,17 @@ const VirtualSindangPage: React.FC = () => {
     const [shrineImageUrl, setShrineImageUrl] = useState<string | null>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     
-    // Authorization States
+    // Authorization & Mode States
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [consultationMode, setConsultationMode] = useState<'basic' | 'premium' | null>(null);
     const [entryToken, setEntryToken] = useState('');
     const [showTokenModal, setShowTokenModal] = useState(false);
+    
+    // Tarot States
+    const [flippedCards, setFlippedCards] = useState<number[]>([]);
+    const [tarotBackUrl, setTarotBackUrl] = useState<string | null>(null);
+    const tarotBackInputRef = React.useRef<HTMLInputElement>(null);
+    const [aiReadingResult, setAiReadingResult] = useState<string | null>(null);
     
     const { resetUiTimer } = useNavigationState();
     useImmersiveMode(true);
@@ -81,6 +88,7 @@ const VirtualSindangPage: React.FC = () => {
     useEffect(() => {
         if (isHost) {
             setIsAuthorized(true);
+            setConsultationMode('premium');
             return;
         }
 
@@ -89,15 +97,19 @@ const VirtualSindangPage: React.FC = () => {
         if (inviteToken) {
             sessionStorage.setItem(roomKey, inviteToken);
             setIsAuthorized(true);
+            setConsultationMode('premium');
             return;
         }
 
+        // If they have a saved token, they were doing a premium consultation
         const savedToken = sessionStorage.getItem(roomKey);
         if (savedToken) {
             setIsAuthorized(true);
+            setConsultationMode('premium');
             return;
         }
 
+        // Otherwise show modal to choose either AI or Enter Code
         setShowTokenModal(true);
     }, [isHost, roomId, roomKey]);
 
@@ -159,6 +171,19 @@ const VirtualSindangPage: React.FC = () => {
         newSocket.on('screen-update', (data: { url: string; type: string }) => {
             if (data.type === 'shrine-image') {
                 setShrineImageUrl(data.url);
+            } else if (data.type === 'tarot-back') {
+                setTarotBackUrl(data.url);
+            }
+        });
+
+        newSocket.on('custom-event', (data: any) => {
+            if (data.type === 'flip-card') {
+                setFlippedCards(prev => {
+                    if (prev.includes(data.cardIndex)) return prev;
+                    return [...prev, data.cardIndex];
+                });
+            } else if (data.type === 'reset-tarot') {
+                setFlippedCards([]);
             }
         });
 
@@ -169,10 +194,52 @@ const VirtualSindangPage: React.FC = () => {
 
     const handleSeatSelect = useCallback((seatId: number) => {
         setLocalParticipant(prev => ({ ...prev, seatId }));
-        if (socket) {
+        if (socket && consultationMode === 'premium') {
             socket.emit('select-seat', { seatId });
         }
-    }, [socket]);
+    }, [socket, consultationMode]);
+
+    const handleCardFlip = useCallback((cardIndex: number) => {
+        setFlippedCards(prev => {
+            if (prev.includes(cardIndex)) return prev;
+            
+            const newFlipped = [...prev, cardIndex];
+            
+            if (consultationMode === 'premium' && socket) {
+                // Emit flip to other users
+                socket.emit('send-custom', { type: 'flip-card', cardIndex });
+            }
+            
+            // Check for AI Basic Mode Trigger
+            if (consultationMode === 'basic' && newFlipped.length === 3) {
+                // Trigger AI Reading automatically after 3 cards
+                fetchAiTarotReading(newFlipped);
+            }
+            
+            return newFlipped;
+        });
+    }, [socket, consultationMode]);
+
+    const fetchAiTarotReading = async (cards: number[]) => {
+        try {
+            console.log("Fetching AI tarot reading for cards:", cards);
+            // Placeholder AI Fetch logic (similarly to how fortune works, or generic proxy)
+            // For now, setting a dummy result after small delay to show the system works
+            setTimeout(() => {
+                setAiReadingResult("AI 타로 마스터의 해석: \n\n과거, 현재, 미래에 걸쳐 뽑으신 세 장의 카드는 각각 새로운 시작, 내면의 직관, 그리고 다가올 풍요를 상징하고 있습니다. 망설이지 말고 직관을 믿고 나아가세요.");
+            }, 1500);
+        } catch (error) {
+            console.error("AI Reading failed", error);
+        }
+    };
+
+    const handleResetTarot = () => {
+        setFlippedCards([]);
+        setAiReadingResult(null);
+        if (consultationMode === 'premium' && socket) {
+            socket.emit('send-custom', { type: 'reset-tarot' });
+        }
+    };
 
     const toggleMute = () => {
         setIsMuted(!isMuted);
@@ -206,7 +273,7 @@ const VirtualSindangPage: React.FC = () => {
         }, 500);
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'shrine-image' | 'tarot-back') => {
         const file = e.target.files?.[0];
         if (!file || !socket || !isHost) return;
 
@@ -226,11 +293,16 @@ const VirtualSindangPage: React.FC = () => {
             const data = await response.json();
             const imageUrl = data.url;
 
-            setShrineImageUrl(imageUrl);
+            if (type === 'shrine-image') {
+                setShrineImageUrl(imageUrl);
+            } else {
+                setTarotBackUrl(imageUrl);
+            }
+
             socket.emit('share-screen', { 
                 roomId: `sindang_${roomId || 'default'}`, 
                 url: imageUrl, 
-                type: 'shrine-image' 
+                type: type 
             });
         } catch (error) {
             console.error('Image upload error:', error);
@@ -242,6 +314,13 @@ const VirtualSindangPage: React.FC = () => {
     const handleTokenSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         sessionStorage.setItem(roomKey, entryToken.trim());
+        setConsultationMode('premium');
+        setIsAuthorized(true);
+        setShowTokenModal(false);
+    };
+
+    const handleSelectAI = () => {
+        setConsultationMode('basic');
         setIsAuthorized(true);
         setShowTokenModal(false);
     };
@@ -282,6 +361,10 @@ const VirtualSindangPage: React.FC = () => {
                                 localParticipant={localParticipant}
                                 onSeatSelect={handleSeatSelect}
                                 shrineImageUrl={shrineImageUrl}
+                                tarotBackUrl={tarotBackUrl}
+                                flippedCards={flippedCards}
+                                onCardFlip={handleCardFlip}
+                                consultationMode={consultationMode || 'premium'}
                             />
                         </Suspense>
                     </Canvas>
@@ -393,7 +476,7 @@ const VirtualSindangPage: React.FC = () => {
                                     <input 
                                         type="file" 
                                         ref={fileInputRef} 
-                                        onChange={handleImageUpload} 
+                                        onChange={(e) => handleImageUpload(e, 'shrine-image')} 
                                         className="hidden" 
                                         accept="image/*"
                                     />
@@ -407,6 +490,33 @@ const VirtualSindangPage: React.FC = () => {
                                             <AutoTranslatedText text="배경 업로드" />
                                         </span>
                                     </button>
+                                    
+                                    <input 
+                                        type="file" 
+                                        ref={tarotBackInputRef} 
+                                        onChange={(e) => handleImageUpload(e, 'tarot-back')} 
+                                        className="hidden" 
+                                        accept="image/*"
+                                    />
+                                    <button 
+                                        onClick={() => tarotBackInputRef.current?.click()}
+                                        className="flex items-center gap-3 px-6 py-4 font-black rounded-2xl bg-gradient-to-r from-[#9C27B0] to-[#7B1FA2] text-white shadow-[0_10px_20px_rgba(156,39,176,0.3)] hover:scale-105 transition-all"
+                                        title={t("나만의 타로 뒷면 업로드")}
+                                    >
+                                        <Sparkles size={20} />
+                                        <span className="text-sm uppercase tracking-widest hidden md:block">
+                                            <AutoTranslatedText text="타로덱 설정" />
+                                        </span>
+                                    </button>
+
+                                    <button 
+                                        onClick={handleResetTarot}
+                                        className="flex items-center gap-3 px-6 py-4 font-black rounded-2xl bg-white/10 hover:bg-white/20 text-white transition-all"
+                                    >
+                                        <span className="text-sm uppercase tracking-widest hidden md:block">
+                                            <AutoTranslatedText text="타로 섞기 (Reset)" />
+                                        </span>
+                                    </button>
                                 </>
                             )}
                         </div>
@@ -417,38 +527,65 @@ const VirtualSindangPage: React.FC = () => {
                 <AnimatePresence>
                     {showTokenModal && (
                         <motion.div 
-                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/90 backdrop-blur-3xl"
+                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/90 backdrop-blur-3xl p-6"
                         >
                             <motion.div 
-                                className="w-full max-w-md p-12 bg-black/40 border border-[#FFD700]/30 rounded-[3rem] shadow-2xl flex flex-col items-center text-center gap-8"
+                                className="w-full max-w-4xl grid md:grid-cols-2 gap-8"
                             >
-                                <div className="w-20 h-20 bg-[#FFD700]/10 rounded-3xl flex items-center justify-center text-[#FFD700] border border-[#FFD700]/30">
-                                    <Lock size={40} />
-                                </div>
-                                
-                                <div className="flex flex-col gap-2">
-                                    <h2 className="text-3xl font-black tracking-tight text-[#FFD700]"><AutoTranslatedText text="영적 입장" /></h2>
-                                    <p className="text-white/40 text-sm tracking-wide">
-                                        <AutoTranslatedText text="이곳은 조용한 상담을 위한 신성한 공간입니다. 부여받은 입장 코드를 입력해 주세요." />
-                                    </p>
+                                {/* Mode 1: AI Tarot (Basic) */}
+                                <div className="p-12 bg-black/40 border border-[#9C27B0]/30 rounded-[3rem] shadow-2xl flex flex-col items-center text-center gap-8 relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-[#9C27B0]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    
+                                    <div className="w-20 h-20 bg-[#9C27B0]/10 rounded-3xl flex items-center justify-center text-[#9C27B0] border border-[#9C27B0]/30 shadow-[0_0_30px_rgba(156,39,176,0.2)] group-hover:scale-110 transition-transform">
+                                        <Sparkles size={40} />
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-2 relative z-10">
+                                        <h2 className="text-3xl font-black tracking-tight text-[#9C27B0]">
+                                            <AutoTranslatedText text="AI 타로 보기" />
+                                        </h2>
+                                        <p className="text-white/40 text-sm tracking-wide h-16">
+                                            <AutoTranslatedText text="신비로운 AI 타로 마스터와 함께 오늘 하루의 운세와 고민을 혼자 편안하게 점쳐보세요." />
+                                        </p>
+                                    </div>
+
+                                    <button 
+                                        onClick={handleSelectAI}
+                                        className="w-full py-5 bg-[#9C27B0] text-white font-black rounded-2xl transition-all hover:scale-[1.02] shadow-[0_10px_30px_rgba(156,39,176,0.3)] relative z-10"
+                                    >
+                                        <AutoTranslatedText text="혼자 점보기 (기본형)" />
+                                    </button>
                                 </div>
 
-                                <form onSubmit={handleTokenSubmit} className="w-full flex flex-col gap-4">
-                                    <input 
-                                        type="text" 
-                                        autoFocus
-                                        value={entryToken}
-                                        onChange={(e) => setEntryToken(e.target.value)}
-                                        placeholder={t("Access Code")}
-                                        className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-[#FFD700]/50 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
-                                    />
-                                    <button 
-                                        type="submit"
-                                        className="w-full py-5 bg-[#FFD700] text-black font-black rounded-2xl transition-all hover:scale-[1.02] shadow-[0_10px_30px_rgba(255,215,0,0.3)]"
-                                    >
-                                        <AutoTranslatedText text="ENTER THE SHRINE" />
-                                    </button>
-                                </form>
+                                {/* Mode 2: 1:1 Consultation (Premium) */}
+                                <div className="p-12 bg-black/40 border border-[#FFD700]/30 rounded-[3rem] shadow-2xl flex flex-col items-center text-center gap-8">
+                                    <div className="w-20 h-20 bg-[#FFD700]/10 rounded-3xl flex items-center justify-center text-[#FFD700] border border-[#FFD700]/30">
+                                        <Lock size={40} />
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-2">
+                                        <h2 className="text-3xl font-black tracking-tight text-[#FFD700]"><AutoTranslatedText text="1:1 타로 점사" /></h2>
+                                        <p className="text-white/40 text-sm tracking-wide h-16">
+                                            <AutoTranslatedText text="전문 타로술사와의 프라이빗한 1:1 상담. 부여받은 입장 코드를 입력해 주세요." />
+                                        </p>
+                                    </div>
+
+                                    <form onSubmit={handleTokenSubmit} className="w-full flex flex-col gap-4">
+                                        <input 
+                                            type="text" 
+                                            value={entryToken}
+                                            onChange={(e) => setEntryToken(e.target.value)}
+                                            placeholder={t("Access Code")}
+                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-[#FFD700]/50 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/20 text-white"
+                                        />
+                                        <button 
+                                            type="submit"
+                                            className="w-full py-5 bg-[#FFD700] text-black font-black rounded-2xl transition-all hover:scale-[1.02] shadow-[0_10px_30px_rgba(255,215,0,0.3)]"
+                                        >
+                                            <AutoTranslatedText text="전문가 상담 입장 (고급형)" />
+                                        </button>
+                                    </form>
+                                </div>
                             </motion.div>
                         </motion.div>
                     )}
@@ -494,6 +631,42 @@ const VirtualSindangPage: React.FC = () => {
                                     </div>
                                     <button onClick={() => setShowInviteModal(false)} className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all">
                                         <AutoTranslatedText text="DONE" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
+                {/* AI Reading Result Modal */}
+                <AnimatePresence>
+                    {aiReadingResult && (
+                        <div className="absolute inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="w-full max-w-2xl bg-[#110e1a] border border-[#9C27B0]/40 rounded-[2.5rem] p-10 relative overflow-hidden shadow-[0_30px_100px_rgba(156,39,176,0.3)]"
+                            >
+                                <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#9C27B0] blur-[100px] opacity-20 rounded-full" />
+                                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#4f46e5] blur-[100px] opacity-20 rounded-full" />
+                                
+                                <button onClick={handleResetTarot} className="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors relative z-10"><X size={20} /></button>
+                                
+                                <div className="flex flex-col items-center text-center gap-6 relative z-10">
+                                    <div className="w-16 h-16 bg-[#9C27B0]/20 rounded-2xl flex items-center justify-center text-[#e879f9] border border-[#9C27B0]/50 shadow-[0_0_30px_rgba(156,39,176,0.4)]">
+                                        <Sparkles size={32} />
+                                    </div>
+                                    <h3 className="text-3xl font-black tracking-tight text-white">
+                                        <AutoTranslatedText text="AI 타로 해석" />
+                                    </h3>
+                                    
+                                    <div className="w-full bg-white/5 border border-white/10 p-8 rounded-3xl text-left text-white/80 leading-relaxed font-medium whitespace-pre-wrap max-h-[50vh] overflow-y-auto custom-scrollbar">
+                                        <AutoTranslatedText text={aiReadingResult} />
+                                    </div>
+                                    
+                                    <button onClick={handleResetTarot} className="mt-4 px-8 py-4 bg-gradient-to-r from-[#9C27B0] to-[#7B1FA2] text-white font-black rounded-2xl transition-all hover:scale-105 shadow-[0_10px_20px_rgba(156,39,176,0.3)]">
+                                        <AutoTranslatedText text="새로운 질문하기" />
                                     </button>
                                 </div>
                             </motion.div>

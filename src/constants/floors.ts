@@ -1,27 +1,27 @@
 export const FLOORS = [
     {
         level: 7,
-        title: '커뮤니케이션 라운지',
+        title: '노마드 워크플레이',
         label: '7F',
         color: '#FF3B30',
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
-            { id: 'meeting-room', label: '회의실' },
-            { id: 'audio-room', label: '오디션' },
-            { id: 'interview-room', label: '면접실' },
-            { id: 'square', label: '모두의 광장' },
-            { id: 'office', label: '오피스' },
+            { id: 'meeting-room', label: '인사이트 챔버' },
+            { id: 'audio-room', label: '넥스트 스타 온에어' },
+            { id: 'interview-room', label: '위너스 라운지' },
+            { id: 'square', label: '오픈 커넥스 스퀘어' },
+            { id: 'office', label: '리얼리티 버추얼 오피스' },
         ]
     },
     {
         level: 6,
-        title: '게더 몰',
+        title: '그로스마켓',
         label: '6F',
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'b2b-mall', label: 'B2B 몰' },
-            { id: 'b2c-mall', label: 'B2C 몰' },
+            { id: 'b2b-mall', label: '홀세일마켓' },
+            { id: 'b2c-mall', label: '플리마켓' },
             { id: 'share-mall', label: '공동구매' },
             { id: 'funding-mall', label: '펀딩 몰' },
         ]
