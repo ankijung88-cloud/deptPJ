@@ -2,7 +2,7 @@
   "ko": {
     "nav": {
       "floor-7": "7F | 커뮤니케이션 라운지",
-      "floor-6": "6F | 게더 몰",
+      "floor-6": "6F | 그로스마켓",
       "floor-5": "5F | 패션 아카이브",
       "floor-4": "4F | 로컬 헤리티지",
       "floor-3": "3F | 라이프스타일 큐레이션",
@@ -16,8 +16,8 @@
       "interview-room": "면접실",
       "square": "모두의 광장",
       "office": "오피스",
-      "b2b-mall": "B2B 몰",
-      "b2c-mall": "B2C 몰",
+      "b2b-mall": "홀세일마켓",
+      "b2c-mall": "플리마켓",
       "share-mall": "공동구매",
       "funding-mall": "펀딩 몰",
       "archive": "패션 아카이브",

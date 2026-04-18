@@ -15,13 +15,13 @@ export const FLOORS = [
     },
     {
         level: 6,
-        title: '게더 몰',
+        title: '그로스마켓',
         label: '6F',
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'b2b-mall', label: 'B2B 몰' },
-            { id: 'b2c-mall', label: 'B2C 몰' },
+            { id: 'b2b-mall', label: '홀세일마켓' },
+            { id: 'b2c-mall', label: '플리마켓' },
             { id: 'share-mall', label: '공동구매' },
             { id: 'funding-mall', label: '펀딩 몰' },
         ]
