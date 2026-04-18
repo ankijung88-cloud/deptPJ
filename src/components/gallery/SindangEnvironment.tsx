@@ -11,6 +11,7 @@ import {
 } from '@react-three/drei';
 // removed unused THREE import
 import { AvatarModel } from './AvatarModel';
+import { TarotDeck3D } from '../tarot/TarotDeck3D';
 
 interface Participant {
     id: string;
@@ -24,6 +25,10 @@ interface SindangEnvironmentProps {
     localParticipant: Participant;
     onSeatSelect: (seatId: number) => void;
     shrineImageUrl?: string | null;
+    tarotBackUrl?: string | null;
+    flippedCards?: number[];
+    onCardFlip?: (index: number) => void;
+    consultationMode?: 'basic' | 'premium';
 }
 
 const SEATS = [
@@ -147,7 +152,11 @@ export const SindangEnvironment: React.FC<SindangEnvironmentProps> = ({
     participants,
     localParticipant,
     onSeatSelect,
-    shrineImageUrl
+    shrineImageUrl,
+    tarotBackUrl,
+    flippedCards = [],
+    onCardFlip = () => {},
+    consultationMode = 'premium'
 }) => {
     const [hoveredSeat, setHoveredSeat] = useState<number | null>(null);
 
@@ -184,6 +193,15 @@ export const SindangEnvironment: React.FC<SindangEnvironmentProps> = ({
 
             {/* Consultation Table */}
             <TraditionalTable />
+
+            {/* Tarot Deck placed on table */}
+            <TarotDeck3D 
+                isHost={true} // In single view, we pass mode down
+                tarotBackUrl={tarotBackUrl}
+                flippedCards={flippedCards}
+                onCardFlip={onCardFlip}
+                consultationMode={consultationMode}
+            />
 
             {/* Candles on altar and table */}
             <Candle position={[-0.4, 0.35, 0]} />

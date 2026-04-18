@@ -1509,6 +1509,19 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                     placeholder="헤리티지"
                                                 />
                                             </div>
+                                            <div className="col-span-2">
+                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Description (KO)</label>
+                                                <textarea 
+                                                    rows={2}
+                                                    value={typeof sub.description === 'string' ? sub.description : (sub.description?.ko || '')} 
+                                                    onChange={e => {
+                                                        const oldDesc = typeof sub.description === 'object' ? sub.description : { ko: sub.description || '' };
+                                                        updateSubitem(idx, 'description', { ...oldDesc, ko: e.target.value });
+                                                    }}
+                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30 resize-none"
+                                                    placeholder="서브 카테고리의 설명 텍스트를 입력하세요."
+                                                />
+                                            </div>
                                         </div>
 
                                         {/* Sub-item Background Image */}

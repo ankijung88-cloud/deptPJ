@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 console.log("VirtualStorePage.tsx version 2 loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, ShoppingBag, CreditCard, ArrowLeft, Tag, ShoppingCart, Info, Plus, UploadCloud, ChevronLeft, ChevronRight, Check, Pencil, Trash2, Edit3, Search } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
-import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Float, ContactShadows } from '@react-three/drei';
-import * as THREE from 'three';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
@@ -19,137 +16,52 @@ import { useCart } from '../context/CartContext';
 import { useAdmin } from '../hooks/useAdmin';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
 
-// --- Sub-components for 3D Viewer ---
+// --- Sub-components for Detail Viewer ---
 
-const DisplacementMesh: React.FC<{ imageUrl: string, scale?: number, subdivisions?: number }> = ({ imageUrl, scale = 0.6, subdivisions = 128 }) => {
-    if (!imageUrl) return null;
+const ProductDetailViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
+    const { i18n } = useTranslation();
+    const getLoc = (val: any, lang: string): string => {
+        if (!val) return '';
+        if (typeof val === 'string') return val;
+        return val[lang] || val['ko'] || '';
+    };
 
-    const texture = useLoader(THREE.TextureLoader, imageUrl);
-    const meshRef = useRef<THREE.Mesh>(null);
-
-    return (
-        <mesh ref={meshRef} castShadow receiveShadow>
-            <planeGeometry args={[3.2, 4.2, subdivisions, subdivisions]} />
-            <meshStandardMaterial
-                map={texture}
-                displacementMap={texture}
-                displacementScale={scale}
-                displacementBias={-0.1}
-                roughness={0.5}
-                metalness={0.2}
-            />
-        </mesh>
-    );
-};
-
-const ProductModel: React.FC<{ item: FeaturedItem }> = ({ item }) => {
-    const { imageUrl, sideImageUrl, leftSideImageUrl, rightSideImageUrl, backImageUrl } = item;
-
-    return (
-        <group>
-            <Suspense fallback={null}>
-                {/* 1. Front View */}
-                <group position={[0, 0, 0.4]}>
-                    <DisplacementMesh imageUrl={imageUrl} scale={0.4} />
-                </group>
-
-                {/* 2. Back View - use backImageUrl or fallback to main */}
-                <group position={[0, 0, -0.4]} rotation={[0, Math.PI, 0]}>
-                    <DisplacementMesh imageUrl={backImageUrl || imageUrl} scale={0.4} />
-                </group>
-
-                {/* 3. Side Views - use separate left/right if available, fallback to sideImageUrl or main */}
-                {(leftSideImageUrl || rightSideImageUrl || sideImageUrl) && (
-                    <>
-                        <group position={[1.6, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-                            <DisplacementMesh imageUrl={rightSideImageUrl || sideImageUrl || imageUrl} scale={0.2} subdivisions={64} />
-                        </group>
-                        <group position={[-1.6, 0, 0]} rotation={[0, -Math.PI / 2, 0]}>
-                            <DisplacementMesh imageUrl={leftSideImageUrl || sideImageUrl || imageUrl} scale={0.2} subdivisions={64} />
-                        </group>
-                    </>
-                )}
-            </Suspense>
-
-            {/* 4. Exhibition Stand (Base) */}
-            <mesh position={[0, -2.5, 0]}>
-                <cylinderGeometry args={[2.5, 2.8, 0.4, 32]} />
-                <meshStandardMaterial color="#0a0a0a" metalness={1} roughness={0.1} />
-            </mesh>
-
-            <spotLight position={[5, 5, 5]} intensity={2} angle={0.4} penumbra={1} castShadow />
-            <spotLight position={[-5, 5, -5]} intensity={1.5} angle={0.4} penumbra={1} color="#00d4ff" />
-            <pointLight position={[0, 2, 3]} intensity={1} />
-        </group>
-    );
-};
-
-const Product3DViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) => {
-    const { t } = useTranslation();
     if (!item) return (
         <div className="w-full h-full flex flex-col items-center justify-center text-white/20 gap-4">
             <ShoppingBag size={48} strokeWidth={1} />
-            {t('store.select_item_3d')}
+            <AutoTranslatedText text="상세설명을 확인할 제품을 선택하세요" />
         </div>
     );
 
-    // Check if we have 3D-specific assets (sides or back)
-    const has3DAssets = item.leftSideImageUrl || item.rightSideImageUrl || item.sideImageUrl || item.backImageUrl;
-
-    if (!has3DAssets) {
-        return (
-            <div className="w-full h-full flex items-center justify-center p-12 bg-black/20">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative w-full h-full flex items-center justify-center"
-                >
+    return (
+        <div className="w-full h-full overflow-y-auto custom-scrollbar relative z-10">
+            <div className="p-8 md:p-12 space-y-12">
+                <div className="w-full aspect-square md:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl relative bg-black/40 border border-white/5">
                     <img
                         src={item.thumbnailUrl || item.imageUrl}
-                        alt={typeof item.title === 'string' ? item.title : item.title.ko}
-                        className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
+                        alt={getLoc(item.title, 'ko')}
+                        className="w-full h-full object-contain hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute top-8 right-8 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-white/40">{t('store.preview_mode_2d')}</span>
+                </div>
+                
+                <div className="space-y-6 pb-20">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                            <Info size={24} className="text-[#00FFC2]" />
+                            <h3 className="text-xl md:text-2xl font-black uppercase tracking-widest text-[#00FFC2]">
+                                <AutoTranslatedText text="상세 스토리 & 설명" />
+                            </h3>
+                        </div>
+                        <div className="w-16 h-[2px] bg-[#00FFC2]/40" />
                     </div>
-                </motion.div>
+                    <div className="text-base md:text-lg text-white/80 leading-relaxed md:leading-loose font-medium whitespace-pre-wrap">
+                        <AutoTranslatedText text={getLoc(item.long_description, i18n.language) || '상세 정보가 등록되지 않았습니다.'} />
+                    </div>
+                </div>
             </div>
-        );
-    }
-
-    return (
-        <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
-            <Canvas shadows dpr={[1, 2]} gl={{ antialias: false, powerPreference: 'high-performance' }}>
-                <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={40} />
-                <ambientLight intensity={0.4} />
-
-                {/* Dynamic Studio Lighting */}
-                <spotLight position={[5, 10, 5]} angle={0.3} penumbra={1} intensity={2} castShadow />
-                <spotLight position={[-5, 5, 5]} angle={0.2} penumbra={1} intensity={1} color="#ffaa00" />
-                <pointLight position={[0, -5, 5]} intensity={0.5} />
-
-                <Suspense fallback={null}>
-                    {/* Near zero floating as requested (제자리에 있도록) */}
-                    <Float speed={0.5} rotationIntensity={0.1} floatIntensity={0.1}>
-                        <ProductModel item={item} />
-                    </Float>
-                    <ContactShadows position={[0, -2.5, 0]} opacity={0.6} scale={8} blur={2.5} far={4} color="#000" />
-                </Suspense>
-
-                <OrbitControls
-                    enableZoom={true}
-                    enablePan={false}
-                    minDistance={4}
-                    maxDistance={12}
-                    autoRotate={true}
-                    autoRotateSpeed={1}
-                    makeDefault
-                />
-            </Canvas>
-
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl">
-                <div className="w-2 h-2 rounded-full bg-orange-500 animate-[pulse_2s_infinite]" />
-                <span className="text-[10px] font-black uppercase text-white tracking-[0.3em]">{t('store.holographic_engine_active')}</span>
+            
+            <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-black/40 border border-[#00FFC2]/20 backdrop-blur-md">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#00FFC2]"><AutoTranslatedText text="Detail Information" /></span>
             </div>
         </div>
     );
@@ -939,11 +851,11 @@ const VirtualStorePage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 2. Interactive 3D Showcase Section */}
+                {/* 2. Interactive Detail Showcase Section */}
                 <section className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div className="lg:col-span-8 h-[70vh] rounded-[3.5rem] bg-black/40 border border-white/5 relative overflow-hidden group shadow-inner">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
-                        <Product3DViewer item={selectedItem} />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
+                        <ProductDetailViewer item={selectedItem} />
                     </div>
 
                     <div className="lg:col-span-4 flex flex-col justify-center gap-10">
@@ -985,14 +897,6 @@ const VirtualStorePage: React.FC = () => {
                             </div>
 
                             <div className="space-y-4">
-                                <button
-                                    onClick={() => { if (selectedItem) { setDetailItem(selectedItem); setShowDetailModal(true); } }}
-                                    disabled={!selectedItem}
-                                    className="w-full py-6 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 disabled:opacity-20"
-                                >
-                                    <AutoTranslatedText text="View Details" />
-                                </button>
-
                                 <button
                                     onClick={handlePurchase}
                                     disabled={!selectedItem || isProcessingPayment || purchaseComplete}
@@ -1356,7 +1260,7 @@ const VirtualStorePage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="pt-8">
+                                <div className="space-y-4">
                                     <button
                                         onClick={handlePurchase}
                                         disabled={isProcessingPayment || purchaseComplete}
