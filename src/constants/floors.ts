@@ -1,7 +1,7 @@
 export const FLOORS = [
     {
         level: 7,
-        title: '커뮤니케이션 라운지',
+        title: '노마드 워크플레이',
         label: '7F',
         color: '#FF3B30',
         videoUrl: '/uploads/meeting_room.mp4',
