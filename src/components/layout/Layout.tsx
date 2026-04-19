@@ -19,18 +19,16 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive, isUiVisible } = useNavigationState();
     
-    const { isLandingPage, isInspirationPage, hideHeader, isAdminPage, isMuseumPage, isSquarePage } = React.useMemo(() => {
+    const { isInspirationPage, hideHeader, isAdminPage, isMuseumPage, isSquarePage } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
         const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
         const inspiration = normalizedPath.endsWith('/inspiration');
         const museum = normalizedPath.endsWith('/museum');
         const square = normalizedPath.endsWith('/square');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
-        const about = normalizedPath.endsWith('/about');
-        const shouldHideHeader = landing || inspiration || admin || about;
+        const shouldHideHeader = landing || inspiration || admin;
         
         return {
-            isLandingPage: landing,
             isInspirationPage: inspiration,
             hideHeader: shouldHideHeader,
             isAdminPage: admin,
@@ -91,7 +89,7 @@ export const Layout: React.FC = () => {
                     <Outlet />
                 </main>
             </div>
-            {!isLandingPage && !isImmersive && <Footer />}
+            {!isImmersive && <Footer />}
 
             {/* Mouse Effect Toggle Button */}
             <button
