@@ -65,7 +65,7 @@ const Header: React.FC = () => {
     }, [location.pathname, breadcrumbPath]);
 
     const is3DStorePage = location.pathname === '/inspiration';
-    const isAboutPage = location.pathname === '/about';
+
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -280,7 +280,7 @@ const Header: React.FC = () => {
                 </Link>
 
                 {/* Desktop Navigation */}
-                {!is3DStorePage && !isAboutPage && (
+                {!is3DStorePage && (
                     <nav className="hidden xl:flex items-center space-x-8 font-serif">
                         {navItems.map((item) => {
                             const floorNum = item.label.split(' | ')[0];   // "1F"
@@ -355,8 +355,7 @@ const Header: React.FC = () => {
                 )}
 
                 {/* User Actions & Utilities */}
-                {!isAboutPage && (
-                    <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
+                <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
                         {/* Compact Breadcrumbs in Top Right */}
                         <div className="opacity-80 hover:opacity-100 transition-opacity">
                             <Breadcrumbs />
@@ -461,11 +460,9 @@ const Header: React.FC = () => {
                             )}
                         </div>
                     </div>
-                )}
 
                 {/* Mobile Menu Button */}
-                {!isAboutPage && (
-                    <div className="flex items-center space-x-4 lg:hidden relative">
+                <div className="flex items-center space-x-4 lg:hidden relative">
                         <button
                             onClick={() => {
                                 const next = !isGlobalMuted;
@@ -514,7 +511,6 @@ const Header: React.FC = () => {
                             </button>
                         )}
                     </div>
-                )}
             </div>
 
             {/* Mobile Menu */}

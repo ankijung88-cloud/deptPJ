@@ -5,8 +5,6 @@ import { lazy, Suspense } from 'react';
 
 import FloorContentPage from './pages/FloorContentPage';
 import SubCategoryPage from './pages/SubCategoryPage';
-import AboutPage from './pages/AboutPage';
-
 import InspirationPage from './pages/InspirationPage';
 const DetailPage = lazy(() => import('./pages/DetailPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -80,7 +78,6 @@ function App() {
                                     </Route>
 
                                     {/* Presentation Pages (No Layout/Navbar) */}
-                                    <Route path="/about" element={<AboutPage />} />
                                 </Routes>
                             </Suspense>
                         </NavigationActionProvider>
