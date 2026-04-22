@@ -204,12 +204,11 @@ const Header: React.FC = () => {
             onMouseEnter={() => resetUiTimer()}
             onMouseLeave={() => resetUiTimer()}
             style={{
-                backgroundColor: isScrolled ? `${theme.bgColor}f2` : theme.bgColor,
-                backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+                backgroundColor: isScrolled ? `${theme.bgColor}fc` : theme.bgColor,
                 boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.5)' : '0 15px 40px rgba(0,0,0,0.4)',
                 borderBottomLeftRadius: isScrolled ? '0' : '50% 16px',
                 borderBottomRightRadius: isScrolled ? '0' : '50% 16px',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, backdrop-filter 0.7s, box-shadow 0.7s, border-radius 0.7s'
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s, border-radius 0.7s'
             }}
         >
             {/* Curved Technical Blueprint Lines (SVG Precision Implementation) */}
@@ -293,9 +292,10 @@ const Header: React.FC = () => {
                                     onMouseEnter={() => setActiveDropdown(item.id)}
                                     onMouseLeave={() => setActiveDropdown(null)}
                                 >
-                                    {/* Elevator button (No longer a link, just a dropdown trigger) */}
-                                    <div
-                                        className="flex items-center justify-center w-[60px] h-[60px] rounded-full my-4 transition-all duration-200 select-none cursor-pointer"
+                                    {/* Elevator button (Direct link to 2D Floor Guide) */}
+                                    <Link
+                                        to={`/floor/${item.id}`}
+                                        className="flex items-center justify-center w-[60px] h-[60px] rounded-full my-4 transition-all duration-200 select-none cursor-pointer no-underline group/btn"
                                         style={{
                                             background: isActive
                                                 ? `radial-gradient(circle at 40% 35%, ${theme.accentColor}55, ${theme.bgColor}cc)`
@@ -308,6 +308,10 @@ const Header: React.FC = () => {
                                                 : '1.5px solid rgba(255,255,255,0.12)',
                                             transform: isActive ? 'scale(0.95)' : 'scale(1)',
                                         }}
+                                        onClick={() => {
+                                            setActiveDropdown(null);
+                                            setIsMenuOpen(false);
+                                        }}
                                     >
                                         <span
                                             className="font-black text-[18px] tracking-widest"
@@ -318,7 +322,7 @@ const Header: React.FC = () => {
                                         >
                                             {floorNum}
                                         </span>
-                                    </div>
+                                    </Link>
 
                                     <div
                                         className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap text-[18px] font-black tracking-widest text-center !break-keep ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
@@ -327,16 +331,15 @@ const Header: React.FC = () => {
                                         <AutoTranslatedText text={floorTitle} className="!whitespace-nowrap" />
                                     </div>
 
-                                    {/* Dropdown sub-items */}
                                     <div
-                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 backdrop-blur-xl rounded-b-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
-                                        style={{ backgroundColor: `${theme.bgColor}f2`, borderTop: `2px solid ${theme.accentColor}` }}
+                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 rounded-b-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
+                                        style={{ backgroundColor: `${theme.bgColor}`, borderTop: `2px solid ${theme.accentColor}`, border: `1px solid ${theme.accentColor}33` }}
                                     >
                                         <div className="py-2 flex flex-col relative font-sans">
                                             {item.subitems.map((sub) => (
                                                 <Link
                                                     key={sub.id}
-                                                    to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
+                                                    to={`/category/${sub.id}`}
                                                     className="px-5 py-3 text-sm tracking-wide text-dancheong-white/70 hover:bg-white/5 transition-all duration-200 text-left relative group/item"
                                                     onMouseEnter={e => (e.currentTarget.style.color = theme.highlightColor)}
                                                     onMouseLeave={e => (e.currentTarget.style.color = '')}
@@ -382,7 +385,7 @@ const Header: React.FC = () => {
                             {/* Search */}
                             <div className="relative flex items-center justify-end">
                                 <div
-                                    className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/10 backdrop-blur-md w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
+                                    className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/5 w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
                                         }`}
                                     style={isSearchOpen ? { border: `1px solid ${theme.borderColor}/40` } : {}}
                                 >
@@ -480,7 +483,7 @@ const Header: React.FC = () => {
 
                         <div
                             className={`flex items-center absolute right-[3.5rem] transition-all duration-400 ease-in-out overflow-hidden rounded-full ${isSearchOpen ? 'pl-3 pr-2 py-1.5 opacity-100 visible shadow-lg w-[200px]' : 'bg-transparent border border-transparent w-0 opacity-0 invisible pl-0 py-1'}`}
-                            style={isSearchOpen ? { backgroundColor: `${theme.bgColor}e6`, border: `1px solid ${theme.accentColor}55` } : {}}
+                            style={isSearchOpen ? { backgroundColor: `${theme.bgColor}`, border: `1px solid ${theme.accentColor}55` } : {}}
                         >
                             <Search size={18} className="shrink-0 mr-2" style={theme.highlightStyle} />
                             <input
@@ -516,15 +519,15 @@ const Header: React.FC = () => {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div
-                    className={`lg:hidden backdrop-blur-2xl h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-right duration-300 font-sans shadow-inner`}
-                    style={{ backgroundColor: `${theme.bgColor}f2`, borderTop: `2px solid ${theme.accentColor}` }}
+                    className={`lg:hidden h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-right duration-300 font-sans shadow-inner`}
+                    style={{ backgroundColor: `${theme.bgColor}`, borderTop: `2px solid ${theme.accentColor}` }}
                 >
                     <div className="flex flex-col p-6 space-y-6">
                         {navItems.map((item) => (
                             <div key={item.id} className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <Link
-                                        to={`/inspiration?floor=${item.level}`}
+                                        to={`/floor/${item.id}`}
                                         className="text-dancheong-white/90 text-lg font-serif font-medium tracking-wide py-1 transition-colors"
                                         onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
                                         onMouseLeave={e => e.currentTarget.style.color = ''}
@@ -546,7 +549,7 @@ const Header: React.FC = () => {
                                         {item.subitems.map((sub) => (
                                             <Link
                                                 key={sub.id}
-                                                to={sub.path || `/floor/${item.id}/articles?filter=${sub.id}`}
+                                                to={`/category/${sub.id}`}
                                                 className="text-dancheong-white/60 text-base tracking-wide transition-colors"
                                                 onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
                                                 onMouseLeave={e => e.currentTarget.style.color = ''}

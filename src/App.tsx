@@ -26,6 +26,8 @@ const VirtualGroupBuyPage = lazy(() => import('./templates/VirtualGroupBuyPage')
 const VirtualFundingPage = lazy(() => import('./templates/VirtualFundingPage'));
 const TeamWorkspacePage = lazy(() => import('./templates/TeamWorkspacePage'));
 const AgencyRegisterPage = lazy(() => import('./pages/AgencyRegisterPage'));
+const FloorGuidePage = lazy(() => import('./pages/FloorGuidePage'));
+
 import NoticePage from './pages/NoticePage';
 import FAQPage from './pages/FAQPage';
 import TermsPage from './pages/TermsPage';
@@ -51,7 +53,9 @@ function App() {
                                         <Route path="/inspiration" element={<InspirationPage />} />
                                         <Route path="/detail/:id" element={<DetailPage />} />
                                         <Route path="/floor/:id/articles" element={<FloorContentPage />} />
+                                        <Route path="/floor/:id" element={<FloorGuidePage />} />
                                         <Route path="/category/:subId" element={<SubCategoryPage />} />
+
                                         <Route path="/notice" element={<NoticePage />} />
                                         <Route path="/faq" element={<FAQPage />} />
                                         <Route path="/search" element={<SearchPage />} />

@@ -128,11 +128,10 @@ export const Breadcrumbs: React.FC = () => {
 
                         let routeTo = '';
                         if (item.type === 'floor') {
-                            const floorNum = item.id?.replace('floor-', '') || '';
-                            routeTo = floorNum ? `/inspiration?floor=${floorNum}` : '/inspiration';
+                            routeTo = item.id ? `/floor/${item.id}` : '/inspiration';
                         } else if (item.type === 'category') {
-                            const floorNum = getFloorBySubId(item.id);
-                            routeTo = floorNum ? `/inspiration?floor=${floorNum}` : `/category/${item.id}`;
+                            const floorId = item.id.startsWith('floor-') ? item.id : (`floor-${getFloorBySubId(item.id)}` || '');
+                            routeTo = floorId !== 'floor-' ? `/floor/${floorId}` : `/category/${item.id}`;
                         } else if (item.type === 'detail' && !isLast) {
                             routeTo = `/detail/${item.id}`;
                         }
@@ -170,7 +169,7 @@ export const Breadcrumbs: React.FC = () => {
                         if (name === 'category' && pathnames[index + 1]) {
                             const floorNum = getFloorBySubId(pathnames[index + 1]);
                             if (floorNum) {
-                                routeTo = `/inspiration?floor=${floorNum}`;
+                                routeTo = `/floor/floor-${floorNum}`;
                             }
                         }
 
