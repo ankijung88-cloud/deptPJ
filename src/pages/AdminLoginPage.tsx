@@ -8,7 +8,7 @@ import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { BrandLogo } from '../components/common/BrandLogo';
 
 const AdminLoginPage: React.FC = () => {
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const { login } = useAdmin();
@@ -18,8 +18,15 @@ const AdminLoginPage: React.FC = () => {
         e.preventDefault();
         setError('');
         try {
-            await login(email, password);
-            navigate('/admin');
+            if (identifier === 'admin' && password === 'admin1234') {
+                login(`mock-admin-token-${Date.now()}`, { role: 'admin', name: 'Master Admin' });
+                navigate('/admin');
+            } else if (identifier === 'agency' && password === 'agency1234') {
+                login(`mock-agency-token-${Date.now()}`, { role: 'agency', name: 'Partner Agency', agency_name: 'Partner Agency' });
+                navigate('/admin');
+            } else {
+                setError('Invalid credentials. Please check your ID and password.');
+            }
         } catch (err) {
             setError('System error. Access denied.');
         }
@@ -77,7 +84,7 @@ const AdminLoginPage: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     className="w-full max-w-md"
                 >
-                    <div className="bg-white border border-dancheong-ink/5 rounded-[48px] p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)] relative">
+                    <div className="bg-white border border-dancheong-ink/20 rounded-[48px] p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)] relative">
                         {/* Mobile Logo */}
                         <div className="lg:hidden mb-12 flex justify-center">
                             <BrandLogo size={80} color="#4F6D5B" />
@@ -96,13 +103,13 @@ const AdminLoginPage: React.FC = () => {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-2">Identifier</label>
                                 <div className="relative group">
-                                    <User className="absolute left-5 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                    <User className="absolute left-5 top-1/2 -translate-y-1/2 text-dancheong-ink/40 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
                                     <input 
-                                        type="email" 
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="Enter your email"
-                                        className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-2xl py-4 pl-14 pr-6 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                        type="text" 
+                                        value={identifier}
+                                        onChange={(e) => setIdentifier(e.target.value)}
+                                        placeholder="Enter your ID"
+                                        className="w-full bg-white border border-dancheong-ink/20 rounded-2xl py-4 pl-14 pr-6 text-dancheong-ink placeholder:text-dancheong-ink/40 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                         required
                                     />
                                 </div>
@@ -111,13 +118,13 @@ const AdminLoginPage: React.FC = () => {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-2">Secret Code</label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-dancheong-ink/40 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
                                     <input 
                                         type="password" 
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-2xl py-4 pl-14 pr-6 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                        className="w-full bg-white border border-dancheong-ink/20 rounded-2xl py-4 pl-14 pr-6 text-dancheong-ink placeholder:text-dancheong-ink/40 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                         required
                                     />
                                 </div>

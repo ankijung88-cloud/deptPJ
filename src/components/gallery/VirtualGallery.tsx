@@ -485,17 +485,30 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
                 >
-                    {/* 1. Card Base */}
-                    <mesh position={[0, 0, -0.05]}>
-                        <boxGeometry args={[4.2, 3.2, 0.1]} />
-                        <meshStandardMaterial
-                            color={theme.color1}
-                            emissive={theme.accentColor}
-                            emissiveIntensity={hovered ? 1.5 : 0.2}
-                            metalness={0.8}
-                            roughness={0.2}
-                        />
-                    </mesh>
+                    {/* 1. Card Base & Border */}
+                    <group position={[0, 0, -0.05]}>
+                        {/* Main Body */}
+                        <mesh>
+                            <boxGeometry args={[4.2, 3.2, 0.1]} />
+                            <meshStandardMaterial
+                                color={theme.color1}
+                                emissive={theme.accentColor}
+                                emissiveIntensity={hovered ? 1.5 : 0.2}
+                                metalness={0.8}
+                                roughness={0.2}
+                            />
+                        </mesh>
+                        {/* Boundary Border */}
+                        <mesh scale={[1.02, 1.02, 1.05]}>
+                            <boxGeometry args={[4.2, 3.2, 0.1]} />
+                            <meshBasicMaterial 
+                                color={theme.accentColor} 
+                                transparent 
+                                opacity={hovered ? 0.8 : 0.3} 
+                                wireframe={false}
+                            />
+                        </mesh>
+                    </group>
 
                     {/* 2. Background Title (Visible during loading) */}
                     <group position={[0, 0, -0.01]}>

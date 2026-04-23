@@ -121,76 +121,118 @@ const AgencyRegisterPage: React.FC = () => {
                                     <div className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.4em]">Section 02 / Archive Registry</div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Agency / Brand Name</label>
-                                        <div className="relative group">
-                                            <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
-                                            <input 
-                                                required
-                                                type="text" 
-                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
-                                                placeholder="Enter agency name"
-                                                value={formData.agencyName}
-                                                onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
-                                            />
+                                <div className="space-y-16">
+                                    {/* Section 1: Identity */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-8">
+                                        <div className="lg:col-span-1">
+                                            <h3 className="text-xl font-black text-dancheong-ink tracking-tight mb-2 uppercase">Brand Identity</h3>
+                                            <p className="text-[10px] text-dancheong-ink/40 font-light italic leading-relaxed">
+                                                귀사의 고유한 브랜드 정체성과 대표자 정보를 입력해 주십시오.
+                                            </p>
+                                        </div>
+                                        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Agency / Brand Name</label>
+                                                <div className="relative group">
+                                                    <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        required
+                                                        type="text" 
+                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="Enter agency name"
+                                                        value={formData.agencyName}
+                                                        onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Representative</label>
+                                                <div className="relative group">
+                                                    <User className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        required
+                                                        type="text" 
+                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="대표자 성함을 입력해 주십시오"
+                                                        value={formData.representative}
+                                                        onChange={(e) => setFormData({...formData, representative: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Representative</label>
-                                        <div className="relative group">
-                                            <User className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
-                                            <input 
-                                                required
-                                                type="text" 
-                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
-                                                placeholder="Name of representative"
-                                                value={formData.representative}
-                                                onChange={(e) => setFormData({...formData, representative: e.target.value})}
-                                            />
+                                    {/* Section 2: Communication */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-16 border-t border-dancheong-ink/5">
+                                        <div className="lg:col-span-1">
+                                            <h3 className="text-xl font-black text-dancheong-ink tracking-tight mb-2 uppercase">Communication</h3>
+                                            <p className="text-[10px] text-dancheong-ink/40 font-light italic leading-relaxed">
+                                                심사 결과 통보 및 공식 연락을 위한 채널을 등록해 주십시오.
+                                            </p>
                                         </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Corporate Email</label>
-                                        <div className="relative group">
-                                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
-                                            <input 
-                                                required
-                                                type="email" 
-                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
-                                                placeholder="agency@example.com"
-                                                value={formData.email}
-                                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Contact Phone</label>
-                                        <div className="relative group">
-                                            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
-                                            <input 
-                                                required
-                                                type="tel" 
-                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
-                                                placeholder="+82-10-0000-0000"
-                                                value={formData.phone}
-                                                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                            />
+                                        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Corporate Email</label>
+                                                <div className="relative group">
+                                                    <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        required
+                                                        type="email" 
+                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="agency@example.com"
+                                                        value={formData.email}
+                                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Contact Phone</label>
+                                                <div className="relative group">
+                                                    <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        required
+                                                        type="tel" 
+                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="+82-10-0000-0000"
+                                                        value={formData.phone}
+                                                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="md:col-span-2 space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Official Website</label>
+                                                <div className="relative group">
+                                                    <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        type="url" 
+                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="https://www.brand.com"
+                                                        value={formData.website}
+                                                        onChange={(e) => setFormData({...formData, website: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     
-                                    <div className="md:col-span-2 space-y-3">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Brand Vision / Description</label>
-                                        <textarea 
-                                            required
-                                            className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-[32px] p-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans min-h-[160px] resize-none"
-                                            placeholder="Describe your brand heritage and vision..."
-                                            value={formData.description}
-                                            onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                        />
+                                    {/* Section 3: Narrative */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-16 border-t border-dancheong-ink/5">
+                                        <div className="lg:col-span-1">
+                                            <h3 className="text-xl font-black text-dancheong-ink tracking-tight mb-2 uppercase">Brand Narrative</h3>
+                                            <p className="text-[10px] text-dancheong-ink/40 font-light italic leading-relaxed">
+                                                브랜드의 철학과 비전을 서술해 주십시오. 아카이브 큐레이션의 핵심 자료로 활용됩니다.
+                                            </p>
+                                        </div>
+                                        <div className="lg:col-span-2">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4 mb-2 block">Vision / Description</label>
+                                            <textarea 
+                                                required
+                                                className="w-full bg-white border border-dancheong-ink/15 rounded-[32px] p-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans min-h-[200px] resize-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                placeholder="Describe your brand heritage and vision..."
+                                                value={formData.description}
+                                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -230,11 +272,26 @@ const AgencyRegisterPage: React.FC = () => {
 
                     {/* Support Links */}
                     <div className="mt-12 flex items-center justify-center gap-10">
-                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Inquiry Support" /></button>
+                        <button 
+                            onClick={() => navigate('/faq')}
+                            className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"
+                        >
+                            <AutoTranslatedText text="Inquiry Support" />
+                        </button>
                         <div className="w-1 h-1 bg-dancheong-ink/10 rounded-full" />
-                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Documentation" /></button>
+                        <button 
+                            onClick={() => navigate('/faq')}
+                            className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"
+                        >
+                            <AutoTranslatedText text="Documentation" />
+                        </button>
                         <div className="w-1 h-1 bg-dancheong-ink/10 rounded-full" />
-                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Status Check" /></button>
+                        <button 
+                            onClick={() => navigate('/admin/login')}
+                            className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"
+                        >
+                            <AutoTranslatedText text="Status Check" />
+                        </button>
                     </div>
                 </div>
             </div>

@@ -8,7 +8,7 @@ import SubCategoryPage from './pages/SubCategoryPage';
 import InspirationPage from './pages/InspirationPage';
 const DetailPage = lazy(() => import('./pages/DetailPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
-const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
+import AdminLoginPage from './pages/AdminLoginPage';
 const VirtualMuseumPage = lazy(() => import('./templates/VirtualMuseumPage'));
 const VirtualStorePage = lazy(() => import('./templates/VirtualStorePage'));
 const VirtualCinemaPage = lazy(() => import('./templates/VirtualCinemaPage'));
@@ -25,7 +25,7 @@ const VirtualSajuPage = lazy(() => import('./templates/VirtualSajuPage'));
 const VirtualGroupBuyPage = lazy(() => import('./templates/VirtualGroupBuyPage'));
 const VirtualFundingPage = lazy(() => import('./templates/VirtualFundingPage'));
 const TeamWorkspacePage = lazy(() => import('./templates/TeamWorkspacePage'));
-const AgencyRegisterPage = lazy(() => import('./pages/AgencyRegisterPage'));
+import AgencyRegisterPage from './pages/AgencyRegisterPage';
 const FloorGuidePage = lazy(() => import('./pages/FloorGuidePage'));
 
 import NoticePage from './pages/NoticePage';
@@ -64,7 +64,7 @@ function App() {
                                         <Route path="/privacy" element={<PrivacyPage />} />
                                         <Route path="/admin" element={<AdminPage />} />
                                         <Route path="/admin/login" element={<AdminLoginPage />} />
-                                        <Route path="/register" element={<AgencyRegisterPage />} />
+                                        <Route path="/agency/register" element={<AgencyRegisterPage />} />
                                         <Route path="/detail/:id/museum" element={<VirtualMuseumPage />} />
                                         <Route path="/detail/:id/store" element={<VirtualStorePage />} />
                                         <Route path="/detail/:id/cinema" element={<VirtualCinemaPage />} />

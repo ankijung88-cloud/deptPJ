@@ -47,7 +47,7 @@ const InspirationPage: React.FC = () => {
                     
                     <div className="flex flex-col gap-2 mb-12">
                         <div className="flex items-center gap-4 opacity-80">
-                            <div className="w-10 h-[1px] bg-dancheong-mugwort" />
+                            <div className="h-[2px] w-12 bg-dancheong-ink" />
                             <span className="text-[10px] font-black tracking-[0.5em] text-dancheong-mugwort uppercase">
                                 Spatial Elevation Guide
                             </span>
@@ -60,7 +60,7 @@ const InspirationPage: React.FC = () => {
                     </div>
 
                     <div className="relative inline-block mb-10">
-                        <h1 className="text-7xl md:text-[10rem] font-serif font-black tracking-tighter leading-[0.8] relative z-10">
+                        <h1 className="text-6xl md:text-[8.5rem] font-serif font-black tracking-tighter leading-[0.8] relative z-10">
                             <motion.span 
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -94,8 +94,7 @@ const InspirationPage: React.FC = () => {
 
                 <section className="relative">
                     {/* Vertical Connecting Line */}
-                    <div className="absolute left-1/2 md:left-[120px] top-0 bottom-0 w-[1px] bg-dancheong-ink/30 z-0" />
-
+                    <div className="absolute left-[60px] top-0 bottom-0 w-[2px] bg-dancheong-ink/10 hidden md:block" />
                     <div className="space-y-4 relative z-10">
                         {sortedFloors.map((floor, index) => {
                             const isActive = hoveredFloor === floor.id;

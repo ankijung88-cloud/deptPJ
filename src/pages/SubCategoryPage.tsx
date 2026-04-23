@@ -197,6 +197,23 @@ const SubCategoryPage: React.FC = () => {
 
     // items[0] is used for content logic if needed elsewhere
 
+    if (!parentFloor) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-dancheong-ivory p-20 text-center">
+                <div className="max-w-md">
+                    <h2 className="text-3xl font-black text-dancheong-ink mb-4">Content Not Found</h2>
+                    <p className="text-dancheong-ink/40 mb-8 italic">The requested category could not be located in our current archives.</p>
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="px-8 py-3 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-dancheong-mugwort transition-all"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
 
@@ -363,7 +380,7 @@ const SubCategoryPage: React.FC = () => {
                             </motion.div>
                         </div>
 
-                        <div className="mt-16 border-t-2 border-b-2 overflow-hidden rounded-3xl h-[60vh] md:h-[80vh]" style={{ borderColor: `${theme.color3}44` }}>
+                        <div className="mt-16 overflow-hidden rounded-3xl h-[60vh] md:h-[80vh] border-t-2 border-b-2 border-dancheong-ink/10">
                         <div className="relative group cursor-pointer w-full h-full">
                             <VirtualGallery 
                                 items={items} 
@@ -432,7 +449,7 @@ const SubCategoryPage: React.FC = () => {
             )}
 
             {/* Pagination/Footer Indicator */}
-            <footer className="px-6 md:px-12 py-16" style={{ backgroundColor: theme.color2, borderTop: `2px solid ${theme.color3}` }}>
+            <footer className="px-6 md:px-12 py-16 border-t border-dancheong-ink/10" style={{ backgroundColor: theme.color2 }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex items-center gap-6">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ border: `2px solid ${theme.accentColor}`, color: theme.accentColor }}>

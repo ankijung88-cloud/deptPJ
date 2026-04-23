@@ -22,8 +22,11 @@ export const Layout: React.FC = () => {
         const inspiration = normalizedPath.endsWith('/inspiration');
         const museum = normalizedPath.endsWith('/museum');
         const square = normalizedPath.endsWith('/square');
-        const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register');
-        const shouldHideHeader = landing || inspiration || admin;
+        const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register') || normalizedPath.startsWith('/agency');
+        
+        // Show header on login and registration pages for better UX
+        const isAuthPage = normalizedPath.includes('/login') || normalizedPath.includes('/register');
+        const shouldHideHeader = (landing || inspiration || admin) && !isAuthPage;
         
         return {
             hideHeader: shouldHideHeader,

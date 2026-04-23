@@ -41,7 +41,7 @@ export const Footer: React.FC = () => {
                         <ul className="space-y-4 text-xs font-black tracking-wide text-[#171717]/70">
                             <li><Link to="/notice" className="hover:text-[#171717] transition-colors"><AutoTranslatedText text={t('footer.notice')} /></Link></li>
                             <li><Link to="/faq" className="hover:text-[#171717] transition-colors"><AutoTranslatedText text={t('footer.faq')} /></Link></li>
-                            <li><Link to="/register" className="hover:text-[#171717] transition-colors"><AutoTranslatedText text={t('footer.partnership')} /></Link></li>
+                            <li><Link to="/agency/register" className="hover:text-[#171717] transition-colors"><AutoTranslatedText text={t('footer.partnership')} /></Link></li>
                         </ul>
                     </div>
 

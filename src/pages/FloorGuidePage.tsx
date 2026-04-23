@@ -45,7 +45,7 @@ const FloorGuidePage: React.FC = () => {
         <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-[#F5F4F0] to-[#EAE8E3] text-dancheong-ink pb-20 pt-32">
             <div className="lossless-layout">
                 <header>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b-2 border-dancheong-ink/30 pb-16">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pb-16">
                         <div className="max-w-4xl">
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
@@ -104,7 +104,7 @@ const FloorGuidePage: React.FC = () => {
 
                                 <div className="w-full md:w-[60%] flex flex-col justify-center relative z-10">
                                     <div className="flex items-center gap-4 mb-6">
-                                        <div className="w-10 h-[3px] bg-dancheong-mugwort/50 group-hover:w-16 transition-all duration-700" />
+
                                         <span className="text-[11px] font-black uppercase tracking-widest text-dancheong-mugwort">
                                             SECTION {idx + 1}
                                         </span>
@@ -126,7 +126,7 @@ const FloorGuidePage: React.FC = () => {
                 </div>
 
                 {/* Footer Return */}
-                <div className="text-center pt-20 border-t-2 border-dancheong-ink/20">
+                <div className="text-center pt-20">
                     <button 
                         onClick={() => navigate('/floor-guide')}
                         className="group px-16 py-6 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all duration-500 shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center gap-4 mx-auto"
