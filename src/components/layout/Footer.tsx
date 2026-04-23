@@ -16,13 +16,13 @@ export const Footer: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
 
                     {/* Brand Meta */}
-                    <div className="md:col-span-5 space-y-10">
+                    <div className="md:col-span-6 space-y-10">
                         <div className="flex items-center gap-6 mb-4">
                             <BrandLogo size={60} color="white" className="opacity-80" />
                             <div className="space-y-4">
                                 <span className="text-[10px] font-bold tracking-[0.5em] text-white/40 uppercase block"><AutoTranslatedText text="Essence" /></span>
                                 <h2 className="text-3xl font-serif font-black text-dancheong-white tracking-widest uppercase">
-                                    <AutoTranslatedText text="HXVARCADE" />
+                                    DEPART
                                 </h2>
                             </div>
                         </div>
@@ -38,24 +38,13 @@ export const Footer: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Navigation Links */}
-                    <div className="md:col-span-2 space-y-8">
-                        <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={t('footer.shop')} /></h4>
-                        <ul className="space-y-4 text-xs font-light tracking-wide">
-                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.tickets')} /></Link></li>
-                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.art')} /></Link></li>
-                            <li><Link to="/about" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.travel')} /></Link></li>
-                            <li><Link to="#" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.membership')} /></Link></li>
-                            <li><Link to="/register" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.partnership')} /></Link></li>
-                            <li><Link to="#" className="hover:text-white transition-colors"><AutoTranslatedText text={t('nav.offline')} /></Link></li>
-                        </ul>
-                    </div>
 
-                    <div className="md:col-span-2 space-y-8">
+                    <div className="md:col-span-3 space-y-8">
                         <h4 className="text-[10px] font-bold tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={t('footer.support')} /></h4>
                         <ul className="space-y-4 text-xs font-light tracking-wide">
                             <li><Link to="/notice" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.notice')} /></Link></li>
                             <li><Link to="/faq" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.faq')} /></Link></li>
+                            <li><Link to="/register" className="hover:text-white transition-colors"><AutoTranslatedText text={t('footer.partnership')} /></Link></li>
                         </ul>
                     </div>
 

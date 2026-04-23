@@ -14,10 +14,10 @@ import { BrandLogo } from '../components/common/BrandLogo';
 const CATEGORY_FILTERS: Record<string, string[]> = {
     'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global', 'tech', 'Tech', 'car'],
     'floor-2': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care', 'Beauty', 'beauty', 'care', 'Care'],
-    'floor-3': ['Tickets', 'tickets', 'Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시', 'lifestyle', 'Lifestyle'],
-    'floor-gather-mall': ['Art', 'art', 'class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk', 'mall', 'culture'],
+    'floor-3': ['Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시', 'lifestyle', 'Lifestyle'],
+    'floor-gather-mall': ['class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk', 'mall', 'culture'],
     'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브', 'Fashion', 'fashion'],
-    'floor-6': ['Travel', 'travel', 'local', 'heritage', 'local_heritage', '여행', '로컬', '유산', 'Heritage', 'heritage'],
+    'floor-6': ['local', 'heritage', 'local_heritage', '로컬', '유산', 'Heritage', 'heritage'],
     'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
 };
 

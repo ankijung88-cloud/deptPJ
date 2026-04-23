@@ -21,7 +21,7 @@ export const LandingRecruitmentSection: React.FC = () => {
                         <AutoTranslatedText text="가상오피스 지원 및 입주기업 모집공고" />
                     </h2>
                     <p className="text-white/60 mt-4 max-w-3xl text-sm md:text-lg break-keep leading-relaxed font-medium">
-                        <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. HXVARCADE의 프리미엄 3D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
+                        <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. DEPART의 프리미엄 3D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
                     </p>
                 </motion.div>
 
@@ -76,10 +76,10 @@ export const LandingRecruitmentSection: React.FC = () => {
                                         <td className="py-5 px-6 font-medium whitespace-nowrap"><AutoTranslatedText text="프리미엄 공간지원" /></td>
                                         <td className="py-5 px-6 text-white/70 whitespace-nowrap"><AutoTranslatedText text="총 4개 호실 (4~8인실)" /></td>
                                         <td className="py-5 px-6 text-white/70 whitespace-nowrap"><AutoTranslatedText text="저렴한 기본 임차료/VAT" /></td>
-                                        <td className="py-5 px-6 text-white/70 break-keep"><AutoTranslatedText text="HXVARCADE 등의 오프라인 지정 사무공간 지원 (일부 실사용료만 납부)" /></td>
+                                        <td className="py-5 px-6 text-white/70 break-keep"><AutoTranslatedText text="DEPART 등의 오프라인 지정 사무공간 지원 (일부 실사용료만 납부)" /></td>
                                     </tr>
                                     <tr className="bg-[#00FFC2]/5 hover:bg-[#00FFC2]/10 transition-colors">
-                                        <td className="py-5 px-6 font-bold text-[#00FFC2] whitespace-nowrap"><AutoTranslatedText text="HXVARCADE 가상오피스" /></td>
+                                        <td className="py-5 px-6 font-bold text-[#00FFC2] whitespace-nowrap"><AutoTranslatedText text="DEPART 가상오피스" /></td>
                                         <td className="py-5 px-6 text-[#00FFC2]/90 font-medium whitespace-nowrap"><AutoTranslatedText text="10개사 내외" /></td>
                                         <td className="py-5 px-6 font-black text-dancheong-gold whitespace-nowrap"><AutoTranslatedText text="전액 무상" /></td>
                                         <td className="py-5 px-6 text-[#00FFC2]/70 break-keep"><AutoTranslatedText text="사업자등록용 비상주 주소지 사용권, 브랜드 전용 3D 가상 스페이스 환경 및 회의실 등 인프라 지원" /></td>

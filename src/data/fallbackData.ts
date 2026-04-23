@@ -180,10 +180,10 @@ export const FALLBACK_STORIES: any[] = [
 export const FALLBACK_NOTICES: Notice[] = [
     {
         id: '1',
-        title: { ko: 'HXVARCADE 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
+        title: { ko: 'DEPART 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
         category: '공지',
         date: '2024-03-01',
-        content: { ko: 'HXVARCADE이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.', en: 'The HXVARCADE is officially open. We offer various benefits for membership sign-ups.' },
+        content: { ko: 'DEPART이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.', en: 'The DEPART is officially open. We offer various benefits for membership sign-ups.' },
         is_important: true
     },
     {
@@ -207,8 +207,8 @@ export const FALLBACK_NOTICES: Notice[] = [
 export const FALLBACK_FAQS: FAQ[] = [
     {
         id: '1',
-        question: { ko: 'HXVARCADE의 운영 시간은 어떻게 되나요?', en: 'What are the operating hours of the HXVARCADE?' },
-        answer: { ko: '저희 HXVARCADE은 연중무휴로 오전 10시 30분부터 오후 8시까지 운영됩니다. 다만, 특별 행사가 있는 경우 운영 시간이 조정될 수 있으니 공지사항을 확인해 주시기 바랍니다.', en: 'The HXVARCADE is open year-round from 10:30 AM to 8:00 PM. However, please check the notices as hours may change for special events.' }
+        question: { ko: 'DEPART의 운영 시간은 어떻게 되나요?', en: 'What are the operating hours of the DEPART?' },
+        answer: { ko: '저희 DEPART은 연중무휴로 오전 10시 30분부터 오후 8시까지 운영됩니다. 다만, 특별 행사가 있는 경우 운영 시간이 조정될 수 있으니 공지사항을 확인해 주시기 바랍니다.', en: 'The DEPART is open year-round from 10:30 AM to 8:00 PM. However, please check the notices as hours may change for special events.' }
     },
     {
         id: '2',
@@ -218,12 +218,12 @@ export const FALLBACK_FAQS: FAQ[] = [
     {
         id: '3',
         question: { ko: '멤버십 혜택은 무엇인가요?', en: 'What are the membership benefits?' },
-        answer: { ko: 'HXVARCADE 멤버십 회원이 되시면 모든 상품 구매 시 3% 포인트 적립, 생일 당일 10% 할인 쿠폰 발급, 그리고 시즌별 한정품 우선 구매권 등의 혜택을 누리실 수 있습니다.', en: 'HXVARCADE membership offers 3% point accumulation on all purchases, a 10% birthday discount coupon, and priority purchase rights for seasonal limited items.' }
+        answer: { ko: 'DEPART 멤버십 회원이 되시면 모든 상품 구매 시 3% 포인트 적립, 생일 당일 10% 할인 쿠폰 발급, 그리고 시즌별 한정품 우선 구매권 등의 혜택을 누리실 수 있습니다.', en: 'DEPART membership offers 3% point accumulation on all purchases, a 10% birthday discount coupon, and priority purchase rights for seasonal limited items.' }
     },
     {
         id: '4',
         question: { ko: '상품권 사용이 가능한가요?', en: 'Can I use gift certificates?' },
-        answer: { ko: '네, 문화상품권, HXVARCADE 상품권(신세계/롯데/현대) 및 HXVARCADE 전용 디지털 기프트카드를 모두 사용하실 수 있습니다.', en: 'Yes, Culture Gift Certificates, Department Store Gift Certificates (Shinsegae/Lotte/Hyundai), and HXVARCADE-exclusive digital gift cards are all accepted.' }
+        answer: { ko: '네, 문화상품권, 백화점 상품권(신세계/롯데/현대) 및 DEPART 전용 디지털 기프트카드를 모두 사용하실 수 있습니다.', en: 'Yes, Culture Gift Certificates, Department Store Gift Certificates (Shinsegae/Lotte/Hyundai), and DEPART-exclusive digital gift cards are all accepted.' }
     },
     {
         id: '5',
@@ -233,11 +233,11 @@ export const FALLBACK_FAQS: FAQ[] = [
 ];
 
 export const FALLBACK_PAGES = [
-    { id: 'page-home', title: { ko: '홈', en: 'Home' }, description: { ko: '문화와 예술이 만나는 디지털 아카이브, HXVARCADE의 메인 페이지입니다.', en: 'The main page of HXVARCADE, a digital archive where culture and art meet.' }, url: '/' },
-    { id: 'page-about', title: { ko: '소개', en: 'About' }, description: { ko: 'HXVARCADE의 가치와 비전, 그리고 우리가 만들어가는 문화 생태계에 대해 소개합니다.', en: 'Introducing the values, vision, and cultural ecosystem of the HXVARCADE.' }, url: '/about' },
-    { id: 'page-notice', title: { ko: '공지사항', en: 'Notice' }, description: { ko: 'HXVARCADE의 새로운 소식과 주요 안내사항을 확인하실 수 있습니다.', en: 'Check out the new news and major announcements from the HXVARCADE.' }, url: '/notice' },
+    { id: 'page-home', title: { ko: '홈', en: 'Home' }, description: { ko: '문화와 예술이 만나는 디지털 아카이브, DEPART의 메인 페이지입니다.', en: 'The main page of DEPART, a digital archive where culture and art meet.' }, url: '/' },
+    { id: 'page-about', title: { ko: '소개', en: 'About' }, description: { ko: 'DEPART의 가치와 비전, 그리고 우리가 만들어가는 문화 생태계에 대해 소개합니다.', en: 'Introducing the values, vision, and cultural ecosystem of the DEPART.' }, url: '/about' },
+    { id: 'page-notice', title: { ko: '공지사항', en: 'Notice' }, description: { ko: 'DEPART의 새로운 소식과 주요 안내사항을 확인하실 수 있습니다.', en: 'Check out the new news and major announcements from the DEPART.' }, url: '/notice' },
     { id: 'page-faq', title: { ko: '자주 묻는 질문', en: 'FAQ' }, description: { ko: '이용 방법, 주차, 멤버십 등 고객님들이 자주 궁금해하시는 질문들에 대한 답변입니다.', en: 'Answers to frequently asked questions about usage, parking, membership, etc.' }, url: '/faq' },
-    { id: 'page-terms', title: { ko: '이용약관', en: 'Terms' }, description: { ko: 'HXVARCADE 서비스 이용을 위한 법적 권리와 의무 사항을 규정합니다.', en: 'Regulating legal rights and obligations for using the HXVARCADE service.' }, url: '/terms' },
+    { id: 'page-terms', title: { ko: '이용약관', en: 'Terms' }, description: { ko: 'DEPART 서비스 이용을 위한 법적 권리와 의무 사항을 규정합니다.', en: 'Regulating legal rights and obligations for using the DEPART service.' }, url: '/terms' },
     { id: 'page-privacy', title: { ko: '개인정보처리방침', en: 'Privacy' }, description: { ko: '고객님의 소중한 개인정보를 어떻게 보호하고 관리하는지 명시합니다.', en: 'Specifying how your valuable personal information is protected and managed.' }, url: '/privacy' },
     { id: 'page-inspiration', title: { ko: '영감의 공간 (트랜드)', en: 'Inspiration (Trend)' }, description: { ko: '1F부터 6F까지 각 층별 최신 트랜드 테마와 디지털 콘텐츠를 한눈에 둘러볼 수 있는 페이지입니다.', en: 'A page where you can browse the latest trend themes and digital content of each floor from 1F to 6F.' }, url: '/inspiration' },
 ];

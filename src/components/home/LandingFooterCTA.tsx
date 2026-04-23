@@ -42,7 +42,7 @@ export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore })
             </div>
             
             <div className="absolute bottom-8 w-full text-center text-white/20 text-xs tracking-widest font-light">
-                © {new Date().getFullYear()} HXVARCADE. ALL RIGHTS RESERVED.
+                © {new Date().getFullYear()} DEPART. ALL RIGHTS RESERVED.
             </div>
         </section>
     );

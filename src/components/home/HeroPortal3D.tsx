@@ -8,12 +8,13 @@ interface ParticleProps {
     velocity: MotionValue<number>;
 }
 
-const OBANGSAEK = [
-    new THREE.Color("#00F2FF"), // Blue (East) - Bright Neon
-    new THREE.Color("#FFFFFF"), // White (West)
-    new THREE.Color("#FF3B30"), // Red (South) - Vibrant
-    new THREE.Color("#4A4A4A"), // Black (North) - Dark Grey for visibility
-    new THREE.Color("#FFD700")  // Yellow (Center) - Bright Gold
+// Luminous Premium Palette (Removed dark spots)
+const LUMINOUS_PALETTE = [
+    new THREE.Color("#FFFFFF"), // Pure White
+    new THREE.Color("#00FFC2"), // Brand Accent (Neon Teal)
+    new THREE.Color("#FFD700"), // Bright Gold
+    new THREE.Color("#00F2FF"), // Electric Blue
+    new THREE.Color("#E5E4E2"), // Platinum
 ];
 
 const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
@@ -21,47 +22,89 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
     const lineRef = useRef<THREE.LineSegments>(null);
     const groupRef = useRef<THREE.Group>(null);
 
+    // Create a "Sparkle" texture for a sharp, tech-like look (Avoids the 'mold' feel)
+    const sparkleTexture = useMemo(() => {
+        const size = 128;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d')!;
+        
+        context.clearRect(0, 0, size, size);
+        
+        // Draw a cross/sparkle shape
+        context.strokeStyle = 'white';
+        context.lineWidth = 4;
+        
+        // Main Glow
+        const gradient = context.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.1)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, size, size);
+
+        // Sharp horizontal/vertical lines for sparkle effect
+        context.beginPath();
+        context.moveTo(size/2, 20);
+        context.lineTo(size/2, size-20);
+        context.moveTo(20, size/2);
+        context.lineTo(size-20, size/2);
+        
+        const lineGradient = context.createLinearGradient(0, 0, size, size);
+        lineGradient.addColorStop(0, 'rgba(255,255,255,0)');
+        lineGradient.addColorStop(0.5, 'rgba(255,255,255,0.8)');
+        lineGradient.addColorStop(1, 'rgba(255,255,255,0)');
+        context.strokeStyle = lineGradient;
+        context.stroke();
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }, []);
+
     // Create particles, streak lines, and their colors
-    const { pos, linePos, colors, lineColors } = useMemo(() => {
+    const { pos, linePos, colors, lineColors, sizes } = useMemo(() => {
         const pos = new Float32Array(count * 3);
         const linePos = new Float32Array(count * 6);
         const colors = new Float32Array(count * 3);
         const lineColors = new Float32Array(count * 6);
+        const sizes = new Float32Array(count);
 
         for (let i = 0; i < count; i++) {
             const theta = Math.random() * Math.PI * 2;
-            const r = Math.random() * 8 + 2;
-            const z = Math.random() * -100;
+            const r = Math.random() * 30 + 3; 
+            const z = Math.random() * -250; 
 
             const i3 = i * 3;
             pos[i3] = Math.cos(theta) * r;
             pos[i3 + 1] = Math.sin(theta) * r;
             pos[i3 + 2] = z;
 
-            // Pick a random Obangsaek color
-            const color = OBANGSAEK[Math.floor(Math.random() * OBANGSAEK.length)];
+            const color = LUMINOUS_PALETTE[Math.floor(Math.random() * LUMINOUS_PALETTE.length)];
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
             colors[i3 + 2] = color.b;
 
-            // Line segment (streak)
+            sizes[i] = Math.random() * 3.0 + 1.0;
+
             const i6 = i * 6;
             linePos[i6] = pos[i3];
             linePos[i6 + 1] = pos[i3 + 1];
             linePos[i6 + 2] = z;
             linePos[i6 + 3] = pos[i3];
             linePos[i6 + 4] = pos[i3 + 1];
-            linePos[i6 + 5] = z - 2;
+            linePos[i6 + 5] = z - (Math.random() * 15 + 10);
 
-            // Line colors (both points of the segment get the same color)
             lineColors[i6] = color.r;
             lineColors[i6 + 1] = color.g;
             lineColors[i6 + 2] = color.b;
-            lineColors[i6 + 3] = color.r;
-            lineColors[i6 + 4] = color.g;
-            lineColors[i6 + 5] = color.b;
+            lineColors[i6 + 3] = color.r * 0.05;
+            lineColors[i6 + 4] = color.g * 0.05;
+            lineColors[i6 + 5] = color.b * 0.05;
         }
-        return { pos, linePos, colors, lineColors };
+        return { pos, linePos, colors, lineColors, sizes };
     }, [count]);
 
     useFrame((state, delta) => {
@@ -72,8 +115,8 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
         const currentVelocity = velocity.get();
         const speedMultiplier = currentVelocity * 15;
 
-        groupRef.current.rotation.z += delta * 0.05;
-        groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+        groupRef.current.rotation.z += delta * 0.015;
+        groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.04;
 
         for (let i = 0; i < count; i++) {
             const i3 = i * 3;
@@ -83,12 +126,12 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
             positions[i3 + 2] += move;
 
             linePositions[i6 + 2] = positions[i3 + 2];
-            linePositions[i6 + 5] = positions[i3 + 2] - (currentVelocity * 0.3 + 0.5);
+            linePositions[i6 + 5] = positions[i3 + 2] - (currentVelocity * 2.0 + 1.0);
 
-            if (positions[i3 + 2] > 10) {
-                positions[i3 + 2] = -100;
-                linePositions[i6 + 2] = -100;
-                linePositions[i6 + 5] = -101;
+            if (positions[i3 + 2] > 20) {
+                positions[i3 + 2] = -250;
+                linePositions[i6 + 2] = -250;
+                linePositions[i6 + 5] = -260;
             }
         }
         points.current.geometry.attributes.position.needsUpdate = true;
@@ -101,12 +144,14 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                 <bufferGeometry>
                     <bufferAttribute attach="attributes-position" count={pos.length / 3} array={pos} itemSize={3} />
                     <bufferAttribute attach="attributes-color" count={colors.length / 3} array={colors} itemSize={3} />
+                    <bufferAttribute attach="attributes-size" count={sizes.length} array={sizes} itemSize={1} />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={0.15}
+                    size={1.8}
                     vertexColors
                     transparent
-                    opacity={0.8}
+                    opacity={1.0}
+                    map={sparkleTexture}
                     sizeAttenuation={true}
                     blending={THREE.AdditiveBlending}
                     depthWrite={false}
@@ -117,7 +162,7 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                     <bufferAttribute attach="attributes-position" count={linePos.length / 3} array={linePos} itemSize={3} />
                     <bufferAttribute attach="attributes-color" count={lineColors.length / 3} array={lineColors} itemSize={3} />
                 </bufferGeometry>
-                <lineBasicMaterial vertexColors transparent opacity={0.4} blending={THREE.AdditiveBlending} />
+                <lineBasicMaterial vertexColors transparent opacity={0.3} blending={THREE.AdditiveBlending} depthWrite={false} />
             </lineSegments>
         </group>
     );
@@ -126,11 +171,13 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
 export const HeroPortal3D: React.FC<{ velocity: MotionValue<number> }> = ({ velocity }) => {
     return (
         <div className="absolute inset-0 z-0 bg-transparent">
-            <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }} camera={{ position: [0, 0, 5], fov: 75 }}>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[0, 0, 0]} intensity={2.5} color="#FFD700" />
-                <StarPortal count={1500} velocity={velocity} />
+            <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }} camera={{ position: [0, 0, 5], fov: 75 }}>
+                <ambientLight intensity={0.4} />
+                <pointLight position={[0, 0, 0]} intensity={4.5} color="#FFFFFF" />
+                <StarPortal count={350} velocity={velocity} />
             </Canvas>
         </div>
     );
 };
+
+

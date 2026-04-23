@@ -19,7 +19,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
     const { t } = useTranslation();
 
     // Motion Values for timed animation
-    const portalVelocity = useMotionValue(2);
+    const portalVelocity = useMotionValue(0);
     const portalOpacity = useMotionValue(0.4);
     const contentScale = useMotionValue(1);
     const contentBlur = useMotionValue(0);
@@ -98,7 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         >
                             <img
                                 src="/DEPT_Logo.png"
-                                alt="HXVARCADE Logo"
+                                alt="DEPART Logo"
                                 className="h-32 w-auto drop-shadow-[0_0_25px_rgba(0,242,255,0.4)]"
                             />
                         </motion.div>
@@ -107,7 +107,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         <motion.h1
                             className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
                         >
-                            <AutoTranslatedText text={t('hero.title_main')} />
+                            DEPART
                         </motion.h1>
 
                         <motion.p

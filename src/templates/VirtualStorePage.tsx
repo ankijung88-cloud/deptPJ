@@ -1541,7 +1541,7 @@ const VirtualStorePage: React.FC = () => {
 
             <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
                 <div className="container mx-auto flex flex-col items-center gap-6">
-                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase"><AutoTranslatedText text="HXVARCADE IMMERSIVE" /></div>
+                    <div className="text-4xl font-black tracking-tighter opacity-10 uppercase"><AutoTranslatedText text="DEPART IMMERSIVE" /></div>
                     <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
                         <AutoTranslatedText text="The convergence of traditional aesthetics and cutting-edge virtual commerce technology." />
                     </p>
