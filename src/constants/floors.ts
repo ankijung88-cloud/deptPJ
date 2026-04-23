@@ -20,8 +20,6 @@ export const FLOORS = [
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'b2b-mall', label: '홀세일마켓' },
-            { id: 'b2c-mall', label: '플리마켓' },
             { id: 'share-mall', label: '공동구매' },
             { id: 'funding-mall', label: '펀딩 몰' },
         ]
