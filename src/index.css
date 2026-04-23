@@ -4,9 +4,8 @@
 
 @layer base {
   body {
-    background-color: #1A2420 !important;
-    /* Solid Vibrant Red for Hero impact */
-    color: #F8FAFF;
+    background-color: #FDFBF7 !important;
+    color: #171717;
     font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     position: relative;
     -webkit-font-smoothing: antialiased;
@@ -28,7 +27,7 @@
   }
 
   ::selection {
-    background-color: #000000;
+    background-color: #4F6D5B; /* Mugwort selection */
     color: #FFFFFF;
   }
 }
@@ -61,17 +60,34 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(23, 23, 23, 0.02);
     border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(23, 23, 23, 0.08);
     border-radius: 10px;
     transition: background 0.2s ease;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(23, 23, 23, 0.15);
+  }
+
+  /* High Visibility Heritage Utilities */
+  .heritage-border {
+    @apply border border-[#171717] border-opacity-30;
+  }
+
+  .heritage-line {
+    @apply h-[1px] bg-[#171717] bg-opacity-30 w-full;
+  }
+
+  .heritage-button-outline {
+    @apply border-2 border-[#171717] border-opacity-40 text-[#171717] hover:bg-[#171717] hover:text-[#FDFBF7] transition-all duration-300;
+  }
+
+  .heritage-card {
+    @apply bg-white/60 backdrop-blur-2xl border border-[#171717] border-opacity-10 shadow-[0_8px_32px_rgba(23,23,23,0.04)] hover:shadow-[0_20px_60px_rgba(23,23,23,0.08)] hover:bg-white/90 transition-all duration-700;
   }
 }

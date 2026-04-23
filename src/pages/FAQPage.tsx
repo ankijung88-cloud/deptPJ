@@ -83,14 +83,14 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-dancheong-red/10 border border-dancheong-red/30 rounded-full text-dancheong-red text-xs font-bold tracking-widest uppercase mb-6"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-dancheong-navy/10 border border-dancheong-navy/30 rounded-full text-dancheong-navy text-xs font-bold tracking-widest uppercase mb-6"
                     >
                         <HelpCircle size={14} />
                         <AutoTranslatedText text="도움말" />
@@ -107,28 +107,28 @@ const FAQPage: React.FC = () => {
 
                 {/* Search Bar */}
                 <div className="max-w-2xl mx-auto mb-16 relative group">
-                    <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 group-hover:border-dancheong-red/30 transition-all duration-300" />
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 group-hover:text-dancheong-red transition-colors" size={20} />
+                    <div className="absolute inset-0 bg-white rounded-2xl border border-dancheong-ink/5 shadow-sm group-hover:border-dancheong-navy/30 group-hover:shadow-md transition-all duration-300" />
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-hover:text-dancheong-navy transition-colors" size={20} />
                     <input
                         type="text"
                         placeholder={t('faq.search_placeholder') || 'Search...'}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full relative bg-transparent border-none py-6 pl-16 pr-8 text-white focus:outline-none placeholder:text-white/20"
+                        className="w-full relative bg-transparent border-none py-6 pl-16 pr-8 text-dancheong-ink focus:outline-none placeholder:text-dancheong-ink/20"
                     />
                 </div>
 
                 {/* FAQ List */}
                 <div className="max-w-3xl mx-auto space-y-4">
                     {loading ? (
-                        <div className="text-center py-20 text-white/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
+                        <div className="text-center py-20 text-dancheong-ink/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
                             <AutoTranslatedText text="Loading FAQs..." />
                         </div>
                     ) : faqs.filter(faq =>
                         displayLocalized(faq.question).toLowerCase().includes(searchTerm.toLowerCase()) ||
                         displayLocalized(faq.answer).toLowerCase().includes(searchTerm.toLowerCase())
                     ).length === 0 ? (
-                        <div className="text-center py-20 text-white/20 italic font-light">
+                        <div className="text-center py-20 text-dancheong-ink/20 italic font-light">
                             <AutoTranslatedText text="검색 결과가 없습니다." />
                         </div>
                     ) : faqs.filter(faq =>
@@ -138,14 +138,14 @@ const FAQPage: React.FC = () => {
                         <div key={faq.id} id={`faq-${faq.id}`} className="relative overflow-hidden group">
                             <button
                                 onClick={() => setOpenId(openId === String(faq.id) ? null : String(faq.id))}
-                                className={`w-full text-left p-6 flex items-center justify-between transition-all relative z-10 ${openId === String(faq.id) ? 'bg-white/10 shadow-2xl' : 'bg-white/5 hover:bg-white/8'
-                                    } rounded-2xl border border-white/10`}
+                                className={`w-full text-left p-6 flex items-center justify-between transition-all relative z-10 ${openId === String(faq.id) ? 'bg-white shadow-lg' : 'bg-white border border-dancheong-ink/5 hover:border-dancheong-navy/20'
+                                    } rounded-2xl`}
                             >
-                                <span className="text-lg font-medium group-hover:text-dancheong-red transition-colors">
+                                <span className="text-lg font-medium text-dancheong-ink group-hover:text-dancheong-navy transition-colors">
                                     <AutoTranslatedText text={displayLocalized(faq.question)} />
                                 </span>
                                 <ChevronDown
-                                    className={`transition-transform duration-300 ${openId === String(faq.id) ? 'rotate-180 text-dancheong-red' : 'text-white/20'}`}
+                                    className={`transition-transform duration-300 ${openId === String(faq.id) ? 'rotate-180 text-dancheong-navy' : 'text-dancheong-ink/20'}`}
                                     size={20}
                                 />
                             </button>
@@ -159,7 +159,7 @@ const FAQPage: React.FC = () => {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="p-8 pb-10 text-white/60 leading-relaxed font-light italic border-x border-b border-white/10 rounded-b-2xl -mt-4 bg-white/5">
+                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-dancheong-ivory/50">
                                             <AutoTranslatedText text={displayLocalized(faq.answer)} />
                                         </div>
                                     </motion.div>
@@ -171,12 +171,12 @@ const FAQPage: React.FC = () => {
 
                 {/* Bottom CTA */}
                 <div className="mt-20 text-center">
-                    <p className="text-white/40 mb-6 font-light">
+                    <p className="text-dancheong-ink/40 mb-6 font-light">
                         <AutoTranslatedText text="찾으시는 내용이 없으신가요?" />
                     </p>
                     <a
                         href="mailto:support@culturedpt.store"
-                        className="inline-flex items-center gap-2 px-10 py-4 bg-dancheong-red hover:bg-red-700 text-white rounded-full font-bold transition-all shadow-lg hover:shadow-dancheong-red/20 transform hover:-translate-y-1"
+                        className="inline-flex items-center gap-2 px-10 py-4 bg-dancheong-navy hover:bg-dancheong-ink text-white rounded-full font-bold transition-all shadow-lg hover:shadow-dancheong-navy/20 transform hover:-translate-y-1"
                     >
                         <AutoTranslatedText text="1:1 문의하기" />
                     </a>

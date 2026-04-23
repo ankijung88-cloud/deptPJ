@@ -204,75 +204,12 @@ const Header: React.FC = () => {
             onMouseEnter={() => resetUiTimer()}
             onMouseLeave={() => resetUiTimer()}
             style={{
-                backgroundColor: isScrolled ? `${theme.bgColor}fc` : theme.bgColor,
-                boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.5)' : '0 15px 40px rgba(0,0,0,0.4)',
-                borderBottomLeftRadius: isScrolled ? '0' : '50% 16px',
-                borderBottomRightRadius: isScrolled ? '0' : '50% 16px',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s, border-radius 0.7s'
+                backgroundColor: isScrolled ? `${theme.bgColor}f8` : theme.bgColor,
+                boxShadow: isScrolled ? '0 10px 30px rgba(23,23,23,0.08)' : 'none',
+                borderBottom: `2px solid ${theme.borderColor}44`,
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s'
             }}
         >
-            {/* Curved Technical Blueprint Lines (SVG Precision Implementation) */}
-            <div className={`absolute bottom-0 left-0 right-0 h-5 pointer-events-none transition-opacity duration-700 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
-                <svg
-                    viewBox="0 0 1000 16"
-                    preserveAspectRatio="none"
-                    className="absolute bottom-0 left-0 right-0 w-full h-4"
-                    style={{ transform: 'translateY(0.5px)' }}
-                >
-                    {/* Measurement Ticks (SVG Dash Array) */}
-                    <path
-                        d="M 0 0 A 500 16 0 0 0 1000 0"
-                        fill="none"
-                        stroke={theme.accentColor}
-                        strokeWidth="4"
-                        strokeDasharray="1,24"
-                        className="opacity-40"
-                        vectorEffect="non-scaling-stroke"
-                    />
-
-                    {/* Secondary Ticks (Offset) */}
-                    <path
-                        d="M 0 0 A 500 16 0 0 0 1000 0"
-                        fill="none"
-                        stroke={theme.highlightColor}
-                        strokeWidth="2"
-                        strokeDasharray="1,12"
-                        className="opacity-20"
-                        vectorEffect="non-scaling-stroke"
-                    />
-
-                    {/* Main Technical Lines */}
-                    <path
-                        d="M 0 0 A 500 16 0 0 0 1000 0"
-                        fill="none"
-                        stroke={theme.accentColor}
-                        strokeWidth="1.5"
-                        vectorEffect="non-scaling-stroke"
-                        className="brightness-150"
-                        style={{ filter: `drop-shadow(0 0 8px ${theme.accentColor}cc)` }}
-                    />
-
-                    {/* Offset Inner Lines for Depth */}
-                    <path
-                        d="M 0 -2 A 500 16 0 0 0 1000 -2"
-                        fill="none"
-                        stroke={theme.accentColor}
-                        strokeWidth="0.5"
-                        vectorEffect="non-scaling-stroke"
-                        className="opacity-30"
-                    />
-
-                    <path
-                        d="M 0 -4 A 500 16 0 0 0 1000 -4"
-                        fill="none"
-                        stroke={theme.accentColor}
-                        strokeWidth="0.5"
-                        vectorEffect="non-scaling-stroke"
-                        className="opacity-10"
-                    />
-                </svg>
-            </div>
-
             <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-16' : 'h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
                     <BrandLogo size={isScrolled ? 48 : 64} color={theme.accentColor} className="transition-all duration-500 group-hover:scale-105" />
@@ -295,18 +232,16 @@ const Header: React.FC = () => {
                                     {/* Elevator button (Direct link to 2D Floor Guide) */}
                                     <Link
                                         to={`/floor/${item.id}`}
-                                        className="flex items-center justify-center w-[60px] h-[60px] rounded-full my-4 transition-all duration-200 select-none cursor-pointer no-underline group/btn"
+                                        className="flex items-center justify-center w-[60px] h-[60px] rounded-full my-4 transition-all duration-300 select-none cursor-pointer no-underline group/btn"
                                         style={{
                                             background: isActive
-                                                ? `radial-gradient(circle at 40% 35%, ${theme.accentColor}55, ${theme.bgColor}cc)`
-                                                : 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.12), rgba(255,255,255,0.03))',
+                                                ? theme.accentColor
+                                                : 'rgba(255, 255, 255, 0.4)',
                                             boxShadow: isActive
-                                                ? `0 0 18px 4px ${theme.accentColor}66, inset 0 2px 4px rgba(0,0,0,0.6), inset 0 -1px 2px rgba(255,255,255,0.08)`
-                                                : 'inset 0 3px 6px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.4)',
-                                            border: isActive
-                                                ? `1.5px solid ${theme.accentColor}99`
-                                                : '1.5px solid rgba(255,255,255,0.12)',
-                                            transform: isActive ? 'scale(0.95)' : 'scale(1)',
+                                                ? `inset 0 0 0 1px ${theme.accentColor}`
+                                                : 'inset 0 0 0 1.5px rgba(23,23,23,0.3)',
+                                            backdropFilter: 'blur(8px)',
+                                            transform: isActive ? 'scale(1.05)' : 'scale(1)',
                                         }}
                                         onClick={() => {
                                             setActiveDropdown(null);
@@ -314,10 +249,9 @@ const Header: React.FC = () => {
                                         }}
                                     >
                                         <span
-                                            className="font-black text-[18px] tracking-widest"
+                                            className="font-black text-[18px] tracking-widest transition-colors duration-300"
                                             style={{
-                                                color: isActive ? theme.accentColor : 'rgba(255,255,255,0.75)',
-                                                textShadow: isActive ? `0 0 12px ${theme.accentColor}` : '0 1px 2px rgba(0,0,0,0.8)',
+                                                color: isActive ? '#FDFBF7' : '#171717',
                                             }}
                                         >
                                             {floorNum}
@@ -326,27 +260,27 @@ const Header: React.FC = () => {
 
                                     <div
                                         className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap text-[18px] font-black tracking-widest text-center !break-keep ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
-                                        style={{ color: theme.accentColor, textShadow: `0 0 10px ${theme.accentColor}44`, whiteSpace: 'nowrap' }}
+                                        style={{ color: theme.accentColor, whiteSpace: 'nowrap' }}
                                     >
                                         <AutoTranslatedText text={floorTitle} className="!whitespace-nowrap" />
                                     </div>
 
                                     <div
-                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 rounded-b-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
-                                        style={{ backgroundColor: `${theme.bgColor}`, borderTop: `2px solid ${theme.accentColor}`, border: `1px solid ${theme.accentColor}33` }}
+                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
+                                        style={{ backgroundColor: '#FDFBF7', borderTop: `2px solid ${theme.accentColor}`, border: `1px solid rgba(23,23,23,0.1)` }}
                                     >
                                         <div className="py-2 flex flex-col relative font-sans">
                                             {item.subitems.map((sub) => (
                                                 <Link
                                                     key={sub.id}
                                                     to={`/category/${sub.id}`}
-                                                    className="px-5 py-3 text-sm tracking-wide text-dancheong-white/70 hover:bg-white/5 transition-all duration-200 text-left relative group/item"
-                                                    onMouseEnter={e => (e.currentTarget.style.color = theme.highlightColor)}
+                                                    className="px-5 py-3 text-sm tracking-wide text-dancheong-ink/70 hover:bg-dancheong-ink/5 transition-all duration-200 text-left relative group/item"
+                                                    onMouseEnter={e => (e.currentTarget.style.color = theme.accentColor)}
                                                     onMouseLeave={e => (e.currentTarget.style.color = '')}
                                                     onClick={() => setActiveDropdown(null)}
                                                 >
                                                     <span className="relative z-10"><AutoTranslatedText text={sub.label} /></span>
-                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 transition-all duration-300 group-hover/item:h-3/5" style={{ backgroundColor: theme.highlightColor }} />
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 transition-all duration-300 group-hover/item:h-3/5" style={{ backgroundColor: theme.accentColor }} />
                                                 </Link>
                                             ))}
                                         </div>
@@ -360,7 +294,7 @@ const Header: React.FC = () => {
                 {/* User Actions & Utilities */}
                 <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
                         {/* Compact Breadcrumbs in Top Right */}
-                        <div className="opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="opacity-100 transition-opacity">
                             <Breadcrumbs />
                         </div>
 
@@ -372,30 +306,29 @@ const Header: React.FC = () => {
                                     localStorage.setItem('isGlobalMuted', String(next));
                                     window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
                                 }}
-                                className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
-                                onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
+                                className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#171717]/80 hover:text-[#171717]' : 'text-dancheong-ink'}`}
+                                onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.accentColor; }}
                                 onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
                                 title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                             >
-                                {isGlobalMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                                {isGlobalMuted ? <VolumeX size={20} strokeWidth={2.5} /> : <Volume2 size={20} strokeWidth={2.5} />}
                             </button>
 
-                            <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
+                            <div className={`h-6 w-[2px] ${is3DStorePage ? 'bg-[#171717]/20' : 'bg-dancheong-ink/20'}`} />
 
                             {/* Search */}
                             <div className="relative flex items-center justify-end">
                                 <div
-                                    className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white/5 w-[260px] px-3 py-1.5 shadow-[0_0_15px_rgba(212,175,55,0.1)]` : 'bg-transparent border border-transparent w-[28px] px-0 py-0'
-                                        }`}
-                                    style={isSearchOpen ? { border: `1px solid ${theme.borderColor}/40` } : {}}
+                                    className={`flex items-center transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden rounded-full ${isSearchOpen ? `bg-white w-[280px] px-4 py-2 shadow-xl` : 'bg-transparent border border-transparent w-[32px] px-0 py-0'
+                                         }`}
+                                    style={isSearchOpen ? { border: `2px solid #171717` } : {}}
                                 >
                                     <button
                                         onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                        className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-2' : (is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70')}`}
-                                        style={isSearchOpen ? theme.highlightStyle : {}}
+                                        className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-3 text-[#171717]' : (is3DStorePage ? 'text-[#171717]/80 hover:text-[#171717]' : 'text-dancheong-ink')}`}
                                         title={t('nav.search')}
                                     >
-                                        <Search size={18} />
+                                        <Search size={20} strokeWidth={2.5} />
                                     </button>
                                     <input
                                         ref={searchInputRef}
@@ -404,23 +337,24 @@ const Header: React.FC = () => {
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         onKeyDown={handleSearch}
                                         placeholder={t('search.placeholder')}
-                                        className={`w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
-                                            }`}
+                                        className={`w-full bg-transparent text-[#171717] text-sm outline-none placeholder:text-[#171717]/40 font-black tracking-wide ${isSearchOpen ? 'opacity-100' : 'opacity-0'
+                                             }`}
                                     />
                                     {isSearchOpen && (
                                         <button
                                             onClick={() => setIsSearchOpen(false)}
-                                            className="text-dancheong-white/50 shrink-0 ml-1 transition-colors"
-                                            onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
-                                            onMouseLeave={e => e.currentTarget.style.color = ''}
+                                            className="text-[#171717]/50 shrink-0 ml-2 transition-colors hover:text-[#171717]"
                                         >
-                                            <X size={16} />
+                                            <X size={18} strokeWidth={2.5} />
                                         </button>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="ml-auto"><LanguageSelector is3DStorePage={is3DStorePage} /></div>
+                            <div className="ml-auto flex items-center gap-4">
+                                <div className={`h-6 w-[2px] ${is3DStorePage ? 'bg-[#171717]/20' : 'bg-dancheong-ink/20'}`} />
+                                <LanguageSelector />
+                            </div>
 
                             {/* Admin & Agency Controls */}
                             {(isAdminLoggedIn || isAgencyLoggedIn) && (

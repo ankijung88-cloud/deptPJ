@@ -5,7 +5,6 @@ import { supportedLanguages } from '../../utils/i18nUtils';
 
 interface LanguageSelectorProps {
     variant?: 'header' | 'floating';
-    is3DStorePage?: boolean;
 }
 
 /**
@@ -13,8 +12,7 @@ interface LanguageSelectorProps {
  * Supports a 'header' variant for the main navigation and a 'floating' variant for immersive pages.
  */
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
-    variant = 'header',
-    is3DStorePage = false
+    variant = 'header'
 }) => {
     const { i18n } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,7 +49,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${isFloating
                     ? 'bg-black/40 backdrop-blur-xl border border-white/10 border-r-0 text-white hover:bg-black/60 shadow-2xl px-4 py-2 rounded-l-full'
-                    : (is3DStorePage ? 'rounded-full text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'rounded-full text-dancheong-white/70 hover:text-dancheong-gold')
+                    : 'rounded-full text-[#171717]/80 hover:text-[#171717]'
                     }`}
             >
                 <Globe size={isFloating ? 20 : 18} />

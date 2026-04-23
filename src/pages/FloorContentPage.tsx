@@ -1,224 +1,150 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Layout, ArrowRight, Calendar, Archive, Bookmark } from 'lucide-react';
+import { useFloors } from '../context/FloorContext';
+import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { getProductsByCategory } from '../api/products';
-import { getFloorCategories } from '../api/categories';
-import { FeaturedItem, FloorCategory } from '../types';
-import { ArrowRight, BookOpen } from 'lucide-react';
-import { JOSEON_THEMES } from '../utils/themeUtils';
-import { BrandLogo } from '../components/common/BrandLogo';
-
-const CATEGORY_FILTERS: Record<string, string[]> = {
-    'floor-tech-care': ['Trend', 'trend', 'car-care', 'window', 'exchange', '글로벌', 'global', 'tech', 'Tech', 'car'],
-    'floor-2': ['skincare', 'hair', 'perfume', 'inner-beauty', 'body-care', 'Beauty', 'beauty', 'care', 'Care'],
-    'floor-3': ['Exhibition', 'Performance', 'performance', 'exhibition', 'media', 'traditional', '공연', '전시', 'lifestyle', 'Lifestyle'],
-    'floor-gather-mall': ['class', 'b2b-mall', 'interview', '문화', '토크', '인터뷰', 'talk', 'mall', 'culture'],
-    'floor-5': ['Style', 'style', 'photo', 'video', 'media', 'archive', 'collection', 'kstyle', '패션', '아카이브', 'Fashion', 'fashion'],
-    'floor-6': ['local', 'heritage', 'local_heritage', '로컬', '유산', 'Heritage', 'heritage'],
-    'community': ['Community', 'community', 'notice', 'qna', 'reviews', '커뮤니티']
-};
 
 const FloorContentPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const [searchParams] = useSearchParams();
-    const filter = searchParams.get('filter');
-    const { t, i18n } = useTranslation();
-    const [items, setItems] = useState<FeaturedItem[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [floorData, setFloorData] = useState<FloorCategory | null>(null);
-
-    const categoryId = id || 'trend';
+    const { floorId } = useParams<{ floorId: string }>();
+    const { floors } = useFloors();
+    const { items: articles, loading } = useEditorial(floorId);
+    const { i18n } = useTranslation();
+    const navigate = useNavigate();
+    const floorData = floors.find(f => f.id === floorId);
 
     useEffect(() => {
-        let mounted = true;
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const floors = await getFloorCategories();
-                const currentFloor = floors.find(f => f.id === categoryId) || null;
-                if (mounted) setFloorData(currentFloor);
-
-                const targetInternalCategories = CATEGORY_FILTERS[categoryId] || [];
-                
-                // 1. Fetch by subcategories
-                const subPromises = targetInternalCategories.map(cat => getProductsByCategory(cat));
-                
-                // 2. Also fetch by Floor ID directly to catch products mapped to the floor but not specific subcats
-                const floorPromise = getProductsByCategory(categoryId);
-                
-                const [subResults, floorResults] = await Promise.all([
-                    Promise.all(subPromises),
-                    floorPromise
-                ]);
-
-                // Flatten and combine results
-                const allFetchedItems = [...subResults.flat(), ...floorResults];
-
-                // Deduplicate items by ID
-                const uniqueMap = new Map();
-                allFetchedItems.filter(item => !!item).forEach(item => uniqueMap.set(item.id, item));
-                let allItems = Array.from(uniqueMap.values());
-
-                    // Apply Sub-filter if present
-                    if (filter) {
-                        allItems = allItems.filter(item =>
-                            (item.subcategory && item.subcategory.toLowerCase() === filter.toLowerCase()) ||
-                            (item.category && item.category.toLowerCase() === filter.toLowerCase())
-                        );
-                    }
-
-                if (mounted) setItems(allItems);
-            } catch (error: any) {
-                // Silently handle or use a proper logger in production
-                console.error('Error in FloorContentPage fetchData:', error);
-            } finally {
-                if (mounted) setLoading(false);
-            }
-        };
-
         window.scrollTo(0, 0);
-        fetchData();
-        return () => { mounted = false; };
-    }, [categoryId, filter, id]);
+    }, [floorId]);
 
-    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
-
-    if (!floorData) {
-        return (
-            <div className="min-h-screen pt-32 text-center text-white" style={theme.bgStyle}>
-                <h2 className="text-2xl font-bold"><AutoTranslatedText text="존재하지 않는 층입니다." /></h2>
-                <Link to="/inspiration" style={theme.highlightStyle} className="mt-4 inline-block"><AutoTranslatedText text="홈으로 가기" /></Link>
-            </div>
-        );
-    }
+    if (!floorData) return null;
 
     return (
-        <div className="pb-20 min-h-screen text-white font-sans" style={theme.bgStyle}>
-            {/* Editorial Header */}
-            <header className="relative w-full py-24 flex items-center justify-center overflow-hidden mb-16 border-b border-white/10">
-                <div className="absolute inset-0 z-0 opacity-20 bg-gradient-to-t from-black to-transparent" />
-
-                <div className="container mx-auto px-6 relative z-10 text-left max-w-7xl">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="flex flex-col items-start"
-                    >
-                        {/* Front-aligned Logo above title - Increased size & reduced gap */}
-                        <div className="mb-6">
-                            <BrandLogo 
-                                size={120} 
-                                color={theme.accentColor} 
-                                mode="portal" 
-                                className="drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-700 hover:scale-105" 
-                            />
+        <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-[#F5F4F0] to-[#EAE8E3] text-dancheong-ink pt-32 pb-20">
+            <div className="lossless-layout">
+                {/* Editorial Header */}
+                <header className="mb-24">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b-8 border-[#171717] pb-16">
+                        <div className="max-w-4xl">
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="inline-flex items-center gap-3 text-[#4F6D5B] font-black text-[11px] tracking-[0.5em] uppercase mb-8"
+                            >
+                                <Bookmark size={14} strokeWidth={3} />
+                                <span className="font-black tracking-[0.2em]">{floorData.floor} PERSPECTIVE</span>
+                            </motion.div>
+                            <motion.h1
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="text-6xl md:text-9xl font-serif font-black text-[#171717] tracking-tighter leading-[0.85] mb-8"
+                            >
+                                <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
+                            </motion.h1>
                         </div>
-
-                        <h1 className="text-6xl md:text-[7rem] font-serif font-black mb-4 tracking-tighter leading-[0.9] drop-shadow-2xl" style={theme.textPrimaryStyle}>
-                            <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
-                        </h1>
-
-                        <div className="w-full max-w-sm">
-                            <div className="h-[1px] w-full mb-6 opacity-30" style={{ backgroundColor: theme.accentColor }} />
-                            <div className="space-y-2 font-mono text-sm tracking-[0.2em] opacity-60" style={{ color: theme.accentColor }}>
-                                <div className="flex justify-between">
-                                    <AutoTranslatedText text="구조 입면도" />
-                                    <span><AutoTranslatedText text="STRUCTURAL ELEVATION" /></span>
-                                </div>
-                                <div className="flex justify-between border-t border-white/5 pt-2">
-                                    <AutoTranslatedText text="스케일" />
-                                    <span>1 : 100</span>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </header>
-
-            <main className="container mx-auto px-6">
-                {/* Loading State */}
-                {loading && (
-                    <div className="flex justify-center items-center py-32">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: theme.accentColor }}></div>
-                    </div>
-                )}
-
-                {/* Empty State */}
-                {!loading && items.length === 0 && (
-                    <div className="text-white/40 text-center py-32 font-light text-lg">
-                        <AutoTranslatedText text="현재 준비된 에디토리얼 콘텐츠가 없습니다." />
-                    </div>
-                )}
-
-                {/* Editorial List Layout */}
-                <div className="flex flex-col gap-24">
-                    {!loading && items.map((item, index) => (
-                        <motion.article
-                            key={item.id}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            transition={{ duration: 0.8 }}
-                            className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-10 md:gap-16 items-center group`}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="max-w-md md:text-right"
                         >
-                            {/* Visual Side */}
-                            <div className="w-full md:w-1/2 overflow-hidden rounded-2xl relative aspect-[4/3] md:aspect-auto md:h-[500px]">
-                                <img
-                                    src={item.imageUrl}
-                                    alt={getLocalizedText(item.title, i18n.language)}
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+                            <p className="text-[#171717] font-black italic text-xl leading-relaxed opacity-80">
+                                <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
+                            </p>
+                        </motion.div>
+                    </div>
+                </header>
 
-                                <div className="absolute top-6 left-6 flex gap-2">
-                                    <span className="bg-black/80 backdrop-blur-md text-white text-xs px-4 py-1.5 rounded-full uppercase tracking-wider border border-white/20 select-none">
-                                        <AutoTranslatedText text={(getLocalizedText(floorData.subitems?.find(s => s.id === item.subcategory)?.label, i18n.language) || t(`subcategory.${item.subcategory}`, getLocalizedText(item.subcategory || item.category || 'Culture', i18n.language))) as string} />
-                                    </span>
+                {/* Editorial Feed */}
+                {loading ? (
+                    <div className="flex justify-center py-40">
+                        <div className="w-12 h-12 border-4 border-[#4F6D5B]/20 border-t-[#4F6D5B] rounded-full animate-spin" />
+                    </div>
+                ) : articles.length > 0 ? (
+                    <div className="space-y-32">
+                        {articles.map((article: any, idx: number) => (
+                            <motion.div
+                                key={article.id}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1, duration: 0.7 }}
+                                className="group cursor-pointer"
+                            >
+                                <div className="bg-white/60 backdrop-blur-2xl border-2 border-[#171717]/20 rounded-[48px] overflow-hidden transition-all duration-700 hover:shadow-[0_60px_100px_rgba(23,23,23,0.12)] hover:-translate-y-3 hover:bg-white/90 h-full flex flex-col">
+                                    <div className="aspect-[3/4] overflow-hidden relative">
+                                        <img 
+                                            src={article.imageUrl} 
+                                            alt={article.title}
+                                            className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-115"
+                                        />
+                                        <div className="absolute inset-0 bg-[#171717]/5 group-hover:bg-transparent transition-colors duration-700" />
+                                        
+                                        <div className="absolute top-10 left-10">
+                                            <div className="px-5 py-2 bg-white rounded-full border-2 border-[#171717] shadow-lg">
+                                                <span className="text-[10px] font-black text-[#171717] uppercase tracking-[0.2em]">
+                                                    {article.category || 'Editorial'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-12 flex-grow flex flex-col">
+                                        <div className="flex items-center gap-2 text-[#171717]/60 text-[10px] font-black uppercase tracking-widest mb-6">
+                                            <Calendar size={14} strokeWidth={2.5} />
+                                            <span>{getLocalizedText(article.date, i18n.language) || 'Upcoming'}</span>
+                                        </div>
+                                        <h3 className="text-3xl font-serif font-black text-[#171717] mb-6 group-hover:text-[#4F6D5B] transition-colors duration-500 leading-[1.1]">
+                                            <AutoTranslatedText text={getLocalizedText(article.title, i18n.language)} />
+                                        </h3>
+                                        <p className="text-[#171717] font-black opacity-80 leading-relaxed text-lg line-clamp-3 mb-10">
+                                            <AutoTranslatedText text={getLocalizedText(article.description, i18n.language)} />
+                                        </p>
+                                        <div className="mt-auto flex items-center gap-4 text-[#171717]/50 group-hover:text-[#171717] transition-colors duration-500 font-black text-[11px] uppercase tracking-[0.3em]">
+                                            <AutoTranslatedText text="Explore Perspective" />
+                                            <ArrowRight size={16} strokeWidth={2.5} className="group-hover:translate-x-3 transition-transform duration-500" />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-40 text-center border-4 border-[#171717]/20 rounded-[48px] bg-white/60 backdrop-blur-2xl shadow-xl">
+                        <div className="w-24 h-24 bg-[#171717]/[0.05] rounded-full flex items-center justify-center mx-auto mb-8">
+                            <Archive size={40} className="text-[#171717]/20" />
+                        </div>
+                        <h2 className="text-3xl font-serif font-black text-[#171717] mb-4">
+                            <AutoTranslatedText text="현재 수집된 기록이 없습니다" />
+                        </h2>
+                        <p className="text-[#171717]/80 font-black italic mb-10">
+                            <AutoTranslatedText text="이 층의 새로운 전시 기록이 준비되는 대로 업데이트될 예정입니다." />
+                        </p>
+                        <button 
+                            onClick={() => navigate('/floor-guide')}
+                            className="px-12 py-5 bg-[#171717] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#4F6D5B] transition-all shadow-xl"
+                        >
+                            <AutoTranslatedText text="Back to Directory" />
+                        </button>
+                    </div>
+                )}
 
-                            {/* Content Side */}
-                            <div className="w-full md:w-1/2 flex flex-col justify-center p-6 rounded-2xl" style={{ backgroundColor: theme.color1, border: `1px solid ${theme.color3}` }}>
-                                <div className="flex items-center text-sm mb-6 space-x-4 font-bold tracking-widest uppercase" style={{ color: theme.color4 }}>
-                                    <span>{getLocalizedText(item.date, i18n.language)}</span>
-                                    {item.location && (
-                                        <>
-                                            <span className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.color4 }} />
-                                            <span>{getLocalizedText(item.location, i18n.language)}</span>
-                                        </>
-                                    )}
-                                </div>
-
-                                <h3 className="text-3xl md:text-5xl font-serif font-bold mb-6 leading-tight" style={theme.textPrimaryStyle}>
-                                    {getLocalizedText(item.title, i18n.language)}
-                                </h3>
-
-                                <p className="text-lg font-light leading-relaxed mb-10 line-clamp-3" style={theme.textSecondaryStyle}>
-                                    {getLocalizedText(item.description, i18n.language)}
-                                </p>
-
-                                <Link
-                                    to={`/detail/${item.id}`}
-                                    className="inline-flex items-center gap-3 text-white font-medium text-lg pb-2 border-b-2 border-transparent transition-all w-fit hover:opacity-80"
-                                    style={{ borderBottomColor: theme.accentColor }}
-                                >
-                                    <BookOpen size={20} />
-                                    <AutoTranslatedText text="Read Article" />
-                                    <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                                </Link>
-                            </div>
-                        </motion.article>
-                    ))}
+                {/* Perspective Navigator */}
+                <div className="mt-40 pt-20 border-t-4 border-[#171717] flex flex-col md:flex-row items-center justify-between gap-12">
+                    <button 
+                        onClick={() => navigate('/floor-guide')}
+                        className="flex items-center gap-4 text-[#171717]/50 hover:text-[#171717] transition-colors font-black text-[11px] uppercase tracking-[0.4em] group"
+                    >
+                        <Layout size={20} strokeWidth={2.5} className="group-hover:rotate-90 transition-transform duration-500" />
+                        <AutoTranslatedText text="Return to Main Floor Map" />
+                    </button>
                 </div>
-            </main>
+            </div>
         </div>
     );
 };
 
 export default FloorContentPage;
-
-

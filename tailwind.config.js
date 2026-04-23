@@ -10,20 +10,25 @@ export default {
                 'dancheong-red': '#A12D27',
                 'dancheong-vibrant-red': '#C0392B',
                 'dancheong-green': '#4F6D5B',
+                'dancheong-mugwort': '#4F6D5B',
                 'dancheong-vibrant-green': '#5BB085',
                 'dancheong-teal': '#5BB085',
                 'dancheong-vibrant-teal': '#00A0E9',
                 'dancheong-blue': '#7BA6C9',
+                'dancheong-navy': '#1A2944',
                 'dancheong-vibrant-blue': '#00479E',
                 'dancheong-yellow': '#DAA520',
                 'dancheong-vibrant-yellow': '#FFF100',
                 'dancheong-gold': '#D4AF37',
-                'dancheong-white': '#F5F5DC', // Oksun (Off-white)
-                'dancheong-deep-bg': '#1A2420', // Deep Noirok (Aligned with Template)
+                'dancheong-white': '#171717', // Swapped to Ink for primary text
+                'dancheong-ivory': '#FDFBF7', // Primary Background
+                'dancheong-beige': '#F5F5DC', // Secondary Background
+                'dancheong-ink': '#171717',   // Primary Text
+                'dancheong-deep-bg': '#FDFBF7', // Overwritten for global compatibility
                 'dancheong-deep-red': '#7A221E',
                 'dancheong-deep-green': '#1E2924',
-                'dancheong-border': 'rgba(212, 175, 55, 0.2)',
-                'dancheong-border-vibrant': '#D4AF37',
+                'dancheong-border': 'rgba(23, 23, 23, 0.1)',
+                'dancheong-border-vibrant': '#4F6D5B', // Using Mugwort for active borders
                 // Neo-Dancheong Cyber Palette
                 'cyber-pine': '#1A2420',
                 'cyber-red': '#FF3B30',

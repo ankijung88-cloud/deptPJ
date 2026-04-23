@@ -1,256 +1,243 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { UserPlus, Mail, Lock, Building, ArrowLeft, Loader2, CheckCircle2, Calendar, Phone } from 'lucide-react';
-import { registerAgency } from '../api/auth';
+import { Building2, User, Mail, Phone, Globe, ArrowRight, ShieldCheck, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-
-declare global {
-    interface Window {
-        daum: any;
-    }
-}
+import { BrandLogo } from '../components/common/BrandLogo';
 
 const AgencyRegisterPage: React.FC = () => {
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        username: '',
-        password: '',
         agencyName: '',
-        birthDate: '',
-        phoneMobile: ''
+        representative: '',
+        email: '',
+        phone: '',
+        website: '',
+        address: '',
+        category: 'Fashion',
+        description: ''
     });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
 
-    // No longer using Daum Postcode script for manual entry
-    useEffect(() => {}, []);
-
-    const { translateAsync } = useAutoTranslate(null);
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        setError('');
-        
-        try {
-            await registerAgency(formData);
-            setSuccess(true);
-            setTimeout(() => navigate('/admin/login'), 3000);
-        } catch (err: any) {
-            const rawError = err.message || 'Registration failed';
-            const translatedErr = await translateAsync(rawError);
-            setError(translatedErr);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } finally {
-            setLoading(false);
-        }
+        setStep(3); // Show success state
     };
 
-    if (success) {
-        return (
-            <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 font-sans">
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="max-w-md w-full backdrop-blur-2xl bg-white/5 border border-[#00FFC2]/30 rounded-3xl p-10 text-center shadow-[0_0_50px_rgba(0,255,194,0.1)]"
-                >
-                    <div className="w-20 h-20 bg-[#00FFC2]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle2 className="text-[#00FFC2] w-10 h-10" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-white mb-4"><AutoTranslatedText text="가입 신청 완료" /></h2>
-                    <p className="text-dancheong-white/60 mb-8 leading-relaxed">
-                        <AutoTranslatedText text="에이전시 등록 신청이 정상적으로 완료되었습니다." /><br />
-                        <AutoTranslatedText text="관리자의 승인 후 로그인이 가능합니다." />
-                    </p>
-                    <div className="text-sm text-[#00FFC2] animate-pulse">
-                        <AutoTranslatedText text="3초 후 로그인 페이지로 이동합니다..." />
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen bg-[#050505] relative overflow-hidden flex items-center justify-center py-20 px-6 font-sans">
-            {/* Background Effects */}
-            <div className="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#00FFC2]/5 rounded-full blur-[120px]" />
-            <div className="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#00FFC2]/5 rounded-full blur-[120px]" />
+        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+            <div className="lossless-layout">
+                {/* Header Context */}
+                <div className="max-w-4xl mx-auto mb-20 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-dancheong-mugwort/10 border border-dancheong-mugwort/30 rounded-full text-dancheong-mugwort text-[10px] font-black tracking-widest uppercase mb-8"
+                    >
+                        <Building2 size={14} />
+                        <AutoTranslatedText text="PARTNER REGISTRATION" />
+                    </motion.div>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="text-5xl md:text-8xl font-serif font-black text-dancheong-ink mb-8 tracking-tighter leading-none"
+                    >
+                        <AutoTranslatedText text="전략적 파트너십 구축" />
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-xl text-dancheong-ink/40 font-light italic leading-relaxed max-w-2xl mx-auto"
+                    >
+                        <AutoTranslatedText text="DEPART와 함께 새로운 브랜드 가치를 창출하고 글로벌 시장으로의 확장을 준비하십시오. 귀사의 기록은 DEPART의 아카이브에 영구히 보존됩니다." />
+                    </motion.p>
+                </div>
 
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-xl w-full relative z-10"
-            >
-                {/* Back Button */}
-                <button 
-                    onClick={() => navigate('/admin/login')}
-                    className="flex items-center gap-2 text-dancheong-white/50 hover:text-[#00FFC2] transition-colors mb-8 group"
-                >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-sm font-medium"><AutoTranslatedText text="로그인으로 돌아가기" /></span>
-                </button>
-
-                <div className="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
-                    <div className="mb-10 text-center md:text-left">
-                        <div className="w-16 h-16 bg-[#00FFC2]/10 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
-                            <UserPlus className="text-[#00FFC2] w-8 h-8" />
+                {/* Multi-step Form / Content */}
+                <div className="max-w-5xl mx-auto">
+                    <div className="bg-white border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                        {/* Decorative Pattern */}
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
+                            <BrandLogo size={300} color="#171717" />
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-2"><AutoTranslatedText text="에이전시 파트너 등록" /></h1>
-                        <p className="text-dancheong-white/50 text-sm">
-                            <AutoTranslatedText text="디파트먼트의 파트너가 되어 제품을 등록하고 관리하세요." />
-                        </p>
-                    </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        {error && (
-                            <motion.div 
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm overflow-hidden"
-                            >
-                                <AutoTranslatedText text={error} />
+                        {step === 1 ? (
+                            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                                    <div className="space-y-12">
+                                        <div>
+                                            <h2 className="text-3xl font-black text-dancheong-ink mb-6 tracking-tight">
+                                                <AutoTranslatedText text="입점 및 파트너 등록" />
+                                            </h2>
+                                            <div className="space-y-6">
+                                                <div className="flex gap-4">
+                                                    <div className="w-10 h-10 bg-dancheong-mugwort/10 rounded-2xl flex items-center justify-center shrink-0">
+                                                        <ShieldCheck className="text-dancheong-mugwort" size={20} />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-dancheong-ink mb-1 uppercase tracking-tight"><AutoTranslatedText text="Verified Entry" /></h4>
+                                                        <p className="text-xs text-dancheong-ink/40 font-light italic"><AutoTranslatedText text="엄격한 심사를 거쳐 프리미엄 브랜드 컬렉션에 등록됩니다." /></p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-4">
+                                                    <div className="w-10 h-10 bg-dancheong-ink/5 rounded-2xl flex items-center justify-center shrink-0">
+                                                        <Globe className="text-dancheong-ink/30" size={20} />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-dancheong-ink mb-1 uppercase tracking-tight"><AutoTranslatedText text="Global Exposure" /></h4>
+                                                        <p className="text-xs text-dancheong-ink/40 font-light italic"><AutoTranslatedText text="글로벌 시장을 겨냥한 다국어 큐레이션 서비스가 제공됩니다." /></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-8 bg-dancheong-ivory rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
+                                            <AutoTranslatedText text="등록 신청 후 영업일 기준 3~5일 내에 담당자의 개별 연락이 진행됩니다. 원활한 심사를 위해 정확한 정보를 입력해 주시기 바랍니다." />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col justify-center">
+                                        <button 
+                                            onClick={() => setStep(2)}
+                                            className="group w-full bg-dancheong-ink text-dancheong-ivory py-8 rounded-[32px] text-xs font-black uppercase tracking-[0.5em] hover:bg-dancheong-mugwort transition-all shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center justify-center gap-6"
+                                        >
+                                            <AutoTranslatedText text="Registration Start" />
+                                            <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform opacity-40" />
+                                        </button>
+                                        <p className="mt-8 text-center text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.3em]">
+                                            <AutoTranslatedText text="System Secure Connection Active" />
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ) : step === 2 ? (
+                            <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} onSubmit={handleSubmit} className="space-y-12">
+                                <div className="flex items-center justify-between mb-8">
+                                    <button onClick={() => setStep(1)} className="flex items-center gap-2 text-[10px] font-black text-dancheong-ink/30 uppercase tracking-widest hover:text-dancheong-mugwort transition-colors">
+                                        <ChevronLeft size={16} /> <AutoTranslatedText text="Back" />
+                                    </button>
+                                    <div className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.4em]">Section 02 / Archive Registry</div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Agency / Brand Name</label>
+                                        <div className="relative group">
+                                            <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                            <input 
+                                                required
+                                                type="text" 
+                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                                placeholder="Enter agency name"
+                                                value={formData.agencyName}
+                                                onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Representative</label>
+                                        <div className="relative group">
+                                            <User className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                            <input 
+                                                required
+                                                type="text" 
+                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                                placeholder="Name of representative"
+                                                value={formData.representative}
+                                                onChange={(e) => setFormData({...formData, representative: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Corporate Email</label>
+                                        <div className="relative group">
+                                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                            <input 
+                                                required
+                                                type="email" 
+                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                                placeholder="agency@example.com"
+                                                value={formData.email}
+                                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Contact Phone</label>
+                                        <div className="relative group">
+                                            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                            <input 
+                                                required
+                                                type="tel" 
+                                                className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans"
+                                                placeholder="+82-10-0000-0000"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="md:col-span-2 space-y-3">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Brand Vision / Description</label>
+                                        <textarea 
+                                            required
+                                            className="w-full bg-dancheong-ivory border border-dancheong-ink/5 rounded-[32px] p-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort/30 transition-all font-sans min-h-[160px] resize-none"
+                                            placeholder="Describe your brand heritage and vision..."
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <p className="text-[10px] text-dancheong-ink/30 font-light italic max-w-sm">
+                                        <AutoTranslatedText text="By submitting this registry, you agree to our heritage preservation terms and platform service agreements." />
+                                    </p>
+                                    <button 
+                                        type="submit"
+                                        className="px-16 py-6 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all shadow-xl shadow-dancheong-ink/10 active:scale-95 flex items-center gap-4"
+                                    >
+                                        <AutoTranslatedText text="Submit Registry" />
+                                        <ArrowRight size={16} className="opacity-40" />
+                                    </button>
+                                </div>
+                            </motion.form>
+                        ) : (
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-20 text-center">
+                                <div className="w-24 h-24 bg-dancheong-mugwort/10 border border-dancheong-mugwort/20 rounded-full flex items-center justify-center mx-auto mb-10">
+                                    <CheckCircle2 className="text-dancheong-mugwort" size={48} />
+                                </div>
+                                <h2 className="text-4xl font-serif font-black text-dancheong-ink mb-6 tracking-tight">
+                                    <AutoTranslatedText text="등록 신청 완료" />
+                                </h2>
+                                <p className="text-dancheong-ink/40 font-light italic text-xl mb-12 max-w-lg mx-auto">
+                                    <AutoTranslatedText text="파트너 등록 신청이 성공적으로 접수되었습니다. 브랜드 큐레이션팀의 검토 후 연락드리겠습니다." />
+                                </p>
+                                <button 
+                                    onClick={() => navigate('/')}
+                                    className="px-12 py-5 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all"
+                                >
+                                    <AutoTranslatedText text="Return to Main" />
+                                </button>
                             </motion.div>
                         )}
+                    </div>
 
-                        <div className="flex flex-col gap-6">
-                            {/* Agency Name */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="에이전시 명" /></label>
-                                <div className="relative group">
-                                    <Building className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.agencyName ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder={t('agency.name_placeholder', 'Agency Name')}
-                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
-                                            !formData.agencyName && formData.agencyName !== '' ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
-                                        }`}
-                                        value={formData.agencyName}
-                                        onChange={(e) => setFormData({ ...formData, agencyName: e.target.value })}
-                                    />
-                                </div>
-                                <p className="text-[10px] text-dancheong-white/30 ml-1">
-                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 에이전시 정식 명칭을 입력해 주세요." />
-                                </p>
-                            </div>
-
-                            {/* Email (ID) */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="아이디 (이메일)" /></label>
-                                <div className="relative group">
-                                    <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.username.includes('@') ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
-                                    <input
-                                        type="email"
-                                        required
-                                        placeholder={t('agency.email_placeholder', 'Email Address')}
-                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
-                                            formData.username && !formData.username.includes('@') ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
-                                        }`}
-                                        value={formData.username}
-                                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    />
-                                </div>
-                                <p className={`text-[10px] ml-1 ${formData.username && !formData.username.includes('@') ? 'text-red-400' : 'text-dancheong-white/30'}`}>
-                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 유효한 이메일 주소를 입력해 주세요 (예: user@example.com)" />
-                                </p>
-                            </div>
-
-                            {/* Password */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="비밀번호" /></label>
-                                <div className="relative group">
-                                    <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.password.length >= 8 ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
-                                    <input
-                                        type="password"
-                                        required
-                                        placeholder={t('agency.password_placeholder', 'Password')}
-                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
-                                            formData.password && formData.password.length < 8 ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
-                                        }`}
-                                        value={formData.password}
-                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    />
-                                </div>
-                                <p className={`text-[10px] ml-1 ${formData.password && formData.password.length < 8 ? 'text-red-400' : 'text-dancheong-white/30'}`}>
-                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 영문, 숫자 포함 8자 이상으로 설정해 주세요." />
-                                </p>
-                            </div>
-
-                            {/* Birth Date */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="생년월일" /></label>
-                                <div className="relative group">
-                                    <Calendar className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${formData.birthDate ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
-                                    <input
-                                        type="date"
-                                        required
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#00FFC2]/50 focus:bg-white/10 transition-all font-medium appearance-none"
-                                        value={formData.birthDate}
-                                        onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                                    />
-                                </div>
-                                <p className="text-[10px] text-dancheong-white/30 ml-1">
-                                    <AutoTranslatedText text="* 필수 입력 사항입니다." />
-                                </p>
-                            </div>
-
-                            {/* Mobile Phone */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-dancheong-white/40 uppercase tracking-widest ml-1"><AutoTranslatedText text="휴대폰 번호" /></label>
-                                <div className="relative group">
-                                    <Phone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'text-[#00FFC2]' : 'text-dancheong-white/30'}`} size={18} />
-                                    <input
-                                        type="tel"
-                                        required
-                                        placeholder="010-0000-0000"
-                                        className={`w-full bg-white/5 border rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:bg-white/10 transition-all font-medium ${
-                                            formData.phoneMobile && !/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'border-red-500/50' : 'border-white/10 focus:border-[#00FFC2]/50'
-                                        }`}
-                                        value={formData.phoneMobile}
-                                        onChange={(e) => setFormData({ ...formData, phoneMobile: e.target.value })}
-                                    />
-                                </div>
-                                <p className={`text-[10px] ml-1 ${formData.phoneMobile && !/^\d{3}-\d{3,4}-\d{4}$/.test(formData.phoneMobile) ? 'text-red-400' : 'text-dancheong-white/30'}`}>
-                                    <AutoTranslatedText text="* 필수 입력 사항입니다. 하이픈(-)을 포함하여 입력해 주세요. (예: 010-1234-5678)" />
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-[#00FFC2] hover:bg-[#00FFC2]/90 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold py-5 rounded-xl transition-all shadow-[0_10px_30px_rgba(0,255,194,0.3)] flex items-center justify-center gap-2 text-lg active:scale-[0.98]"
-                        >
-                            {loading ? (
-                                <Loader2 className="animate-spin" size={24} />
-                            ) : (
-                                <>
-                                    <span><AutoTranslatedText text="가입 신청하기" /></span>
-                                </>
-                            )}
-                        </button>
-                    </form>
-
-                    <div className="mt-10 text-center">
-                        <p className="text-dancheong-white/40 text-sm">
-                            <AutoTranslatedText text="이미 계정이 있으신가요?" />{' '}
-                            <Link to="/admin/login" className="text-[#00FFC2] hover:underline font-medium ml-1">
-                                <AutoTranslatedText text="로그인" />
-                            </Link>
-                        </p>
+                    {/* Support Links */}
+                    <div className="mt-12 flex items-center justify-center gap-10">
+                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Inquiry Support" /></button>
+                        <div className="w-1 h-1 bg-dancheong-ink/10 rounded-full" />
+                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Documentation" /></button>
+                        <div className="w-1 h-1 bg-dancheong-ink/10 rounded-full" />
+                        <button className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-[0.2em] hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Status Check" /></button>
                     </div>
                 </div>
-
-                <div className="mt-12 text-center opacity-30">
-                    <img src="/DEPT_Logo.png" alt="Logo" className="h-10 mx-auto grayscale brightness-200" />
-                </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

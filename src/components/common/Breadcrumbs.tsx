@@ -107,7 +107,7 @@ export const Breadcrumbs: React.FC = () => {
                 </span>
             </div>
 
-            <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest text-white/80">
+            <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest text-dancheong-ink/60">
                 <Link to="/" className="transition-colors whitespace-nowrap hover:brightness-125" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = theme.accentColor} onMouseLeave={e => e.currentTarget.style.color = ''}>
                     <AutoTranslatedText text="3D포털" />
                 </Link>
@@ -149,7 +149,7 @@ export const Breadcrumbs: React.FC = () => {
                                             <AutoTranslatedText text={label} />
                                         </Link>
                                     ) : (
-                                        <span className="text-white/80 whitespace-nowrap">
+                                        <span className="text-dancheong-ink/60 whitespace-nowrap">
                                             <AutoTranslatedText text={label} />
                                         </span>
                                     )

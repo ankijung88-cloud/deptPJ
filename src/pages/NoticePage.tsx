@@ -71,15 +71,14 @@ const NoticePage: React.FC = () => {
     }, [loading]);
 
     return (
-        <div className="min-h-screen bg-dancheong-deep-bg text-white pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-3 text-dancheong-red text-sm font-black tracking-[0.4em] uppercase mb-6"
-                        style={{ textShadow: '0 0 15px rgba(235, 59, 45, 0.4)' }}
+                        className="inline-flex items-center gap-3 text-dancheong-mugwort text-sm font-black tracking-[0.4em] uppercase mb-6"
                     >
                         <Megaphone size={16} />
                         <AutoTranslatedText text="공지사항" />
@@ -96,7 +95,7 @@ const NoticePage: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-white/60 max-w-2xl mx-auto italic font-light"
+                        className="text-dancheong-ink/60 max-w-2xl mx-auto italic font-light"
                     >
                         <AutoTranslatedText text="DEPART의 새로운 소식과 안내사항을 전해드립니다." />
                     </motion.p>
@@ -105,11 +104,11 @@ const NoticePage: React.FC = () => {
                 {/* Notice List */}
                 <div className="max-w-4xl mx-auto space-y-4">
                     {loading ? (
-                        <div className="text-center py-20 text-white/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
+                        <div className="text-center py-20 text-dancheong-ink/20 uppercase tracking-[0.2em] text-xs font-bold leading-relaxed">
                             <AutoTranslatedText text="Loading notices..." />
                         </div>
                     ) : notices.length === 0 ? (
-                        <div className="text-center py-20 text-white/20 italic font-light">
+                        <div className="text-center py-20 text-dancheong-ink/20 italic font-light">
                             <AutoTranslatedText text="등록된 공지사항이 없습니다." />
                         </div>
                     ) : notices.map((notice, index) => (
@@ -121,23 +120,23 @@ const NoticePage: React.FC = () => {
                             transition={{ delay: 0.1 * index }}
                             className="group relative overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-dancheong-red/30" />
+                            <div className="absolute inset-0 bg-white border border-dancheong-ink/5 rounded-2xl transition-all duration-300 group-hover:border-dancheong-mugwort/30 shadow-sm group-hover:shadow-md" />
                             <div className="relative p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${notice.is_important ? 'bg-dancheong-red text-white' : 'bg-white/10 text-white/60'
+                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${notice.is_important ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink/5 text-dancheong-ink/60'
                                         }`}>
                                         <AutoTranslatedText text={notice.category} />
                                     </span>
-                                    <h3 className="text-lg font-medium text-white group-hover:text-dancheong-red transition-colors flex-grow">
+                                    <h3 className="text-lg font-medium text-dancheong-ink group-hover:text-dancheong-mugwort transition-colors flex-grow">
                                         <AutoTranslatedText text={typeof notice.title === 'string' ? notice.title : (notice.title.ko || notice.title.en || '')} />
                                     </h3>
                                 </div>
                                 <div className="flex items-center justify-between md:justify-end gap-6">
-                                    <div className="flex items-center gap-2 text-white/40 text-xs font-light">
+                                    <div className="flex items-center gap-2 text-dancheong-ink/40 text-xs font-light">
                                         <Calendar size={14} />
                                         <span>{notice.date}</span>
                                     </div>
-                                    <ChevronRight className="text-white/20 group-hover:text-dancheong-red transform group-hover:translate-x-1 transition-all" size={20} />
+                                    <ChevronRight className="text-dancheong-ink/20 group-hover:text-dancheong-mugwort transform group-hover:translate-x-1 transition-all" size={20} />
                                 </div>
                             </div>
                         </motion.div>
@@ -147,7 +146,7 @@ const NoticePage: React.FC = () => {
                 {/* Pagination Placeholder */}
                 <div className="mt-16 flex justify-center gap-2">
                     {[1, 2, 3].map(n => (
-                        <button key={n} className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${n === 1 ? 'bg-dancheong-red text-white' : 'bg-white/5 text-white/40 hover:bg-white/10'
+                        <button key={n} className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${n === 1 ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink/5 text-dancheong-ink/40 hover:bg-dancheong-ink/10'
                             }`}>
                             {n}
                         </button>

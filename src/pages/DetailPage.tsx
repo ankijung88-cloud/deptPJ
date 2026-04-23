@@ -302,25 +302,25 @@ export const DetailPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white" style={{ backgroundColor: theme.bgColor }}>
-                <Loader2 className="animate-spin text-[#00FFC2]" size={40} />
+            <div className="min-h-screen pt-24 flex items-center justify-center" style={{ backgroundColor: theme.bgColor, color: theme.textPrimary }}>
+                <Loader2 className="animate-spin" style={{ color: theme.highlightColor }} size={40} />
             </div>
         );
     }
 
     if (!item) {
         return (
-            <div className="min-h-screen pt-24 flex items-center justify-center text-white" style={{ backgroundColor: theme.bgColor }}>
+            <div className="min-h-screen pt-24 flex items-center justify-center" style={{ backgroundColor: theme.bgColor, color: theme.textPrimary }}>
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">{t('common.item_not_found')}</h2>
-                    <Link to="/inspiration" className="text-[#00FFC2] hover:underline font-bold text-lg"><AutoTranslatedText text={t('common.back_home')} /></Link>
+                    <Link to="/inspiration" className="hover:underline font-bold text-lg" style={{ color: theme.highlightColor }}><AutoTranslatedText text={t('common.back_home')} /></Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <article className="min-h-screen text-white" style={{ backgroundColor: theme.bgColor }}>
+        <article className="min-h-screen" style={{ backgroundColor: theme.bgColor, color: theme.textPrimary }}>
             {/* Magazine Hero */}
             <div className="relative h-[45vh] w-full group overflow-hidden">
                 <motion.div 
@@ -362,23 +362,23 @@ export const DetailPage: React.FC = () => {
                                     <AutoTranslatedText text="아카이브" /> {floorLabel}
                                 </button>
                                 {item.subcategory && (
-                                    <span className="text-white/40 text-xs font-mono tracking-widest uppercase ml-2">
+                                    <span className="text-xs font-mono tracking-widest uppercase ml-2 opacity-40">
                                         / {item.subcategory}
                                     </span>
                                 )}
                             </div>
                             
-                            <h1 className="text-5xl md:text-8xl font-serif font-black mb-8 leading-none tracking-tighter">
+                            <h1 className="text-5xl md:text-8xl font-serif font-black mb-8 leading-none tracking-tighter" style={{ color: theme.textPrimary }}>
                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                             </h1>
 
-                            <div className="flex flex-wrap gap-8 text-sm font-light" style={{ color: theme.textSecondary }}>
+                            <div className="flex flex-wrap gap-8 text-sm font-light">
                                 <div className="flex items-center gap-2">
-                                    <CalendarIcon size={16} className="text-[#00FFC2]" />
+                                    <CalendarIcon size={16} style={{ color: theme.highlightColor }} />
                                     <AutoTranslatedText text={getLocalizedText(item.date, i18n.language)} />
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <MapPin size={16} className="text-[#00FFC2]" />
+                                    <MapPin size={16} style={{ color: theme.highlightColor }} />
                                     <AutoTranslatedText text={getLocalizedText(item.location, i18n.language)} />
                                 </div>
                             </div>
@@ -400,13 +400,13 @@ export const DetailPage: React.FC = () => {
                     {/* Description Column */}
                     <div className="lg:col-span-8 space-y-16">
                         <section className="relative">
-                            <div className="absolute -left-6 top-0 bottom-0 w-1 bg-[#00FFC2] opacity-30" />
+                            <div className="absolute -left-6 top-0 bottom-0 w-1 opacity-30" style={{ backgroundColor: theme.highlightColor }} />
                             <p className="text-2xl md:text-3xl leading-relaxed font-serif italic" style={{ color: theme.textSecondary }}>
                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                             </p>
                         </section>
 
-                        <div className="h-px w-full bg-white/5" />
+                        <div className="h-px w-full" style={{ backgroundColor: `${theme.textPrimary}11` }} />
 
                         <section className="prose prose-invert max-w-none">
                             <div className="text-lg leading-relaxed space-y-8 font-light" style={{ color: theme.textSecondary }}>
@@ -466,19 +466,20 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-4 lg:pl-10">
                         <div className="sticky top-32 space-y-12">
                             {/* Price / Action Card */}
-                            <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-8">
+                            <div className="p-8 rounded-3xl border shadow-sm" style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}>
                                 <div className="space-y-2">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">{t('common.price')}</span>
-                                    <div className="text-3xl font-serif font-bold text-[#00FFC2]">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}>{t('common.price')}</span>
+                                    <div className="text-3xl font-serif font-bold" style={{ color: theme.highlightColor }}>
                                         <AutoTranslatedText text={getLocalizedText(item.price, i18n.language)} />
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-4 mt-8">
                                     {item.videoUrl && (
                                         <button 
                                             onClick={() => window.open(item.videoUrl || item.image_url || '/#', '_blank')}
-                                            className="w-full py-4 bg-[#00FFC2] text-black rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
+                                            className="w-full py-4 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all shadow-md"
+                                            style={{ backgroundColor: theme.highlightColor }}
                                         >
                                             <ExternalLink size={20} />
                                             <AutoTranslatedText text="SITE LINK" />
@@ -515,7 +516,8 @@ export const DetailPage: React.FC = () => {
                                                     key={tpl.id}
                                                     onClick={() => handleApplyTemplate(tpl.id)}
                                                     disabled={applyingTemplate !== null}
-                                                    className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/20 transition-all disabled:opacity-50 group"
+                                                    className="w-full py-4 bg-white border rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-dancheong-ivory transition-all disabled:opacity-50 group shadow-sm hover:shadow-md"
+                                                    style={{ borderColor: theme.color3, color: theme.textPrimary }}
                                                 >
                                                     {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
                                                     <AutoTranslatedText text={tplInfo.label} />
@@ -524,7 +526,8 @@ export const DetailPage: React.FC = () => {
                                         })}
                                     <button 
                                         onClick={handleShare}
-                                        className="w-full py-4 bg-transparent border border-white/20 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                                        className="w-full py-4 bg-transparent border rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
+                                        style={{ borderColor: theme.color3, color: theme.textSecondary }}
                                     >
                                         <Share2 size={20} />
                                         <AutoTranslatedText text="Share Content" />
@@ -534,10 +537,10 @@ export const DetailPage: React.FC = () => {
 
                             {/* Template Usage Card */}
                             {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
-                                <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6">
+                                <div className="p-8 rounded-3xl border shadow-sm space-y-6" style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}>
                                     <div className="space-y-1">
-                                        <span className="text-[10px] font-bold text-[#00FFC2] uppercase tracking-[0.2em]"><AutoTranslatedText text="템플릿 선택 사용" /></span>
-                                        <p className="text-xs text-white/40"><AutoTranslatedText text="원하는 테마의 템플릿을 선택하여 제품을 체험해보세요." /></p>
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.highlightColor }}><AutoTranslatedText text="템플릿 선택 사용" /></span>
+                                        <p className="text-xs" style={{ color: theme.textMuted }}><AutoTranslatedText text="원하는 테마의 템플릿을 선택하여 제품을 체험해보세요." /></p>
                                     </div>
                                     
                                     <div className="grid grid-cols-2 gap-3">
@@ -568,20 +571,21 @@ export const DetailPage: React.FC = () => {
                                                         onClick={() => toggleTemplateSelection(tpl.id)}
                                                         className={`w-full flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
                                                             isSelected 
-                                                                ? 'bg-white/10 border-[#00FFC2] shadow-[0_0_20px_rgba(0,255,194,0.1)]' 
-                                                                : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
+                                                                ? 'bg-white shadow-md' 
+                                                                : 'bg-dancheong-ivory/50 border-dancheong-ink/5 hover:bg-white hover:border-dancheong-ink/10'
                                                         }`}
+                                                        style={isSelected ? { borderColor: theme.highlightColor } : {}}
                                                     >
                                                         <div className="absolute top-3 right-3">
                                                             <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                                                                isSelected ? 'bg-[#00FFC2] border-[#00FFC2]' : 'border-white/20'
+                                                                isSelected ? 'bg-dancheong-ink border-dancheong-ink' : 'border-dancheong-ink/10'
                                                             }`}>
-                                                                {isSelected && <Check size={10} className="text-black" strokeWidth={4} />}
+                                                                {isSelected && <Check size={10} className="text-white" strokeWidth={4} />}
                                                             </div>
                                                         </div>
                                                         <tpl.icon size={24} style={{ color: tpl.color }} className={`${isSelected ? 'scale-110' : 'group-hover:scale-110'} transition-transform`} />
                                                         <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
-                                                            isSelected ? 'text-white' : 'text-white/40'
+                                                            isSelected ? 'text-dancheong-ink' : 'opacity-40'
                                                         }`}>
                                                             <AutoTranslatedText text={tpl.label} />
                                                         </span>
@@ -594,13 +598,14 @@ export const DetailPage: React.FC = () => {
                                                         <div className="flex gap-1">
                                                             <button 
                                                                 onClick={(e) => { e.stopPropagation(); toggleTemplateStatus(tpl.id); }}
-                                                                className="flex-1 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold uppercase tracking-wider"
+                                                                className="flex-1 py-1 bg-white hover:bg-dancheong-ivory rounded-lg text-[9px] font-bold uppercase tracking-wider border border-dancheong-ink/5"
+                                                                style={{ color: theme.textSecondary }}
                                                             >
                                                                 {isHidden ? <AutoTranslatedText text="Unhide" /> : <AutoTranslatedText text="Hide" />}
                                                             </button>
                                                             <button 
                                                                 onClick={(e) => { e.stopPropagation(); deleteTemplateByAdmin(tpl.id); }}
-                                                                className="px-2 py-1 bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg text-[9px] font-bold uppercase"
+                                                                className="px-2 py-1 bg-dancheong-red/10 hover:bg-dancheong-red/20 text-dancheong-red rounded-lg text-[9px] font-bold uppercase border border-dancheong-red/10"
                                                             >
                                                                 <AutoTranslatedText text="Del" />
                                                             </button>
@@ -645,20 +650,21 @@ export const DetailPage: React.FC = () => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
                             className="relative border w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
-                            style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}
+                            style={{ backgroundColor: theme.bgColor, borderColor: theme.color3, color: theme.textPrimary }}
                         >
                             <div className="flex justify-between items-center">
                                 <h3 className="text-xl font-bold"><AutoTranslatedText text="Share" /></h3>
-                                <button onClick={() => setShowShareModal(false)} className="text-white/40 hover:text-white"><X size={24}/></button>
+                                <button onClick={() => setShowShareModal(false)} className="opacity-40 hover:opacity-100 transition-opacity"><X size={24}/></button>
                             </div>
                             
                             <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 overflow-hidden text-xs text-white/40 font-mono truncate">
+                                <div className="p-4 bg-dancheong-ink/5 rounded-2xl border border-dancheong-ink/5 overflow-hidden text-xs font-mono truncate" style={{ color: theme.textSecondary }}>
                                     {window.location.href}
                                 </div>
                                 <button 
                                     onClick={handleCopyLink}
-                                    className={`w-full py-4 ${copySuccess ? 'bg-[#00FFC2]' : 'bg-white'} text-black rounded-2xl font-bold transition-all`}
+                                    className="w-full py-4 text-white rounded-2xl font-bold transition-all shadow-md"
+                                    style={{ backgroundColor: copySuccess ? theme.highlightColor : theme.textPrimary }}
                                 >
                                     {copySuccess ? <AutoTranslatedText text="Copied!" /> : <AutoTranslatedText text="Copy Link" />}
                                 </button>

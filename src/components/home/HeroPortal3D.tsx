@@ -8,13 +8,13 @@ interface ParticleProps {
     velocity: MotionValue<number>;
 }
 
-// Luminous Premium Palette (Removed dark spots)
+// Heritage-inspired Palette (Ivory & Ink compatible)
 const LUMINOUS_PALETTE = [
-    new THREE.Color("#FFFFFF"), // Pure White
-    new THREE.Color("#00FFC2"), // Brand Accent (Neon Teal)
-    new THREE.Color("#FFD700"), // Bright Gold
-    new THREE.Color("#00F2FF"), // Electric Blue
-    new THREE.Color("#E5E4E2"), // Platinum
+    new THREE.Color("#171717"), // Ink
+    new THREE.Color("#4F6D5B"), // Mugwort
+    new THREE.Color("#1A2944"), // Navy
+    new THREE.Color("#8B7355"), // Antique Gold
+    new THREE.Color("#2F4F4F"), // Dark Slate
 ];
 
 const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
@@ -150,10 +150,10 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                     size={1.8}
                     vertexColors
                     transparent
-                    opacity={1.0}
+                    opacity={0.8}
                     map={sparkleTexture}
                     sizeAttenuation={true}
-                    blending={THREE.AdditiveBlending}
+                    blending={THREE.NormalBlending}
                     depthWrite={false}
                 />
             </points>
@@ -162,7 +162,7 @@ const StarPortal: React.FC<ParticleProps> = ({ count, velocity }) => {
                     <bufferAttribute attach="attributes-position" count={linePos.length / 3} array={linePos} itemSize={3} />
                     <bufferAttribute attach="attributes-color" count={lineColors.length / 3} array={lineColors} itemSize={3} />
                 </bufferGeometry>
-                <lineBasicMaterial vertexColors transparent opacity={0.3} blending={THREE.AdditiveBlending} depthWrite={false} />
+                <lineBasicMaterial vertexColors transparent opacity={0.2} blending={THREE.NormalBlending} depthWrite={false} />
             </lineSegments>
         </group>
     );
@@ -172,9 +172,9 @@ export const HeroPortal3D: React.FC<{ velocity: MotionValue<number> }> = ({ velo
     return (
         <div className="absolute inset-0 z-0 bg-transparent">
             <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }} camera={{ position: [0, 0, 5], fov: 75 }}>
-                <ambientLight intensity={0.4} />
-                <pointLight position={[0, 0, 0]} intensity={4.5} color="#FFFFFF" />
-                <StarPortal count={350} velocity={velocity} />
+                <ambientLight intensity={0.8} color="#FDFBF7" />
+                <pointLight position={[0, 0, 10]} intensity={2.0} color="#FDFBF7" />
+                <StarPortal count={1500} velocity={velocity} />
             </Canvas>
         </div>
     );

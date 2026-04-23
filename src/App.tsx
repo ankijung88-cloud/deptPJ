@@ -51,9 +51,10 @@ function App() {
                                     <Route element={<Layout />}>
                                         <Route path="/" element={<LandingPage />} />
                                         <Route path="/inspiration" element={<InspirationPage />} />
+                                        <Route path="/floor-guide" element={<InspirationPage />} />
                                         <Route path="/detail/:id" element={<DetailPage />} />
-                                        <Route path="/floor/:id/articles" element={<FloorContentPage />} />
-                                        <Route path="/floor/:id" element={<FloorGuidePage />} />
+                                        <Route path="/floor/:floorId/articles" element={<FloorContentPage />} />
+                                        <Route path="/floor/:floorId" element={<FloorGuidePage />} />
                                         <Route path="/category/:subId" element={<SubCategoryPage />} />
 
                                         <Route path="/notice" element={<NoticePage />} />

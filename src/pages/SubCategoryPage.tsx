@@ -158,11 +158,11 @@ const SubCategoryPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-white" style={theme.bgStyle}>
+            <div className="min-h-screen flex flex-col items-center justify-center text-dancheong-ink" style={theme.bgStyle}>
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                    className="w-12 h-12 rounded-full border-2 border-white/10 mb-6"
+                    className="w-12 h-12 rounded-full border-2 border-dancheong-ink/10 mb-6"
                     style={{ borderTopColor: theme.accentColor }}
                 />
                 <p className="opacity-40 text-sm font-mono tracking-widest uppercase" style={theme.accentStyle}><AutoTranslatedText text="Loading" /></p>
@@ -170,25 +170,22 @@ const SubCategoryPage: React.FC = () => {
         );
     }
 
-
-
-
     if (!parentFloor || !subcategoryData) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center text-white p-6" style={theme.bgStyle}>
+            <div className="min-h-screen flex flex-col items-center justify-center text-dancheong-ink p-6" style={theme.bgStyle}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="max-w-md w-full text-center space-y-6"
                 >
-                    <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto" style={{ border: `1px solid ${theme.accentColor}44` }}>
+                    <div className="w-20 h-20 bg-dancheong-ink/5 rounded-full flex items-center justify-center mx-auto" style={{ border: `1px solid ${theme.accentColor}44` }}>
                         <BookOpen size={32} style={{ color: theme.accentColor, opacity: 0.4 }} />
                     </div>
-                    <h2 className="text-2xl font-serif font-bold tracking-tight"><AutoTranslatedText text={t('common.not_found') as string} /></h2>
-                    <p className="text-white/50 font-light"><AutoTranslatedText text={t('common.not_found_desc') as string} /></p>
+                    <h2 className="text-2xl font-serif font-bold tracking-tight text-dancheong-ink"><AutoTranslatedText text={t('common.not_found') as string} /></h2>
+                    <p className="text-dancheong-ink/40 font-light"><AutoTranslatedText text={t('common.not_found_desc') as string} /></p>
                     <Link
                         to="/inspiration"
-                        className="inline-flex items-center gap-2 px-8 py-3 text-white rounded-full font-medium hover:opacity-90 transition-all active:scale-95"
+                        className="inline-flex items-center gap-2 px-8 py-3 text-dancheong-ivory rounded-full font-medium hover:opacity-90 transition-all active:scale-95"
                         style={theme.bgHighlightStyle}
                     >
                         <AutoTranslatedText text={t('common.go_inspiration') as string} />
@@ -196,15 +193,12 @@ const SubCategoryPage: React.FC = () => {
                 </motion.div>
             </div>
         );
-
     }
 
     // items[0] is used for content logic if needed elsewhere
 
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
-
-            {/* Back Navigation Bar */}
 
             {/* Editorial Header */}
             <header className="relative w-full min-h-[45vh] flex items-center pt-24 pb-10 overflow-hidden">
@@ -213,10 +207,10 @@ const SubCategoryPage: React.FC = () => {
                         <img
                             src={subcategoryData?.bgImage || parentFloor?.bgImage || ''}
                             alt=""
-                            className="w-full h-full object-cover opacity-50 scale-110 transition-opacity duration-700"
+                            className="w-full h-full object-cover opacity-10 scale-110 transition-opacity duration-700"
                         />
                     )}
-                    <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent 20%, ${theme.bgColor}aa 70%, ${theme.bgColor})` }} />
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent 20%, ${theme.bgColor}ee 70%, ${theme.bgColor})` }} />
                 </div>
 
                 <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -229,34 +223,31 @@ const SubCategoryPage: React.FC = () => {
                                 transition={{ duration: 0.8, ease: "easeOut" }}
                             >
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="px-4 py-1.5 rounded-full border text-[10px] font-black tracking-[0.3em] uppercase backdrop-blur-md" 
+                                    <div className="px-4 py-1.5 rounded-full border text-[10px] font-black tracking-[0.3em] uppercase bg-white/70 border-dancheong-ink/20" 
                                          style={{ 
-                                             backgroundColor: `${theme.color2}44`, 
-                                             borderColor: `${theme.color3}66`, 
-                                             color: theme.highlightColor 
+                                             color: theme.accentColor 
                                           }}>
                                         <AutoTranslatedText text={`Archive ${parentFloor.floor}`} />
                                     </div>
-                                    <div className="h-[1px] w-12 bg-white/20" />
-                                    <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 text-white">
+                                    <div className="h-[1px] w-12 bg-dancheong-ink/20" />
+                                    <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-60 text-dancheong-ink">
                                         <AutoTranslatedText text="Temporal Curation" />
                                     </span>
                                 </div>
 
                                 <h1 className="text-5xl md:text-8xl font-black tracking-[-0.02em] uppercase mb-8 leading-[0.9]" 
                                     style={{ 
-                                        color: theme.highlightColor, 
-                                        textShadow: `0 0 40px ${theme.glowColor}44` 
+                                        color: theme.accentColor
                                     }}>
                                     <AutoTranslatedText text={(getLocalizedText(subcategoryData?.label, i18n.language) || t(`subcategory.${targetSubId}`, t('common.no_info'))) as string} />
                                 </h1>
 
-                                <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8" 
-                                   style={{ borderColor: `${theme.color3}44`, color: theme.color4 }}>
+                                <p className="text-lg md:text-2xl font-serif italic leading-relaxed opacity-80 max-w-2xl border-l-2 pl-8 border-dancheong-ink/20" 
+                                   style={{ color: theme.textSecondary }}>
                                     <AutoTranslatedText text={(subcategoryData?.description ? getLocalizedText(subcategoryData.description, i18n.language) : (t(`subcategory_msg.${targetSubId}`) !== `subcategory_msg.${targetSubId}` ? t(`subcategory_msg.${targetSubId}`) : t('subcategory_desc'))) as string} />
                                 </p>
 
-                                <p className="mt-4 text-sm md:text-base font-bold tracking-widest opacity-60 flex items-center gap-3 px-8 py-3 bg-white/5 rounded-full w-fit border border-white/5" style={{ color: theme.accentColor }}>
+                                <p className="mt-4 text-sm md:text-base font-bold tracking-widest opacity-80 flex items-center gap-3 px-8 py-3 bg-dancheong-ink/10 rounded-full w-fit border border-dancheong-ink/10" style={{ color: theme.accentColor }}>
                                     <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: theme.accentColor }} />
                                     <AutoTranslatedText text={t('subcategory_guide')} />
                                 </p>
@@ -269,74 +260,65 @@ const SubCategoryPage: React.FC = () => {
                             transition={{ duration: 0.8, delay: 0.2 }}
                             className="lg:w-[380px] shrink-0"
                         >
-                            <div className="rounded-[2rem] p-1 backdrop-blur-3xl border shadow-2xl overflow-hidden group"
-                                 style={{ 
-                                     backgroundColor: `${theme.color1}44`, 
-                                     borderColor: `${theme.color3}33`,
-                                     boxShadow: `0 20px 40px -10px ${theme.bgColor}cc`
-                                 }}>
-                                
-                                <div className="p-6 md:p-7 space-y-4">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                                            <div className="text-[10px] md:text-[12px] font-black tracking-[0.4em] text-white/60 uppercase w-fit">
-                                                <AutoTranslatedText text="Collection Data" />
-                                            </div>
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="text-xl font-serif font-black" style={{ color: theme.highlightColor }}>
-                                                    {items.length + stories.length}
-                                                </span>
-                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-white"><AutoTranslatedText text="RECORDS" /></span>
-                                            </div>
+                            <div className="rounded-[2rem] p-8 border shadow-lg overflow-hidden group bg-white border-dancheong-ink/10">
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between border-b border-dancheong-ink/5 pb-2">
+                                        <div className="text-[10px] md:text-[12px] font-black tracking-[0.4em] text-dancheong-ink/40 uppercase w-fit">
+                                            <AutoTranslatedText text="Collection Data" />
                                         </div>
-                                        
-                                        <div className="relative">
-                                            {/* List of Titles - Pure Scrollable Container */}
-                                            <div 
-                                                ref={scrollContainerRef}
-                                                className="flex-grow space-y-2 max-h-[160px] overflow-y-auto pr-4 scroll-smooth custom-scrollbar"
-                                            >
-                                                <style>{`
-                                                    .custom-scrollbar::-webkit-scrollbar {
-                                                        width: 4px;
-                                                    }
-                                                    .custom-scrollbar::-webkit-scrollbar-track {
-                                                        background: rgba(255, 255, 255, 0.05);
-                                                        border-radius: 10px;
-                                                    }
-                                                    .custom-scrollbar::-webkit-scrollbar-thumb {
-                                                        background: rgba(255, 255, 255, 0.2);
-                                                        border-radius: 10px;
-                                                        transition: background 0.3s;
-                                                    }
-                                                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                                                        background: rgba(255, 255, 255, 0.4);
-                                                    }
-                                                `}</style>
-                                                {([...items, ...stories]).map((item, idx) => (
-                                                    <motion.div 
-                                                        key={item.id} 
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: idx * 0.05 }}
-                                                        className="flex items-start gap-4 group/item cursor-pointer mb-2"
-                                                        onClick={() => {
-                                                            setSelectedItemId(item.id);
-                                                            setIsExplorationMode(true);
-                                                        }}
-                                                    >
-                                                        <span className="text-[10px] font-serif italic opacity-30 mt-1">{String(idx + 1).padStart(2, '0')}</span>
-                                                        <span className="text-sm md:text-base font-medium text-white/80 group-hover/item:text-white transition-colors line-clamp-1">
-                                                            <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                        </span>
-                                                    </motion.div>
-                                                ))}
-                                                {([...items, ...stories].length === 0) && (
-                                                    <div className="text-sm text-white/20 italic">
-                                                        <AutoTranslatedText text="No items found." />
-                                                    </div>
-                                                )}
-                                            </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-xl font-serif font-black text-dancheong-ink">
+                                                {items.length + stories.length}
+                                            </span>
+                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-dancheong-ink"><AutoTranslatedText text="RECORDS" /></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="relative">
+                                        <div 
+                                            ref={scrollContainerRef}
+                                            className="flex-grow space-y-2 max-h-[160px] overflow-y-auto pr-4 scroll-smooth custom-scrollbar"
+                                        >
+                                            <style>{`
+                                                .custom-scrollbar::-webkit-scrollbar {
+                                                    width: 4px;
+                                                }
+                                                .custom-scrollbar::-webkit-scrollbar-track {
+                                                    background: rgba(0, 0, 0, 0.02);
+                                                    border-radius: 10px;
+                                                }
+                                                .custom-scrollbar::-webkit-scrollbar-thumb {
+                                                    background: rgba(0, 0, 0, 0.1);
+                                                    border-radius: 10px;
+                                                    transition: background 0.3s;
+                                                }
+                                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                                    background: rgba(0, 0, 0, 0.2);
+                                                }
+                                            `}</style>
+                                            {([...items, ...stories]).map((item, idx) => (
+                                                <motion.div 
+                                                    key={item.id} 
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: idx * 0.05 }}
+                                                    className="flex items-start gap-4 group/item cursor-pointer mb-2"
+                                                    onClick={() => {
+                                                        setSelectedItemId(item.id);
+                                                        setIsExplorationMode(true);
+                                                    }}
+                                                >
+                                                    <span className="text-[10px] font-serif italic opacity-20 mt-1">{String(idx + 1).padStart(2, '0')}</span>
+                                                    <span className="text-sm md:text-base font-medium text-dancheong-ink/60 group-hover/item:text-dancheong-ink transition-colors line-clamp-1">
+                                                        <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                    </span>
+                                                </motion.div>
+                                            ))}
+                                            {([...items, ...stories].length === 0) && (
+                                                <div className="text-sm text-dancheong-ink/20 italic">
+                                                    <AutoTranslatedText text="No items found." />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

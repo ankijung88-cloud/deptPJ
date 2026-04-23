@@ -64,7 +64,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
 
 
     return (
-        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-[#1A2420]`} style={{ backgroundColor: '#1A2420' }}>
+        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-dancheong-ivory`} style={{ backgroundColor: '#FDFBF7' }}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key="hero-content"
@@ -97,21 +97,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                             className="mb-2 flex justify-center"
                         >
                             <img
-                                src="/DEPT_Logo.png"
+                                src="/sample.png"
                                 alt="DEPART Logo"
-                                className="h-32 w-auto drop-shadow-[0_0_25px_rgba(0,242,255,0.4)]"
+                                className="h-32 w-auto grayscale contrast-125 brightness-75 opacity-80"
                             />
                         </motion.div>
 
 
                         <motion.h1
-                            className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-white"
+                            className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-dancheong-ink"
                         >
                             DEPART
                         </motion.h1>
 
                         <motion.p
-                            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/80 leading-relaxed font-medium break-keep px-4 sm:px-0"
+                            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-[#171717] opacity-80 leading-relaxed font-medium break-keep px-4 sm:px-0"
                         >
                             <AutoTranslatedText text={t('hero.description')} />
                         </motion.p>
@@ -120,13 +120,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                             <button
                                 onClick={handleExplore}
                                 disabled={phase === 'warping'}
-                                className="w-36 py-4 bg-[#FF3B30] text-white font-semibold rounded-full hover:bg-[#e6352b] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,59,48,0.4)] tracking-wider uppercase disabled:opacity-50"
+                                className="w-48 py-5 bg-[#171717] text-[#FDFBF7] font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
                             >
                                 {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                             </button>
                             <button
                                 onClick={() => navigate('/admin/login')}
-                                className="w-36 py-4 border border-white/30 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/10 transition-all duration-500 tracking-wider uppercase"
+                                className="heritage-button-outline w-48 py-5 font-black rounded-full shadow-xl shadow-[#171717]/5"
                             >
                                 <AutoTranslatedText text={t('hero.story')} />
                             </button>
@@ -136,11 +136,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 1, duration: 1 }}
-                            className="mt-8 flex justify-center"
+                            className="mt-12 flex justify-center"
                         >
                             <button
                                 onClick={() => navigate('/inspiration')}
-                                className="text-sm text-white/70 hover:text-white transition-all duration-300 tracking-[0.3em] uppercase border-b border-white/40 hover:border-white hover:scale-110 pb-1"
+                                className="text-sm text-[#171717] font-black hover:text-[#4F6D5B] transition-all duration-300 tracking-[0.4em] uppercase border-b-2 border-[#171717]/20 hover:border-[#4F6D5B] hover:scale-110 pb-2"
                             >
                                 <AutoTranslatedText text="SKIP" />
                             </button>

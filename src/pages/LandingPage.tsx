@@ -20,12 +20,13 @@ const LandingPage: React.FC = () => {
 
     return (
         <div
-            className="bg-[#05070D] min-h-screen selection:bg-[#FF3B30]/30"
-            style={{ backgroundColor: '#05070D' }}
+            className="bg-dancheong-ivory min-h-screen selection:bg-dancheong-mugwort/30"
+            style={{ backgroundColor: '#FDFBF7' }}
         >
             {/* Ambient Background Glows - Heritage Tones */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-dancheong-green/5 blur-[120px] rounded-full opacity-20" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-dancheong-mugwort/5 blur-[120px] rounded-full opacity-40" />
+                <div className="absolute top-[10%] left-[-5%] w-[30%] h-[30%] bg-dancheong-navy/5 blur-[100px] rounded-full opacity-30" />
             </div>
 
             <main className="relative z-10 w-full pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
