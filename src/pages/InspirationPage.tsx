@@ -216,7 +216,7 @@ const InspirationPage: React.FC = () => {
                     <div className="flex items-center gap-8">
                         <div className="flex flex-col gap-1">
                             <span className="text-[10px] font-bold tracking-[0.3em] uppercase"><AutoTranslatedText text="System Version" /></span>
-                            <span className="text-xs text-dancheong-ink/60"><AutoTranslatedText text="Ivory Minimalist v3.0" /></span>
+                            <span className="text-xs text-dancheong-ink/60"><AutoTranslatedText text="Mongtangssok Minimalist v3.0" /></span>
                         </div>
                         <div className="w-[1px] h-10 bg-dancheong-ink/10" />
                         <div className="flex flex-col gap-1">

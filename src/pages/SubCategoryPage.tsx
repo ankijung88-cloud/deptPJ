@@ -185,7 +185,7 @@ const SubCategoryPage: React.FC = () => {
                     <p className="text-dancheong-ink/40 font-light"><AutoTranslatedText text={t('common.not_found_desc') as string} /></p>
                     <Link
                         to="/inspiration"
-                        className="inline-flex items-center gap-2 px-8 py-3 text-dancheong-ivory rounded-full font-medium hover:opacity-90 transition-all active:scale-95"
+                        className="inline-flex items-center gap-2 px-8 py-3 text-white rounded-full font-medium hover:opacity-90 transition-all active:scale-95"
                         style={theme.bgHighlightStyle}
                     >
                         <AutoTranslatedText text={t('common.go_inspiration') as string} />
@@ -240,7 +240,7 @@ const SubCategoryPage: React.FC = () => {
                                 transition={{ duration: 0.8, ease: "easeOut" }}
                             >
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="px-4 py-1.5 rounded-full border text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-ivory/80 border-dancheong-ink/20" 
+                                    <div className="px-4 py-1.5 rounded-full border text-[10px] font-black tracking-[0.3em] uppercase bg-white/80 border-dancheong-ink/20" 
                                          style={{ 
                                              color: theme.accentColor 
                                           }}>
@@ -277,7 +277,7 @@ const SubCategoryPage: React.FC = () => {
                             transition={{ duration: 0.8, delay: 0.2 }}
                             className="lg:w-[380px] shrink-0"
                         >
-                            <div className="rounded-[2rem] p-8 border shadow-lg overflow-hidden group bg-dancheong-ivory/60 backdrop-blur-md border-dancheong-ink/10">
+                            <div className="rounded-[2rem] p-8 border shadow-lg overflow-hidden group bg-white/60 backdrop-blur-md border-dancheong-ink/10">
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between border-b border-dancheong-ink/5 pb-2">
                                         <div className="text-[10px] md:text-[12px] font-black tracking-[0.4em] text-dancheong-ink/40 uppercase w-fit">

@@ -516,7 +516,7 @@ export const DetailPage: React.FC = () => {
                                                     key={tpl.id}
                                                     onClick={() => handleApplyTemplate(tpl.id)}
                                                     disabled={applyingTemplate !== null}
-                                                    className="w-full py-4 bg-white border rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-dancheong-ivory transition-all disabled:opacity-50 group shadow-sm hover:shadow-md"
+                                                    className="w-full py-4 bg-white border rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition-all disabled:opacity-50 group shadow-sm hover:shadow-md"
                                                     style={{ borderColor: theme.color3, color: theme.textPrimary }}
                                                 >
                                                     {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
@@ -571,8 +571,8 @@ export const DetailPage: React.FC = () => {
                                                         onClick={() => toggleTemplateSelection(tpl.id)}
                                                         className={`w-full flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
                                                             isSelected 
-                                                                ? 'bg-white shadow-md' 
-                                                                : 'bg-dancheong-ivory/50 border-dancheong-ink/5 hover:bg-white hover:border-dancheong-ink/10'
+                                                                ? 'bg-dancheong-ink border-dancheong-ink' 
+                                                                : 'bg-white border-dancheong-ink/15 hover:border-dancheong-ink/30'
                                                         }`}
                                                         style={isSelected ? { borderColor: theme.highlightColor } : {}}
                                                     >
@@ -598,7 +598,7 @@ export const DetailPage: React.FC = () => {
                                                         <div className="flex gap-1">
                                                             <button 
                                                                 onClick={(e) => { e.stopPropagation(); toggleTemplateStatus(tpl.id); }}
-                                                                className="flex-1 py-1 bg-white hover:bg-dancheong-ivory rounded-lg text-[9px] font-bold uppercase tracking-wider border border-dancheong-ink/5"
+                                                                className="flex-1 py-1 bg-white hover:bg-gray-50 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-dancheong-ink/5"
                                                                 style={{ color: theme.textSecondary }}
                                                             >
                                                                 {isHidden ? <AutoTranslatedText text="Unhide" /> : <AutoTranslatedText text="Hide" />}

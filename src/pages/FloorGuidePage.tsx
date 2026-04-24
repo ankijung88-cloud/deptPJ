@@ -34,7 +34,7 @@ const FloorGuidePage: React.FC = () => {
                     <Archive size={32} className="text-dancheong-ink/20" />
                 </div>
                 <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Floor not found" /></h2>
-                <button onClick={() => navigate('/floor-guide')} className="px-8 py-3 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-widest">
+                <button onClick={() => navigate('/floor-guide')} className="px-8 py-3 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-widest">
                     <AutoTranslatedText text="Back to Directory" />
                 </button>
             </div>
@@ -93,7 +93,7 @@ const FloorGuidePage: React.FC = () => {
                                     <Building size={160} className="text-dancheong-ink" />
                                 </div>
 
-                                <div className="w-full md:w-[40%] aspect-square rounded-[32px] overflow-hidden bg-dancheong-ivory/50 backdrop-blur-sm relative">
+                                <div className="w-full md:w-[40%] aspect-square rounded-[32px] overflow-hidden bg-white/50 backdrop-blur-sm relative">
                                     <img 
                                         src={sub.bgImage || '/placeholder_floor.jpg'} 
                                         alt={getLocalizedText(sub.label, i18n.language)}
@@ -129,7 +129,7 @@ const FloorGuidePage: React.FC = () => {
                 <div className="text-center pt-20">
                     <button 
                         onClick={() => navigate('/floor-guide')}
-                        className="group px-16 py-6 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all duration-500 shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center gap-4 mx-auto"
+                        className="group px-16 py-6 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all duration-500 shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center gap-4 mx-auto"
                     >
                         <AutoTranslatedText text="Back to Directory" />
                         <ArrowRight size={16} className="opacity-40 group-hover:translate-x-1 transition-transform" />

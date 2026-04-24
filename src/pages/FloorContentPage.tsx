@@ -23,7 +23,7 @@ const FloorContentPage: React.FC = () => {
     if (!floorData) return null;
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-white text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Editorial Header */}
                 <header className="mb-24">
@@ -125,7 +125,7 @@ const FloorContentPage: React.FC = () => {
                         </p>
                         <button 
                             onClick={() => navigate('/floor-guide')}
-                            className="w-48 py-5 bg-[#171717] text-[#F2E7D5] font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
+                            className="w-48 py-5 bg-[#171717] text-white font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
                         >
                             <AutoTranslatedText text="Back to Directory" />
                         </button>

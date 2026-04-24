@@ -85,7 +85,7 @@
   }
 
   .heritage-button-outline {
-    @apply border-2 border-[#171717] border-opacity-40 text-[#171717] hover:bg-[#171717] hover:text-dancheong-ivory transition-all duration-300;
+    @apply border-2 border-[#171717] border-opacity-40 text-[#171717] hover:bg-[#171717] hover:text-white transition-all duration-300;
   }
 
   .heritage-card {

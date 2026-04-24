@@ -120,7 +120,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                             <button
                                 onClick={handleExplore}
                                 disabled={phase === 'warping'}
-                                className="w-48 py-5 bg-[#171717] text-dancheong-ivory font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
+                                className="w-48 py-5 bg-[#171717] text-white font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
                             >
                                 {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                             </button>

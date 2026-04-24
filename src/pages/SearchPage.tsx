@@ -217,7 +217,7 @@ const SearchPage: React.FC = () => {
                         </p>
                         <button 
                             onClick={() => navigate('/')}
-                            className="px-10 py-4 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-widest hover:bg-dancheong-mugwort transition-colors shadow-lg shadow-dancheong-ink/10"
+                            className="px-10 py-4 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-dancheong-mugwort transition-colors shadow-lg shadow-dancheong-ink/10"
                         >
                             <AutoTranslatedText text="홈으로 돌아가기" />
                         </button>

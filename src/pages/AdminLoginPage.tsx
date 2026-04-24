@@ -142,7 +142,7 @@ const AdminLoginPage: React.FC = () => {
 
                             <button 
                                 type="submit"
-                                className="w-full bg-dancheong-ink text-dancheong-ivory py-5 rounded-2xl text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all shadow-xl shadow-dancheong-ink/10 active:scale-95 flex items-center justify-center gap-4 mt-8"
+                                className="w-full bg-dancheong-ink text-white py-5 rounded-2xl text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all shadow-xl shadow-dancheong-ink/10 active:scale-95 flex items-center justify-center gap-4 mt-8"
                             >
                                 <AutoTranslatedText text="Enter Portal" />
                                 <ArrowRight size={16} className="opacity-40" />

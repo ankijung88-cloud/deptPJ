@@ -93,7 +93,7 @@ const AgencyRegisterPage: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="p-8 bg-dancheong-ivory rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
+                                        <div className="p-8 bg-gray-50 rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
                                             <AutoTranslatedText text="등록 신청 후 영업일 기준 3~5일 내에 담당자의 개별 연락이 진행됩니다. 원활한 심사를 위해 정확한 정보를 입력해 주시기 바랍니다." />
                                         </div>
                                     </div>
@@ -101,7 +101,7 @@ const AgencyRegisterPage: React.FC = () => {
                                     <div className="flex flex-col justify-center">
                                         <button 
                                             onClick={() => setStep(2)}
-                                            className="group w-full bg-dancheong-ink text-dancheong-ivory py-8 rounded-[32px] text-xs font-black uppercase tracking-[0.5em] hover:bg-dancheong-mugwort transition-all shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center justify-center gap-6"
+                                            className="group w-full bg-dancheong-ink text-white py-8 rounded-[32px] text-xs font-black uppercase tracking-[0.5em] hover:bg-dancheong-mugwort transition-all shadow-2xl shadow-dancheong-ink/20 active:scale-95 flex items-center justify-center gap-6"
                                         >
                                             <AutoTranslatedText text="Registration Start" />
                                             <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform opacity-40" />
@@ -242,7 +242,7 @@ const AgencyRegisterPage: React.FC = () => {
                                     </p>
                                     <button 
                                         type="submit"
-                                        className="px-16 py-6 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all shadow-xl shadow-dancheong-ink/10 active:scale-95 flex items-center gap-4"
+                                        className="px-16 py-6 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all shadow-xl shadow-dancheong-ink/10 active:scale-95 flex items-center gap-4"
                                     >
                                         <AutoTranslatedText text="Submit Registry" />
                                         <ArrowRight size={16} className="opacity-40" />
@@ -262,7 +262,7 @@ const AgencyRegisterPage: React.FC = () => {
                                 </p>
                                 <button 
                                     onClick={() => navigate('/')}
-                                    className="px-12 py-5 bg-dancheong-ink text-dancheong-ivory rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all"
+                                    className="px-12 py-5 bg-dancheong-ink text-white rounded-full text-xs font-black uppercase tracking-[0.4em] hover:bg-dancheong-mugwort transition-all"
                                 >
                                     <AutoTranslatedText text="Return to Main" />
                                 </button>

@@ -1699,7 +1699,7 @@ export const VirtualStore3D: React.FC = () => {
                 >
                     <img
                         src="/DEPT_Logo.png"
-                        alt="DEPART Logo"
+                        alt="몽땅쏙 Logo"
                         className="h-24 w-auto drop-shadow-[0_0_20px_rgba(0,255,194,0.3)]"
                     />
                 </div>
