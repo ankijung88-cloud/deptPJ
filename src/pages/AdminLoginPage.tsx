@@ -33,7 +33,7 @@ const AdminLoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white flex relative overflow-hidden font-serif selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+        <div className="min-h-screen bg-dancheong-ivory flex relative overflow-hidden font-serif selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
             {/* Heritage Decorative Elements */}
             <div className="absolute top-0 left-0 w-full h-2 bg-dancheong-mugwort/20" />
             <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">

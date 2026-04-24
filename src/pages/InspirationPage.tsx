@@ -27,14 +27,14 @@ const InspirationPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
+            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-dancheong-mugwort"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-white text-dancheong-ink font-sans selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink overflow-x-hidden">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink font-sans selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink overflow-x-hidden">
 
             <main className="relative z-10 pt-32 pb-40 px-6 lg:px-12 max-w-[1400px] mx-auto">
                 <header className="mb-32 text-left relative">
@@ -109,8 +109,8 @@ const InspirationPage: React.FC = () => {
                                     {/* Level Indicator */}
                                     <div className="w-24 md:w-[120px] flex-shrink-0 flex items-center justify-center">
                                         <div 
-                                            className={`text-4xl md:text-5xl font-serif italic transition-all duration-500 ${isActive ? 'scale-110 opacity-100' : 'opacity-40'}`}
-                                            style={{ color: isActive ? floor.color : '#171717' }}
+                                            className={`text-4xl md:text-5xl font-serif italic transition-all duration-500 ${isActive ? 'scale-110 opacity-100' : 'opacity-40 text-dancheong-ink'}`}
+                                            style={{ color: isActive ? floor.color : undefined }}
                                         >
                                             {floor.floor}
                                         </div>
@@ -143,7 +143,7 @@ const InspirationPage: React.FC = () => {
                                                                 className="flex flex-wrap justify-center md:justify-start gap-3"
                                                             >
                                                                  {floor.subitems?.slice(0, 5).map((sub) => (
-                                                                    <span key={sub.id} className="text-[10px] tracking-widest font-black uppercase py-2 px-4 border-2 border-[#171717]/40 text-[#171717]/80 rounded-xl hover:bg-dancheong-ink/5 transition-colors">
+                                                                    <span key={sub.id} className="text-[10px] tracking-widest font-black uppercase py-2 px-4 border-2 border-dancheong-ink/40 text-dancheong-ink/80 rounded-xl hover:bg-dancheong-ink/5 transition-colors">
                                                                         <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                                     </span>
                                                                 ))}
@@ -160,9 +160,9 @@ const InspirationPage: React.FC = () => {
                                                                 animate={{ opacity: 1, y: 0 }}
                                                                 exit={{ opacity: 0, y: -10 }}
                                                                 transition={{ duration: 0.3 }}
-                                                                className="flex flex-col gap-1 w-full max-w-md border-l-4 border-[#171717]/40 pl-6 py-2"
+                                                                className="flex flex-col gap-1 w-full max-w-md border-l-4 border-dancheong-ink/40 pl-6 py-2"
                                                             >
-                                                                <p className="text-[#171717]/90 text-base font-medium leading-relaxed mb-6 hidden md:block italic">
+                                                                <p className="text-dancheong-ink/90 text-base font-medium leading-relaxed mb-6 hidden md:block italic">
                                                                     <AutoTranslatedText text={getLocalizedText(floor.description, i18n.language)} />
                                                                 </p>
                                                                 {floor.subitems?.map((sub) => (
@@ -175,8 +175,8 @@ const InspirationPage: React.FC = () => {
                                                                         }}
                                                                         className="py-2.5 flex items-center gap-3 group/sub transition-all duration-300 text-left"
                                                                     >
-                                                                        <ChevronRight size={14} className="text-[#171717]/40 group-hover/sub:text-[#4F6D5B] transition-colors" />
-                                                                        <span className="text-sm font-black tracking-[0.2em] uppercase text-[#171717]/60 group-hover/sub:text-[#171717] truncate">
+                                                                        <ChevronRight size={14} className="text-dancheong-ink/40 group-hover/sub:text-dancheong-mugwort transition-colors" />
+                                                                        <span className="text-sm font-black tracking-[0.2em] uppercase text-dancheong-ink/60 group-hover:text-dancheong-ink truncate">
                                                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                                         </span>
                                                                     </motion.button>
@@ -195,7 +195,7 @@ const InspirationPage: React.FC = () => {
                                                         backgroundColor: isActive ? `${floor.color}20` : 'transparent'
                                                     }}
                                                 >
-                                                    <ArrowRight size={24} style={{ color: isActive ? floor.color : 'rgba(23,23,23,0.5)' }} />
+                                                    <ArrowRight size={24} className={isActive ? '' : 'text-dancheong-ink/50'} style={{ color: isActive ? floor.color : undefined }} />
                                                 </div>
                                                 <span 
                                                     className={`text-[10px] tracking-[0.4em] font-black uppercase transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}

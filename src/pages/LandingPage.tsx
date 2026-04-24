@@ -20,7 +20,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <div
-            className="bg-white min-h-screen selection:bg-dancheong-mugwort/30"
+            className="bg-dancheong-ivory min-h-screen selection:bg-dancheong-mugwort/30"
         >
             {/* Ambient Background Glows - Heritage Tones */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

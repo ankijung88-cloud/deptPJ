@@ -64,7 +64,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
 
 
     return (
-        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-white`}>
+        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-dancheong-ivory`}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key="hero-content"
@@ -111,7 +111,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         </motion.h1>
 
                         <motion.p
-                            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-[#171717] opacity-80 leading-relaxed font-medium break-keep px-4 sm:px-0"
+                            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-dancheong-ink opacity-80 leading-relaxed font-medium break-keep px-4 sm:px-0"
                         >
                             <AutoTranslatedText text={t('hero.description')} />
                         </motion.p>
@@ -120,13 +120,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                             <button
                                 onClick={handleExplore}
                                 disabled={phase === 'warping'}
-                                className="w-48 py-5 bg-[#171717] text-white font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
+                                className="w-48 py-5 bg-dancheong-ink text-white font-black rounded-full hover:bg-dancheong-mugwort transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-dancheong-ink/20 tracking-[0.2em] uppercase disabled:opacity-50"
                             >
                                 {phase === 'warping' ? <AutoTranslatedText text={t('hero.warping')} /> : <AutoTranslatedText text={t('hero.explore')} />}
                             </button>
                             <button
                                 onClick={() => navigate('/admin/login')}
-                                className="heritage-button-outline w-48 py-5 font-black rounded-full shadow-xl shadow-[#171717]/5"
+                                className="heritage-button-outline w-48 py-5 font-black rounded-full shadow-xl shadow-dancheong-ink/5"
                             >
                                 <AutoTranslatedText text={t('hero.story')} />
                             </button>
@@ -140,7 +140,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         >
                             <button
                                 onClick={() => navigate('/inspiration')}
-                                className="text-sm text-[#171717] font-black hover:text-[#4F6D5B] transition-all duration-300 tracking-[0.4em] uppercase border-b-2 border-[#171717]/20 hover:border-[#4F6D5B] hover:scale-110 pb-2"
+                                className="text-sm text-dancheong-ink font-black hover:text-dancheong-mugwort transition-all duration-300 tracking-[0.4em] uppercase border-b-2 border-dancheong-ink/20 hover:border-dancheong-mugwort hover:scale-110 pb-2"
                             >
                                 <AutoTranslatedText text="SKIP" />
                             </button>

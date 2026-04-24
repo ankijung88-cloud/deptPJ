@@ -330,14 +330,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-serif font-bold text-white">Product Management</h2>
-                    <span className="bg-white/10 text-white/60 px-3 py-1 rounded-full text-sm font-bold">
+                    <h2 className="text-2xl font-serif font-bold text-dancheong-ink">Product Management</h2>
+                    <span className="bg-white/10 text-dancheong-ink/60 px-3 py-1 rounded-full text-sm font-bold">
                         {filteredCountText}
                     </span>
                 </div>
                 <button 
                     onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
-                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
                     <Plus size={18} /> Add Product
                 </button>
@@ -345,17 +345,17 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
 
             <div className="flex flex-col md:flex-row gap-4 relative z-10">
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-ink/30" size={18} />
                     <input 
                         type="text" 
                         placeholder={searchPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
 
-                <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
+                <div className="flex items-center gap-2 bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
                     <input 
                         type="checkbox" 
                         id="bypass-filters"
@@ -363,7 +363,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         onChange={(e) => setIsBypassFilters(e.target.checked)}
                         className="w-4 h-4 accent-[#00FFC2] cursor-pointer"
                     />
-                    <label htmlFor="bypass-filters" className="text-xs text-white/50 cursor-pointer select-none whitespace-nowrap">
+                    <label htmlFor="bypass-filters" className="text-xs text-dancheong-ink/50 cursor-pointer select-none whitespace-nowrap">
                         Show All (Bypass)
                     </label>
                 </div>
@@ -379,7 +379,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                                 setSelectedTemplate('');
                             }}
-                            className="bg-black/40 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-[#00FFC2] focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
+                            className="bg-white/60 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-dancheong-mugwort focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
                         >
                             <option value="">{allAgenciesLabel}</option>
                             {agencies.map(a => (
@@ -396,7 +396,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedSubcategory('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
+                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allFloorsLabel}</option>
                         {floorOptions.map(f => (
@@ -412,7 +412,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[150px]"
+                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[150px]"
                         disabled={!selectedFloor}
                     >
                         <option value="">{allSubCatsLabel}</option>
@@ -428,7 +428,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType(e.target.value);
                             setSelectedTemplate('');
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
+                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allProductTypesLabel}</option>
                         {productTitleOptions.map(title => (
@@ -447,7 +447,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                             }
                         }}
-                        className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[180px]"
+                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[180px]"
                     >
                         <option value="">{allTemplatesLabel}</option>
                         {templateOptions.map(opt => (
@@ -465,7 +465,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedTemplate('');
                             setCurrentPage(1);
                         }}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-2xl text-white font-bold transition-all border border-white/20 hover:scale-105 active:scale-95"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-2xl text-dancheong-ink font-bold transition-all border border-white/20 hover:scale-105 active:scale-95"
                     >
                         <RotateCcw size={18} />
                         <span className="text-sm">Reset Filters</span>
@@ -473,13 +473,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                 </div>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4">Image</th>
                             <th className="px-6 py-4">Title</th>
-                            {isAdmin && <th className="px-6 py-4 text-[#00FFC2]">Agency</th>}
+                            {isAdmin && <th className="px-6 py-4 text-dancheong-mugwort">Agency</th>}
                             <th className="px-6 py-4">Floor</th>
                             <th className="px-6 py-4">Category</th>
                             <th className="px-6 py-4 text-right">Actions</th>
@@ -487,7 +487,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {paginatedProducts.map(product => (
-                            <tr key={product.id} className="hover:bg-white/5 transition-colors">
+                            <tr key={product.id} className="hover:bg-dancheong-ink/5 transition-colors">
                                 <td 
                                     className="px-6 py-4 cursor-pointer group"
                                     onClick={() => navigate(`/detail/${product.id}`)}
@@ -498,7 +498,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     </div>
                                 </td>
                                 <td 
-                                    className="px-6 py-4 text-white font-medium cursor-pointer hover:text-[#00FFC2] transition-colors"
+                                    className="px-6 py-4 text-dancheong-ink font-medium cursor-pointer hover:text-dancheong-mugwort transition-colors"
                                     onClick={() => navigate(`/detail/${product.id}`)}
                                 >
                                     <span className="border-bottom border-transparent hover:border-[#00FFC2]">
@@ -506,14 +506,14 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     </span>
                                 </td>
                                 {isAdmin && (
-                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
+                                    <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs">
                                         {agencies.find(a => a.id === (product as any).agency_id)?.agency_name || '-'}
                                     </td>
                                 )}
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === getNormalizedFloorId(product.category))?.color || '#333' }}></div>
-                                        <span className="text-white font-bold">
+                                        <span className="text-dancheong-ink font-bold">
                                             {(() => {
                                             const normalizedCatId = getNormalizedFloorId(product.category);
                                                 const floor = floors.find(f => f.id === normalizedCatId);
@@ -522,7 +522,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                                 return displayLocalized(product.category);
                                             })()}
                                         </span>
-                                        <span className="text-white/40 text-xs">
+                                        <span className="text-dancheong-ink/40 text-xs">
                                             {(() => {
                                                 const normalizedCatId = getNormalizedFloorId(product.category);
                                                 const floor = floors.find(f => f.id === normalizedCatId);
@@ -533,7 +533,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                         </span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-white/60">
+                                <td className="px-6 py-4 text-dancheong-ink/60">
                                     {(() => {
                                         const normalizedCatId = getNormalizedFloorId(product.category);
                                         const floor = floors.find(f => f.id === normalizedCatId);
@@ -546,13 +546,13 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     <div className="flex justify-end gap-2">
                                         <button 
                                             onClick={() => { setEditingProduct(product); setIsModalOpen(true); }}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2] transition-colors"
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort transition-colors"
                                         >
                                             <Edit2 size={18} />
                                         </button>
                                         <button 
                                             onClick={() => handleDelete(product.id)}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400 transition-colors"
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400 transition-colors"
                                         >
                                             <Trash2 size={18} />
                                         </button>
@@ -563,21 +563,21 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                     </tbody>
                 </table>
                 {loading && (
-                    <div className="py-20 text-center text-white/20">Loading products...</div>
+                    <div className="py-20 text-center text-dancheong-ink/20">Loading products...</div>
                 )}
             </div>
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-2xl px-6 py-4">
-                    <div className="text-white/40 text-sm">
-                        Showing <span className="text-white font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-white font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-white font-medium">{filteredProducts.length}</span> results
+                <div className="flex items-center justify-between bg-white/60 border border-dancheong-ink/10 rounded-2xl px-6 py-4">
+                    <div className="text-dancheong-ink/40 text-sm">
+                        Showing <span className="text-dancheong-ink font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-dancheong-ink font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-dancheong-ink font-medium">{filteredProducts.length}</span> results
                     </div>
                     <div className="flex gap-2">
                         <button 
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
+                            className="px-4 py-2 rounded-xl bg-dancheong-ink/5 text-dancheong-ink disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-dancheong-ink/5"
                         >
                             Previous
                         </button>
@@ -588,8 +588,8 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     onClick={() => setCurrentPage(page)}
                                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all border ${
                                         currentPage === page 
-                                            ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' 
-                                            : 'bg-white/5 text-white border-white/5 hover:bg-white/10'
+                                            ? 'bg-dancheong-ink text-white border-[#00FFC2]' 
+                                            : 'bg-dancheong-ink/5 text-dancheong-ink border-dancheong-ink/5 hover:bg-white/10'
                                     }`}
                                 >
                                     {page}
@@ -599,7 +599,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         <button 
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 rounded-xl bg-white/5 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-white/5"
+                            className="px-4 py-2 rounded-xl bg-dancheong-ink/5 text-dancheong-ink disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-colors border border-dancheong-ink/5"
                         >
                             Next
                         </button>
@@ -717,13 +717,13 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-4xl bg-[#1A2420] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                className="relative w-full max-w-4xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-                <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                    <h3 className="text-xl font-serif font-bold text-white">
+                <div className="p-6 border-b border-dancheong-ink/10 flex justify-between items-center">
+                    <h3 className="text-xl font-serif font-bold text-dancheong-ink">
                         {isEdit ? 'Edit Product' : 'Add New Product'}
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-dancheong-ink/40"><X size={20} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
@@ -732,21 +732,21 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <div className="space-y-4">
                             {!isEdit && (
                                 <div>
-                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
                                     <input 
                                         type="text" required
                                         value={formData.id} onChange={(e) => setFormData({...formData, id: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                         placeholder="e.g. k-heritage-001"
                                     />
                                 </div>
                             )}
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="2. 제목" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="2. 제목" /></label>
                                 <input 
                                     type="text" required
                                     value={formData.title.ko} onChange={(e) => setFormData({...formData, title: {...formData.title, ko: e.target.value}})}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 />
                             </div>
                         </div>
@@ -755,11 +755,11 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <div className="space-y-4">
                             {isAdmin && (
                                 <div>
-                                    <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                                    <label className="text-xs font-bold text-dancheong-mugwort uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
                                     <select 
                                         value={formData.agency_id || ''} 
                                         onChange={(e) => setFormData({...formData, agency_id: e.target.value})}
-                                        className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                                        className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                                     >
                                         <option value="">Admin (Default)</option>
                                         {agencies.map(a => (
@@ -769,7 +769,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 </div>
                             )}
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
                                 <select 
                                     required
                                     value={formData.category} 
@@ -782,7 +782,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             subcategory: floor?.subitems?.[0]?.id || ''
                                         });
                                     }}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 >
                                     <option value="">Select Floor</option>
                                     {floors.map(floor => (
@@ -798,12 +798,12 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="4. Subcategory ID" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="4. Subcategory ID" /></label>
                                 <select 
                                     required
                                     value={formData.subcategory} 
                                     onChange={(e) => setFormData({...formData, subcategory: e.target.value})}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                     disabled={!formData.category}
                                 >
                                     <option value="">Select Subcategory</option>
@@ -823,28 +823,28 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
                     {/* 5. Description */}
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5. 설명" /></label>
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5. 설명" /></label>
                         <textarea 
                             rows={4} required
                             value={formData.description.ko} onChange={(e) => setFormData({...formData, description: {...formData.description, ko: e.target.value}})}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
                         />
                     </div>
 
                     {/* Template specific fields: Parent ID */}
                     {TEMPLATE_CATEGORIES.includes(formData.category) && (
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block">
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block">
                                 <AutoTranslatedText text="Template Linked Parent ID (필수)" />
                             </label>
                             <input 
                                 type="text" 
                                 value={formData.parent_id || ''} 
                                 onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
-                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="연결할 상위 제품의 ID를 입력하세요 (예: car-care-exchange-week)"
                             />
-                            <p className="text-[10px] text-white/30 mt-2 px-1">
+                            <p className="text-[10px] text-dancheong-ink/30 mt-2 px-1">
                                 * 템플릿(Cinema, Museum 등) 데이터는 상위 제품 ID가 정확히 입력되어야 해당 페이지에서 노출됩니다.
                             </p>
                         </div>
@@ -852,56 +852,56 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
                     {/* 5-2. Detailed Description */}
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
                         <textarea 
                             rows={8}
                             value={formData.long_description.ko} onChange={(e) => setFormData({...formData, long_description: {...formData.long_description, ko: e.target.value}})}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
                             placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
                         />
                     </div>
 
                     {/* 5-3. 상세 미디어 (상세 설명 하단) */}
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-6 rounded-2xl border border-white/5">
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-6 rounded-2xl border border-dancheong-ink/5">
                             <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-white/40 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
+                                <label className="text-[10px] font-bold text-dancheong-ink/40 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
                                 <div className="flex gap-4">
                                     <button 
                                         type="button"
                                         onClick={() => setFormData({...formData, detail_media_type: 'image'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' : 'bg-black/40 text-white/40 border-white/10 hover:bg-white/5'}`}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-white/60 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
                                     >
                                         이미지 (Image)
                                     </button>
                                     <button 
                                         type="button"
                                         onClick={() => setFormData({...formData, detail_media_type: 'video'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-[#00FFC2] text-[#0A0D17] border-[#00FFC2]' : 'bg-black/40 text-white/40 border-white/10 hover:bg-white/5'}`}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-white/60 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
                                     >
                                         영상 (Video)
                                     </button>
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-white/40 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
+                                <label className="text-[10px] font-bold text-dancheong-ink/40 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
                                 <div className="flex gap-2">
                                     <div className="flex-1 relative group">
                                         <input 
                                             type="text" 
                                             value={formData.detail_media_url || ''} 
                                             onChange={(e) => setFormData({...formData, detail_media_url: e.target.value})}
-                                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-xs focus:border-[#00FFC2]/50 pr-12"
+                                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50 pr-12"
                                             placeholder="https://..."
                                         />
-                                        <label className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg cursor-pointer text-white/40 hover:text-[#00FFC2] transition-all">
+                                        <label className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg cursor-pointer text-dancheong-ink/40 hover:text-dancheong-mugwort transition-all">
                                             {uploading === 'detail_media_url' ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
                                             <input type="file" className="hidden" accept={formData.detail_media_type === 'video' ? "video/*" : "image/*"} onChange={(e) => handleFileUpload(e, 'detail_media_url')} />
                                         </label>
                                     </div>
                                 </div>
-                                <div className="p-4 bg-white/5 rounded-xl border border-white/10 min-h-[150px] flex items-center justify-center overflow-hidden">
+                                <div className="p-4 bg-dancheong-ink/5 rounded-xl border border-dancheong-ink/10 min-h-[150px] flex items-center justify-center overflow-hidden">
                                     {formData.detail_media_url ? (
                                         formData.detail_media_type === 'video' ? (
                                             <video src={formData.detail_media_url} className="max-h-[300px] w-auto" muted loop autoPlay />
@@ -916,10 +916,10 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             </div>
                                         )
                                     ) : (
-                                        <span className="text-[10px] text-white/20 uppercase tracking-widest italic">미리보기 (No Preview)</span>
+                                        <span className="text-[10px] text-dancheong-ink/20 uppercase tracking-widest italic">미리보기 (No Preview)</span>
                                     )}
                                 </div>
-                                <p className="text-[9px] text-white/20 px-1 italic">
+                                <p className="text-[9px] text-dancheong-ink/20 px-1 italic">
                                     * 상세 페이지 하단에 표시될 미디어입니다. {formData.detail_media_type === 'video' ? 'MP4/M4V 영상 권장.' : 'JPG/PNG 이미지 권장.'}
                                 </p>
                             </div>
@@ -929,14 +929,14 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* 6. Main Image */}
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="6. Main Image" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="6. Main Image" /></label>
                             <div className="space-y-4">
-                                <div className="relative group aspect-video bg-black/40 border border-white/10 rounded-2xl overflow-hidden flex items-center justify-center">
+                                <div className="relative group aspect-video bg-white/60 border border-dancheong-ink/10 rounded-2xl overflow-hidden flex items-center justify-center">
                                     {formData.image_url ? (
                                         <>
                                             <img src={formData.image_url} alt="" className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label className="cursor-pointer bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
+                                                <label className="cursor-pointer bg-dancheong-ink text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
                                                     <Upload size={18} />
                                                     <AutoTranslatedText text="Change Image" />
                                                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'image_url')} />
@@ -944,8 +944,8 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             </div>
                                         </>
                                     ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-3 text-white/20 hover:text-[#00FFC2] transition-colors">
-                                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
+                                        <label className="cursor-pointer flex flex-col items-center gap-3 text-dancheong-ink/20 hover:text-dancheong-mugwort transition-colors">
+                                            <div className="w-16 h-16 rounded-2xl bg-dancheong-ink/5 flex items-center justify-center">
                                                 {uploading === 'image_url' ? <div className="w-8 h-8 border-4 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
                                             </div>
                                             <span className="text-sm font-bold uppercase tracking-wider"><AutoTranslatedText text="Upload Main Image" /></span>
@@ -956,7 +956,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 <input 
                                     type="text" placeholder="https://..."
                                     value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-sm focus:border-[#00FFC2]/50"
+                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                 />
                             </div>
                         </div>
@@ -965,20 +965,20 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     {/* 8. Event Date & 9. Location */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="8. 행사 기간" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="8. 행사 기간" /></label>
                             <input 
                                 type="text" 
                                 value={formData.event_date.ko} onChange={(e) => setFormData({...formData, event_date: {...formData.event_date, ko: e.target.value}})}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 2025.03.15 - 04.30"
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="9. 장소" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="9. 장소" /></label>
                             <input 
                                 type="text" 
                                 value={formData.location.ko} onChange={(e) => setFormData({...formData, location: {...formData.location, ko: e.target.value}})}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 6층 K-컬처 센터"
                             />
                         </div>
@@ -987,16 +987,16 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     {/* 10. Price, 11. Closed Days, 12. Video URL */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="10. Price" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="10. Price" /></label>
                             <input 
                                 type="text" 
                                 value={formData.price || ''} onChange={(e) => setFormData({...formData, price: e.target.value})}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 50,000원"
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="11. Closed Days" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="11. Closed Days" /></label>
                             <input 
                                 type="text"
                                 value={Array.isArray(formData.closed_days) ? JSON.stringify(formData.closed_days) : (formData.closed_days || '[]')} 
@@ -1006,33 +1006,33 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                         if (Array.isArray(parsed)) setFormData({...formData, closed_days: parsed});
                                     } catch(err) { /* ignore parse errors while typing */ }
                                 }}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono text-sm focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-sm focus:border-[#00FFC2]/50"
                                 placeholder='["2025-03-25"]'
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
                             <input 
                                 type="text" 
                                 value={formData.video_url || ''} onChange={(e) => setFormData({...formData, video_url: e.target.value})}
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="https://youtube.com/..."
                             />
                         </div>
                     </div>
 
                     {/* Reservation Settings Section */}
-                    <div className="space-y-6 pt-6 border-t border-white/5">
+                    <div className="space-y-6 pt-6 border-t border-dancheong-ink/5">
                         <div className="flex items-center gap-2">
-                            <Layers className="text-[#00FFC2]" size={18} />
-                            <h4 className="text-sm font-bold text-white uppercase tracking-widest">Reservation Settings</h4>
+                            <Layers className="text-dancheong-mugwort" size={18} />
+                            <h4 className="text-sm font-bold text-dancheong-ink uppercase tracking-widest">Reservation Settings</h4>
                         </div>
                         
                         <div className="grid grid-cols-1 gap-8">
                             {/* Programs Management */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1">Programs</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1">Programs</label>
                                     <button 
                                         type="button"
                                         onClick={() => {
@@ -1047,21 +1047,21 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                 reservation_programs: [...formData.reservation_programs, newProgram]
                                             });
                                         }}
-                                        className="text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
+                                        className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
                                     >
                                         + Add Program
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-1 gap-4">
                                     {formData.reservation_programs.map((prog: any, idx: number) => (
-                                        <div key={prog.id} className="bg-black/20 border border-white/5 rounded-2xl p-6 relative group">
+                                        <div key={prog.id} className="bg-black/20 border border-dancheong-ink/5 rounded-2xl p-6 relative group">
                                             <button 
                                                 type="button"
                                                 onClick={() => {
                                                     const updated = formData.reservation_programs.filter((_: any, i: number) => i !== idx);
                                                     setFormData({ ...formData, reservation_programs: updated });
                                                 }}
-                                                className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                                                className="absolute top-4 right-4 p-2 text-dancheong-ink/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
                                             >
                                                 <Trash2 size={16} />
                                             </button>
@@ -1076,7 +1076,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], title: { ...updated[idx].title, ko: e.target.value } };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                                     />
                                                     <input 
                                                         type="text"
@@ -1087,7 +1087,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], price: e.target.value };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                                     />
                                                 </div>
                                                 <div>
@@ -1100,14 +1100,14 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], description: { ...updated[idx].description, ko: e.target.value } };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full h-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/50 resize-none"
+                                                        className="w-full h-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50 resize-none"
                                                     />
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                                     {formData.reservation_programs.length === 0 && (
-                                        <div className="text-center py-8 border border-dashed border-white/5 rounded-2xl text-white/20 text-xs italic">
+                                        <div className="text-center py-8 border border-dashed border-dancheong-ink/5 rounded-2xl text-dancheong-ink/20 text-xs italic">
                                             No programs registered. Default programs will be used.
                                         </div>
                                     )}
@@ -1117,7 +1117,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             {/* Time Slots Management */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-white/40 uppercase tracking-widest pl-1">Time Slots</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1">Time Slots</label>
                                     <button 
                                         type="button"
                                         onClick={() => {
@@ -1126,14 +1126,14 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                 reservation_slots: [...formData.reservation_slots, "10:00"]
                                             });
                                         }}
-                                        className="text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
+                                        className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
                                     >
                                         + Add Slot
                                     </button>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {formData.reservation_slots.map((slot: string, idx: number) => (
-                                        <div key={idx} className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pl-3">
+                                        <div key={idx} className="flex items-center gap-2 bg-white/60 border border-dancheong-ink/10 rounded-xl p-1 pl-3">
                                             <input 
                                                 type="text"
                                                 value={slot}
@@ -1142,7 +1142,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                     updated[idx] = e.target.value;
                                                     setFormData({ ...formData, reservation_slots: updated });
                                                 }}
-                                                className="bg-transparent border-none text-white text-xs font-mono w-16 focus:outline-none"
+                                                className="bg-transparent border-none text-dancheong-ink text-xs font-mono w-16 focus:outline-none"
                                             />
                                             <button 
                                                 type="button"
@@ -1150,14 +1150,14 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                     const updated = formData.reservation_slots.filter((_: any, i: number) => i !== idx);
                                                     setFormData({ ...formData, reservation_slots: updated });
                                                 }}
-                                                className="p-1.5 hover:bg-white/10 rounded-lg text-white/20 hover:text-red-400 transition-all font-sans"
+                                                className="p-1.5 hover:bg-white/10 rounded-lg text-dancheong-ink/20 hover:text-red-400 transition-all font-sans"
                                             >
                                                 <X size={14} />
                                             </button>
                                         </div>
                                     ))}
                                     {formData.reservation_slots.length === 0 && (
-                                        <div className="w-full text-center py-4 border border-dashed border-white/5 rounded-2xl text-white/20 text-xs italic">
+                                        <div className="w-full text-center py-4 border border-dashed border-dancheong-ink/5 rounded-2xl text-dancheong-ink/20 text-xs italic">
                                             No time slots registered. Default slots will be used.
                                         </div>
                                     )}
@@ -1166,9 +1166,9 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         </div>
                     </div>
 
-                    <div className="pt-4 flex justify-end gap-4 border-t border-white/5">
-                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="px-8 py-3 rounded-xl bg-[#00FFC2] text-[#0A0D17] font-bold hover:scale-105 transition-all">
+                    <div className="pt-4 flex justify-end gap-4 border-t border-dancheong-ink/5">
+                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="px-8 py-3 rounded-xl bg-dancheong-ink text-white font-bold hover:scale-105 transition-all">
                             <AutoTranslatedText text={isEdit ? 'Update Product' : 'Create Product'} />
                         </button>
                     </div>
@@ -1202,18 +1202,18 @@ const FloorManager = () => {
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Floor Content Management" /></h2>
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Floor Content Management" /></h2>
                 <button 
                     onClick={() => { setEditingFloor(null); setIsModalOpen(true); }}
-                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add Floor Content" />
                 </button>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
@@ -1223,21 +1223,21 @@ const FloorManager = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {floors.map(floor => (
-                            <tr key={floor.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 text-[#00FFC2] font-bold">{floor.floor}</td>
-                                <td className="px-6 py-4 text-white font-medium">{displayLocalized(floor.title)}</td>
-                                <td className="px-6 py-4 text-white/40 text-sm truncate max-w-xs">{displayLocalized(floor.description)}</td>
+                            <tr key={floor.id} className="hover:bg-dancheong-ink/5 transition-colors">
+                                <td className="px-6 py-4 text-dancheong-mugwort font-bold">{floor.floor}</td>
+                                <td className="px-6 py-4 text-dancheong-ink font-medium">{displayLocalized(floor.title)}</td>
+                                <td className="px-6 py-4 text-dancheong-ink/40 text-sm truncate max-w-xs">{displayLocalized(floor.description)}</td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         <button 
                                             onClick={() => { setEditingFloor(floor); setIsModalOpen(true); }}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2] transition-colors"
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort transition-colors"
                                         >
                                             <Edit2 size={18} />
                                         </button>
                                         <button 
                                             onClick={() => handleDelete(floor.id)}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400 transition-colors"
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400 transition-colors"
                                         >
                                             <Trash2 size={18} />
                                         </button>
@@ -1247,8 +1247,8 @@ const FloorManager = () => {
                         ))}
                     </tbody>
                 </table>
-                {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading floors..." /></div>}
-                {!loading && floors.length === 0 && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="No floor content found" /></div>}
+                {loading && <div className="py-20 text-center text-dancheong-ink/20"><AutoTranslatedText text="Loading floors..." /></div>}
+                {!loading && floors.length === 0 && <div className="py-20 text-center text-dancheong-ink/20"><AutoTranslatedText text="No floor content found" /></div>}
             </div>
 
             {isModalOpen && (
@@ -1392,61 +1392,61 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
-                className="relative w-full max-w-4xl bg-[#1A2420] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                className="relative w-full max-w-4xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-                <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                    <h3 className="text-xl font-serif font-bold text-white">
+                <div className="p-6 border-b border-dancheong-ink/10 flex justify-between items-center">
+                    <h3 className="text-xl font-serif font-bold text-dancheong-ink">
                         {isEdit ? 'Edit Floor Content' : 'Add Floor Content'}
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40 border-none bg-transparent cursor-pointer"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-dancheong-ink/40 border-none bg-transparent cursor-pointer"><X size={20} /></button>
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                     <div className="flex flex-col gap-8 flex-1 overflow-y-auto pr-2 custom-scrollbar p-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Floor Level (e.g. 6F)</label>
-                                <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Floor Level (e.g. 6F)</label>
+                                <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">ID (Unique)</label>
-                                <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" disabled={isEdit} required />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">ID (Unique)</label>
+                                <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" disabled={isEdit} required />
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block">제목</label>
-                            <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">제목</label>
+                            <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Theme Color (HEX)</label>
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Theme Color (HEX)</label>
                                 <div className="flex gap-2">
-                                    <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 text-white font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
-                                    <div className="w-14 h-14 rounded-xl border border-white/10" style={{ backgroundColor: formData.color || '#000' }} />
+                                    <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
+                                    <div className="w-14 h-14 rounded-xl border border-dancheong-ink/10" style={{ backgroundColor: formData.color || '#000' }} />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="사이트 URL" /></label>
-                                <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" placeholder="https://..." />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="사이트 URL" /></label>
+                                <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" placeholder="https://..." />
                             </div>
                         </div>
 
                         {/* Floor Background Image */}
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block">Floor Background Image</label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Floor Background Image</label>
                             <div className="flex gap-4 items-start">
-                                <div className="flex-1 relative group bg-black/40 border border-white/10 rounded-xl overflow-hidden aspect-[21/9] flex items-center justify-center">
+                                <div className="flex-1 relative group bg-white/60 border border-dancheong-ink/10 rounded-xl overflow-hidden aspect-[21/9] flex items-center justify-center">
                                     {formData.bgImage ? (
                                         <>
                                             <img src={formData.bgImage} alt="" className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label className="cursor-pointer p-3 bg-white/20 hover:bg-white/30 rounded-full text-white backdrop-blur-md">
+                                                <label className="cursor-pointer p-3 bg-white/20 hover:bg-white/30 rounded-full text-dancheong-ink backdrop-blur-md">
                                                     <Upload size={20} />
                                                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
                                                 </label>
                                             </div>
                                         </>
                                     ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-white/20 hover:text-[#00FFC2] transition-colors">
+                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-dancheong-ink/20 hover:text-dancheong-mugwort transition-colors">
                                             {uploading === 'bgImage' ? <div className="w-6 h-6 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={24} />}
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Upload Image</span>
                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
@@ -1458,61 +1458,61 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                         type="text" 
                                         value={formData.bgImage || ''} 
                                         onChange={e => setFormData({...formData, bgImage: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white text-xs focus:border-[#00FFC2]/50"
+                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50"
                                         placeholder="https://..."
                                     />
-                                    <p className="text-[10px] text-white/20 px-1 italic">* 층 전체의 배경으로 사용되는 이미지입니다. 가로가 긴 이미지 권장.</p>
+                                    <p className="text-[10px] text-dancheong-ink/20 px-1 italic">* 층 전체의 배경으로 사용되는 이미지입니다. 가로가 긴 이미지 권장.</p>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
-                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
+                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                         </div>
                         
                         {/* Sub-items Management */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center pr-2">
-                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block"><AutoTranslatedText text="Sub-items (Categories)" /></label>
-                                <button type="button" onClick={addSubitem} className="flex items-center gap-1 text-[10px] font-bold text-[#00FFC2] bg-[#00FFC2]/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all border-none cursor-pointer">
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest block"><AutoTranslatedText text="Sub-items (Categories)" /></label>
+                                <button type="button" onClick={addSubitem} className="flex items-center gap-1 text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all border-none cursor-pointer">
                                     <Plus size={14} /> <AutoTranslatedText text="Add Category" />
                                 </button>
                             </div>
                             
                             <div className="space-y-4">
                                 {(formData.subitems || []).map((sub: any, idx: number) => (
-                                    <div key={idx} className="bg-black/40 border border-white/10 rounded-2xl p-6 space-y-4 relative group/sub">
+                                    <div key={idx} className="bg-white/60 border border-dancheong-ink/10 rounded-2xl p-6 space-y-4 relative group/sub">
                                         <button 
                                             type="button" 
                                             onClick={() => removeSubitem(idx)}
-                                            className="absolute top-4 right-4 p-2 text-white/20 hover:text-red-400 opacity-0 group-hover/sub:opacity-100 transition-all border-none bg-transparent cursor-pointer"
+                                            className="absolute top-4 right-4 p-2 text-dancheong-ink/20 hover:text-red-400 opacity-0 group-hover/sub:opacity-100 transition-all border-none bg-transparent cursor-pointer"
                                         >
                                             <Trash2 size={16} />
                                         </button>
                                         
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">ID</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">ID</label>
                                                 <input 
                                                     type="text" 
                                                     value={sub.id} 
                                                     onChange={e => updateSubitem(idx, 'id', e.target.value)}
-                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30"
+                                                    className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-sm focus:border-dancheong-mugwort/30"
                                                     placeholder="heritage"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Label (KO)</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">Label (KO)</label>
                                                 <input 
                                                     type="text" 
                                                     value={typeof sub.label === 'string' ? sub.label : (sub.label?.ko || '')} 
                                                     onChange={e => updateSubitem(idx, 'label', e.target.value)}
-                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30"
+                                                    className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-sm focus:border-dancheong-mugwort/30"
                                                     placeholder="헤리티지"
                                                 />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-[10px] font-bold text-white/20 uppercase mb-2 block">Description (KO)</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">Description (KO)</label>
                                                 <textarea 
                                                     rows={2}
                                                     value={typeof sub.description === 'string' ? sub.description : (sub.description?.ko || '')} 
@@ -1520,7 +1520,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                         const oldDesc = typeof sub.description === 'object' ? sub.description : { ko: sub.description || '' };
                                                         updateSubitem(idx, 'description', { ...oldDesc, ko: e.target.value });
                                                     }}
-                                                    className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-sm focus:border-[#00FFC2]/30 resize-none"
+                                                    className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-sm focus:border-dancheong-mugwort/30 resize-none"
                                                     placeholder="서브 카테고리의 설명 텍스트를 입력하세요."
                                                 />
                                             </div>
@@ -1528,21 +1528,21 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
 
                                         {/* Sub-item Background Image */}
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-bold text-white/20 uppercase block tracking-wider">Sub-category Background Image</label>
+                                            <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase block tracking-wider">Sub-category Background Image</label>
                                             <div className="flex gap-4 items-start">
-                                                <div className="w-32 h-20 bg-black/20 border border-white/5 rounded-xl overflow-hidden flex items-center justify-center relative group">
+                                                <div className="w-32 h-20 bg-black/20 border border-dancheong-ink/5 rounded-xl overflow-hidden flex items-center justify-center relative group">
                                                     {sub.bgImage ? (
                                                         <>
                                                             <img src={sub.bgImage} alt="" className="w-full h-full object-cover" />
                                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                <label className="cursor-pointer p-2 bg-white/10 hover:bg-white/20 rounded-full text-white">
+                                                                <label className="cursor-pointer p-2 bg-white/10 hover:bg-white/20 rounded-full text-dancheong-ink">
                                                                     <Upload size={14} />
                                                                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage', idx)} />
                                                                 </label>
                                                             </div>
                                                         </>
                                                     ) : (
-                                                        <label className="cursor-pointer flex flex-col items-center gap-1 text-white/10 hover:text-[#00FFC2] transition-colors">
+                                                        <label className="cursor-pointer flex flex-col items-center gap-1 text-dancheong-ink/10 hover:text-dancheong-mugwort transition-colors">
                                                             {uploading === `bgImage-${idx}` ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
                                                             <span className="text-[8px] font-bold uppercase">Upload</span>
                                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage', idx)} />
@@ -1554,10 +1554,10 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                         type="text" 
                                                         value={sub.bgImage || ''} 
                                                         onChange={e => updateSubitem(idx, 'bgImage', e.target.value)}
-                                                        className="w-full bg-black/20 border border-white/5 rounded-xl p-3 text-white text-[10px] focus:border-[#00FFC2]/30"
+                                                        className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-[10px] focus:border-dancheong-mugwort/30"
                                                         placeholder="Image URL (https://...)"
                                                     />
-                                                    <p className="text-[9px] text-white/10 italic px-1">* 해당 카테고리 진입 시 헤더 배경으로 사용됩니다.</p>
+                                                    <p className="text-[9px] text-dancheong-ink/10 italic px-1">* 해당 카테고리 진입 시 헤더 배경으로 사용됩니다.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1566,16 +1566,16 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                 ))}
                                 
                                 {(formData.subitems || []).length === 0 && (
-                                    <div className="text-center py-10 bg-black/20 border border-dashed border-white/10 rounded-2xl">
-                                        <p className="text-white/20 text-xs font-bold uppercase tracking-widest"><AutoTranslatedText text="No sub-items added" /></p>
+                                    <div className="text-center py-10 bg-black/20 border border-dashed border-dancheong-ink/10 rounded-2xl">
+                                        <p className="text-dancheong-ink/20 text-xs font-bold uppercase tracking-widest"><AutoTranslatedText text="No sub-items added" /></p>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <div className="p-6 border-t border-white/10 flex justify-end gap-4 bg-black/20">
-                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-white/40 hover:text-white transition-colors border-none bg-transparent cursor-pointer font-bold"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all border-none cursor-pointer">
+                    <div className="p-6 border-t border-dancheong-ink/10 flex justify-end gap-4 bg-black/20">
+                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-dancheong-ink/40 hover:text-dancheong-ink transition-colors border-none bg-transparent cursor-pointer font-bold"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all border-none cursor-pointer">
                             <AutoTranslatedText text={isEdit ? 'Update Content' : 'Create Content'} />
                         </button>
                     </div>
@@ -1644,10 +1644,10 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Notice Management" /></h2>
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Notice Management" /></h2>
                 <button 
                     onClick={() => { setEditingNotice(null); setIsModalOpen(true); }}
-                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add Notice" />
                 </button>
@@ -1655,20 +1655,20 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
 
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-ink/30" size={18} />
                     <input 
                         type="text" 
                         placeholder={searchNoticesPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
                 
                 <select 
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
                     <option value="">{allCategoriesNoticeLabel}</option>
                     {categories.map(cat => (
@@ -1677,9 +1677,9 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
                 </select>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
@@ -1690,29 +1690,29 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {filteredNotices.map(notice => (
-                            <tr key={notice.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 text-white font-medium flex items-center gap-2">
+                            <tr key={notice.id} className="hover:bg-dancheong-ink/5 transition-colors">
+                                <td className="px-6 py-4 text-dancheong-ink font-medium flex items-center gap-2">
                                     {notice.is_important && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
                                     {displayLocalized(notice.title)}
                                 </td>
-                                <td className="px-6 py-4 text-white/40">{notice.category}</td>
-                                <td className="px-6 py-4 text-white/40">{notice.date}</td>
+                                <td className="px-6 py-4 text-dancheong-ink/40">{notice.category}</td>
+                                <td className="px-6 py-4 text-dancheong-ink/40">{notice.date}</td>
                                 {isAdmin && (
-                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
-                                        {agencies.find(a => Number(a.id) === Number(notice.agency_id))?.agency_name || <span className="text-white/20">Admin</span>}
+                                    <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs">
+                                        {agencies.find(a => Number(a.id) === Number(notice.agency_id))?.agency_name || <span className="text-dancheong-ink/20">Admin</span>}
                                     </td>
                                 )}
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button onClick={() => { setEditingNotice(notice); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
-                                        <button onClick={() => handleDelete(notice.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                        <button onClick={() => { setEditingNotice(notice); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Edit2 size={18} /></button>
+                                        <button onClick={() => handleDelete(notice.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={18} /></button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading notices..." /></div>}
+                {loading && <div className="py-20 text-center text-dancheong-ink/20"><AutoTranslatedText text="Loading notices..." /></div>}
             </div>
 
             {isModalOpen && <NoticeFormModal notice={editingNotice} agencies={agencies} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchNotices(); }} />}
@@ -1739,18 +1739,18 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
-                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit Notice' : 'Add Notice'} />
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {isAdmin && (
                         <div>
-                            <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                            <label className="text-xs font-bold text-dancheong-mugwort uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
                             <select 
                                 value={formData.agency_id || ''} 
                                 onChange={e => setFormData({...formData, agency_id: e.target.value})}
-                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                             >
                                 <option value="">Admin (Default)</option>
                                 {agencies.map((a: any) => (
@@ -1761,11 +1761,11 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
                     )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
                             <select 
                                 value={formData.category} 
                                 onChange={e => setFormData({...formData, category: e.target.value})} 
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" 
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -1777,25 +1777,25 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Date" /></label>
-                            <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Date" /></label>
+                            <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
-                        <input type="text" value={formData.title.ko} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
+                        <input type="text" value={formData.title.ko} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="내용" /></label>
-                        <textarea rows={4} value={formData.content.ko} onChange={e => setFormData({...formData, content: {...formData.content, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="내용" /></label>
+                        <textarea rows={4} value={formData.content.ko} onChange={e => setFormData({...formData, content: {...formData.content, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                     </div>
                     <div className="flex items-center gap-3">
-                        <input type="checkbox" checked={formData.is_important} onChange={e => setFormData({...formData, is_important: e.target.checked})} className="w-5 h-5 rounded border-white/10 bg-black/40 text-[#00FFC2] focus:ring-[#00FFC2]" />
-                        <label className="text-sm text-white/60"><AutoTranslatedText text="Important Notice (Shows indicator)" /></label>
+                        <input type="checkbox" checked={formData.is_important} onChange={e => setFormData({...formData, is_important: e.target.checked})} className="w-5 h-5 rounded border-dancheong-ink/10 bg-white/60 text-dancheong-mugwort focus:ring-[#00FFC2]" />
+                        <label className="text-sm text-dancheong-ink/60"><AutoTranslatedText text="Important Notice (Shows indicator)" /></label>
                     </div>
-                    <div className="flex justify-end gap-4 pt-4 border-t border-white/5">
-                        <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
+                    <div className="flex justify-end gap-4 pt-4 border-t border-dancheong-ink/5">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
                     </div>
                 </form>
             </motion.div>
@@ -1864,10 +1864,10 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="FAQ Management" /></h2>
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="FAQ Management" /></h2>
                 <button 
                     onClick={() => { setEditingFaq(null); setIsModalOpen(true); }}
-                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add FAQ" />
                 </button>
@@ -1875,20 +1875,20 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
 
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-ink/30" size={18} />
                     <input 
                         type="text" 
                         placeholder={searchFaqsPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
                 
                 <select 
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-black/40 border border-white/10 rounded-2xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
                     <option value="">{allCategoriesFaqLabel}</option>
                     {categories.map(cat => (
@@ -1897,9 +1897,9 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
                 </select>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Question" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
@@ -1909,25 +1909,25 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {filteredFaqs.map(faq => (
-                            <tr key={faq.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 text-white font-medium">{displayLocalized(faq.question)}</td>
-                                <td className="px-6 py-4 text-white/40">{faq.category || 'General'}</td>
+                            <tr key={faq.id} className="hover:bg-dancheong-ink/5 transition-colors">
+                                <td className="px-6 py-4 text-dancheong-ink font-medium">{displayLocalized(faq.question)}</td>
+                                <td className="px-6 py-4 text-dancheong-ink/40">{faq.category || 'General'}</td>
                                 {isAdmin && (
-                                    <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs">
-                                        {agencies.find(a => Number(a.id) === Number(faq.agency_id))?.agency_name || <span className="text-white/20">Admin</span>}
+                                    <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs">
+                                        {agencies.find(a => Number(a.id) === Number(faq.agency_id))?.agency_name || <span className="text-dancheong-ink/20">Admin</span>}
                                     </td>
                                 )}
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button onClick={() => { setEditingFaq(faq); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
-                                        <button onClick={() => handleDelete(faq.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                        <button onClick={() => { setEditingFaq(faq); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Edit2 size={18} /></button>
+                                        <button onClick={() => handleDelete(faq.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={18} /></button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading FAQs..." /></div>}
+                {loading && <div className="py-20 text-center text-dancheong-ink/20"><AutoTranslatedText text="Loading FAQs..." /></div>}
             </div>
 
             {isModalOpen && <FAQFormModal faq={editingFaq} agencies={agencies} onClose={() => setIsModalOpen(false)} onSuccess={() => { setIsModalOpen(false); fetchFaqs(); }} />}
@@ -1961,18 +1961,18 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
-                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit FAQ' : 'Add FAQ'} />
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {isAdmin && (
                         <div>
-                            <label className="text-xs font-bold text-[#00FFC2] uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
+                            <label className="text-xs font-bold text-dancheong-mugwort uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
                             <select 
                                 value={formData.agency_id || ''} 
                                 onChange={e => setFormData({...formData, agency_id: e.target.value})}
-                                className="w-full bg-black/40 border border-[#00FFC2]/30 rounded-xl p-4 text-[#00FFC2] focus:border-[#00FFC2]/50 font-bold"
+                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                             >
                                 <option value="">Admin (Default)</option>
                                 {agencies.map((a: any) => (
@@ -1983,11 +1983,11 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                     )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
                             <select 
                                 value={formData.category} 
                                 onChange={e => setFormData({...formData, category: e.target.value})} 
-                                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" 
+                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -1998,21 +1998,21 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Display Order" /></label>
-                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value)})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Display Order" /></label>
+                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value)})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="질문" /></label>
-                        <input type="text" value={formData.question.ko} onChange={e => setFormData({...formData, question: {...formData.question, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="질문" /></label>
+                        <input type="text" value={formData.question.ko} onChange={e => setFormData({...formData, question: {...formData.question, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="답변" /></label>
-                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50 resize-none" required />
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="답변" /></label>
+                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                     </div>
-                    <div className="flex justify-end gap-4 pt-4 border-t border-white/5">
-                        <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
+                    <div className="flex justify-end gap-4 pt-4 border-t border-dancheong-ink/5">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all"><AutoTranslatedText text="Submit" /></button>
                     </div>
                 </form>
             </motion.div>
@@ -2075,22 +2075,22 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Order Management" /></h2>
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Order Management" /></h2>
                 <div className="flex gap-4">
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-ink/30" size={18} />
                         <input 
                             type="text" 
                             placeholder="Search orders..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-black/40 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                            className="bg-white/60 border border-dancheong-ink/10 rounded-xl py-2 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                         />
                     </div>
                     <select 
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#00FFC2]/50"
+                        className="bg-white/60 border border-dancheong-ink/10 rounded-xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     >
                         <option value="">All Statuses</option>
                         <option value="PENDING">PENDING</option>
@@ -2102,10 +2102,10 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
                 </div>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                        <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                             <tr>
                                 <th className="px-6 py-4">Order Info</th>
                                 <th className="px-6 py-4">Customer</th>
@@ -2118,35 +2118,35 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {filteredOrders.map(order => (
-                                <tr key={order.id} className="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                                <tr key={order.id} className="hover:bg-dancheong-ink/5 transition-colors border-b border-dancheong-ink/5 last:border-0">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="text-white text-xs font-mono">{order.payment_id}</span>
-                                            <span className="text-white/30 text-[10px]">{new Date(order.created_at).toLocaleString()}</span>
+                                            <span className="text-dancheong-ink text-xs font-mono">{order.payment_id}</span>
+                                            <span className="text-dancheong-ink/30 text-[10px]">{new Date(order.created_at).toLocaleString()}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="text-white font-bold">{order.user_name}</span>
-                                            <span className="text-white/40 text-[10px]">{order.user_phone}</span>
+                                            <span className="text-dancheong-ink font-bold">{order.user_name}</span>
+                                            <span className="text-dancheong-ink/40 text-[10px]">{order.user_phone}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-white/60 text-sm whitespace-nowrap">{order.product_name}</td>
-                                    <td className="px-6 py-4 text-white font-bold whitespace-nowrap">{order.price?.toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-dancheong-ink/60 text-sm whitespace-nowrap">{order.product_name}</td>
+                                    <td className="px-6 py-4 text-dancheong-ink font-bold whitespace-nowrap">{order.price?.toLocaleString()}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${statusColors[order.status]}`}>
                                             {order.status}
                                         </span>
                                     </td>
                                     {isAdmin && (
-                                        <td className="px-6 py-4 text-[#00FFC2] font-bold text-xs whitespace-nowrap">
+                                        <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs whitespace-nowrap">
                                             {agencies.find(a => Number(a.id) === Number(order.agency_id))?.agency_name || 'Admin'}
                                         </td>
                                     )}
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button onClick={() => { setEditingOrder(order); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Edit2 size={18} /></button>
-                                            <button onClick={() => handleDelete(order.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                            <button onClick={() => { setEditingOrder(order); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Edit2 size={18} /></button>
+                                            <button onClick={() => handleDelete(order.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={18} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -2154,8 +2154,8 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
                         </tbody>
                     </table>
                 </div>
-                {loading && <div className="py-20 text-center text-white/20">Loading orders...</div>}
-                {!loading && filteredOrders.length === 0 && <div className="py-20 text-center text-white/20">No orders found.</div>}
+                {loading && <div className="py-20 text-center text-dancheong-ink/20">Loading orders...</div>}
+                {!loading && filteredOrders.length === 0 && <div className="py-20 text-center text-dancheong-ink/20">No orders found.</div>}
             </div>
 
             {isModalOpen && (
@@ -2188,31 +2188,31 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl">
-                <h3 className="text-xl font-serif font-bold text-white mb-6 uppercase tracking-widest">Update Order Status</h3>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">Update Order Status</h3>
                 
                 <div className="space-y-6">
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
+                    <div className="p-4 rounded-xl bg-dancheong-ink/5 border border-dancheong-ink/5 space-y-2">
                         <div className="flex justify-between">
-                            <span className="text-[10px] text-white/40 font-bold uppercase">Customer</span>
-                            <span className="text-sm text-white font-bold">{order.user_name}</span>
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Customer</span>
+                            <span className="text-sm text-dancheong-ink font-bold">{order.user_name}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-[10px] text-white/40 font-bold uppercase">Product</span>
-                            <span className="text-sm text-white/60">{order.product_name}</span>
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Product</span>
+                            <span className="text-sm text-dancheong-ink/60">{order.product_name}</span>
                         </div>
-                        <div className="flex justify-between border-t border-white/5 pt-2">
-                            <span className="text-[10px] text-white/40 font-bold uppercase">Address</span>
-                            <span className="text-xs text-white/40 max-w-[200px] text-right">{order.user_address}</span>
+                        <div className="flex justify-between border-t border-dancheong-ink/5 pt-2">
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Address</span>
+                            <span className="text-xs text-dancheong-ink/40 max-w-[200px] text-right">{order.user_address}</span>
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-white/40 uppercase block">Status</label>
+                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase block">Status</label>
                         <select 
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50"
+                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                         >
                             <option value="PENDING">PENDING</option>
                             <option value="PAID">PAID</option>
@@ -2223,11 +2223,11 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="flex justify-end gap-4 pt-4">
-                        <button onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors">Cancel</button>
+                        <button onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors">Cancel</button>
                         <button 
                             onClick={handleUpdate}
                             disabled={isUpdating}
-                            className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50"
+                            className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50"
                         >
                             {isUpdating ? 'Updating...' : 'Update Status'}
                         </button>
@@ -2277,18 +2277,18 @@ const AgencyManager = () => {
     return (
         <div className="space-y-6 pt-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-serif font-bold text-white"><AutoTranslatedText text="Agency Management" /></h2>
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Agency Management" /></h2>
                 <button 
                     onClick={() => { setEditingAgency(null); setIsModalOpen(true); }}
-                    className="bg-[#00FFC2] text-[#0A0D17] px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
                 >
                     <Plus size={18} /> <AutoTranslatedText text="Add Agency" />
                 </button>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-black/40 text-white/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="ID / PW" /></th>
@@ -2299,22 +2299,22 @@ const AgencyManager = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {agencies.map(agency => (
-                            <tr key={agency.id} className="hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                            <tr key={agency.id} className="hover:bg-dancheong-ink/5 transition-colors border-b border-dancheong-ink/5 last:border-0">
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">
-                                        <span className="text-white font-bold">{agency.agency_name}</span>
-                                        <span className="text-white/30 text-[10px]">{new Date(agency.created_at).toLocaleDateString()}</span>
+                                        <span className="text-dancheong-ink font-bold">{agency.agency_name}</span>
+                                        <span className="text-dancheong-ink/30 text-[10px]">{new Date(agency.created_at).toLocaleDateString()}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-white/60 text-xs font-mono">{agency.username}</span>
-                                        <span className="text-white/90 text-sm font-mono select-all hover:text-[#00FFC2] transition-colors bg-white/5 px-2 py-0.5 rounded-md w-fit">{agency.password}</span>
+                                        <span className="text-dancheong-ink/60 text-xs font-mono">{agency.username}</span>
+                                        <span className="text-dancheong-ink/90 text-sm font-mono select-all hover:text-dancheong-mugwort transition-colors bg-dancheong-ink/5 px-2 py-0.5 rounded-md w-fit">{agency.password}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="flex flex-col text-[10px] text-white/60 space-y-0.5">
-                                        <span className="flex items-center gap-1"><span className="text-white/20 italic">M:</span> {agency.phone_mobile || '-'}</span>
+                                    <div className="flex flex-col text-[10px] text-dancheong-ink/60 space-y-0.5">
+                                        <span className="flex items-center gap-1"><span className="text-dancheong-ink/20 italic">M:</span> {agency.phone_mobile || '-'}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
@@ -2328,7 +2328,7 @@ const AgencyManager = () => {
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end items-center gap-2">
-                                        <div className="flex gap-1 mr-2 border-r border-white/10 pr-2">
+                                        <div className="flex gap-1 mr-2 border-r border-dancheong-ink/10 pr-2">
                                             {agency.status === 'PENDING' && (
                                                 <>
                                                     <button 
@@ -2357,15 +2357,15 @@ const AgencyManager = () => {
                                                 </button>
                                             )}
                                         </div>
-                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-[#00FFC2]"><Search size={16} /></button>
-                                        <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-red-400"><Trash2 size={16} /></button>
+                                        <button onClick={() => { setEditingAgency(agency); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Search size={16} /></button>
+                                        <button onClick={() => handleDelete(agency.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={16} /></button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {loading && <div className="py-20 text-center text-white/20"><AutoTranslatedText text="Loading agencies..." /></div>}
+                {loading && <div className="py-20 text-center text-dancheong-ink/20"><AutoTranslatedText text="Loading agencies..." /></div>}
             </div>
 
             {isModalOpen && (
@@ -2407,47 +2407,47 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
-                className="relative w-full max-w-2xl bg-[#1A2420] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+                className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
             >
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-serif font-bold text-white uppercase tracking-widest">
+                    <h3 className="text-xl font-serif font-bold text-dancheong-ink uppercase tracking-widest">
                         <AutoTranslatedText text={isEdit ? 'Agency Details / Edit' : 'Add Agency'} />
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-white/40"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-dancheong-ink/40"><X size={20} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
-                                <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
+                                <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
-                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
+                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
-                                <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" required={!isEdit} />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
+                                <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required={!isEdit} />
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Birth Date" /></label>
-                                <input type="text" placeholder="YYYY.MM.DD" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Birth Date" /></label>
+                                <input type="text" placeholder="YYYY.MM.DD" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-white/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
-                                <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-[#00FFC2]/50" />
+                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
+                                <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-4 pt-6 border-t border-white/5">
-                        <button type="button" onClick={onClose} className="px-6 py-2 text-white/40 hover:text-white transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="bg-[#00FFC2] text-[#0A0D17] px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
+                    <div className="flex justify-end gap-4 pt-6 border-t border-dancheong-ink/5">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
                             <AutoTranslatedText text={isEdit ? 'Save Changes' : 'Submit'} />
                         </button>
                     </div>
@@ -2499,7 +2499,7 @@ export const AdminPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0A0D17] lg:flex relative overflow-x-hidden">
+        <div className="min-h-screen bg-dancheong-ivory lg:flex relative overflow-x-hidden">
             {/* Mobile Sidebar Overlay (Left) */}
             <AnimatePresence>
                 {isSidebarOpen && (
@@ -2529,13 +2529,13 @@ export const AdminPage: React.FC = () => {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-80 bg-[#1A2420] border-l border-white/10 z-[130] flex flex-col shadow-2xl"
+                            className="fixed inset-y-0 right-0 w-80 bg-white/80 backdrop-blur-md shadow-2xl z-[130] flex flex-col"
                         >
-                            <div className="p-6 border-b border-white/5 flex items-center justify-between">
-                                <h2 className="text-lg font-serif font-bold text-white">Category Menu</h2>
+                            <div className="p-6 border-b border-dancheong-ink/5 flex items-center justify-between">
+                                <h2 className="text-lg font-serif font-bold text-dancheong-ink">Category Menu</h2>
                                 <button 
                                     onClick={() => setIsGlobalMenuOpen(false)}
-                                    className="p-2 text-white/40 hover:text-white transition-colors"
+                                    className="p-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"
                                 >
                                     <X size={24} />
                                 </button>
@@ -2543,7 +2543,7 @@ export const AdminPage: React.FC = () => {
                             <div className="flex-1 overflow-y-auto p-4 space-y-6">
                                 {floors.map(floor => (
                                     <div key={floor.id} className="space-y-3">
-                                        <div className="flex items-center gap-2 text-[#00FFC2] font-bold text-sm tracking-widest uppercase opacity-80">
+                                        <div className="flex items-center gap-2 text-dancheong-mugwort font-bold text-sm tracking-widest uppercase opacity-80">
                                             <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2]" />
                                             {floor.floor} | {displayLocalized(floor.title)}
                                         </div>
@@ -2552,7 +2552,7 @@ export const AdminPage: React.FC = () => {
                                                 <button
                                                     key={sub.id}
                                                     onClick={() => navigate(`/category/${sub.id}`)}
-                                                    className="w-full text-left px-4 py-3 rounded-xl bg-white/5 text-white/60 text-sm hover:text-white hover:bg-[#00FFC2]/10 transition-all border border-transparent hover:border-[#00FFC2]/20"
+                                                    className="w-full text-left px-4 py-3 rounded-xl bg-dancheong-ink/5 text-dancheong-ink/60 text-sm hover:text-dancheong-ink hover:bg-dancheong-mugwort/10 transition-all border border-transparent hover:border-[#00FFC2]/20"
                                                 >
                                                     {displayLocalized(sub.label)}
                                                 </button>
@@ -2561,10 +2561,10 @@ export const AdminPage: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                            <div className="p-4 border-t border-white/5">
+                            <div className="p-4 border-t border-dancheong-ink/5">
                                 <button
                                     onClick={() => navigate('/')}
-                                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 text-white/80 font-bold hover:bg-white/10 transition-all"
+                                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-dancheong-ink/5 text-dancheong-ink/80 font-bold hover:bg-white/10 transition-all"
                                 >
                                     Go to Front Page
                                 </button>
@@ -2576,21 +2576,21 @@ export const AdminPage: React.FC = () => {
 
             {/* Sidebar */}
             <aside className={`
-                fixed inset-y-0 left-0 w-72 border-r border-white/5 bg-[#1A2420] flex flex-col z-[110] 
+                fixed inset-y-0 left-0 w-72 border-r border-dancheong-ink/5 bg-white flex flex-col z-[110] 
                 transition-transform duration-300 transform
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                 lg:relative lg:translate-x-0 lg:h-screen lg:sticky lg:top-0 overflow-y-auto
             `}>
-                <div className="p-8 border-b border-white/5">
+                <div className="p-8 border-b border-dancheong-ink/5">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-[#00FFC2]/10 rounded-xl flex items-center justify-center border border-[#00FFC2]/30">
-                            <LayoutDashboard className="text-[#00FFC2]" />
+                        <div className="w-10 h-10 bg-dancheong-mugwort/10 rounded-xl flex items-center justify-center border border-dancheong-mugwort/30">
+                            <LayoutDashboard className="text-dancheong-mugwort" />
                         </div>
-                        <h1 className="text-xl font-serif font-bold text-white tracking-tight">
+                        <h1 className="text-xl font-serif font-bold text-dancheong-ink tracking-tight">
                             Admin Console
                         </h1>
                     </div>
-                    <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-bold">
+                    <p className="text-dancheong-ink/30 text-[10px] uppercase tracking-[0.2em] font-bold">
                         몽땅쏙 Management v1.0
                     </p>
                 </div>
@@ -2599,7 +2599,7 @@ export const AdminPage: React.FC = () => {
                     <div className="mb-8 px-2">
                         <button 
                             onClick={() => window.open('/', '_blank')}
-                            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-[#00FFC2] border border-[#00FFC2]/20 hover:bg-[#00FFC2]/10 transition-all font-bold group shadow-[0_4px_12px_rgba(0,255,194,0.1)] hover:shadow-[0_4px_20px_rgba(0,255,194,0.2)]"
+                            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-dancheong-mugwort border border-dancheong-mugwort/20 hover:bg-dancheong-mugwort/10 transition-all font-bold group shadow-[0_4px_12px_rgba(79,109,91,0.1)] hover:shadow-[0_4px_20px_rgba(79,109,91,0.2)]"
                         >
                             <LayoutGrid size={20} className="group-hover:rotate-12 transition-transform" />
                             <span className="text-sm tracking-tight"><AutoTranslatedText text="Visit 3D Portal" /></span>
@@ -2616,8 +2616,8 @@ export const AdminPage: React.FC = () => {
                             }}
                             className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${
                                 activeTab === tab.id 
-                                ? 'bg-[#00FFC2] text-[#0A0D17] font-bold shadow-[0_0_20px_rgba(0,255,194,0.2)]' 
-                                : 'text-white/40 hover:text-white hover:bg-white/5'
+                                ? 'bg-dancheong-ink text-white font-bold shadow-[0_0_20px_rgba(0,255,194,0.2)]' 
+                                : 'text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-dancheong-ink/5'
                             }`}
                         >
                             <tab.icon size={20} />
@@ -2627,7 +2627,7 @@ export const AdminPage: React.FC = () => {
                     ))}
                 </nav>
 
-                <div className="p-4 border-t border-white/5 mt-auto">
+                <div className="p-4 border-t border-dancheong-ink/5 mt-auto">
                     <button
                         onClick={logout}
                         className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all font-bold"
@@ -2639,27 +2639,27 @@ export const AdminPage: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-black/40">
-                <header className="px-6 md:px-10 py-6 md:py-8 border-b border-white/5 flex justify-between items-center bg-[#1A2420]/20 backdrop-blur-md sticky top-0 z-50">
+            <main className="flex-1 overflow-y-auto bg-dancheong-ivory">
+                <header className="px-6 md:px-10 py-6 md:py-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/40 backdrop-blur-md sticky top-0 z-50">
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => setIsSidebarOpen(true)}
-                            className="p-2 lg:hidden text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                            className="p-2 lg:hidden text-dancheong-ink/60 hover:text-dancheong-ink hover:bg-dancheong-ink/5 rounded-xl transition-all"
                         >
                             <Menu size={24} />
                         </button>
                         <div>
-                            <h2 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-1">
+                            <h2 className="text-[10px] font-bold text-dancheong-ink/40 uppercase tracking-[0.3em] mb-1">
                                 Overview
                             </h2>
-                            <h3 className="text-xl md:text-2xl font-serif font-bold text-white">
+                            <h3 className="text-xl md:text-2xl font-serif font-bold text-dancheong-ink">
                                 {tabs.find(t => t.id === activeTab)?.label || ''}
                             </h3>
                         </div>
                     </div>
                     <button 
                         onClick={() => setIsGlobalMenuOpen(true)}
-                        className="p-3 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2 font-bold text-xs"
+                        className="p-3 text-dancheong-ink/60 hover:text-dancheong-ink hover:bg-dancheong-ink/5 rounded-xl transition-all flex items-center gap-2 font-bold text-xs"
                     >
                         <span className="hidden sm:inline opacity-60">CATEGORIES</span>
                         <Menu size={24} />

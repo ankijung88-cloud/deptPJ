@@ -25,7 +25,7 @@ const AgencyRegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
             <div className="lossless-layout">
                 {/* Header Context */}
                 <div className="max-w-4xl mx-auto mb-20 text-center">
@@ -57,7 +57,7 @@ const AgencyRegisterPage: React.FC = () => {
 
                 {/* Multi-step Form / Content */}
                 <div className="max-w-5xl mx-auto">
-                    <div className="bg-white border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                    <div className="bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
                         {/* Decorative Pattern */}
                         <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                             <BrandLogo size={300} color="#171717" />
@@ -93,7 +93,7 @@ const AgencyRegisterPage: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="p-8 bg-gray-50 rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
+                                        <div className="p-8 bg-dancheong-ivory/40 backdrop-blur-sm rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
                                             <AutoTranslatedText text="등록 신청 후 영업일 기준 3~5일 내에 담당자의 개별 연락이 진행됩니다. 원활한 심사를 위해 정확한 정보를 입력해 주시기 바랍니다." />
                                         </div>
                                     </div>
@@ -138,7 +138,7 @@ const AgencyRegisterPage: React.FC = () => {
                                                     <input 
                                                         required
                                                         type="text" 
-                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                         placeholder="Enter agency name"
                                                         value={formData.agencyName}
                                                         onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
@@ -152,7 +152,7 @@ const AgencyRegisterPage: React.FC = () => {
                                                     <input 
                                                         required
                                                         type="text" 
-                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                         placeholder="대표자 성함을 입력해 주십시오"
                                                         value={formData.representative}
                                                         onChange={(e) => setFormData({...formData, representative: e.target.value})}
@@ -178,7 +178,7 @@ const AgencyRegisterPage: React.FC = () => {
                                                     <input 
                                                         required
                                                         type="email" 
-                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                         placeholder="agency@example.com"
                                                         value={formData.email}
                                                         onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -192,7 +192,7 @@ const AgencyRegisterPage: React.FC = () => {
                                                     <input 
                                                         required
                                                         type="tel" 
-                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                         placeholder="+82-10-0000-0000"
                                                         value={formData.phone}
                                                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -205,7 +205,7 @@ const AgencyRegisterPage: React.FC = () => {
                                                     <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
                                                     <input 
                                                         type="url" 
-                                                        className="w-full bg-white border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                         placeholder="https://www.brand.com"
                                                         value={formData.website}
                                                         onChange={(e) => setFormData({...formData, website: e.target.value})}
@@ -227,7 +227,7 @@ const AgencyRegisterPage: React.FC = () => {
                                             <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4 mb-2 block">Vision / Description</label>
                                             <textarea 
                                                 required
-                                                className="w-full bg-white border border-dancheong-ink/15 rounded-[32px] p-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans min-h-[200px] resize-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                className="w-full bg-white/60 border border-dancheong-ink/15 rounded-[32px] p-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans min-h-[200px] resize-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                                                 placeholder="Describe your brand heritage and vision..."
                                                 value={formData.description}
                                                 onChange={(e) => setFormData({...formData, description: e.target.value})}

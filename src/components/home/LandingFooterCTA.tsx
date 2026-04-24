@@ -8,7 +8,7 @@ interface LandingFooterCTAProps {
 
 export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore }) => {
     return (
-        <section className="relative w-full py-32 px-6 bg-white flex flex-col items-center justify-center border-t border-dancheong-ink/10">
+        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center justify-center border-t border-dancheong-ink/10">
             <div className="absolute inset-0 pointer-events-none z-0">
                 <div className="absolute bottom-[-20%] left-[20%] w-[60%] h-[60%] bg-[#FFD700]/5 blur-[200px] rounded-full" />
             </div>
@@ -18,7 +18,7 @@ export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore })
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-4xl md:text-5xl lg:text-7xl font-black text-[#171717] mb-8 tracking-tighter"
+                    className="text-4xl md:text-5xl lg:text-7xl font-black text-dancheong-ink mb-8 tracking-tighter"
                 >
                     <AutoTranslatedText text="READY TO DIVE IN?" />
                 </motion.h2>
@@ -31,17 +31,17 @@ export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore })
                 >
                     <button
                         onClick={onExplore}
-                        className="px-12 py-5 bg-[#171717] text-white text-lg font-bold rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-[0_0_40px_rgba(23,23,23,0.3)] tracking-[0.2em] uppercase"
+                        className="px-12 py-5 bg-dancheong-ink text-white text-lg font-bold rounded-full hover:bg-dancheong-mugwort transition-all duration-500 hover:scale-105 hover:shadow-[0_0_40px_rgba(26,26,26,0.3)] tracking-[0.2em] uppercase"
                     >
                         <AutoTranslatedText text="EXPLORE NOW" />
                     </button>
-                    <p className="mt-6 text-[#171717]/40 text-sm font-light tracking-wide">
+                    <p className="mt-6 text-dancheong-ink/40 text-sm font-light tracking-wide">
                         <AutoTranslatedText text="지금 바로 새로운 차원의 연결을 경험하세요." />
                     </p>
                 </motion.div>
             </div>
             
-            <div className="absolute bottom-8 w-full text-center text-[#171717]/20 text-xs tracking-widest font-light">
+            <div className="absolute bottom-8 w-full text-center text-dancheong-ink/20 text-xs tracking-widest font-light">
                 © {new Date().getFullYear()} 몽땅쏙. ALL RIGHTS RESERVED.
             </div>
         </section>

@@ -71,7 +71,7 @@ const NoticePage: React.FC = () => {
     }, [loading]);
 
     return (
-        <div className="min-h-screen bg-white text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -120,7 +120,7 @@ const NoticePage: React.FC = () => {
                             transition={{ delay: 0.1 * index }}
                             className="group relative overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-white border border-dancheong-ink/5 rounded-2xl transition-all duration-300 group-hover:border-dancheong-mugwort/30 shadow-sm group-hover:shadow-md" />
+                            <div className="absolute inset-0 bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-2xl transition-all duration-300 group-hover:border-dancheong-mugwort/30 shadow-sm group-hover:shadow-md" />
                             <div className="relative p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${notice.is_important ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink/5 text-dancheong-ink/60'
@@ -146,7 +146,7 @@ const NoticePage: React.FC = () => {
                 {/* Pagination Placeholder */}
                 <div className="mt-16 flex justify-center gap-2">
                     {[1, 2, 3].map(n => (
-                        <button key={n} className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${n === 1 ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink/5 text-dancheong-ink/40 hover:bg-dancheong-ink/10'
+                        <button key={n} className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${n === 1 ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink/10 text-dancheong-ink/40 hover:bg-dancheong-ink/20'
                             }`}>
                             {n}
                         </button>

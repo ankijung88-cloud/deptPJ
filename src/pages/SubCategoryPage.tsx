@@ -199,7 +199,7 @@ const SubCategoryPage: React.FC = () => {
 
     if (!parentFloor) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-white p-20 text-center">
+            <div className="min-h-screen flex items-center justify-center bg-dancheong-ivory p-20 text-center">
                 <div className="max-w-md">
                     <h2 className="text-3xl font-black text-dancheong-ink mb-4">Content Not Found</h2>
                     <p className="text-dancheong-ink/40 mb-8 italic">The requested category could not be located in our current archives.</p>

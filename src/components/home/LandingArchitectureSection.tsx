@@ -32,7 +32,7 @@ const archFeatures = [
 
 export const LandingArchitectureSection: React.FC = () => {
     return (
-        <section className="relative w-full py-32 px-6 bg-white flex flex-col items-center border-t border-dancheong-ink/5">
+        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center border-t border-dancheong-ink/5">
             <div className="max-w-6xl mx-auto w-full relative z-10">
                 <div className="flex flex-col lg:flex-row gap-16 items-start">
                     
@@ -62,7 +62,7 @@ export const LandingArchitectureSection: React.FC = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.15 }}
-                                className="bg-white border border-dancheong-ink/5 rounded-[2rem] p-8 hover:border-dancheong-ink/20 transition-all duration-300 group shadow-lg relative overflow-hidden"
+                                className="bg-dancheong-ivory/40 backdrop-blur-md border border-dancheong-ink/10 rounded-[2rem] p-8 hover:border-dancheong-ink/20 transition-all duration-300 group shadow-lg relative overflow-hidden"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-dancheong-ink/5 rounded-full blur-[50px] group-hover:bg-dancheong-ink/10 transition-colors" />
                                 <div className="mb-6 p-4 rounded-full inline-flex bg-dancheong-ink/5 border border-dancheong-ink/5">

@@ -83,7 +83,7 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -107,7 +107,7 @@ const FAQPage: React.FC = () => {
 
                 {/* Search Bar */}
                 <div className="max-w-2xl mx-auto mb-16 relative group">
-                    <div className="absolute inset-0 bg-white rounded-2xl border border-dancheong-ink/5 shadow-sm group-hover:border-dancheong-navy/30 group-hover:shadow-md transition-all duration-300" />
+                    <div className="absolute inset-0 bg-white/60 backdrop-blur-md rounded-2xl border border-dancheong-ink/5 shadow-sm group-hover:border-dancheong-navy/30 group-hover:shadow-md transition-all duration-300" />
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-hover:text-dancheong-navy transition-colors" size={20} />
                     <input
                         type="text"
@@ -138,8 +138,8 @@ const FAQPage: React.FC = () => {
                         <div key={faq.id} id={`faq-${faq.id}`} className="relative overflow-hidden group">
                             <button
                                 onClick={() => setOpenId(openId === String(faq.id) ? null : String(faq.id))}
-                                className={`w-full text-left p-6 flex items-center justify-between transition-all relative z-10 ${openId === String(faq.id) ? 'bg-white shadow-lg' : 'bg-white border border-dancheong-ink/5 hover:border-dancheong-navy/20'
-                                    } rounded-2xl`}
+                                className={`w-full text-left p-6 flex items-center justify-between transition-all relative z-10 ${openId === String(faq.id) ? 'bg-white/90 shadow-lg' : 'bg-white/60 backdrop-blur-sm border border-dancheong-ink/5 hover:border-dancheong-navy/20'
+                                     } rounded-2xl`}
                             >
                                 <span className="text-lg font-medium text-dancheong-ink group-hover:text-dancheong-navy transition-colors">
                                     <AutoTranslatedText text={displayLocalized(faq.question)} />
@@ -159,7 +159,7 @@ const FAQPage: React.FC = () => {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-gray-50">
+                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-dancheong-ivory/40 backdrop-blur-sm">
                                             <AutoTranslatedText text={displayLocalized(faq.answer)} />
                                         </div>
                                     </motion.div>

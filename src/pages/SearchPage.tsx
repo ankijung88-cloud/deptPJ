@@ -111,7 +111,7 @@ const SearchPage: React.FC = () => {
     }, [products, notices, faqs, floors, pages, i18n.language]);
 
     return (
-        <div className="min-h-screen bg-white pt-32 pb-20 text-dancheong-ink">
+        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 text-dancheong-ink">
             <div className="lossless-layout">
                 {/* Search Header */}
                 <div className="mb-16">
@@ -166,9 +166,10 @@ const SearchPage: React.FC = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.05 }}
                                     onClick={() => navigate(result.link)}
-                                    className="group cursor-pointer"
+                                    className="group cursor-pointer relative"
                                 >
-                                    <div className="h-full bg-white border border-dancheong-ink/5 rounded-[32px] p-8 transition-all duration-500 hover:shadow-[0_30px_70px_rgba(0,0,0,0.06)] hover:-translate-y-2 flex flex-col">
+                                    <div className="absolute inset-0 bg-white/60 backdrop-blur-md rounded-3xl border border-dancheong-ink/5 shadow-2xl group-hover:border-dancheong-navy transition-all duration-500" />
+                                    <div className="relative p-8 flex flex-col h-full">
                                         <div className="flex items-start justify-between mb-8">
                                             <div className="px-3 py-1 bg-dancheong-mugwort/[0.07] border border-dancheong-mugwort/10 rounded-full">
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-dancheong-mugwort">

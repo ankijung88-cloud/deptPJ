@@ -32,7 +32,7 @@ const features = [
 
 export const LandingFeaturesSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-white flex flex-col items-center">
+        <section className="relative w-full py-24 px-6 bg-dancheong-ivory flex flex-col items-center">
             <div className="max-w-6xl mx-auto w-full">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -58,13 +58,13 @@ export const LandingFeaturesSection: React.FC = () => {
                             transition={{ delay: idx * 0.1, duration: 0.6 }}
                             className="heritage-card rounded-2xl p-8 shadow-sm group"
                         >
-                            <div className="mb-6 p-4 bg-[#171717]/5 rounded-full inline-block group-hover:scale-110 transition-transform duration-300">
+                            <div className="mb-6 p-4 bg-dancheong-ink/5 rounded-full inline-block group-hover:scale-110 transition-transform duration-300">
                                 {feature.icon}
                             </div>
-                            <h4 className="text-xl font-black text-[#171717] mb-3 tracking-wide">
+                            <h4 className="text-xl font-black text-dancheong-ink mb-3 tracking-wide">
                                 <AutoTranslatedText text={feature.title} />
                             </h4>
-                            <p className="text-[#171717]/70 text-sm leading-relaxed break-keep font-medium">
+                            <p className="text-dancheong-ink/70 text-sm leading-relaxed break-keep font-medium">
                                 <AutoTranslatedText text={feature.desc} />
                             </p>
                         </motion.div>

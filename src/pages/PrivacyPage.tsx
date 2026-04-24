@@ -8,7 +8,7 @@ const PrivacyPage: React.FC = () => {
     useTranslation();
 
     return (
-        <div className="min-h-screen bg-white text-dancheong-ink pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20">
             <div className="lossless-layout pt-32">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -39,7 +39,7 @@ const PrivacyPage: React.FC = () => {
                 </div>
 
                 {/* Content Section */}
-                <div className="max-w-4xl mx-auto bg-white border border-dancheong-ink/5 rounded-3xl p-8 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.03)] overflow-hidden relative">
+                <div className="max-w-4xl mx-auto bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-3xl p-8 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.03)] overflow-hidden relative">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                         <Eye size={300} className="text-dancheong-ink" />
                     </div>
