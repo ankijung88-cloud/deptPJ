@@ -49,7 +49,7 @@ const InspirationPage: React.FC = () => {
                             </span>
                         </div>
                         <div className="flex gap-4 items-center pl-14 opacity-40">
-                            <span className="text-[8px] font-mono tracking-widest uppercase">DEPART / Archive V3.0</span>
+                            <span className="text-[8px] font-mono tracking-widest uppercase">몽땅쏙 / Archive V3.0</span>
                             <div className="w-1 h-1 rounded-full bg-dancheong-ink/20" />
                             <span className="text-[8px] font-mono tracking-widest uppercase">Traditional Contemporary Harmony</span>
                         </div>
@@ -84,7 +84,7 @@ const InspirationPage: React.FC = () => {
                     </div>
 
                     <p className="max-w-2xl text-xl text-dancheong-ink/80 font-light leading-relaxed pl-1 border-l-2 border-dancheong-ink/20 ml-1">
-                        <AutoTranslatedText text="Discover the vertical narrative of DEPART. Each floor represents a curated sanctuary where tradition meets contemporary innovation." />
+                        <AutoTranslatedText text="Discover the vertical narrative of 몽땅쏙. Each floor represents a curated sanctuary where tradition meets contemporary innovation." />
                     </p>
                 </header>
 
@@ -228,7 +228,7 @@ const InspirationPage: React.FC = () => {
                     <BrandLogo size={60} color="#4F6D5B" className="opacity-40 hover:opacity-100 transition-opacity" />
                     
                     <div className="font-mono text-[10px] tracking-[0.2em] text-right hidden md:block">
-                        <p>© 2026 DEPART ARCHIVE</p>
+                        <p>© 2026 몽땅쏙 ARCHIVE</p>
                         <p>SOLID SURFACE INTERFACE</p>
                     </div>
                 </footer>

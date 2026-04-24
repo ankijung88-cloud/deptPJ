@@ -9,8 +9,8 @@ import { FAQ } from '../types';
 const FAQ_DATA = [
     {
         id: '1',
-        question: 'DEPART의 운영 시간은 어떻게 되나요?',
-        answer: '저희 DEPART은 연중무휴로 오전 10시 30분부터 오후 8시까지 운영됩니다. 다만, 특별 행사가 있는 경우 운영 시간이 조정될 수 있으니 공지사항을 확인해 주시기 바랍니다.'
+        question: '몽땅쏙의 운영 시간은 어떻게 되나요?',
+        answer: '저희 몽땅쏙은 연중무휴로 오전 10시 30분부터 오후 8시까지 운영됩니다. 다만, 특별 행사가 있는 경우 운영 시간이 조정될 수 있으니 공지사항을 확인해 주시기 바랍니다.'
     },
     {
         id: '2',
@@ -20,12 +20,12 @@ const FAQ_DATA = [
     {
         id: '3',
         question: '멤버십 혜택은 무엇인가요?',
-        answer: 'DEPART 멤버십 회원이 되시면 모든 상품 구매 시 3% 포인트 적립, 생일 당일 10% 할인 쿠폰 발급, 그리고 시즌별 한정품 우선 구매권 등의 혜택을 누리실 수 있습니다.'
+        answer: '몽땅쏙 멤버십 회원이 되시면 모든 상품 구매 시 3% 포인트 적립, 생일 당일 10% 할인 쿠폰 발급, 그리고 시즌별 한정품 우선 구매권 등의 혜택을 누리실 수 있습니다.'
     },
     {
         id: '4',
         question: '상품권 사용이 가능한가요?',
-        answer: '네, 문화상품권, 백화점 상품권(신세계/롯데/현대) 및 DEPART 전용 디지털 기프트카드를 모두 사용하실 수 있습니다.'
+        answer: '네, 문화상품권, 백화점 상품권(신세계/롯데/현대) 및 몽땅쏙 전용 디지털 기프트카드를 모두 사용하실 수 있습니다.'
     },
     {
         id: '5',
@@ -83,7 +83,7 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-white text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -159,7 +159,7 @@ const FAQPage: React.FC = () => {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-dancheong-ivory/50">
+                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-gray-50">
                                             <AutoTranslatedText text={displayLocalized(faq.answer)} />
                                         </div>
                                     </motion.div>

@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <footer className="bg-dancheong-ivory text-dancheong-ink/80 py-24 relative overflow-hidden border-t border-dancheong-ink/10">
+        <footer className="bg-white text-dancheong-ink/80 py-24 relative overflow-hidden border-t border-dancheong-ink/10">
             <div className="lossless-layout relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
 
@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
                             <div className="space-y-4">
                                 <span className="text-[10px] font-black tracking-[0.5em] text-[#171717] uppercase block"><AutoTranslatedText text="Essence" /></span>
                                 <h2 className="text-3xl font-serif font-black text-[#171717] tracking-widest uppercase">
-                                    DEPART
+                                    몽땅쏙
                                 </h2>
                             </div>
                         </div>

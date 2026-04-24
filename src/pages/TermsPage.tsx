@@ -8,7 +8,7 @@ const TermsPage: React.FC = () => {
     useTranslation();
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20">
+        <div className="min-h-screen bg-white text-dancheong-ink pb-20">
             <div className="lossless-layout pt-32">
                 {/* Header Section */}
                 <div className="text-center mb-16">
@@ -34,7 +34,7 @@ const TermsPage: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-dancheong-ink/50 max-w-2xl mx-auto italic font-light text-lg"
                     >
-                        <AutoTranslatedText text="DEPART 서비스 이용에 관한 권리와 책임을 안내해 드립니다." />
+                        <AutoTranslatedText text="몽땅쏙 서비스 이용에 관한 권리와 책임을 안내해 드립니다." />
                     </motion.p>
                 </div>
 
@@ -47,7 +47,7 @@ const TermsPage: React.FC = () => {
                     <div className="relative z-10 space-y-12 text-dancheong-ink/70 leading-relaxed font-light">
                         <section className="space-y-6">
                             <h2 className="text-2xl font-serif font-bold text-dancheong-ink border-b border-dancheong-ink/5 pb-4"><AutoTranslatedText text="제 1 조 (목적)" /></h2>
-                            <p className="text-lg"><AutoTranslatedText text="본 약관은 DEPART(이하 '회사')가 운영하는 웹사이트 및 관련 서비스를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다." /></p>
+                            <p className="text-lg"><AutoTranslatedText text="본 약관은 몽땅쏙(이하 '회사')가 운영하는 웹사이트 및 관련 서비스를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다." /></p>
                         </section>
 
                         <section className="space-y-6">

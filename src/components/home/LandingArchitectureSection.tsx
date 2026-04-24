@@ -32,7 +32,7 @@ const archFeatures = [
 
 export const LandingArchitectureSection: React.FC = () => {
     return (
-        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center border-t border-dancheong-ink/5">
+        <section className="relative w-full py-32 px-6 bg-white flex flex-col items-center border-t border-dancheong-ink/5">
             <div className="max-w-6xl mx-auto w-full relative z-10">
                 <div className="flex flex-col lg:flex-row gap-16 items-start">
                     

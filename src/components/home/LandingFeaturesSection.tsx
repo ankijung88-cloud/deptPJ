@@ -32,7 +32,7 @@ const features = [
 
 export const LandingFeaturesSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-dancheong-ivory flex flex-col items-center">
+        <section className="relative w-full py-24 px-6 bg-white flex flex-col items-center">
             <div className="max-w-6xl mx-auto w-full">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

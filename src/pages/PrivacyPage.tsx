@@ -8,7 +8,7 @@ const PrivacyPage: React.FC = () => {
     useTranslation();
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20">
+        <div className="min-h-screen bg-white text-dancheong-ink pb-20">
             <div className="lossless-layout pt-32">
                 {/* Header Section */}
                 <div className="text-center mb-16">

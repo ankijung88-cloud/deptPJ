@@ -202,7 +202,7 @@ export const getComplementaryColor = (hex: string): string => {
 
 export const DEFAULT_THEME: JoseonTheme = buildTheme([
     '#FFFFFF', '#4F6D5B', '#1A2944', 'rgba(79,109,91,0.2)',
-    '#FFFFFF', '#FFFFFF', '#4F6D5B22', '#1A294433', '#171717', 'DEPART (Default)'
+    '#FFFFFF', '#FFFFFF', '#4F6D5B22', '#1A294433', '#171717', '몽땅쏙 (Default)'
 ]);
 
 function hashString(s: string): number {

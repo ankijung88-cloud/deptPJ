@@ -111,7 +111,7 @@ const SearchPage: React.FC = () => {
     }, [products, notices, faqs, floors, pages, i18n.language]);
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 text-dancheong-ink">
+        <div className="min-h-screen bg-white pt-32 pb-20 text-dancheong-ink">
             <div className="lossless-layout">
                 {/* Search Header */}
                 <div className="mb-16">
@@ -190,7 +190,7 @@ const SearchPage: React.FC = () => {
                                             <div className="flex items-center gap-2">
                                                 <Archive size={12} className="text-dancheong-ink/20" />
                                                 <span className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-tighter">
-                                                    DEPART ARCHIVE
+                                                    몽땅쏙 ARCHIVE
                                                 </span>
                                             </div>
                                             {result.date && (

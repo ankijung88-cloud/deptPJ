@@ -961,7 +961,7 @@ const BlueprintBuilding = ({ floors, selectedFloor, hoveredFloor, activeModalFlo
                                 >
                                     <div className="flex flex-col gap-1">
                                         <span style={{ fontSize: '7px', color: '#fff', fontWeight: '900', letterSpacing: '0.4em' }}><AutoTranslatedText text="STRUCTURAL FRAGMENT" /></span>
-                                        <span style={{ fontSize: '8px', color: activeFloorData.color, fontWeight: 'bold' }}>CODE: DEPT_FR_0{activeFloorData.floor}</span>
+                                        <span style={{ fontSize: '8px', color: activeFloorData.color, fontWeight: 'bold' }}>CODE: MTSS_FR_0{activeFloorData.floor}</span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: activeFloorData.color, fontWeight: '900', fontSize: '12px', whiteSpace: 'nowrap' }}>
                                         <span style={{ fontSize: '18px', lineHeight: 1 }}>→</span>
@@ -1166,7 +1166,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
                 <div className="mt-4 pt-8 border-t border-white/10 flex items-center justify-between">
                     <div className="flex flex-col gap-1 opacity-50">
                         <span className="text-[8px] font-mono font-bold text-white tracking-[0.2em] uppercase"><AutoTranslatedText text="Structural Fragment" /></span>
-                        <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: DEPT_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
+                        <span className="text-[8px] font-mono text-[#00FFC2] tracking-[0.1em]">CODE: MTSS_FR_{activeFloorData.floor.replace(/\D/g, '')}</span>
                     </div>
 
                     <button
@@ -1288,7 +1288,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
             <div className="absolute top-8 left-8 md:top-12 md:left-12 z-[1100] pointer-events-none">
                 <img
                     src="/DEPT_Logo.png"
-                    alt="DEPART Logo"
+                    alt="몽땅쏙 Logo"
                     className="h-16 md:h-20 w-auto drop-shadow-[0_0_15px_rgba(0,255,194,0.3)] opacity-80"
                 />
             </div>

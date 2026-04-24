@@ -25,7 +25,7 @@ const AgencyRegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+        <div className="min-h-screen bg-white pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
             <div className="lossless-layout">
                 {/* Header Context */}
                 <div className="max-w-4xl mx-auto mb-20 text-center">
@@ -51,7 +51,7 @@ const AgencyRegisterPage: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-xl text-dancheong-ink/40 font-light italic leading-relaxed max-w-2xl mx-auto"
                     >
-                        <AutoTranslatedText text="DEPART와 함께 새로운 브랜드 가치를 창출하고 글로벌 시장으로의 확장을 준비하십시오. 귀사의 기록은 DEPART의 아카이브에 영구히 보존됩니다." />
+                        <AutoTranslatedText text="몽땅쏙과 함께 새로운 브랜드 가치를 창출하고 글로벌 시장으로의 확장을 준비하십시오. 귀사의 기록은 몽땅쏙의 아카이브에 영구히 보존됩니다." />
                     </motion.p>
                 </div>
 

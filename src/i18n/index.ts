@@ -22,14 +22,14 @@ const resources = {
             },
 
             "hero": {
-                "title_main": "DEPART",
+                "title_main": "몽땅쏙",
                 "description": "별도의 앱 설치 없이 웹 브라우저에서 바로 경험하는 프리미엄 3D 비즈니스 플랫폼. 기업과 브랜드를 위한 통합 가상 오피스 및 쇼룸을 마우스 클릭으로 직관적으로 구축하고 탐험해 보세요.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
                 "philosophy": "모집 공고",
-                "welcome": "Welcome to DEPART",
-                "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, DEPART입니다.",
+                "welcome": "Welcome to 몽땅쏙",
+                "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, 몽땅쏙입니다.",
                 "start": "시작하기"
             },
             "subcategory": {
@@ -70,12 +70,12 @@ const resources = {
                 "f6_tour": "지역의 숨겨진 보석 같은 이야기들을 따라가는 역사와 문화의 여정입니다."
             },
             "brand_vision": {
-                "masthead": "DEPART VISIONARY",
+                "masthead": "몽땅쏙 VISIONARY",
                 "headline": "디지털 비즈니스의 새로운 지평: 시공간을 초월한 혁신",
                 "subheadline": "우리는 단순한 가상 공간을 넘어, 가상융합(XR) 및 첨단기술 창업가들이 직접 모이고 성장하는 압도적인 비즈니스 허브를 구축합니다.",
-                "metadata": "SPECIAL REPORT | DEPART OPERATION TEAM",
-                "body_intro": "DEPART은 단순한 3D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
-                "body_philosophy": "투명하게 비치는 유리 너머로 시야가 확장되듯, DEPART의 글래스모피즘(Glassmorphism) UI는 한계 없는 아이디어의 확장을 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
+                "metadata": "SPECIAL REPORT | 몽땅쏙 OPERATION TEAM",
+                "body_intro": "몽땅쏙은 단순한 3D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
+                "body_philosophy": "투명하게 비치는 유리 너머로 시야가 확장되듯, 몽땅쏙의 글래스모피즘(Glassmorphism) UI는 한계 없는 아이디어의 확장을 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
                 "body_future": "오프라인 지정 사무공간의 효율성과 온라인 가상 플랫폼의 무한한 네트워크를 빈틈없이 동기화하는 '하이브리드 워크플레이스'의 새로운 기준입니다. 기술은 도구를 넘어 살아 숨 쉬는 유기적 성장의 원동력이 될 것입니다.",
                 "body_essential": "빠르게 변화하는 시장 환경 속에서, 스타트업과 창업가들은 오직 혁신에만 집중해야 합니다. 사업자 단위의 비상주 오피스부터 프리미엄 3D 비즈니스 캔버스 지원까지, 우리는 혁신가들의 도약을 위한 가장 완벽한 베이스캠프이자 필수 불가결한 엑셀러레이터입니다.",
                 "pull_quote": "성장하는 기업을 위한 제약 없는 3D 캔버스, 시공간을 초월한 혁신적 비즈니스 생태계.",
@@ -83,7 +83,7 @@ const resources = {
             },
             "footer": {
                 "address": "서울특별시 중구 소공로 123",
-                "copyright": "© 2026 DEPART. All rights reserved.",
+                "copyright": "© 2026 몽땅쏙. All rights reserved.",
                 "privacy": "개인정보처리방침",
                 "terms": "이용약관",
                 "shop": "SHOP",
@@ -323,13 +323,13 @@ const resources = {
                 "placeholder": "Search..."
             },
             "hero": {
-                "title_main": "DEPART",
+                "title_main": "몽땅쏙",
                 "description": "A premium 3D business platform experienced directly in your web browser without installing any apps. Intuitively build and explore integrated virtual offices and showrooms for enterprises and brands with a single click.",
                 "warping": "Warping...",
                 "explore": "Explore",
                 "story": "Partner Login",
                 "philosophy": "Philosophy",
-                "welcome": "Welcome to DEPART",
+                "welcome": "Welcome to 몽땅쏙",
                 "start": "Get Started"
             },
             "subcategory": {

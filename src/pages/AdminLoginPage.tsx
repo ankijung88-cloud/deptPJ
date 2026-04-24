@@ -33,7 +33,7 @@ const AdminLoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory flex relative overflow-hidden font-serif selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+        <div className="min-h-screen bg-white flex relative overflow-hidden font-serif selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
             {/* Heritage Decorative Elements */}
             <div className="absolute top-0 left-0 w-full h-2 bg-dancheong-mugwort/20" />
             <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
@@ -58,7 +58,7 @@ const AdminLoginPage: React.FC = () => {
                             transition={{ delay: 0.1 }}
                             className="text-xl text-dancheong-ink/40 font-light italic leading-relaxed"
                         >
-                            <AutoTranslatedText text="본 시스템은 DEPART 플랫폼의 아카이브 및 큐레이션을 관리하기 위한 통합 관리자 환경입니다. 인가된 사용자만 접근이 가능합니다." />
+                            <AutoTranslatedText text="본 시스템은 몽땅쏙 플랫폼의 아카이브 및 큐레이션을 관리하기 위한 통합 관리자 환경입니다. 인가된 사용자만 접근이 가능합니다." />
                         </motion.p>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ const AdminLoginPage: React.FC = () => {
                     </div>
                     <div className="w-px h-12 bg-dancheong-ink/5" />
                     <div className="text-[10px] font-black uppercase tracking-[0.4em] text-dancheong-ink/20 leading-loose">
-                        © 2024 DEPART HERITAGE<br />ALL RIGHTS RESERVED.
+                        © 2024 몽땅쏙 HERITAGE<br />ALL RIGHTS RESERVED.
                     </div>
                 </div>
             </div>

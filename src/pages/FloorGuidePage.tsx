@@ -21,7 +21,7 @@ const FloorGuidePage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center">
+            <div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-dancheong-mugwort"></div>
             </div>
         );
@@ -29,7 +29,7 @@ const FloorGuidePage: React.FC = () => {
 
     if (!floorData) {
         return (
-            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center flex-col gap-8">
+            <div className="min-h-screen bg-white flex items-center justify-center flex-col gap-8">
                 <div className="w-20 h-20 bg-dancheong-ink/10 rounded-full flex items-center justify-center">
                     <Archive size={32} className="text-dancheong-ink/20" />
                 </div>
@@ -42,7 +42,7 @@ const FloorGuidePage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20 pt-32">
+        <div className="min-h-screen bg-white text-dancheong-ink pb-20 pt-32">
             <div className="lossless-layout">
                 <header>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pb-16">

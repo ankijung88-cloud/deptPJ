@@ -4,7 +4,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const LandingRecruitmentSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-dancheong-ivory flex flex-col items-center">
+        <section className="relative w-full py-24 px-6 bg-white flex flex-col items-center">
             <div className="w-full max-w-6xl mx-auto relative z-10">
                 {/* Background Details */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -21,7 +21,7 @@ export const LandingRecruitmentSection: React.FC = () => {
                         <AutoTranslatedText text="가상오피스 지원 및 입주기업 모집공고" />
                     </h2>
                     <p className="text-[#171717] opacity-80 mt-4 max-w-3xl text-sm md:text-lg break-keep leading-relaxed font-black">
-                        <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. DEPART의 프리미엄 3D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
+                        <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. 몽땅쏙의 프리미엄 3D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
                     </p>
                 </motion.div>
 
@@ -76,10 +76,10 @@ export const LandingRecruitmentSection: React.FC = () => {
                                         <td className="py-6 px-6 font-black whitespace-nowrap"><AutoTranslatedText text="프리미엄 공간지원" /></td>
                                         <td className="py-6 px-6 text-[#171717] whitespace-nowrap font-black"><AutoTranslatedText text="총 4개 호실 (4~8인실)" /></td>
                                         <td className="py-6 px-6 text-[#171717] whitespace-nowrap font-black"><AutoTranslatedText text="저렴한 기본 임차료/VAT" /></td>
-                                        <td className="py-6 px-6 text-[#171717] break-keep font-black"><AutoTranslatedText text="DEPART 등의 오프라인 지정 사무공간 지원 (일부 실사용료만 납부)" /></td>
+                                        <td className="py-6 px-6 text-[#171717] break-keep font-black"><AutoTranslatedText text="몽땅쏙 등의 오프라인 지정 사무공간 지원 (일부 실사용료만 납부)" /></td>
                                     </tr>
                                     <tr className="bg-[#003140]/[0.05] hover:bg-[#003140]/[0.1] transition-colors">
-                                        <td className="py-6 px-6 font-black text-[#003140] whitespace-nowrap"><AutoTranslatedText text="DEPART 가상오피스" /></td>
+                                        <td className="py-6 px-6 font-black text-[#003140] whitespace-nowrap"><AutoTranslatedText text="몽땅쏙 가상오피스" /></td>
                                         <td className="py-6 px-6 text-[#003140] font-black whitespace-nowrap"><AutoTranslatedText text="10개사 내외" /></td>
                                         <td className="py-6 px-6 font-black text-[#4F6D5B] whitespace-nowrap"><AutoTranslatedText text="전액 무상" /></td>
                                         <td className="py-6 px-6 text-[#003140] font-black break-keep"><AutoTranslatedText text="사업자등록용 비상주 주소지 사용권, 브랜드 전용 3D 가상 스페이스 환경 및 회의실 등 인프라 지원" /></td>

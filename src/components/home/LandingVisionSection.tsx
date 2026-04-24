@@ -4,7 +4,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const LandingVisionSection: React.FC = () => {
     return (
-        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center justify-center overflow-hidden">
+        <section className="relative w-full py-32 px-6 bg-white flex flex-col items-center justify-center overflow-hidden">
             {/* Background elements */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 <div className="absolute top-[20%] left-[-10%] w-[50%] h-[50%] bg-dancheong-mugwort/5 blur-[150px] rounded-full" />
@@ -22,7 +22,7 @@ export const LandingVisionSection: React.FC = () => {
                         <AutoTranslatedText text="ENTERPRISE METAVERSE SOLUTION" />
                     </h2>
                     <p className="text-lg md:text-2xl text-dancheong-ink/70 leading-relaxed font-light max-w-3xl mx-auto break-keep">
-                        <AutoTranslatedText text="DEPART는 단순한 가상 공간 전시를 넘어, 시간과 공간의 제약을 없애고 완벽한 몰입감의 프라이빗 웹 기반 인프라를 제공하는 차세대 비즈니스 공간 솔루션입니다." />
+                        <AutoTranslatedText text="몽땅쏙은 단순한 가상 공간 전시를 넘어, 시간과 공간의 제약을 없애고 완벽한 몰입감의 프라이빗 웹 기반 인프라를 제공하는 차세대 비즈니스 공간 솔루션입니다." />
                     </p>
                 </motion.div>
             </div>

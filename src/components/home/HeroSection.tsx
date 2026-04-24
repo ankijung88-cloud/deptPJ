@@ -64,7 +64,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
 
 
     return (
-        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-dancheong-ivory`}>
+        <section className={`${phase !== 'hero' ? 'fixed inset-0 z-50' : 'relative h-screen w-full overflow-hidden'} flex items-center justify-center bg-white`}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key="hero-content"
@@ -98,7 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         >
                             <img
                                 src="/sample.png"
-                                alt="DEPART Logo"
+                                alt="몽땅쏙 Logo"
                                 className="h-32 w-auto grayscale contrast-125 brightness-75 opacity-80"
                             />
                         </motion.div>
@@ -107,7 +107,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ externalTrigger }) => 
                         <motion.h1
                             className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-dancheong-ink"
                         >
-                            DEPART
+                            몽땅쏙
                         </motion.h1>
 
                         <motion.p

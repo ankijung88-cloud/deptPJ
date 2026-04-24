@@ -199,7 +199,7 @@ const SubCategoryPage: React.FC = () => {
 
     if (!parentFloor) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-dancheong-ivory p-20 text-center">
+            <div className="min-h-screen flex items-center justify-center bg-white p-20 text-center">
                 <div className="max-w-md">
                     <h2 className="text-3xl font-black text-dancheong-ink mb-4">Content Not Found</h2>
                     <p className="text-dancheong-ink/40 mb-8 italic">The requested category could not be located in our current archives.</p>
@@ -456,7 +456,7 @@ const SubCategoryPage: React.FC = () => {
                             {subcategoryData?.id.substring(0, 2).toUpperCase() || 'FF'}
                         </div>
                         <div className="text-xs font-bold tracking-widest uppercase" style={{ color: theme.textMuted }}>
-                            <AutoTranslatedText text="DEPART Curation Policy V1.0 - Selection Based on Timeless Aesthetics" />
+                            <AutoTranslatedText text="몽땅쏙 Curation Policy V1.0 - Selection Based on Timeless Aesthetics" />
                         </div>
                     </div>
                     <button
