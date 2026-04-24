@@ -27,18 +27,14 @@ const InspirationPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
+            <div className="min-h-screen bg-[#ffffff] flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-dancheong-mugwort"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#FDFBF7] text-dancheong-ink font-sans selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink overflow-x-hidden">
-            {/* Ambient Background Paper Texture Pattern */}
-            <div className="fixed inset-0 pointer-events-none opacity-[0.1]">
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#171717 0.5px, transparent 0.5px)', backgroundSize: '30px 30px' }} />
-            </div>
+        <div className="min-h-screen bg-white text-dancheong-ink font-sans selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink overflow-x-hidden">
 
             <main className="relative z-10 pt-32 pb-40 px-6 lg:px-12 max-w-[1400px] mx-auto">
                 <header className="mb-32 text-left relative">
@@ -123,10 +119,11 @@ const InspirationPage: React.FC = () => {
                                     {/* Floor Card */}
                                     <div className="flex-grow w-full md:w-auto">
                                         <div 
-                                            className={`p-8 md:p-12 transition-all duration-700 relative overflow-hidden flex flex-col md:flex-row justify-between gap-8 items-center ${isActive ? 'shadow-[0_20px_60px_rgba(23,23,23,0.1)] translate-y-[-8px]' : 'border-transparent'}`}
+                                            className={`p-8 md:p-12 rounded-[32px] transition-all duration-700 relative overflow-hidden flex flex-col md:flex-row justify-between gap-8 items-center ${isActive ? 'shadow-[0_20px_60px_rgba(23,23,23,0.1)] translate-y-[-8px]' : 'border-transparent'}`}
                                             style={{ 
-                                                backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                                                border: isActive ? `2px solid ${floor.color}` : '1px solid transparent'
+                                                backgroundColor: isActive ? 'rgba(255, 255, 255, 0.5)' : 'transparent',
+                                                border: isActive ? `2px solid ${floor.color}` : '1px solid transparent',
+                                                backdropFilter: isActive ? 'blur(10px)' : 'none'
                                             }}
                                         >
                                             <div className="relative z-10 max-w-xl text-center md:text-left">
@@ -145,8 +142,8 @@ const InspirationPage: React.FC = () => {
                                                                 transition={{ duration: 0.3 }}
                                                                 className="flex flex-wrap justify-center md:justify-start gap-3"
                                                             >
-                                                                {floor.subitems?.slice(0, 5).map((sub) => (
-                                                                    <span key={sub.id} className="text-[10px] tracking-widest font-black uppercase py-2 px-4 border-2 border-[#171717]/40 text-[#171717]/80">
+                                                                 {floor.subitems?.slice(0, 5).map((sub) => (
+                                                                    <span key={sub.id} className="text-[10px] tracking-widest font-black uppercase py-2 px-4 border-2 border-[#171717]/40 text-[#171717]/80 rounded-xl hover:bg-dancheong-ink/5 transition-colors">
                                                                         <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                                     </span>
                                                                 ))}

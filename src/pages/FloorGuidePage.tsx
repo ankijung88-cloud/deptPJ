@@ -42,7 +42,7 @@ const FloorGuidePage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-[#F5F4F0] to-[#EAE8E3] text-dancheong-ink pb-20 pt-32">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20 pt-32">
             <div className="lossless-layout">
                 <header>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pb-16">
@@ -93,7 +93,7 @@ const FloorGuidePage: React.FC = () => {
                                     <Building size={160} className="text-dancheong-ink" />
                                 </div>
 
-                                <div className="w-full md:w-[40%] aspect-square rounded-[32px] overflow-hidden bg-dancheong-ivory relative">
+                                <div className="w-full md:w-[40%] aspect-square rounded-[32px] overflow-hidden bg-dancheong-ivory/50 backdrop-blur-sm relative">
                                     <img 
                                         src={sub.bgImage || '/placeholder_floor.jpg'} 
                                         alt={getLocalizedText(sub.label, i18n.language)}

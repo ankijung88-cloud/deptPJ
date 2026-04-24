@@ -52,76 +52,76 @@ type PaletteData = [
 
 const JOSEON_PALETTE_DATA: PaletteData[] = [
     // 1. 내금위 (Royal Guard) — crimson & gold
-    ['#FDFBF7', '#A12D27', '#FF5252', 'rgba(161,45,39,0.2)',
-        '#F5F5DC', '#FDFBF7', '#A12D2722', '#FFD700', '#FF8A80', '내금위 (Royal Guard)'],
+    ['#FFFFFF', '#A12D27', '#FF5252', 'rgba(161,45,39,0.2)',
+        '#FFFFFF', '#FFFFFF', '#A12D2722', '#FFD700', '#FF8A80', '내금위 (Royal Guard)'],
 
     // 2. 관복 (Officer Blue) — deep indigo & sky
-    ['#FDFBF7', '#1A2944', '#7DD3FC', 'rgba(26,41,68,0.2)',
-        '#F5F5DC', '#FDFBF7', '#1A294422', '#E0F2FE', '#0EA5E9', '관복 (Officer Blue)'],
+    ['#FFFFFF', '#1A2944', '#7DD3FC', 'rgba(26,41,68,0.2)',
+        '#FFFFFF', '#FFFFFF', '#1A294422', '#E0F2FE', '#0EA5E9', '관복 (Officer Blue)'],
 
     // 3. 선비 (Scholar) — forest jade
-    ['#FDFBF7', '#4F6D5B', '#34D399', 'rgba(79,109,91,0.2)',
-        '#F5F5DC', '#FDFBF7', '#4F6D5B22', '#A7F3D0', '#059669', '선비 (Scholar Green)'],
+    ['#FFFFFF', '#4F6D5B', '#34D399', 'rgba(79,109,91,0.2)',
+        '#FFFFFF', '#FFFFFF', '#4F6D5B22', '#A7F3D0', '#059669', '선비 (Scholar Green)'],
 
     // 4. 왕실 (Royal Court) — purple & lilac
-    ['#FDFBF7', '#6D28D9', '#C084FC', 'rgba(109,40,217,0.2)',
-        '#F5F5DC', '#FDFBF7', '#6D28D922', '#E9D5FF', '#7C3AED', '왕실 (Royal Purple)'],
+    ['#FFFFFF', '#6D28D9', '#C084FC', 'rgba(109,40,217,0.2)',
+        '#FFFFFF', '#FFFFFF', '#6D28D922', '#E9D5FF', '#7C3AED', '왕실 (Royal Purple)'],
 
     // 5. 포수 (Hunter) — warm earth & amber
-    ['#FDFBF7', '#B45309', '#FCD34D', 'rgba(180,83,9,0.2)',
-        '#F5F5DC', '#FDFBF7', '#B4530922', '#FEF3C7', '#D97706', '포수 (Hunter Amber)'],
+    ['#FFFFFF', '#B45309', '#FCD34D', 'rgba(180,83,9,0.2)',
+        '#FFFFFF', '#FFFFFF', '#B4530922', '#FEF3C7', '#D97706', '포수 (Hunter Amber)'],
 
     // 6. 묵서 (Ink Calligraphy) — charcoal & silver
-    ['#FDFBF7', '#171717', '#E5E5E5', 'rgba(23,23,23,0.2)',
-        '#F5F5DC', '#FDFBF7', '#17171722', '#F5F5F5', '#6B7280', '묵서 (Ink & Silver)'],
+    ['#FFFFFF', '#171717', '#E5E5E5', 'rgba(23,23,23,0.2)',
+        '#FFFFFF', '#FFFFFF', '#17171722', '#F5F5F5', '#6B7280', '묵서 (Ink & Silver)'],
 
     // 7. 해군 (Navy Strategist) — teal & cyan
-    ['#FDFBF7', '#0891B2', '#67E8F9', 'rgba(8,145,178,0.2)',
-        '#F5F5DC', '#FDFBF7', '#0891B222', '#CFFAFE', '#0891B2', '해군 (Ocean Strategy)'],
+    ['#FFFFFF', '#0891B2', '#67E8F9', 'rgba(8,145,178,0.2)',
+        '#FFFFFF', '#FFFFFF', '#0891B222', '#CFFAFE', '#0891B2', '해군 (Ocean Strategy)'],
 
     // 8. 후궁 (Inner Palace) — plum & rose
-    ['#FDFBF7', '#C026D3', '#F0ABFC', 'rgba(192,38,211,0.2)',
-        '#F5F5DC', '#FDFBF7', '#C026D322', '#FAE8FF', '#C026D3', '후궁 (Inner Palace)'],
+    ['#FFFFFF', '#C026D3', '#F0ABFC', 'rgba(192,38,211,0.2)',
+        '#FFFFFF', '#FFFFFF', '#C026D322', '#FAE8FF', '#C026D3', '후궁 (Inner Palace)'],
 
     // 9. 학자 (Jade Scholar) — emerald & mint
-    ['#FDFBF7', '#059669', '#6EE7B7', 'rgba(5,150,105,0.2)',
-        '#F5F5DC', '#FDFBF7', '#05966922', '#D1FAE5', '#059669', '학자 (Jade Scholar)'],
+    ['#FFFFFF', '#059669', '#6EE7B7', 'rgba(5,150,105,0.2)',
+        '#FFFFFF', '#FFFFFF', '#05966922', '#D1FAE5', '#059669', '학자 (Jade Scholar)'],
 
     // 10. 무장 (Warrior) — copper & fire
-    ['#FDFBF7', '#EA580C', '#FCA369', 'rgba(234,88,12,0.2)',
-        '#F5F5DC', '#FDFBF7', '#EA580C22', '#FFEDD5', '#EA580C', '무장 (Warrior Copper)'],
+    ['#FFFFFF', '#EA580C', '#FCA369', 'rgba(234,88,12,0.2)',
+        '#FFFFFF', '#FFFFFF', '#EA580C22', '#FFEDD5', '#EA580C', '무장 (Warrior Copper)'],
 
     // 11. 야간 (Night Sky) — deep indigo
-    ['#FDFBF7', '#4338CA', '#818CF8', 'rgba(67,56,202,0.2)',
-        '#F5F5DC', '#FDFBF7', '#4338CA22', '#E0E7FF', '#4338CA', '야간 (Night Sky)'],
+    ['#FFFFFF', '#4338CA', '#818CF8', 'rgba(67,56,202,0.2)',
+        '#FFFFFF', '#FFFFFF', '#4338CA22', '#E0E7FF', '#4338CA', '야간 (Night Sky)'],
 
     // 12. 대나무 (Bamboo Grove) — lime & sage
-    ['#FDFBF7', '#65A30D', '#A3E635', 'rgba(101,163,13,0.2)',
-        '#F5F5DC', '#FDFBF7', '#65A30D22', '#ECFCCB', '#65A30D', '대나무 (Bamboo Grove)'],
+    ['#FFFFFF', '#65A30D', '#A3E635', 'rgba(101,163,13,0.2)',
+        '#FFFFFF', '#FFFFFF', '#65A30D22', '#ECFCCB', '#65A30D', '대나무 (Bamboo Grove)'],
 
     // 13. 홍화 (Safflower Pink) — rose & coral
-    ['#FDFBF7', '#E11D48', '#FDA4AF', 'rgba(225,29,72,0.2)',
-        '#F5F5DC', '#FDFBF7', '#E11D4822', '#FFE4E6', '#E11D48', '홍화 (Safflower Pink)'],
+    ['#FFFFFF', '#E11D48', '#FDA4AF', 'rgba(225,29,72,0.2)',
+        '#FFFFFF', '#FFFFFF', '#E11D4822', '#FFE4E6', '#E11D48', '홍화 (Safflower Pink)'],
 
     // 14. 심해 (Deep Sea) — navy blue & aqua
-    ['#FDFBF7', '#0369A1', '#7DD3FC', 'rgba(3,105,161,0.2)',
-        '#F5F5DC', '#FDFBF7', '#0369A122', '#BAE6FD', '#0369A1', '심해 (Deep Sea)'],
+    ['#FFFFFF', '#0369A1', '#7DD3FC', 'rgba(3,105,161,0.2)',
+        '#FFFFFF', '#FFFFFF', '#0369A122', '#BAE6FD', '#0369A1', '심해 (Deep Sea)'],
 
     // 15. 청동 (Ancient Bronze) — deep amber & rust
-    ['#FDFBF7', '#B45309', '#F59E0B', 'rgba(180,83,9,0.2)',
-        '#F5F5DC', '#FDFBF7', '#B4530922', '#FEF3C7', '#B45309', '청동 (Ancient Bronze)'],
+    ['#FFFFFF', '#B45309', '#F59E0B', 'rgba(180,83,9,0.2)',
+        '#FFFFFF', '#FFFFFF', '#B4530922', '#FEF3C7', '#B45309', '청동 (Ancient Bronze)'],
 
     // 16. 신비 (Mystical) — violet & lavender
-    ['#FDFBF7', '#7C3AED', '#C084FC', 'rgba(124,58,237,0.2)',
-        '#F5F5DC', '#FDFBF7', '#7C3AED22', '#EDE9FE', '#7C3AED', '신비 (Mystical Violet)'],
+    ['#FFFFFF', '#7C3AED', '#C084FC', 'rgba(124,58,237,0.2)',
+        '#FFFFFF', '#FFFFFF', '#7C3AED22', '#EDE9FE', '#7C3AED', '신비 (Mystical Violet)'],
 
     // 17. 산천 (Mountain Stream) — teal & seafoam
-    ['#FDFBF7', '#0D9488', '#5EEAD4', 'rgba(13,148,136,0.2)',
-        '#F5F5DC', '#FDFBF7', '#0D948822', '#CCFBF1', '#0D9488', '산천 (Mountain Stream)'],
+    ['#FFFFFF', '#0D9488', '#5EEAD4', 'rgba(13,148,136,0.2)',
+        '#FFFFFF', '#FFFFFF', '#0D948822', '#CCFBF1', '#0D9488', '산천 (Mountain Stream)'],
 
     // 18. 전통 (Traditional Clay) — terracotta & beige
-    ['#FDFBF7', '#92400E', '#D4956A', 'rgba(146,64,14,0.2)',
-        '#F5F5DC', '#FDFBF7', '#92400E22', '#FDF8F0', '#92400E', '전통 (Traditional Clay)'],
+    ['#FFFFFF', '#92400E', '#D4956A', 'rgba(146,64,14,0.2)',
+        '#FFFFFF', '#FFFFFF', '#92400E22', '#FDF8F0', '#92400E', '전통 (Traditional Clay)'],
 ];
 
 // Compute relative luminance from hex to determine if text should be dark or light
@@ -201,8 +201,8 @@ export const getComplementaryColor = (hex: string): string => {
 };
 
 export const DEFAULT_THEME: JoseonTheme = buildTheme([
-    '#FDFBF7', '#4F6D5B', '#1A2944', 'rgba(79,109,91,0.2)',
-    '#F5F5DC', '#FDFBF7', '#4F6D5B22', '#1A294433', '#171717', 'DEPART (Default)'
+    '#FFFFFF', '#4F6D5B', '#1A2944', 'rgba(79,109,91,0.2)',
+    '#FFFFFF', '#FFFFFF', '#4F6D5B22', '#1A294433', '#171717', 'DEPART (Default)'
 ]);
 
 function hashString(s: string): number {

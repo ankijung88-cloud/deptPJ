@@ -21,10 +21,10 @@ export default {
                 'dancheong-vibrant-yellow': '#FFF100',
                 'dancheong-gold': '#D4AF37',
                 'dancheong-white': '#171717', // Swapped to Ink for primary text
-                'dancheong-ivory': '#FDFBF7', // Primary Background
+                'dancheong-ivory': '#F2E7D5', // Hanji-inspired Primary Background
                 'dancheong-beige': '#F5F5DC', // Secondary Background
                 'dancheong-ink': '#171717',   // Primary Text
-                'dancheong-deep-bg': '#FDFBF7', // Overwritten for global compatibility
+                'dancheong-deep-bg': '#F2E7D5', // Warm Hanji Background
                 'dancheong-deep-red': '#7A221E',
                 'dancheong-deep-green': '#1E2924',
                 'dancheong-border': 'rgba(23, 23, 23, 0.1)',

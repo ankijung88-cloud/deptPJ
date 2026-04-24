@@ -39,7 +39,7 @@ export const Layout: React.FC = () => {
     return (
         <div
             dir={isRTL ? 'rtl' : 'ltr'}
-            className="flex flex-col min-h-screen bg-dancheong-ivory text-dancheong-ink font-sans selection:bg-dancheong-mugwort selection:text-white"
+            className="flex flex-col min-h-screen bg-white text-dancheong-ink font-sans selection:bg-dancheong-mugwort selection:text-white"
         >
 
             {!hideHeader && !isImmersive && <Header />}

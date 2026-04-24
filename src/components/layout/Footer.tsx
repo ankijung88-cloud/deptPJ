@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <footer className="bg-dancheong-ivory text-dancheong-ink/80 py-24 relative overflow-hidden border-t-8 border-[#171717]">
+        <footer className="bg-dancheong-ivory text-dancheong-ink/80 py-24 relative overflow-hidden border-t border-dancheong-ink/10">
             <div className="lossless-layout relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
 
@@ -63,7 +63,7 @@ export const Footer: React.FC = () => {
                 </div>
 
                 {/* Business Info Bar */}
-                <div className="pt-12 border-t-4 border-[#171717] flex flex-col md:flex-row flex-wrap gap-x-8 gap-y-2 text-[10px] font-black text-[#171717] uppercase tracking-widest mb-8">
+                <div className="pt-12 border-t border-dancheong-ink/10 flex flex-col md:flex-row flex-wrap gap-x-8 gap-y-2 text-[10px] font-black text-[#171717] uppercase tracking-widest mb-8">
                     <span><AutoTranslatedText text={t('footer.representative')} /></span>
                     <span><AutoTranslatedText text={t('footer.business_id')} /></span>
                     <span><AutoTranslatedText text={t('footer.mail_order_id')} /></span>

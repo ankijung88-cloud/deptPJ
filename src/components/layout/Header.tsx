@@ -204,9 +204,11 @@ const Header: React.FC = () => {
             onMouseEnter={() => resetUiTimer()}
             onMouseLeave={() => resetUiTimer()}
             style={{
-                backgroundColor: isScrolled ? `${theme.bgColor}f8` : theme.bgColor,
-                boxShadow: isScrolled ? '0 10px 30px rgba(23,23,23,0.08)' : 'none',
-                borderBottom: `2px solid ${theme.borderColor}44`,
+                backgroundColor: isScrolled ? `rgba(255, 255, 255, 0.6)` : `rgba(242, 231, 213, 0.4)`,
+                backdropFilter: 'blur(16px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                boxShadow: isScrolled ? '0 10px 30px rgba(23,23,23,0.05)' : 'none',
+                borderBottom: `1px solid ${theme.borderColor}22`,
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s'
             }}
         >
@@ -251,7 +253,7 @@ const Header: React.FC = () => {
                                         <span
                                             className="font-black text-[18px] tracking-widest transition-colors duration-300"
                                             style={{
-                                                color: isActive ? '#FDFBF7' : '#171717',
+                                                color: isActive ? theme.bgColor : '#171717',
                                             }}
                                         >
                                             {floorNum}
@@ -267,7 +269,7 @@ const Header: React.FC = () => {
 
                                     <div
                                         className={`absolute top-full left-1/2 -translate-x-1/2 w-48 rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
-                                        style={{ backgroundColor: '#FDFBF7', borderTop: `2px solid ${theme.accentColor}`, border: `1px solid rgba(23,23,23,0.1)` }}
+                                        style={{ backgroundColor: theme.bgColor, borderTop: `2px solid ${theme.accentColor}`, border: `1px solid rgba(23,23,23,0.1)` }}
                                     >
                                         <div className="py-2 flex flex-col relative font-sans">
                                             {item.subitems.map((sub) => (

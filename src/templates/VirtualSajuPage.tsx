@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Sparkles, User, Calendar, Clock, Moon, Sun, Loader } from 'lucide-react';
+import { LogOut, Sparkles, User, Calendar, Clock, Moon, Sun, Loader, X, Maximize2 } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useImmersiveMode, useNavigationState } from '../context/NavigationActionContext';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -23,6 +23,15 @@ const VirtualSajuPage: React.FC = () => {
 
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -288,8 +297,14 @@ const VirtualSajuPage: React.FC = () => {
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="flex-1 bg-black/40 backdrop-blur-xl border border-white/5 p-10 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden"
+                            onClick={() => isMobile && result && setIsModalOpen(true)}
+                            className={`flex-1 bg-black/40 backdrop-blur-xl border border-white/5 p-10 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden ${isMobile && result ? 'cursor-pointer hover:bg-white/5 transition-colors active:scale-[0.98]' : ''}`}
                         >
+                            {isMobile && result && (
+                                <div className="absolute top-6 right-6 p-2 bg-white/5 rounded-full text-[#FFD700] animate-pulse">
+                                    <Maximize2 size={18} />
+                                </div>
+                            )}
                             {!result && !loading && (
                                 <div className="text-center opacity-30 flex flex-col items-center gap-4">
                                     <Moon size={48} className="text-[#FFD700] opacity-50" />
@@ -328,6 +343,49 @@ const VirtualSajuPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Mobile Result Modal */}
+                <AnimatePresence>
+                    {isModalOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 50 }}
+                            className="fixed inset-0 z-[100] bg-[#050505] flex flex-col overflow-hidden"
+                        >
+                            {/* Modal Header */}
+                            <div className="flex-shrink-0 p-6 flex justify-between items-center border-b border-white/10 bg-black/40 backdrop-blur-md">
+                                <div className="flex items-center gap-3">
+                                    <Sparkles size={20} className="text-[#FFD700]" />
+                                    <h2 className="text-xl font-bold text-white tracking-tight">
+                                        <span className="text-[#9C27B0]">{formData.name}</span>님 사주 풀이
+                                    </h2>
+                                </div>
+                                <button 
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            {/* Modal Content */}
+                            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                                <div className="max-w-[600px] mx-auto pb-20">
+                                    <div className="prose prose-invert prose-yellow max-w-none">
+                                        {renderMarkdown(result || '')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bottom Close Hint */}
+                            <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black to-transparent pointer-events-none">
+                                <p className="text-[10px] text-center text-white/30 uppercase tracking-[0.3em]">
+                                    Scroll to read all
+                                </p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </ErrorBoundary>
     );

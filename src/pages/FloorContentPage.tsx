@@ -23,7 +23,7 @@ const FloorContentPage: React.FC = () => {
     if (!floorData) return null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-[#F5F4F0] to-[#EAE8E3] text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Editorial Header */}
                 <header className="mb-24">
@@ -97,10 +97,10 @@ const FloorContentPage: React.FC = () => {
                                             <Calendar size={14} strokeWidth={2.5} />
                                             <span>{getLocalizedText(article.date, i18n.language) || 'Upcoming'}</span>
                                         </div>
-                                        <h3 className="text-3xl font-serif font-black text-[#171717] mb-6 group-hover:text-[#4F6D5B] transition-colors duration-500 leading-[1.1]">
+                                        <h3 className="text-3xl font-serif font-black text-[#171717] mb-6 group-hover:text-[#4F6D5B] transition-colors duration-500 leading-[1.1] text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.title, i18n.language)} />
                                         </h3>
-                                        <p className="text-[#171717] font-black opacity-80 leading-relaxed text-lg line-clamp-3 mb-10">
+                                        <p className="text-[#171717] font-black opacity-80 leading-relaxed text-lg line-clamp-3 mb-10 text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.description, i18n.language)} />
                                         </p>
                                         <div className="mt-auto flex items-center gap-4 text-[#171717]/50 group-hover:text-[#171717] transition-colors duration-500 font-black text-[11px] uppercase tracking-[0.3em]">
@@ -125,7 +125,7 @@ const FloorContentPage: React.FC = () => {
                         </p>
                         <button 
                             onClick={() => navigate('/floor-guide')}
-                            className="px-12 py-5 bg-[#171717] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#4F6D5B] transition-all shadow-xl"
+                            className="w-48 py-5 bg-[#171717] text-[#F2E7D5] font-black rounded-full hover:bg-[#4F6D5B] transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#171717]/20 tracking-[0.2em] uppercase disabled:opacity-50"
                         >
                             <AutoTranslatedText text="Back to Directory" />
                         </button>

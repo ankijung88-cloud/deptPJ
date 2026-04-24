@@ -172,8 +172,8 @@ export const HeroPortal3D: React.FC<{ velocity: MotionValue<number> }> = ({ velo
     return (
         <div className="absolute inset-0 z-0 bg-transparent">
             <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }} camera={{ position: [0, 0, 5], fov: 75 }}>
-                <ambientLight intensity={0.8} color="#FDFBF7" />
-                <pointLight position={[0, 0, 10]} intensity={2.0} color="#FDFBF7" />
+                <ambientLight intensity={0.8} color="#F2E7D5" />
+                <pointLight position={[0, 0, 10]} intensity={2.0} color="#F2E7D5" />
                 <StarPortal count={1500} velocity={velocity} />
             </Canvas>
         </div>
