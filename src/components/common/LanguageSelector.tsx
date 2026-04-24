@@ -44,11 +44,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const isFloating = variant === 'floating';
 
     return (
-        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed top-1/2 -translate-y-1/2 right-0 z-[10000]' : 'relative'}`}>
+        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed top-32 right-8 z-[10000]' : 'relative'}`}>
             <button
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${isFloating
-                    ? 'bg-black/40 backdrop-blur-xl border border-white/10 border-r-0 text-white hover:bg-black/60 shadow-2xl px-4 py-2 rounded-l-full'
+                    ? 'bg-zinc-900/80 backdrop-blur-xl border border-white/10 text-white hover:bg-zinc-800 shadow-2xl px-5 py-2.5 rounded-full'
                     : 'rounded-full text-[#171717]/80 hover:text-[#171717]'
                     }`}
             >
@@ -59,16 +59,16 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </button>
 
             {isMenuOpen && (
-                <div className={`absolute right-0 mt-4 bg-[#1A2420]/95 backdrop-blur-3xl border-t-2 border-dancheong-red shadow-[0_20px_60px_rgba(0,0,0,0.8)] p-4 z-[10000] transition-all duration-300 origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[320px] top-full rounded-l-xl rounded-r-none border-r-0' : 'w-[450px] top-full rounded-b-xl'
+                <div className={`absolute right-0 mt-4 bg-zinc-900 backdrop-blur-2xl border-t-2 border-dancheong-red shadow-[0_30px_80px_rgba(0,0,0,0.7)] p-4 z-[10000] transition-all duration-300 origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[320px] top-full rounded-l-xl rounded-r-none border-r-0' : 'w-[450px] top-full rounded-b-xl'
                     }`}>
                     <div className={`grid ${isFloating ? 'grid-cols-2' : 'grid-cols-3'} gap-1`}>
                         {supportedLanguages.map((lang) => (
                             <button
                                 key={lang.code}
                                 onClick={() => changeLanguage(lang.code)}
-                                className={`flex items-center px-4 py-2 text-xs hover:bg-white/5 rounded-lg transition-all duration-200 relative group/lang tracking-wide ${i18n.language === lang.code
-                                    ? 'text-dancheong-gold font-bold bg-white/5'
-                                    : 'text-dancheong-white/70 hover:text-dancheong-gold'
+                                className={`flex items-center px-4 py-2.5 text-xs hover:bg-white/10 rounded-lg transition-all duration-300 relative group/lang tracking-wider ${i18n.language === lang.code
+                                    ? 'text-[#D4AF37] font-extrabold bg-white/10'
+                                    : 'text-zinc-400 hover:text-white hover:translate-x-1'
                                     }`}
                             >
                                 <span className="relative z-10 truncate">{lang.label}</span>

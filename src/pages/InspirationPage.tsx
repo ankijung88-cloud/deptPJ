@@ -94,7 +94,7 @@ const InspirationPage: React.FC = () => {
 
                 <section className="relative">
                     {/* Vertical Connecting Line */}
-                    <div className="absolute left-[60px] top-0 bottom-0 w-[2px] bg-dancheong-ink/10 hidden md:block" />
+
                     <div className="space-y-4 relative z-10">
                         {sortedFloors.map((floor, index) => {
                             const isActive = hoveredFloor === floor.id;
