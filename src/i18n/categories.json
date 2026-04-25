@@ -11,13 +11,13 @@
       "floor-tech-care": "1F | 테크 앤 케어"
     },
     "subcategory": {
-      "study-room": "스터디",
-      "audio-room": "넥스트 스타 온에어",
-      "interview-room": "위너스 라운지",
-      "square": "오픈 커넥스 스퀘어",
-      "office": "리얼리티 버추얼 오피스",
-      "share-mall": "공동구매",
-      "funding-mall": "펀딩 몰",
+      "study": "스터디",
+      "audio-room": "오디오룸",
+      "interview-room": "면접실",
+      "square": "모두의 광장",
+      "office": "오피스",
+      "funding": "크라우드펀딩",
+      "share-buy": "공동구매",
       "archive": "패션 아카이브",
       "collection": "시즌 컬렉션",
       "f5_fitting": "피팅 스튜디오",
@@ -25,7 +25,7 @@
       "f6_gourmet": "미식 아카이브",
       "f6_craft": "지역 공예관",
       "f6_tour": "헤리티지 투어",
-      "saju-room": "사주명리",
+      "saju": "사주상담소",
       "performance": "공연 실황",
       "exhibit": "가상 전시",
       "movement": "무브먼트 아카이브",
@@ -39,7 +39,7 @@
       "f1_kpop": "K-팝 스테이지",
       "f1_library": "트렌드 라이브러리",
       "f1_tech": "한류 테크존",
-      "car-care": "자동차"
+      "car-care": "CAR 케어"
     }
   },
   "en": {
@@ -54,13 +54,13 @@
       "floor-tech-care": "1F | TECH & CARE"
     },
     "subcategory": {
-      "study-room": "Meeting Room",
-      "audio-room": "",
-      "interview-room": "",
-      "square": "",
-      "office": "",
-      "share-mall": "",
-      "funding-mall": "",
+      "study": "Meeting Room",
+      "audio-room": "Audio Room",
+      "interview-room": "Interview Room",
+      "square": "Square",
+      "office": "Office",
+      "funding": "",
+      "share-buy": "",
       "archive": "Fashion Archive",
       "collection": "Season Collection",
       "f5_fitting": "Fitting Studio",
@@ -68,7 +68,7 @@
       "f6_gourmet": "Gourmet Archive",
       "f6_craft": "Local Craft",
       "f6_tour": "Heritage Tour",
-      "saju-room": "",
+      "saju": "Saju Reading",
       "performance": "Live Performance",
       "exhibit": "Virtual Exhibit",
       "movement": "",

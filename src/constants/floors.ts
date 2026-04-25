@@ -6,11 +6,11 @@ export const FLOORS = [
         color: '#FF3B30',
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
-            { id: 'study-room', label: '스터디' },
-            { id: 'audio-room', label: '넥스트 스타 온에어' },
-            { id: 'interview-room', label: '위너스 라운지' },
-            { id: 'square', label: '오픈 커넥스 스퀘어' },
-            { id: 'office', label: '리얼리티 버추얼 오피스' },
+            { id: 'study', label: '스터디' },
+            { id: 'audio-room', label: '오디오룸' },
+            { id: 'interview-room', label: '면접실' },
+            { id: 'square', label: '모두의 광장' },
+            { id: 'office', label: '오피스' },
         ]
     },
     {
@@ -20,8 +20,8 @@ export const FLOORS = [
         color: '#FF4757',
         videoUrl: '/uploads/travel.mp4',
         subcategories: [
-            { id: 'share-mall', label: '공동구매' },
-            { id: 'funding-mall', label: '펀딩 몰' },
+            { id: 'funding', label: '크라우드펀딩' },
+            { id: 'share-buy', label: '공동구매' },
         ]
     },
     {
@@ -47,7 +47,7 @@ export const FLOORS = [
             { id: 'f6_gourmet', label: '미식 아카이브' },
             { id: 'f6_craft', label: '지역 공예관' },
             { id: 'f6_tour', label: '헤리티지 투어' },
-            { id: 'saju-room', label: '사주명리' },
+            { id: 'saju', label: '사주상담소' },
         ]
     },
     {
@@ -97,8 +97,7 @@ export const FLOORS = [
         color: '#FFD32A',
         videoUrl: '/uploads/k-culture.mp4',
         subcategories: [
-            { id: 'car-care', label: '자동차' },
-            { id: 'f1_tech', label: '한류 테크존' },
+            { id: 'car-care', label: 'CAR 케어' },
         ]
     },
 ];
