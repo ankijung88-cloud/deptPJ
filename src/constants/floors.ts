@@ -6,7 +6,7 @@ export const FLOORS = [
         color: '#FF3B30',
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
-            { id: 'meeting-room', label: '인사이트 챔버' },
+            { id: 'study-room', label: '스터디' },
             { id: 'audio-room', label: '넥스트 스타 온에어' },
             { id: 'interview-room', label: '위너스 라운지' },
             { id: 'square', label: '오픈 커넥스 스퀘어' },
@@ -47,7 +47,6 @@ export const FLOORS = [
             { id: 'f6_gourmet', label: '미식 아카이브' },
             { id: 'f6_craft', label: '지역 공예관' },
             { id: 'f6_tour', label: '헤리티지 투어' },
-            { id: 'shaman', label: '무속신당' },
             { id: 'saju-room', label: '사주명리' },
         ]
     },
@@ -100,7 +99,6 @@ export const FLOORS = [
         subcategories: [
             { id: 'car-care', label: '자동차' },
             { id: 'f1_tech', label: '한류 테크존' },
-            { id: 'cat-1775227156624', label: '테스트' },
         ]
     },
 ];

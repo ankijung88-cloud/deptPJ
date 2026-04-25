@@ -11,7 +11,7 @@
       "floor-tech-care": "1F | 테크 앤 케어"
     },
     "subcategory": {
-      "meeting-room": "인사이트 챔버",
+      "study-room": "스터디",
       "audio-room": "넥스트 스타 온에어",
       "interview-room": "위너스 라운지",
       "square": "오픈 커넥스 스퀘어",
@@ -25,7 +25,6 @@
       "f6_gourmet": "미식 아카이브",
       "f6_craft": "지역 공예관",
       "f6_tour": "헤리티지 투어",
-      "shaman": "무속신당",
       "saju-room": "사주명리",
       "performance": "공연 실황",
       "exhibit": "가상 전시",
@@ -40,8 +39,7 @@
       "f1_kpop": "K-팝 스테이지",
       "f1_library": "트렌드 라이브러리",
       "f1_tech": "한류 테크존",
-      "car-care": "자동차",
-      "cat-1775227156624": "테스트"
+      "car-care": "자동차"
     }
   },
   "en": {
@@ -56,7 +54,7 @@
       "floor-tech-care": "1F | TECH & CARE"
     },
     "subcategory": {
-      "meeting-room": "Meeting Room",
+      "study-room": "Meeting Room",
       "audio-room": "",
       "interview-room": "",
       "square": "",
@@ -70,7 +68,6 @@
       "f6_gourmet": "Gourmet Archive",
       "f6_craft": "Local Craft",
       "f6_tour": "Heritage Tour",
-      "shaman": "",
       "saju-room": "",
       "performance": "Live Performance",
       "exhibit": "Virtual Exhibit",
@@ -85,8 +82,7 @@
       "f1_kpop": "K-Pop Stage",
       "f1_library": "Trend Library",
       "f1_tech": "K-Tech Zone",
-      "car-care": "CAR Care",
-      "cat-1775227156624": ""
+      "car-care": "CAR Care"
     }
   }
 }
