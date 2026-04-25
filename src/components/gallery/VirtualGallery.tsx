@@ -1,20 +1,17 @@
 import React, { useMemo, useRef, Suspense, Component, ReactNode, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
-    PerspectiveCamera,
     useScroll,
     ScrollControls,
     Image as DreiImage,
-    Text as DreiText,
-    useTexture
+    Text as DreiText
 } from '@react-three/drei';
 import * as THREE from 'three';
 import type { FeaturedItem } from '../../types';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
 import { useNavigate } from 'react-router-dom';
-import { Compass, ChevronUp, ChevronDown, LayoutGrid, Box } from 'lucide-react';
+import { Compass, Box } from 'lucide-react';
 import { getLocalizedText } from '../../utils/i18nUtils';
-import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import TheaterEnvironment from './TheaterEnvironment';
 
 // Local error boundary for individual cards
@@ -62,11 +59,16 @@ const CanvasText = ({ text, color = "white", width = 4, height = 1 }: { text: st
             const fontSize = 80;
             const lineHeight = 100;
             ctx.font = `bold ${fontSize}px 'Pretendard', sans-serif, Arial`;
-            ctx.fillStyle = color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur = 12;
+            
+            // Add a subtle text shadow/glow for extra premium feel
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur = 35;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+
+            ctx.fillStyle = color;
 
             const maxWidth = 1800;
             const words = (text || "").split(/(\s+)/);
@@ -87,9 +89,11 @@ const CanvasText = ({ text, color = "white", width = 4, height = 1 }: { text: st
                 }
             }
             if (currentLine) lines.push(currentLine);
-            const totalHeight = lines.length * lineHeight;
-            const startY = (c.height - totalHeight) / 2 + lineHeight / 2;
-            lines.forEach((line, i) => { ctx.fillText(line.trim(), c.width / 2, startY + i * lineHeight); });
+            
+            lines.forEach((line, i) => {
+                const lineY = (c.height / 2) - ((lines.length - 1) * lineHeight / 2) + (i * lineHeight);
+                ctx.fillText(line.trim(), c.width / 2, lineY);
+            });
         }
 
         if (textureRef.current) {
@@ -558,20 +562,50 @@ const ExhibitCard = ({ item, side, zPos, theme, index, lang, onItemClick, isMobi
                             </group>
                         </mesh>
                     )}
-                </mesh>
 
-                <group position={[0, -1.1, 0.06]}>
-                    <mesh>
-                        <planeGeometry args={[4, 0.8]} />
-                        <meshBasicMaterial color="black" transparent opacity={0.6} />
-                    </mesh>
-                    <CanvasText
-                        text={translatedText || displayName || "Loading..."}
-                        color="white"
-                        width={4}
-                        height={0.8}
-                    />
-                </group>
+                    {/* 4. Title Bar (Premium Glassmorphism) */}
+                    <group position={[0, -1.15, 0.08]}>
+                        <mesh>
+                            <planeGeometry args={[4.2, 0.9]} />
+                            <meshStandardMaterial 
+                                color="black" 
+                                transparent 
+                                opacity={hovered ? 0.85 : 0.65} 
+                                metalness={1}
+                                roughness={0.1}
+                            />
+                        </mesh>
+                        {/* Glow effect when hovered */}
+                        {hovered && (
+                            <mesh position={[0, 0, -0.01]}>
+                                <planeGeometry args={[4.4, 1.1]} />
+                                <meshBasicMaterial color={theme.accentColor} transparent opacity={0.3} />
+                            </mesh>
+                        )}
+                        <CanvasText
+                            text={translatedText || displayName || "Loading..."}
+                            color={hovered ? theme.accentColor : "white"}
+                            width={4}
+                            height={0.8}
+                        />
+                        
+                        {/* Interactive Hint */}
+                        <group position={[0, -0.65, 0.1]}>
+                            <mesh>
+                                <planeGeometry args={[hovered ? 2.5 : 1.5, 0.25]} />
+                                <meshBasicMaterial color={hovered ? theme.accentColor : "white"} transparent opacity={hovered ? 0.2 : 0.1} />
+                            </mesh>
+                            <DreiText 
+                                fontSize={0.1} 
+                                color={hovered ? theme.accentColor : "white"} 
+                                fillOpacity={hovered ? 1 : 0.6}
+                                font="https://fonts.gstatic.com/s/notosanskr/v27/PpkLdfScl0q6m7JNoN5SpgY.woff2"
+                            >
+                                {hovered ? "CLICK TO VISIT STORE" : "INTERACTABLE EXHIBIT"}
+                            </DreiText>
+                        </group>
+                    </group>
+                </mesh>
             </group>
         </group>
     );
@@ -798,255 +832,161 @@ const GalleryScene = ({
                         <meshStandardMaterial 
                             color={theme.accentColor} 
                             transparent={false} 
-                            opacity={1} 
-                            metalness={0.2} 
-                            roughness={0.8} 
+                            metalness={0.1} 
+                            roughness={0.9} 
                         />
                     </mesh>
-
-                    <mesh position={[-5.1, -4.95, -100]}>
-                        <boxGeometry args={[0.2, 0.01, 2000]} />
-                        <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
-                    </mesh>
-                    <mesh position={[5.1, -4.95, -100]}>
-                        <boxGeometry args={[0.2, 0.01, 2000]} />
-                        <meshStandardMaterial color={theme.accentColor} emissive={theme.accentColor} emissiveIntensity={4} />
-                    </mesh>
-                    <fog attach="fog" args={[theme.bgColor, 10, 60]} />
                 </>
-            ) : null}
-
-            {isTheater && (
-                <TheaterEnvironment 
-                    accentColor={theme.accentColor} 
-                    isPlaying={playing || false}
-                />
+            ) : (
+                <TheaterEnvironment accentColor={theme.accentColor} isPlaying={playing || false} />
             )}
 
-            {(activeCinemaItem || isTheater) && (
-                <group position={[0, isMobile ? 3 : 7.2, -25]}>
-                    <VideoScreen
-                        videoUrl={normalizeVideoUrl(activeCinemaItem?.videoUrl || (activeCinemaItem as any)?.video_url || '')}
-                        imageUrl={activeCinemaItem?.imageUrl || (activeCinemaItem as any)?.image_url || ''}
-                        scale={isMobile ? [18, 10] : [45, 25.3]} // Increased scale for 4/5 view
-                        hovered={false}
-                        theme={theme}
-                        playing={!!playing}
-                        setPlaying={(p) => setPlaying?.(p)}
-                        isMobile={isMobile}
-                    />
-                </group>
-            )}
-
-            {!isTheater && exhibits.map((ex: any, i: number) => (
-                <ExhibitCard
-                    key={`${i}-${lang}`}
-                    item={ex}
-                    side={ex.side}
-                    zPos={ex.zPos}
-                    theme={theme}
-                    index={i}
-                    lang={lang}
-                    onItemClick={onItemClick}
-                    isMobile={isMobile}
-                    exhibitsCount={exhibits.length}
-                />
-            ))}
-
-            <ambientLight intensity={1.5} />
-            <pointLight position={[0, 10, -5]} intensity={2} color={theme.accentColor} />
-            <pointLight position={[0, -10, -5]} intensity={1} color={theme.color1} />
+            <Suspense fallback={null}>
+                {isTheater && activeCinemaItem ? (
+                    <group position={[0, 7.2, -25]}>
+                        <VideoScreen
+                            videoUrl={activeCinemaItem.videoUrl || ""}
+                            imageUrl={activeCinemaItem.imageUrl || activeCinemaItem.image_url || ""}
+                            scale={[24, 13.5]}
+                            theme={theme}
+                            hovered={true}
+                            playing={playing || false}
+                            setPlaying={setPlaying || (() => {})}
+                            isMobile={isMobile}
+                        />
+                    </group>
+                ) : (
+                    exhibits.map((ex, i) => (
+                        <ExhibitCard
+                            key={ex.id || i}
+                            item={ex}
+                            side={ex.side}
+                            zPos={ex.zPos}
+                            theme={theme}
+                            index={i}
+                            lang={lang}
+                            onItemClick={onItemClick}
+                            isMobile={isMobile}
+                            isMuseum={isMuseum}
+                            exhibitsCount={exhibits.length}
+                        />
+                    ))
+                )}
+            </Suspense>
         </group>
     );
 };
 
-export const VirtualGallery = ({
+const VirtualGallery = ({
     items,
     stories,
     theme,
-    showUI = true,
-    lang = 'ko',
-    playing,
-    setPlaying,
-    initialItemId = null,
+    lang,
     onItemClick,
-    defaultActivated = false,
-    onClick,
-    isTheaterMode = false,
     isMuseum = false,
     cinemaItem = null,
+    playing,
+    setPlaying,
+    onActiveIndexChange,
+    targetIndex = 0,
+    isTheaterMode = false,
     isZoomed = false,
+    onClick,
+    showUI = true,
+    isActivated,
+    defaultActivated = false,
+    initialItemId = null
 }: {
     items: FeaturedItem[],
     stories: any[],
     theme: any,
-    showUI?: boolean,
-    lang?: string,
+    lang: string,
     onItemClick?: (item: any) => void,
+    isMuseum?: boolean,
+    cinemaItem?: FeaturedItem | null,
     playing?: boolean,
     setPlaying?: (p: boolean) => void,
-    initialItemId?: string | null,
-    defaultActivated?: boolean,
-    onClick?: () => void,
+    onActiveIndexChange?: (index: number) => void,
+    targetIndex?: number,
     isTheaterMode?: boolean,
-    isMuseum?: boolean,
     isZoomed?: boolean,
-    cinemaItem?: FeaturedItem | null
+    onClick?: () => void,
+    showUI?: boolean,
+    isActivated?: boolean,
+    defaultActivated?: boolean,
+    initialItemId?: string | null
 }) => {
-    const [isActivated, setIsActivated] = useState(defaultActivated);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const [targetIndex, setTargetIndex] = useState(0);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [isGridView, setIsGridView] = useState(false);
-    const navigate = useNavigate();
+    const [internalActivated, setInternalActivated] = useState(defaultActivated || isActivated || false);
 
-    const totalExhibits = (items?.length || 0) + (stories?.length || 0);
-
-    const handleNavigate = (direction: 'up' | 'down') => {
-        if (totalExhibits === 0) return;
-
-        setTargetIndex(prev => {
-            const next = direction === 'up' ? prev - 1 : prev + 1;
-            return next;
-        });
-    };
-
+    // Sync internal state with isActivated prop if it changes
     useEffect(() => {
-        if (initialItemId && items.length > 0) {
-            const idx = items.findIndex(item => item.id === initialItemId);
-            if (idx !== -1) {
-                setTargetIndex(idx);
-                setActiveIndex(idx);
-                setIsActivated(true);
-            }
+        if (isActivated !== undefined) {
+            setInternalActivated(isActivated);
         }
-    }, [initialItemId, items]);
+    }, [isActivated]);
 
-    // Image Preloading Logic to prevent delay in 3D gallery
-    useEffect(() => {
-        const imageUrls = [
-            ...items.map(item => item.imageUrl || (item as any).image_url),
-            ...stories.map(story => story.imageUrl || (story as any).image_url),
-            cinemaItem?.imageUrl || (cinemaItem as any)?.image_url
-        ].filter(Boolean) as string[];
-
-        // Preload icons/UI if needed
-        const uniqueUrls = Array.from(new Set(imageUrls));
-        
-        // 1. Browser Cache Preload (Initial fetch)
-        uniqueUrls.forEach(url => {
-            const img = new Image();
-            img.src = url;
-        });
-
-        // 2. R3F Texture Preload (Warm GPU cache)
-        if (typeof useTexture !== 'undefined') {
-            uniqueUrls.forEach(url => {
-                try {
-                    useTexture.preload(url);
-                } catch (e) {}
-            });
+    // If initialItemId is provided, find its index
+    const effectiveTargetIndex = useMemo(() => {
+        if (initialItemId) {
+            const index = items.findIndex(item => item.id === initialItemId);
+            if (index !== -1) return index;
         }
-
-        console.log(`🚀 Preloading ${uniqueUrls.length} images (800px) Optimized for 3D gallery...`);
-    }, [items, stories, cinemaItem]);
+        return targetIndex;
+    }, [initialItemId, items, targetIndex]);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        
+        // Delay activation to ensure smooth entry if not already activated
+        const timer = setTimeout(() => {
+            if (!internalActivated) setInternalActivated(true);
+        }, 100);
+        
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(timer);
+        };
+    }, [internalActivated]);
+
+    const exhibitsCount = (items?.length || 0) + (stories?.length || 0);
+    const scrollPages = isMuseum ? exhibitsCount * 1.5 : exhibitsCount * 1.2;
 
     return (
-        <div
-            className={`w-full h-full relative bg-[#0a0a0a] overflow-hidden group ${(!isActivated || isTheaterMode) ? 'hide-3d-scrollbar' : ''}`}
-            onClick={() => {
-                if (!onClick && !isActivated) setIsActivated(true);
-                if (onClick) onClick();
-            }}
+        <div 
+            className="w-full h-full relative" 
+            style={{ background: isMuseum ? '#000' : 'transparent' }}
+            onClick={onClick}
         >
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                .hide-3d-scrollbar *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-                .hide-3d-scrollbar * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
-            `}} />
-            
-            {showUI && (!isTheaterMode) && (
-                <div className="absolute top-6 right-6 z-[60] flex bg-black/40 backdrop-blur-xl border border-white/20 rounded-xl overflow-hidden p-1 shadow-2xl">
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); setIsGridView(false); setIsActivated(true); }}
-                        className={`flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg transition-all ${!isGridView ? 'bg-white/20 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                    >
-                        <Box size={16} />
-                        <span className="text-xs md:text-sm font-bold tracking-wider hidden md:inline">3D VIEW</span>
-                    </button>
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); setIsGridView(true); setIsActivated(true); }}
-                        className={`flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg transition-all ${isGridView ? 'bg-[#00FFC2]/20 text-[#00FFC2] shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                    >
-                        <LayoutGrid size={16} />
-                        <span className="text-xs md:text-sm font-bold tracking-wider hidden md:inline">GRID</span>
-                    </button>
-                </div>
-            )}
-
-            {isGridView ? (
-                <div className="absolute inset-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-md overflow-y-auto custom-scrollbar p-6 pt-24 md:p-12 md:pt-32 cursor-auto" onClick={(e) => e.stopPropagation()}>
-                    <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 pb-24">
-                        {[...items, ...stories].map((ex, i) => {
-                            const isProduct = ex.id?.includes('item-') || ex.id?.startsWith('p') || ex.price || ex.location;
-                            const imageUrl = ex.imageUrl || ex.image_url;
-                            const displayName = getLocalizedText(ex.title, lang);
-                            
-                            return (
-                                <div 
-                                    key={i}
-                                    onClick={() => {
-                                        if (onItemClick) {
-                                            onItemClick(ex);
-                                            setIsGridView(false);
-                                        } else if (isProduct) {
-                                            navigate(`/detail/${ex.id}`);
-                                        } else {
-                                            // Optional: close grid and scroll to this story in 3D
-                                            setTargetIndex(i);
-                                            setTimeout(() => setIsGridView(false), 50);
-                                        }
-                                    }}
-                                    className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-pointer hover:border-[#00FFC2]/50 hover:shadow-[0_0_20px_rgba(0,255,194,0.15)] transition-all duration-300"
-                                >
-                                    {imageUrl ? (
-                                        <img src={imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                    ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
-                                            <Compass className="text-white/20 mb-2 animate-pulse" size={32} />
-                                        </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 md:p-6">
-                                        <h3 className="text-white font-bold text-sm md:text-base line-clamp-2 drop-shadow-md">
-                                            <AutoTranslatedText text={displayName || "Untitled Item"} />
-                                        </h3>
-                                        <div className="flex justify-between items-center mt-2">
-                                            <span className="text-[#00FFC2] text-xs font-mono uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                                                <AutoTranslatedText text="Explore" /> &rarr;
-                                            </span>
-                                            {isProduct && <span className="text-white/40 text-[10px] uppercase border border-white/20 px-2 py-0.5 rounded-full backdrop-blur-sm">ITEM</span>}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+            <GalleryErrorBoundary fallback={
+                <div className="flex items-center justify-center w-full h-full text-white bg-red-900/20 p-8 text-center rounded-xl border border-red-500/30">
+                    <div className="max-w-md">
+                        <Box className="w-12 h-12 mx-auto mb-4 text-red-500 opacity-50" />
+                        <h3 className="text-xl font-bold mb-2">3D Gallery Interrupted</h3>
+                        <p className="opacity-70 mb-4">The exhibition environment encountered a rendering issue. Please try refreshing or check back in a moment.</p>
+                        <button 
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-2 bg-red-600 hover:bg-red-500 rounded-full text-sm font-medium transition-colors"
+                        >
+                            Refresh Experience
+                        </button>
                     </div>
                 </div>
-            ) : (
-            <GalleryErrorBoundary fallback={
-                <div className="w-full h-full flex flex-col items-center justify-center text-white/20 p-12 text-center">
-                    <Compass size={48} className="mb-6 opacity-10" />
-                    <p className="text-sm font-mono tracking-[0.3em] uppercase"><AutoTranslatedText text="3D Gallery Error - Using Standard View" /></p>
-                </div>
             }>
-                <Canvas shadows={false} dpr={[1, 2]}>
-                    <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={40} />
+                <Canvas
+                    shadows
+                    camera={{ fov: 40, position: [0, 0, 50], near: 0.1, far: 2000 }}
+                    gl={{ antialias: true, alpha: true }}
+                    onPointerMissed={() => onClick?.()}
+                >
+                    <color attach="background" args={isMuseum ? ["#050505"] : ["#000000"]} />
+                    {isMuseum && <fog attach="fog" args={["#000", 1, 100]} />}
+                    
+                    <ambientLight intensity={isMuseum ? 0.3 : 0.6} />
+                    <pointLight position={[10, 10, 10]} intensity={1.5} color={theme.accentColor} />
+                    <pointLight position={[-10, 10, 5]} intensity={1.0} color={theme.color3} />
+
                     <Suspense fallback={null}>
                         {isMobile ? (
                             <GalleryScene
@@ -1060,21 +1000,14 @@ export const VirtualGallery = ({
                                 cinemaItem={cinemaItem}
                                 playing={playing}
                                 setPlaying={setPlaying}
-                                onActiveIndexChange={setActiveIndex}
-                                isActivated={isActivated}
-                                targetIndex={targetIndex}
+                                onActiveIndexChange={onActiveIndexChange}
+                                isActivated={internalActivated}
+                                targetIndex={effectiveTargetIndex}
                                 isTheaterMode={isTheaterMode}
                                 isZoomed={isZoomed}
                             />
                         ) : (
-                            <ScrollControls
-                                pages={!isActivated
-                                    ? 0
-                                    : Math.max(3, ((items?.length || 0) + (stories?.length || 0)) * 0.8)}
-                                damping={0.3}
-                                distance={1}
-                                enabled={isActivated}
-                            >
+                            <ScrollControls pages={scrollPages} damping={0.2} infinite={false}>
                                 <GalleryScene
                                     items={items}
                                     stories={stories}
@@ -1086,7 +1019,8 @@ export const VirtualGallery = ({
                                     cinemaItem={cinemaItem}
                                     playing={playing}
                                     setPlaying={setPlaying}
-                                    isActivated={isActivated}
+                                    onActiveIndexChange={onActiveIndexChange}
+                                    isActivated={internalActivated}
                                     targetIndex={targetIndex}
                                     isTheaterMode={isTheaterMode}
                                     isZoomed={isZoomed}
@@ -1096,60 +1030,21 @@ export const VirtualGallery = ({
                     </Suspense>
                 </Canvas>
             </GalleryErrorBoundary>
-            )}
 
-            {showUI && (
-                <>
-                    {!isActivated && !isTheaterMode && !isGridView && (
-                        <div className="absolute inset-0 z-[30] flex items-center justify-center bg-black/20 backdrop-blur-[2px] cursor-pointer transition-all hover:bg-black/10">
-                            <div className="px-8 py-4 border border-white/20 rounded-full backdrop-blur-xl bg-black/40 shadow-2xl flex flex-col items-center gap-2 group-hover:scale-105 transition-transform duration-500">
-                                <Compass size={24} className="text-white/60 animate-[spin_8s_linear_infinite]" />
-                                <span className="text-sm font-black tracking-[0.3em] text-white uppercase"><AutoTranslatedText text={onClick ? "클릭하여 가상공간 진입" : "클릭하여 탐험 시작"} /></span>
-                                <span className="text-[10px] font-mono tracking-widest text-white/30 uppercase"><AutoTranslatedText text={onClick ? "Click to open fullscreen" : "Scroll disabled until click"} /></span>
-                            </div>
+            {/* Navigation Overlay */}
+            {showUI && !isTheaterMode && !cinemaItem && !isMuseum && (
+                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+                    <div className="flex items-center gap-3 mb-2 opacity-40">
+                        <Compass className="w-4 h-4 text-white animate-spin-slow" />
+                        <span className="text-[10px] uppercase tracking-[0.4em] text-white font-bold italic">Explorer</span>
+                    </div>
+                    <div className="flex items-center gap-8">
+                        <div className="w-24 h-[1px] bg-gradient-to-r from-transparent to-white/40" />
+                        <div className="text-[11px] font-black text-white/80 uppercase tracking-[0.3em]">
+                            {isMobile ? "SWIPE TO NAVIGATE" : "SCROLL TO EXPLORE"}
                         </div>
-                    )}
-
-                    {!isTheaterMode && !isGridView && (
-                        <div className="absolute top-10 right-10 pointer-events-none z-20 text-right md:-mt-0 mt-14">
-                            <div className="text-[10px] font-mono tracking-[0.4em] text-white/40 mb-1 uppercase"><AutoTranslatedText text="Navigation Guide" /></div>
-                            <div className="text-xl font-serif italic text-white/60">
-                                {isActivated ? (
-                                    <AutoTranslatedText text="Scroll to explore the Temporal Corridor" />
-                                ) : (
-                                    <AutoTranslatedText text={onClick ? "가상공간을 보려면 클릭하세요" : "스크롤을 활성화하려면 클릭하세요"} />
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {!isTheaterMode && !isGridView && (
-                        <div className="absolute bottom-24 md:bottom-10 left-20 md:left-10 pointer-events-none z-20">
-                            <div className="flex items-center gap-4">
-                                <div className="flex flex-col">
-                                    <span className="text-2xl font-black text-white leading-none">{(activeIndex % totalExhibits + totalExhibits) % totalExhibits + 1} / {totalExhibits}</span>
-                                    <span className="text-[8px] font-mono tracking-widest text-white/40 uppercase"><AutoTranslatedText text="Current Exhibit" /></span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </>
-            )}
-
-            {isMobile && isActivated && !isGridView && (
-                <div className="absolute bottom-24 right-6 z-40 flex flex-col gap-4">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); handleNavigate('up'); }}
-                        className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
-                    >
-                        <ChevronUp size={24} />
-                    </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); handleNavigate('down'); }}
-                        className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white/70 active:scale-90 active:bg-white/10 transition-all duration-200"
-                    >
-                        <ChevronDown size={24} />
-                    </button>
+                        <div className="w-24 h-[1px] bg-gradient-to-l from-transparent to-white/40" />
+                    </div>
                 </div>
             )}
         </div>

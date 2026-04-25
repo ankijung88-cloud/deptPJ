@@ -15,13 +15,8 @@ export const Footer: React.FC = () => {
                     {/* Brand Meta */}
                     <div className="md:col-span-6 space-y-10">
                         <div className="flex items-center gap-6 mb-4">
-                            <BrandLogo size={60} color="var(--color-dancheong-ink)" className="opacity-80" />
-                            <div className="space-y-4">
-                                <span className="text-[10px] font-black tracking-[0.5em] text-dancheong-ink/40 uppercase block"><AutoTranslatedText text="Essence" /></span>
-                                <h2 className="text-3xl font-serif font-black text-dancheong-ink tracking-widest uppercase">
-                                     몽땅쏙
-                                 </h2>
-                            </div>
+                            <BrandLogo size={60} className="opacity-80" />
+                            {/* Text logo removed as per user request to use ONLY the seal as logo */}
                         </div>
                         <p className="text-sm leading-relaxed max-w-sm font-medium italic text-dancheong-ink/60">
                             <AutoTranslatedText text={t('footer.description')} />

@@ -5,11 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
-import { BookOpen, X } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { JOSEON_THEMES } from '../utils/themeUtils';
-import VirtualGallery from '../components/gallery/VirtualGallery';
 import { useFloors } from '../context/FloorContext';
-import { useImmersiveMode } from '../context/NavigationActionContext';
 import { getFeaturedProducts } from '../api/products';
 import { FALLBACK_PRODUCTS } from '../data/fallbackData';
 
@@ -22,39 +20,6 @@ interface StoryCard {
     created_at: string;
 }
 
-const PointingFinger = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
-    <svg 
-        width={size} 
-        height={size} 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-        className={className}
-    >
-        <path 
-            d="M9.5 13.5V6.5C9.5 5.39543 10.3954 4.5 11.5 4.5V4.5C12.6046 4.5 13.5 5.39543 13.5 6.5V12.5" 
-            stroke="currentColor" 
-            strokeWidth="1.2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-        />
-        <path 
-            d="M13.5 8.5C13.5 7.39543 14.3954 6.5 15.5 6.5V6.5C16.6046 6.5 17.5 7.39543 17.5 8.5V12.5C17.5 15.8137 14.8137 18.5 11.5 18.5C8.18629 18.5 5.5 15.8137 5.5 12.5V11.5C5.5 10.3954 6.39543 9.5 7.5 9.5V9.5C8.60457 9.5 9.5 10.3954 9.5 11.5" 
-            stroke="currentColor" 
-            strokeWidth="1.2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-        />
-        <path 
-            d="M11.5 14.5V11.5" 
-            stroke="currentColor" 
-            strokeWidth="1.2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            opacity="0.5"
-        />
-    </svg>
-);
 
 const SubCategoryPage: React.FC = () => {
     const { subId } = useParams<{ subId: string }>();
@@ -64,11 +29,20 @@ const SubCategoryPage: React.FC = () => {
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [stories, setStories] = useState<StoryCard[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isExplorationMode, setIsExplorationMode] = useState(false);
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-    // Toggle immersive mode when in exploration mode
-    useImmersiveMode(isExplorationMode);
+    // State for the currently displayed product card
+    const [selectedItem, setSelectedItem] = useState<FeaturedItem | StoryCard | null>(null);
+
+    useEffect(() => {
+        if (items.length > 0) {
+            setSelectedItem(items[0]);
+            setSelectedItemId(items[0].id);
+        } else if (stories.length > 0) {
+            setSelectedItem(stories[0]);
+            setSelectedItemId(stories[0].id);
+        }
+    }, [items, stories]);
 
     const targetSubId = subId || '';
 
@@ -81,13 +55,17 @@ const SubCategoryPage: React.FC = () => {
 
     const legacySubId = getLegacyId(targetSubId);
     
-    let parentFloor = floors.find(f => f.subitems?.some(s => s.id === targetSubId)) || null;
+    // Find the floor that contains this subcategory - using case-insensitive match for robustness
+    let parentFloor = floors.find(f => 
+        f.subitems?.some(s => s.id?.toLowerCase() === targetSubId?.toLowerCase())
+    ) || null;
     if (!parentFloor && legacySubId) {
         parentFloor = floors.find(f => f.subitems?.some(s => s.id === legacySubId)) || null;
     }
 
     const subcategoryData = parentFloor?.subitems?.find(s => 
-        s.id === targetSubId || (legacySubId && s.id === legacySubId)
+        s.id?.toLowerCase() === targetSubId?.toLowerCase() || 
+        (legacySubId && s.id?.toLowerCase() === legacySubId.toLowerCase())
     ) || null;
 
 
@@ -214,6 +192,7 @@ const SubCategoryPage: React.FC = () => {
         );
     }
 
+
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
 
@@ -290,6 +269,31 @@ const SubCategoryPage: React.FC = () => {
                                             <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 text-dancheong-ink"><AutoTranslatedText text="RECORDS" /></span>
                                         </div>
                                     </div>
+
+                                    {/* Floor Navigation - Subcategories on the same floor */}
+                                    <div className="py-2 border-b border-dancheong-ink/5">
+                                        <div className="text-[10px] font-black tracking-[0.2em] text-dancheong-ink/30 uppercase mb-3 px-1">
+                                            <AutoTranslatedText text={`${parentFloor.floor} Archive Menu`} />
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {parentFloor.subitems?.map((sub) => {
+                                                const isCurrent = sub.id?.toLowerCase() === targetSubId?.toLowerCase();
+                                                return (
+                                                    <button
+                                                        key={sub.id}
+                                                        onClick={() => navigate(`/category/${sub.id}`)}
+                                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase transition-all duration-300 ${
+                                                            isCurrent 
+                                                            ? 'bg-dancheong-ink text-white shadow-md' 
+                                                            : 'bg-dancheong-ink/5 text-dancheong-ink/40 hover:bg-dancheong-ink/10 hover:text-dancheong-ink'
+                                                        }`}
+                                                    >
+                                                        <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                     
                                     <div className="relative">
                                         <div 
@@ -313,24 +317,33 @@ const SubCategoryPage: React.FC = () => {
                                                     background: rgba(0, 0, 0, 0.2);
                                                 }
                                             `}</style>
-                                            {([...items, ...stories]).map((item, idx) => (
-                                                <motion.div 
-                                                    key={item.id} 
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: idx * 0.05 }}
-                                                    className="flex items-start gap-4 group/item cursor-pointer mb-2"
-                                                    onClick={() => {
-                                                        setSelectedItemId(item.id);
-                                                        setIsExplorationMode(true);
-                                                    }}
-                                                >
-                                                    <span className="text-[10px] font-serif italic opacity-20 mt-1">{String(idx + 1).padStart(2, '0')}</span>
-                                                    <span className="text-sm md:text-base font-medium text-dancheong-ink/60 group-hover/item:text-dancheong-ink transition-colors line-clamp-1">
-                                                        <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                    </span>
-                                                </motion.div>
-                                            ))}
+                                            {([...items, ...stories]).map((item, idx) => {
+                                                const isSelected = selectedItemId === item.id;
+                                                return (
+                                                    <motion.div 
+                                                        key={item.id} 
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.05 }}
+                                                        className={`flex items-start gap-4 group/item cursor-pointer mb-2 p-2 rounded-xl transition-all duration-300 ${
+                                                            isSelected ? 'bg-dancheong-ink/5 border-l-4 border-dancheong-ink' : 'hover:bg-dancheong-ink/[0.02]'
+                                                        }`}
+                                                        onClick={() => {
+                                                            setSelectedItemId(item.id);
+                                                            setSelectedItem(item);
+                                                        }}
+                                                    >
+                                                        <span className={`text-[10px] font-serif italic mt-1 transition-opacity ${isSelected ? 'opacity-100 text-dancheong-ink' : 'opacity-20'}`}>
+                                                            {String(idx + 1).padStart(2, '0')}
+                                                        </span>
+                                                        <span className={`text-sm md:text-base font-medium transition-colors line-clamp-1 ${
+                                                            isSelected ? 'text-dancheong-ink' : 'text-dancheong-ink/60 group-hover/item:text-dancheong-ink'
+                                                        }`}>
+                                                            <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                        </span>
+                                                    </motion.div>
+                                                );
+                                            })}
                                             {([...items, ...stories].length === 0) && (
                                                 <div className="text-sm text-dancheong-ink/20 italic">
                                                     <AutoTranslatedText text="No items found." />
@@ -358,95 +371,95 @@ const SubCategoryPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Content Section - 3D Virtual Gallery Preview */}
+                {/* Content Section - Replaced 3D Gallery with Premium Product Card */}
                 {!loading && (
-                    <>
-                        {/* Animated Pointer - Centered between text and gallery */}
-                        <div className="flex justify-center -mt-12 -mb-6 relative z-10 pointer-events-none">
-                            <motion.div
-                                animate={{ 
-                                    y: [0, 20, 0],
-                                    opacity: [0.4, 0.8, 0.4]
-                                }}
-                                transition={{ 
-                                    duration: 2, 
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
-                                style={{ color: theme.accentColor }}
-                                className="flex flex-col items-center"
-                            >
-                                <PointingFinger size={80} className="rotate-180 drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]" />
-                            </motion.div>
-                        </div>
-
-                        <div className="mt-16 overflow-hidden rounded-3xl h-[60vh] md:h-[80vh] border-t-2 border-b-2 border-dancheong-ink/10">
-                        <div className="relative group cursor-pointer w-full h-full">
-                            <VirtualGallery 
-                                items={items} 
-                                stories={stories} 
-                                theme={theme} 
-                                lang={i18n.language} 
-                                onClick={() => {
-                                    setSelectedItemId(null);
-                                    setIsExplorationMode(true);
-                                }}
-                                onItemClick={(item) => navigate(`/detail/${item.id}`)}
-                            />
-                        </div>
-                    </div>
-                </>
-            )}
-            </main>
-
-            {/* Immersive Exploration Mode - Fullscreen Overlay */}
-            {isExplorationMode && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
-                    className="fixed inset-0 z-[2000] bg-black"
-                >
-                    <div className="absolute top-8 left-10 z-[2010] flex items-center gap-6">
-                         <h1 
-                            className="text-4xl md:text-7xl font-serif font-black mb-8 leading-[1.1] tracking-tight text-white"
+                    <div className="mt-16 relative">
+                        {/* Selected Item Detail View */}
+                        <motion.div 
+                            key={selectedItem?.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white/40 backdrop-blur-xl rounded-[3rem] border border-dancheong-ink/10 overflow-hidden shadow-2xl min-h-[70vh] flex flex-col md:flex-row"
                         >
-                            {subcategoryData ? getLocalizedText(subcategoryData.label, i18n.language) : ''}
-                        </h1>
-                        <h2 className="text-xl md:text-2xl font-serif italic text-white/30 hidden md:block">
-                            <AutoTranslatedText text="Immersive Gallery" />
-                        </h2>
-                    </div>
+                            {selectedItem ? (
+                                <>
+                                    {/* Product Visual Area */}
+                                    <div className="md:w-3/5 relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
+                                        <img 
+                                            src={(selectedItem as any).image_url || (selectedItem as any).image || ''} 
+                                            alt=""
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                        />
+                                        <div className="absolute bottom-10 left-10 z-20">
+                                            <div className="px-5 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 text-white text-[10px] font-black tracking-widest uppercase mb-4">
+                                                <AutoTranslatedText text="Curated Selection" />
+                                            </div>
+                                            <h3 className="text-4xl md:text-6xl font-black text-white leading-tight">
+                                                <AutoTranslatedText text={getLocalizedText(selectedItem.title, i18n.language)} />
+                                            </h3>
+                                        </div>
+                                    </div>
 
-                    <button
-                        onClick={() => setIsExplorationMode(false)}
-                        className="absolute top-8 right-10 z-[2010] p-3 md:p-4 bg-white/5 hover:bg-white/20 rounded-full text-white backdrop-blur-xl border border-white/10 transition-all active:scale-95 group"
-                    >
-                        <X size={24} className="group-hover:rotate-90 transition-transform duration-500" />
-                    </button>
+                                    {/* Product Information Area */}
+                                    <div className="md:w-2/5 p-12 md:p-16 flex flex-col justify-between">
+                                        <div className="space-y-12">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <span className="text-[10px] font-black tracking-[0.4em] text-dancheong-ink/30 uppercase block mb-2">Identifier</span>
+                                                    <span className="text-xl font-serif italic text-dancheong-ink/60">#{selectedItem.id.substring(0, 8)}</span>
+                                                </div>
+                                                <button 
+                                                    onClick={() => navigate(`/detail/${selectedItem.id}`)}
+                                                    className="p-4 bg-dancheong-ink text-white rounded-full hover:scale-110 transition-transform shadow-xl shadow-dancheong-ink/20"
+                                                >
+                                                    <BookOpen size={24} />
+                                                </button>
+                                            </div>
 
-                    <div className="w-full h-full">
-                        <VirtualGallery 
-                            items={items} 
-                            stories={stories} 
-                            theme={theme} 
-                            showUI={false} 
-                            lang={i18n.language} 
-                            defaultActivated={true}
-                            initialItemId={selectedItemId}
-                        />
+                                            <div className="space-y-6">
+                                                <h4 className="text-[10px] font-black tracking-[0.3em] text-dancheong-ink/40 uppercase">Archival Narrative</h4>
+                                                <p className="text-lg md:text-xl font-serif leading-relaxed text-dancheong-ink/80 italic">
+                                                    <AutoTranslatedText text={getLocalizedText((selectedItem as any).content || (selectedItem as any).description, i18n.language) || t('common.no_description')} />
+                                                </p>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-8 pt-8 border-t border-dancheong-ink/5">
+                                                <div>
+                                                    <span className="text-[9px] font-black tracking-widest text-dancheong-ink/30 uppercase block mb-2">Category</span>
+                                                    <span className="text-xs font-bold text-dancheong-ink uppercase tracking-wider">
+                                                        {targetSubId}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-[9px] font-black tracking-widest text-dancheong-ink/30 uppercase block mb-2">Status</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-dancheong-mugwort" />
+                                                        <span className="text-xs font-bold text-dancheong-ink uppercase tracking-wider">Authenticated</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => navigate(`/detail/${selectedItem.id}`)}
+                                            className="w-full py-5 bg-dancheong-ink text-white rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:bg-dancheong-ink/90 transition-colors mt-12 group"
+                                        >
+                                            <span className="group-hover:mr-4 transition-all"><AutoTranslatedText text="Explore Detailed Archive" /></span>
+                                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex-1 flex flex-col items-center justify-center py-40 opacity-20">
+                                    <BookOpen size={64} className="mb-6" />
+                                    <p className="text-xl font-serif italic">Select a record to explore</p>
+                                </div>
+                            )}
+                        </motion.div>
                     </div>
-                    
-                    {/* Navigation HUD */}
-                    <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-[2010] flex flex-col items-center">
-                        <div className="flex items-center gap-8 mb-4">
-                            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent to-white/40" />
-                            <div className="text-[10px] font-mono tracking-[0.5em] text-white/40 uppercase"><AutoTranslatedText text="Scroll to Proceed" /></div>
-                            <div className="w-24 h-[1px] bg-gradient-to-l from-transparent to-white/40" />
-                        </div>
-                    </div>
-                </motion.div>
-            )}
+                )}
+            </main>
 
             {/* Pagination/Footer Indicator */}
             <footer className="px-6 md:px-12 py-16 border-t border-dancheong-ink/10" style={{ backgroundColor: theme.color2 }}>

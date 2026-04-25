@@ -1,0 +1,247 @@
+﻿import { FloorCategory, NavItem, Notice, FAQ } from '../types';
+
+export const FALLBACK_FLOORS: FloorCategory[] = [
+    {
+        id: 'floor-7',
+        floor: '7F',
+        title: { ko: '而ㅻ??덉??댁뀡 ?쇱슫吏', en: 'COMMUNICATION LOUNGE' },
+        description: { ko: '?ㅼ떆媛?媛???뚯쓽? ?꾨컮? 湲곕컲???뚰넻???대（?댁????낆껜?곸씤 ?묒뾽 怨듦컙?낅땲??', en: 'A 3D collaborative space for real-time virtual meetings and avatar-based communication.' },
+        videoUrl: '/uploads/meeting_room.mp4',
+        color: '#FF3B30', // 7F - Vibrant Red (Meeting/Action)
+        content: [],
+        subitems: [
+            { id: 'meeting-room', label: { ko: '?뚯쓽??, en: 'Meeting Room' } }
+        ]
+    },
+    {
+        id: 'floor-6',
+        floor: '6F',
+        title: { ko: '寃뚮뜑 紐?, en: 'GATHER MALL' },
+        description: { ko: '?쒖슱???꾧꼍??鍮뚮뵫 ???ъ씠濡??쇱퀜吏??猷⑦봽??媛?좉낵 湲濡쒕쾶 臾명솕 援먮쪟瑜??꾪븳 ?쇱슫吏?낅땲??', en: 'A rooftop garden with city views and a lounge for global cultural exchange.' },
+        videoUrl: '/uploads/travel.mp4',
+        color: '#FF4757', // 6F - Vibrant Red (Culture)
+        content: [],
+        subitems: [
+            { id: 'travel', label: { ko: '?ы뻾', en: 'Travel' } },
+            { id: 'b2b-mall', label: { ko: 'B2B 紐?, en: 'B2B Mall' } },
+            { id: 'interview', label: { ko: '?꾪떚?ㅽ듃 ?명꽣酉?, en: 'Artist Interview' } },
+            { id: 'f4_plus', label: { ko: '?좏겕 ?뚮윭??, en: 'Talk Plus' } },
+            { id: 'f4_book', label: { ko: '?꾩꽌愿 ?뱀뀡', en: 'Book Section' } },
+            { id: 'f4_seminar', label: { ko: '?몃???猷?, en: 'Seminar Room' } }
+        ]
+    },
+    {
+        id: 'floor-5',
+        floor: '5F',
+        title: { ko: '?⑥뀡 ?꾩뭅?대툕', en: 'FASHION ARCHIVE' },
+        description: { ko: '?꾩떖 ?띿뿉??吏꾩젙???댁떇怨?嫄닿컯??李얜뒗 怨듦컙?낅땲?? ?먯뿰?먯꽌 ???뚯옱?ㅻ줈 袁몃ŉ吏??곕땲??議댁엯?덈떎.', en: 'A space for true relaxation and health in the city, themed with natural materials.' },
+        videoUrl: '/uploads/modern_tradition.mp4',
+        color: '#00D2FF', // 5F - Bright Cyan (Fashion/White-adjacent)
+        content: [],
+        subitems: [
+            { id: 'archive', label: { ko: '?⑥뀡 ?꾩뭅?대툕', en: 'Fashion Archive' } },
+            { id: 'collection', label: { ko: '?쒖쫵 而щ젆??, en: 'Season Collection' } },
+            { id: 'f5_material', label: { ko: '?뚯옱 ?꾩꽌愿', en: 'Material Library' } },
+            { id: 'f5_fitting', label: { ko: '?쇳똿 ?ㅽ뒠?붿삤', en: 'Fitting Studio' } },
+            { id: 'f5_textile', label: { ko: '?띿뒪???猷?, en: 'Textile Room' } }
+        ]
+    },
+    {
+        id: 'floor-4',
+        floor: '4F',
+        title: { ko: '濡쒖뺄 ?ㅻ━?곗?', en: 'LOCAL HERITAGE' },
+        description: { ko: '?쒓뎅 ?꾩뿭???꾩꽑??濡쒖뺄 ?앹옱猷뚯? ?μ씤???먭만???우? 誘몄떇???멸퀎瑜?寃쏀뿕?대낫?몄슂.', en: 'Experience the world of gourmet food with selected local ingredients and artisan touches.' },
+        videoUrl: '/uploads/festival.mp4',
+        color: '#00A8FF', // 4F - Vibrant Blue (Heritage)
+        content: [],
+        subitems: [
+            { id: 'heritage', label: { ko: '吏??臾명솕 ?좎궛', en: 'Local Heritage' } },
+            { id: 'f6_gourmet', label: { ko: '誘몄떇 ?꾩뭅?대툕', en: 'Gourmet Archive' } },
+            { id: 'f6_craft', label: { ko: '吏??怨듭삁愿', en: 'Local Craft' } },
+            { id: 'f6_tour', label: { ko: '?ㅻ━?곗? ?ъ뼱', en: 'Heritage Tour' } }
+        ]
+    },
+    {
+        id: 'floor-3',
+        floor: '3F',
+        title: { ko: '?쇱씠?꾩뒪????먮젅?댁뀡', en: 'LIFESTYLE CURATION' },
+        description: { ko: '?덉닠怨??щ엺??留뚮굹??怨? ?ㅼ뼇???뚰겕?띻낵 ?꾩떆瑜??듯빐 ?덈줈??而ㅻ??덊떚媛 ?뺤꽦?⑸땲??', en: 'Where art meets people. New communities are formed through various workshops and exhibitions.' },
+        videoUrl: '/uploads/active.mp4',
+        color: '#2ECC71', // 3F - Emerald Green (Lifestyle)
+        content: [],
+        subitems: [
+            { id: 'performance', label: { ko: '怨듭뿰 ?ㅽ솴', en: 'Live Performance' } },
+            { id: 'exhibit', label: { ko: '媛???꾩떆', en: 'Virtual Exhibit' } },
+            { id: 'f3_media', label: { ko: '誘몃뵒???꾪듃 ?', en: 'Media Art Hall' } },
+            { id: 'f3_lounge', label: { ko: '?꾪떚?ㅽ듃 ?쇱슫吏', en: 'Artist Lounge' } },
+            { id: 'f3_audio', label: { ko: '?ъ슫???꾩뭅?대툕', en: 'Sound Archive' } }
+        ]
+    },
+    {
+        id: 'floor-2',
+        floor: '2F',
+        title: { ko: '酉고떚 ??耳??, en: 'BEAUTY & CARE' },
+        description: { ko: '?섎쭔???꾨쫫?ㅼ???諛쒓껄?섍퀬 ?꾩꽦?섎뒗 怨좏뭹寃?酉고떚 ?먮젅?댁뀡 怨듦컙?낅땲??', en: 'A premium beauty curation space where you discover and complete your own beauty.' },
+        videoUrl: '/uploads/trend.mp4',
+        color: '#F39C12', // 2F - Vibrant Orange/Marigold (Media)
+        content: [],
+        subitems: [
+            { id: 'skincare', label: { ko: '?ㅽ궓耳??, en: 'Skincare' } },
+            { id: 'hair', label: { ko: '?ㅼ뼱耳??, en: 'Hair Care' } },
+            { id: 'p_surgery', label: { ko: '酉고떚?깊삎', en: 'Plastic Surgery' } },
+            { id: 'inner-beauty', label: { ko: '?대꼫 酉고떚', en: 'Inner Beauty' } },
+            { id: 'body-care', label: { ko: '諛붾뵒耳??, en: 'Body Care' } }
+        ]
+    },
+    {
+        id: 'floor-tech-care',
+        floor: '1F',
+        title: { ko: '?뚰겕 ??耳??, en: 'TECH & CARE' },
+        description: { ko: '?먮룞李?湲곗닠???곸떊怨??쇱씠?꾩뒪???耳?닿? 留뚮굹??誘몃옒??怨듦컙?낅땲??', en: 'A futuristic space where automotive innovation meets lifestyle care.' },
+        videoUrl: '/uploads/k-culture.mp4',
+        color: '#FFD32A', // 1F - Sunny Yellow (Trends)
+        content: [],
+        subitems: [
+            { id: 'car-care', label: { ko: 'CAR 耳??, en: 'CAR Care' } },
+            { id: 'window', label: { ko: '?붿????쇱쐢??, en: 'Digital Window' } },
+            { id: 'f1_kpop', label: { ko: 'K-???ㅽ뀒?댁?', en: 'K-Pop Stage' } },
+            { id: 'f1_library', label: { ko: '?몃젋???쇱씠釉뚮윭由?, en: 'Trend Library' } },
+            { id: 'f1_tech', label: { ko: '?쒕쪟 ?뚰겕議?, en: 'K-Tech Zone' } }
+        ]
+    }
+];
+
+export const FALLBACK_NAV: NavItem[] = [
+    {
+        id: 'floors',
+        href: '/inspiration',
+        subitems: FALLBACK_FLOORS.map(f => ({
+            id: f.id,
+            label: (typeof f.title === 'string' ? f.title : f.title.ko) || f.floor,
+            href: `/detail/${f.id}`
+        }))
+    },
+    {
+        id: 'about',
+        href: '/about'
+    },
+    {
+        id: 'notice',
+        href: '/notice'
+    },
+    {
+        id: 'faq',
+        href: '/faq'
+    }
+];
+
+export const FALLBACK_PRODUCTS: any[] = [
+    // 4F Local Heritage
+    { id: 'p6-1', subcategory: 'heritage', category: 'floor-4', title: { ko: '寃쎈났沅?洹쇱젙??異뺤냼 紐⑦삎', en: 'Gyeongbokgung Geunjeongjeon Scale Model' }, description: { ko: '?뺢탳???멸났?쇰줈 ?꾩꽦??議곗꽑 ?뺤떎 嫄댁텞???뺤닔?낅땲??', en: 'The essence of Joseon royal architecture completed with exquisite craftsmanship.' }, image_url: '/via_station_logo_portal.png', price: '2,500,000?? },
+    { id: 'p6-2', subcategory: 'travel', category: 'floor-6', title: { ko: '?쒖슱 怨⑤ぉ湲?媛???ъ뼱 ?⑦궎吏', en: 'Seoul Alleyway Virtual Tour Package' }, description: { ko: '?④꺼吏??쒖슱??留ㅻ젰??VR濡??먰뿕?섎뒗 ?꾨━誘몄뾼 ?ъ뼱?낅땲??', en: 'A premium VR tour exploring the hidden charms of Seoul.' }, image_url: '/via_station_logo_portal.png', price: '45,000?? },
+    { id: 'p6-3', subcategory: 'f6_gourmet', category: 'floor-4', title: { ko: '沅곸쨷 ?ㅺ낵 ?쒖젙???명듃', en: 'Royal Tea & Sweets Limited Set' }, description: { ko: '泥쒕뀈????궗瑜??댁? 紐낆씤???먭만濡?鍮싳? ?ㅺ낵 ?명듃?낅땲??', en: 'A tea and sweets set crafted by a master with a thousand years of history.' }, image_url: '/via_station_logo_portal.png', price: '85,000?? },
+    { id: 'p6-4', subcategory: 'f6_craft', category: 'floor-4', title: { ko: '諛⑹쭨?좉린 ?μ씤 ?앷린 ?명듃', en: 'Hand-forged Bronzeware Tableware Set' }, description: { ko: '????愿묓깮怨??닿퇏 ?④낵媛 ?곸썡???쒓뎅 ?꾪넻 ?앷린?낅땲??', en: 'Traditional Korean tableware with a subtle luster and excellent sterilization effects.' }, image_url: '/via_station_logo_portal.png', price: '580,000?? },
+    { id: 'p6-5', subcategory: 'f6_tour', category: 'floor-4', title: { ko: '?쒖뼇?꾩꽦 ?щ튆 ?먮갑沅?, en: 'Hanyangdoseong Moonlight Exploration Pass' }, description: { ko: '?깃낸湲몄쓣 ?곕씪 嫄룸뒗 濡쒕㎤?깊븳 ?쇨꼍 ?ъ뼱 ?꾨줈洹몃옩?낅땲??', en: 'A romantic night tour program walking along the fortress walls.' }, image_url: '/via_station_logo_portal.png', price: '30,000?? },
+
+    // 5F Fashion Archive
+    { id: 'p5-1', subcategory: 'archive', category: 'floor-5', title: { ko: '1970?꾨? 紐낅룞 ?⑥뀡 ?꾩뭅?대툕 肄뷀듃', en: '1970s Myeongdong Fashion Archive Coat' }, description: { ko: '?쒓뎅 ?⑥뀡???⑷툑湲곕? ?ъ“紐낇븳 蹂듦컖 ?쒕━利덉엯?덈떎.', en: 'A replica series re-illuminating the golden age of Korean fashion.' }, image_url: '/via_station_logo_portal.png', price: '620,000?? },
+    { id: 'p5-2', subcategory: 'collection', category: 'floor-5', title: { ko: '???쒕꽕?덉씠??罹≪뒓 而щ젆??, en: 'New Generation Capsule Collection' }, description: { ko: '?쇱씠吏??붿옄?대꼫?ㅼ씠 ?쒖븞?섎뒗 ?대쾲 ?쒖쫵 ?듭떖 ?꾩씠?쒖엯?덈떎.', en: 'Key items of this season suggested by rising designers.' }, image_url: '/via_station_logo_portal.png', price: '290,000?? },
+    { id: 'p5-3', subcategory: 'f5_material', category: 'floor-5', title: { ko: '?뱀닔 媛怨??쒖? ?ъ쑀 ?섑뵆??, en: 'Specially Processed Hanji Fiber Sampler' }, description: { ko: '移쒗솚寃쎌쟻?대ŉ ?듦린?깆씠 ?곗뼱???곸떊 ?뚯옱?낅땲??', en: 'An innovative material that is eco-friendly and highly breathable.' }, image_url: '/via_station_logo_portal.png', price: '15,000?? },
+    { id: 'p5-4', subcategory: 'f5_fitting', category: 'floor-5', title: { ko: '3D ?ㅻ쭏???쇳똿 ?쒕퉬?ㅺ텒', en: '3D Smart Fitting Service Pass' }, description: { ko: '?뺣? ?ㅼ틪???듯븳 ?꾨꼍???륁쓽 留욎땄蹂??붾（?섏엯?덈떎.', en: 'A custom clothing solution with a perfect fit through precision scanning.' }, image_url: '/via_station_logo_portal.png', price: '120,000?? },
+
+    // 6F Gather Mall
+    { id: 'p4-1', subcategory: 'b2b-mall', category: 'floor-6', title: { ko: '紐낆궗 珥덉껌 臾명솕 ?대줎 ?곗폆', en: 'VIP Cultural Discourse Ticket' }, description: { ko: '?밸? 理쒓퀬??吏?깅뱾怨??섎늻??源딆씠 ?덈뒗 ??붿엯?덈떎.', en: 'In-depth conversations with the greatest minds of our time.' }, image_url: '/via_station_logo_portal.png', price: '50,000?? },
+    { id: 'p4-2', subcategory: 'interview', category: 'floor-6', title: { ko: '?꾪떚?ㅽ듃 ?명꽣酉??곸긽 ?꾩뭅?대툕', en: 'Artist Interview Video Archive' }, description: { ko: '?묎???泥좏븰???좉쾬 洹몃?濡??댁븘???낆젏 ?명꽣酉곗엯?덈떎.', en: 'Exclusive interviews capturing the artist\'s philosophy in its raw form.' }, image_url: '/via_station_logo_portal.png', price: '15,000?? },
+    { id: 'p4-3', subcategory: 'f4_book', category: 'floor-6', title: { ko: '?붿옄??珥앹꽌 ?붾낫吏?, en: 'Design Series Art Book' }, description: { ko: '?섎룞???낆꽌瑜??섏뼱 ?곴컧??二쇰뒗 ?쒓컖 ?덉닠 ?꾩꽌?낅땲??', en: 'A visual art book that goes beyond passive reading and provides inspiration.' }, image_url: '/via_station_logo_portal.png', price: '95,000?? },
+    { id: 'p4-4', subcategory: 'f4_seminar', category: 'floor-6', title: { ko: '?ㅻ쭏???먮?耳?댁뀡 ?몃?????, en: 'Smart Education Seminar Room' }, description: { ko: '理쒖떊 援먯쑁 湲곗닠???묐ぉ??吏?ν삎 ?숈뒿 怨듦컙?낅땲??', en: 'An intelligent learning space integrated with latest educational technology.' }, image_url: '/via_station_logo_portal.png', price: '200,000?? },
+
+    // 3F Lifestyle Curation
+    { id: 'p3-1', subcategory: 'performance', category: 'floor-3', title: { ko: '誘몃뵒???듯빀 ?ㅺ컧 怨듭뿰 ?곗폆', en: 'Media Convergence Immersive Performance Ticket' }, description: { ko: '臾대?? 湲곗닠???섎굹?섎뒗 ?뺣룄??怨듭뿰???쒓컙?낅땲??', en: 'A moment of overwhelming performance where the stage and technology become one.' }, image_url: '/via_station_logo_portal.png', price: '110,000?? },
+    { id: 'p3-2', subcategory: 'exhibit', category: 'floor-3', title: { ko: '?붿???罹붾쾭???꾪듃 ?뚰겕', en: 'Digital Canvas Art Work' }, description: { ko: '怨듦컙??遺꾩쐞湲곕? ?ㅼ떆媛꾩쑝濡?蹂?붿떆?ㅻ뒗 ?덉닠 寃쏀뿕?낅땲??', en: 'An art experience that changes the atmosphere of a space in real time.' }, image_url: '/via_station_logo_portal.png', price: '850,000?? },
+    { id: 'p3-3', subcategory: 'f3_media', category: 'floor-3', title: { ko: '?濡쒓렇???대㉧?쒕툕 ?꾩떆 愿?뚭텒', en: 'Hologram Immersive Exhibition Ticket' }, description: { ko: '鍮쏆쑝濡?援ы쁽??媛???멸퀎瑜?吏곸젒 泥댄뿕?대낫?몄슂.', en: 'Experience a virtual world implemented with light.' }, image_url: '/via_station_logo_portal.png', price: '25,000?? },
+
+    // 2F Beauty & Care
+    { id: 'p2-1', subcategory: 'skincare', category: 'floor-2', title: { ko: '?꾨━誘몄뾼 諛몃윴???몃읆', en: 'Premium Balancing Serum' }, description: { ko: '?쇰? ??源딆? 怨녠퉴吏 ?섎텇??梨꾩썙二쇰뒗 怨좊냽異??곸뼇 Serum?낅땲??', en: 'A highly concentrated nourishing serum that fills moisture deep into the skin.' }, image_url: '/via_station_logo_portal.png', price: '120,000?? },
+    { id: 'p2-2', subcategory: 'hair', category: 'floor-2', title: { ko: '?ㅽ겕 由ы럹???ㅼ뼱 ?먯꽱??, en: 'Silk Repair Hair Essence' }, description: { ko: '?먯긽??紐⑤컻??利됯컖?곸씤 ?ㅺ린? 遺?쒕윭???遺?ы븯???꾨줈?섏뀛???ㅼ뼱 耳?댁엯?덈떎.', en: 'Professional hair care that gives instant shine and softness to damaged hair.' }, image_url: '/via_station_logo_portal.png', price: '68,000?? },
+    { id: 'p2-3', subcategory: 'inner-beauty', category: 'floor-2', title: { ko: '鍮꾪? 遺?ㅽ듃 肄쒕씪寃??고뵆', en: 'Vita Boost Collagen Ampoule' }, description: { ko: '?띾???李⑥삤瑜대뒗 ?앷린瑜??꾪븳 留덉떆???꾨━誘몄뾼 酉고떚 ?붾（?섏엯?덈떎.', en: 'A drinking premium beauty solution for vitality from the inside out.' }, image_url: '/via_station_logo_portal.png', price: '85,000?? },
+
+    // 1F Tech & Care
+    { id: 'p1-1', subcategory: 'car-care', category: 'floor-tech-care', title: { ko: '?꾨━誘몄뾼 ?몄젙 諛?肄뷀똿 ?ㅽ듃', en: 'Premium Washing & Coating Kit' }, description: { ko: '?꾨Ц媛???먭만??吏묒뿉?쒕룄 寃쏀뿕?????덈뒗 ?섏씠?붾뱶 移댁????명듃?낅땲??', en: 'A high-end car care set to experience a professional touch at home.' }, image_url: '/via_station_logo_portal.png', price: '75,000?? },
+    { id: 'p1-2', subcategory: 'window', category: 'floor-tech-care', title: { ko: '?ㅻ쭏???쒗떚 ?濡쒓렇???ㅽ듃', en: 'Smart City Hologram Kit' }, description: { ko: '???먯븞???묒? ?쒖슱??援ы쁽?섎뒗 ?뚰겕 ?ㅽ듃?낅땲??', en: 'A tech kit that implements a small Seoul in your hands.' }, image_url: '/via_station_logo_portal.png', price: '129,000?? },
+    { id: 'p1-3', subcategory: 'f1_kpop', category: 'floor-tech-care', title: { ko: '媛???꾩씠???곕퇃 ?⑤쾾 而⑥뀎 ?꾪듃', en: 'Virtual Idol Debut Album Concept Art' }, description: { ko: '媛???멸퀎???ㅽ?瑜??꾩떎濡??뚰솚?섎뒗 ?꾪듃 而щ젆?섏엯?덈떎.', en: 'An art collection that summons stars from the virtual world to reality.' }, image_url: '/via_station_logo_portal.png', price: '55,000?? }
+];
+
+export const FALLBACK_STORIES: any[] = [
+    { id: 's6-1', subcategory: 'heritage', category: 'floor-4', title: '?딇?吏?沅곴텗???몃옒', content: '?쒖슱??以묒떖?먯꽌 ?좎옄怨??덈뜕 ???댁빞湲곕뱾???꾨??곸쑝濡?諛쒓뎬?대깄?덈떎.', image_url: '/via_station_logo_portal.png' },
+    { id: 's5-1', subcategory: 'archive', category: 'floor-5', title: '?ㅼ쓣 ?ｋ뒗 留덉쓬', content: '?꾪넻 ?ъ쑀 ?뚯옱媛 ?꾨? ?⑥뀡??二쇱뿭???섍린源뚯???湲??ъ젙???댁븯?듬땲??', image_url: '/via_station_logo_portal.png' },
+    { id: 's4-1', subcategory: 'b2b-mall', category: 'floor-6', title: '紐⑹냼由ъ쓽 ?뚮룞', content: '?대줎怨???붽? ?대뼸寃??몄긽??諛붽씀?붿? ?묎??ㅼ쓽 紐⑹냼由щ줈 ?ㅼ뼱遊낅땲??', image_url: '/via_station_logo_portal.png' },
+    { id: 's3-1', subcategory: 'performance', category: 'floor-3', title: '臾대????뺤옣', content: '怨듭뿰???앸궃 ?꾩뿉???⑤뒗 ?ъ슫, 洹??댁긽??媛먮룞??媛怨듦났媛꾩뿉???댁뼱媛묐땲??', image_url: '/via_station_logo_portal.png' },
+    { id: 's2-1', subcategory: 'skincare', category: 'floor-2', title: '?꾨쫫?ㅼ???蹂몄쭏??李얠븘??, content: '?ㅽ궓耳??湲곗큹遺???쒖옉?섎뒗 嫄닿컯???쇰? 蹂?붿쓽 湲곕줉???댁븯?듬땲??', image_url: '/via_station_logo_portal.png' },
+    { id: 's1-1', subcategory: 'car-care', category: 'floor-tech-care', title: '?곸떊???뷀뀒?쇰쭅???멸퀎', content: '?먮룞李⑤? ?꾨겮??留덉쓬?먯꽌 ?쒖옉??湲곗닠???뺤젏, ?덈줈??耳???⑤윭?ㅼ엫???쒖븞?⑸땲??', image_url: '/via_station_logo_portal.png' }
+];
+
+export const FALLBACK_NOTICES: Notice[] = [
+    {
+        id: '1',
+        title: { ko: 'VIA STATION 洹몃옖???ㅽ뵂 諛?硫ㅻ쾭???쒗깮 ?덈궡', en: 'Grand Opening & Membership Benefits' },
+        category: '怨듭?',
+        date: '2024-03-01',
+        content: { ko: 'VIA STATION???뺤떇 ?ㅽ뵂?섏??듬땲?? 硫ㅻ쾭??媛?????ㅼ뼇???쒗깮???쒕┰?덈떎.', en: 'The VIA STATION is officially open. We offer various benefits for membership sign-ups.' },
+        is_important: true
+    },
+    {
+        id: '2',
+        title: { ko: '遊??쒖쫵 ?쒖젙 ?덉닠???낃퀬 ?덈궡', en: 'Spring Season Limited Art Collection' },
+        category: '?꾩떆',
+        date: '2024-03-10',
+        content: { ko: '?곗뒪??遊꾩쓣 留욎븘 ?꾩꽑???덉닠媛?ㅼ쓽 ?묓뭹???덈∼寃??낃퀬?섏뿀?듬땲??', en: 'Selected artists\' works have been newly stocked in time for the warm spring.' },
+        is_important: false
+    },
+    {
+        id: '3',
+        title: { ko: '吏??二쇱감??蹂댁닔 怨듭궗 ?쇱젙 ?덈궡', en: 'Parking Lot Maintenance Schedule' },
+        category: '怨듭?',
+        date: '2024-03-15',
+        content: { ko: '3??25?쇰???27?쇨퉴吏 二쇱감???쇰? 援ъ뿭??蹂댁닔 怨듭궗媛 吏꾪뻾?⑸땲??', en: 'Maintenance work will take place in some areas of the parking lot from March 25th to 27th.' },
+        is_important: false
+    }
+];
+
+export const FALLBACK_FAQS: FAQ[] = [
+    {
+        id: '1',
+        question: { ko: 'VIA STATION???댁쁺 ?쒓컙? ?대뼸寃??섎굹??', en: 'What are the operating hours of the VIA STATION?' },
+        answer: { ko: '???VIA STATION? ?곗쨷臾댄쑕濡??ㅼ쟾 10??30遺꾨????ㅽ썑 8?쒓퉴吏 ?댁쁺?⑸땲?? ?ㅻ쭔, ?밸퀎 ?됱궗媛 ?덈뒗 寃쎌슦 ?댁쁺 ?쒓컙??議곗젙?????덉쑝??怨듭??ы빆???뺤씤??二쇱떆湲?諛붾엻?덈떎.', en: 'The VIA STATION is open year-round from 10:30 AM to 8:00 PM. However, please check the notices as hours may change for special events.' }
+    },
+    {
+        id: '2',
+        question: { ko: '二쇱감??媛?ν븳媛??', en: 'Is parking available?' },
+        answer: { ko: '?? ?곸젏 嫄대Ъ 吏??1痢듬???3痢듦퉴吏 ?볦? 二쇱감 怨듦컙??留덈젴?섏뼱 ?덉뒿?덈떎. ?곹뭹 援щℓ 怨좉컼猿섎뒗 援щℓ 湲덉븸???곕씪 理쒕? 4?쒓컙源뚯? 臾대즺 二쇱감沅뚯쓣 ?쒓났???쒕┰?덈떎.', en: 'Yes, a large parking space is available from the 1st to 3rd basement levels. Customers will receive a free parking ticket for up to 4 hours depending on the purchase amount.' }
+    },
+    {
+        id: '3',
+        question: { ko: '硫ㅻ쾭???쒗깮? 臾댁뾿?멸???', en: 'What are the membership benefits?' },
+        answer: { ko: 'VIA STATION 硫ㅻ쾭???뚯썝???섏떆硫?紐⑤뱺 ?곹뭹 援щℓ ??3% ?ъ씤???곷┰, ?앹씪 ?뱀씪 10% ?좎씤 荑좏룿 諛쒓툒, 洹몃━怨??쒖쫵蹂??쒖젙???곗꽑 援щℓ沅??깆쓽 ?쒗깮???꾨━?????덉뒿?덈떎.', en: 'VIA STATION membership offers 3% point accumulation on all purchases, a 10% birthday discount coupon, and priority purchase rights for seasonal limited items.' }
+    },
+    {
+        id: '4',
+        question: { ko: '?곹뭹沅??ъ슜??媛?ν븳媛??', en: 'Can I use gift certificates?' },
+        answer: { ko: '?? 臾명솕?곹뭹沅? VIA STATION ?곹뭹沅??좎꽭怨?濡?뜲/?꾨?) 諛?VIA STATION ?꾩슜 ?붿???湲고봽?몄뭅?쒕? 紐⑤몢 ?ъ슜?섏떎 ???덉뒿?덈떎.', en: 'Yes, Culture Gift Certificates, Department Store Gift Certificates (Shinsegae/Lotte/Hyundai), and VIA STATION-exclusive digital gift cards are all accepted.' }
+    },
+    {
+        id: '5',
+        question: { ko: '?섎텋 諛?援먰솚 洹쒖젙? ?대뼸寃??섎굹??', en: 'What is the refund and exchange policy?' },
+        answer: { ko: '援щℓ ??7???대궡???곸닔利앷낵 誘멸컻遊??곹깭???곹뭹??吏李명븯?쒕㈃ ?섎텋 諛?援먰솚??媛?ν빀?덈떎. ?? ?쇰? ?좎꽑 ?쒗뭹?대굹 ?쒖젙???덉닠?덉쓽 寃쎌슦 洹쒖젙???ㅻ? ???덉뒿?덈떎.', en: 'Refunds and exchanges are possible within 7 days of purchase if you bring your receipt and unopened products. However, policies may differ for fresh products or limited-edition artworks.' }
+    }
+];
+
+export const FALLBACK_PAGES = [
+    { id: 'page-home', title: { ko: '??, en: 'Home' }, description: { ko: '臾명솕? ?덉닠??留뚮굹???붿????꾩뭅?대툕, VIA STATION??硫붿씤 ?섏씠吏?낅땲??', en: 'The main page of VIA STATION, a digital archive where culture and art meet.' }, url: '/' },
+    { id: 'page-about', title: { ko: '?뚭컻', en: 'About' }, description: { ko: 'VIA STATION??媛移섏? 鍮꾩쟾, 洹몃━怨??곕━媛 留뚮뱾?닿???臾명솕 ?앺깭怨꾩뿉 ????뚭컻?⑸땲??', en: 'Introducing the values, vision, and cultural ecosystem of the VIA STATION.' }, url: '/about' },
+    { id: 'page-notice', title: { ko: '怨듭??ы빆', en: 'Notice' }, description: { ko: 'VIA STATION???덈줈???뚯떇怨?二쇱슂 ?덈궡?ы빆???뺤씤?섏떎 ???덉뒿?덈떎.', en: 'Check out the new news and major announcements from the VIA STATION.' }, url: '/notice' },
+    { id: 'page-faq', title: { ko: '?먯＜ 臾삳뒗 吏덈Ц', en: 'FAQ' }, description: { ko: '?댁슜 諛⑸쾿, 二쇱감, 硫ㅻ쾭????怨좉컼?섎뱾???먯＜ 沅곴툑?댄븯?쒕뒗 吏덈Ц?ㅼ뿉 ????듬??낅땲??', en: 'Answers to frequently asked questions about usage, parking, membership, etc.' }, url: '/faq' },
+    { id: 'page-terms', title: { ko: '?댁슜?쎄?', en: 'Terms' }, description: { ko: 'VIA STATION ?쒕퉬???댁슜???꾪븳 踰뺤쟻 沅뚮━? ?섎Т ?ы빆??洹쒖젙?⑸땲??', en: 'Regulating legal rights and obligations for using the VIA STATION service.' }, url: '/terms' },
+    { id: 'page-privacy', title: { ko: '媛쒖씤?뺣낫泥섎━諛⑹묠', en: 'Privacy' }, description: { ko: '怨좉컼?섏쓽 ?뚯쨷??媛쒖씤?뺣낫瑜??대뼸寃?蹂댄샇?섍퀬 愿由ы븯?붿? 紐낆떆?⑸땲??', en: 'Specifying how your valuable personal information is protected and managed.' }, url: '/privacy' },
+    { id: 'page-inspiration', title: { ko: '?곴컧??怨듦컙 (?몃옖??', en: 'Inspiration (Trend)' }, description: { ko: '1F遺??6F源뚯? 媛?痢듬퀎 理쒖떊 ?몃옖???뚮쭏? ?붿???肄섑뀗痢좊? ?쒕늿???섎윭蹂????덈뒗 ?섏씠吏?낅땲??', en: 'A page where you can browse the latest trend themes and digital content of each floor from 1F to 6F.' }, url: '/inspiration' },
+];
+

@@ -43,7 +43,7 @@ const AdminLoginPage: React.FC = () => {
             {/* Left Side: Editorial Context */}
             <div className="hidden lg:flex w-1/2 p-20 flex-col justify-between relative z-10">
                 <div>
-                    <BrandLogo size={140} color="#4F6D5B" mode="portal" />
+                    <BrandLogo size={140} />
                     <div className="mt-16 max-w-lg">
                         <motion.h1 
                             initial={{ opacity: 0, y: 20 }}
@@ -87,7 +87,7 @@ const AdminLoginPage: React.FC = () => {
                     <div className="bg-white border border-dancheong-ink/20 rounded-[48px] p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)] relative">
                         {/* Mobile Logo */}
                         <div className="lg:hidden mb-12 flex justify-center">
-                            <BrandLogo size={80} color="#4F6D5B" />
+                            <BrandLogo size={80} />
                         </div>
 
                         <div className="mb-12">

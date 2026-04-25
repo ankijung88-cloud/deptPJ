@@ -60,7 +60,7 @@ const AgencyRegisterPage: React.FC = () => {
                     <div className="bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
                         {/* Decorative Pattern */}
                         <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
-                            <BrandLogo size={300} color="#171717" />
+                            <BrandLogo size={300} />
                         </div>
 
                         {step === 1 ? (

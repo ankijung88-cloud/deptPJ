@@ -3,20 +3,32 @@ import React from 'react';
 interface BrandLogoProps {
     className?: string;
     size?: number | string;
-    mode?: 'portal' | 'hub' | 'wordmark';
-    color?: string;
 }
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({ 
     className = "", 
-    size = 'auto'
+    size = 48
 }) => {
+    const heightValue = typeof size === 'number' ? size : 48;
+
     return (
-        <img 
-            src="/sample.png" 
-            alt="Brand Logo" 
-            className={className} 
-            style={{ height: size, width: 'auto', objectFit: 'contain' }} 
-        />
+        <div className={`flex items-center gap-4 ${className}`}>
+            <img 
+                src="/stamplogo_clean.png" 
+                alt="Mongtang Seal"
+                style={{ height: heightValue, width: 'auto', objectFit: 'contain' }}
+                className="select-none"
+            />
+            <img 
+                src="/titlelogo_clean.png" 
+                alt="Mongtang Title"
+                style={{ height: heightValue * 0.7, width: 'auto', objectFit: 'contain' }}
+                className="select-none"
+            />
+        </div>
     );
 };
+
+
+
+

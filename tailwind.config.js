@@ -90,6 +90,7 @@ export default {
             fontFamily: {
                 sans: ['"Pretendard"', '"Noto Sans KR"', 'sans-serif'],
                 serif: ['"Hahmlet"', '"Noto Serif KR"', 'serif'],
+                gungsuh: ['"Gungsuh"', '"GungsuhChe"', 'cursive'],
             },
         },
     },

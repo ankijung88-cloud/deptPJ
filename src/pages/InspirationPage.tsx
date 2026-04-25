@@ -225,7 +225,7 @@ const InspirationPage: React.FC = () => {
                         </div>
                     </div>
                     
-                    <BrandLogo size={60} color="#4F6D5B" className="opacity-40 hover:opacity-100 transition-opacity" />
+                    <BrandLogo size={60} className="opacity-40 hover:opacity-100 transition-opacity" />
                     
                     <div className="font-mono text-[10px] tracking-[0.2em] text-right hidden md:block">
                         <p>© 2026 몽땅쏙 ARCHIVE</p>
