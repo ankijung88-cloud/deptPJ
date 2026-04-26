@@ -7,10 +7,10 @@ export const FLOORS = [
         videoUrl: '/uploads/meeting_room.mp4',
         subcategories: [
             { id: 'study', label: '스터디' },
-            { id: 'audio-room', label: '오디오룸' },
-            { id: 'interview-room', label: '면접실' },
-            { id: 'square', label: '모두의 광장' },
-            { id: 'office', label: '오피스' },
+            { id: 'hubby', label: '취미 & 여가' },
+            { id: 'interview-room', label: '면접 & 취업' },
+            { id: 'square', label: '봉사 & 활동' },
+            { id: 'office', label: '회의 & 업무' },
         ]
     },
     {

@@ -12,10 +12,10 @@
     },
     "subcategory": {
       "study": "스터디",
-      "audio-room": "오디오룸",
-      "interview-room": "면접실",
-      "square": "모두의 광장",
-      "office": "오피스",
+      "hubby": "취미 & 여가",
+      "interview-room": "면접 & 취업",
+      "square": "봉사 & 활동",
+      "office": "회의 & 업무",
       "funding": "크라우드펀딩",
       "share-buy": "공동구매",
       "archive": "패션 아카이브",
@@ -55,7 +55,7 @@
     },
     "subcategory": {
       "study": "Meeting Room",
-      "audio-room": "Audio Room",
+      "hubby": "Audio Room",
       "interview-room": "Interview Room",
       "square": "Square",
       "office": "Office",
