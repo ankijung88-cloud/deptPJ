@@ -23,6 +23,7 @@ import { OfficeEnvironment } from '../components/gallery/OfficeEnvironment';
 import { useNavigationState, useImmersiveMode } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
 const socket = io();
@@ -97,6 +98,7 @@ const TeamWorkspacePage: React.FC = () => {
     const { t: _t } = useTranslation();
     const { isAdmin, isAgency, user } = useAdmin();
     const { resetUiTimer } = useNavigationState();
+    const { translateAsync } = useAutoTranslate('');
     useImmersiveMode(true);
     const isManagement = isAdmin || isAgency;
 
@@ -148,17 +150,16 @@ const TeamWorkspacePage: React.FC = () => {
         resetUiTimer();
     }, [resetUiTimer]);
 
-    const handleSit = useCallback((seatId: string) => {
+    const handleSit = useCallback(async (seatId: string) => {
         const targetSeat = seats.find(s => s.id === seatId);
         if (targetSeat?.assignedUser && targetSeat.assignedUser.id !== user?.id && !isManagement) {
-            // Using a simple alert for now, but the string can be wrapped if we had a toast system. 
-            // For now, let's keep it but wrap the content if it was a UI element.
-            alert(`Reserved for ${targetSeat.assignedUser.name}`);
+            const msg = await translateAsync(`Reserved for ${targetSeat.assignedUser.name}`);
+            alert(msg);
             return;
         }
         socket.emit('select-seat', { seatId });
         handleActivity();
-    }, [roomId, handleActivity, seats, user, isManagement]);
+    }, [roomId, handleActivity, seats, user, isManagement, translateAsync]);
 
     useEffect(() => {
         handleActivity();
@@ -363,7 +364,7 @@ const TeamWorkspacePage: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setAssigningSeatId(null)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/95"
                         />
                         <motion.div 
                             initial={{ scale: 0.9, opacity: 0 }}
@@ -454,7 +455,7 @@ const TeamWorkspacePage: React.FC = () => {
 
                 {/* Bottom Controls */}
                 <footer className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 pointer-events-auto">
-                    <div className="px-6 py-4 rounded-3xl bg-black/40 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6">
+                    <div className="px-6 py-4 rounded-3xl bg-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6">
                         <div className="flex items-center gap-4 border-r border-white/10 pr-6 mr-2">
                             {[
                                 { id: 'working', icon: Monitor, color: '#00D2FF', label: <AutoTranslatedText text="Working" /> },
@@ -502,7 +503,7 @@ const TeamWorkspacePage: React.FC = () => {
                             initial={{ opacity: 0, x: 100 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 100 }}
-                            className="absolute right-8 top-24 bottom-32 w-80 bg-black/40 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col overflow-hidden"
+                            className="absolute right-8 top-24 bottom-32 w-80 bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col overflow-hidden"
                         >
                             <div className="p-4 border-b border-white/10 flex justify-between items-center">
                                 <h3 className="font-bold text-xs uppercase tracking-widest text-white/40"><AutoTranslatedText text="Office Chat" /></h3>

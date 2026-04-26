@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Sparkles, User, Calendar, Clock, Moon, Sun, Loader, X, Maximize2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useImmersiveMode, useNavigationState } from '../context/NavigationActionContext';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
 const VirtualSajuPage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const { resetUiTimer } = useNavigationState();
+    const { translateAsync } = useAutoTranslate('');
     useImmersiveMode(true);
 
     const [formData, setFormData] = useState({
@@ -62,7 +66,8 @@ const VirtualSajuPage: React.FC = () => {
             }
         } catch (error: any) {
             console.error('Saju fetch error:', error);
-            alert(`사주 결과를 불러오는 중 문제가 발생했습니다:\n${error.message}`);
+            const errorMsg = await translateAsync(`사주 결과를 불러오는 중 문제가 발생했습니다:\n${error.message}`);
+            alert(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -70,25 +75,24 @@ const VirtualSajuPage: React.FC = () => {
 
     // Helper to render simple markdown without extra dependencies
     const renderMarkdown = (text: string) => {
-        // Split text by lines
         const lines = text.split('\n');
         return lines.map((line, idx) => {
             if (line.startsWith('###')) {
-                return <h3 key={idx} className="text-xl font-bold mt-6 mb-3 text-[#FFD700]">{line.replace(/###/g, '').trim()}</h3>;
+                return <h3 key={idx} className="text-xl font-bold mt-6 mb-3 text-[#FFD700]"><AutoTranslatedText text={line.replace(/###/g, '').trim()} /></h3>;
             }
             if (line.startsWith('##')) {
-                return <h2 key={idx} className="text-2xl font-black mt-8 mb-4 tracking-tight text-[#FFD700] border-b border-white/10 pb-2">{line.replace(/##/g, '').trim()}</h2>;
+                return <h2 key={idx} className="text-2xl font-black mt-8 mb-4 tracking-tight text-[#FFD700] border-b border-white/10 pb-2"><AutoTranslatedText text={line.replace(/##/g, '').trim()} /></h2>;
             }
             if (line.startsWith('#')) {
-                return <h1 key={idx} className="text-3xl font-black mt-10 mb-4 tracking-tighter text-white">{line.replace(/#/g, '').trim()}</h1>;
+                return <h1 key={idx} className="text-3xl font-black mt-10 mb-4 tracking-tighter text-white"><AutoTranslatedText text={line.replace(/#/g, '').trim()} /></h1>;
             }
             if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
-                return <li key={idx} className="ml-4 mb-2 text-white/80 leading-relaxed">{line.replace(/^[-*]\s/, '')}</li>;
+                return <li key={idx} className="ml-4 mb-2 text-white/80 leading-relaxed"><AutoTranslatedText text={line.replace(/^[-*]\s/, '')} /></li>;
             }
-            // Add bold text replacement
+            
             const boldRegex = /\*\*(.*?)\*\*/g;
             const parts = line.split(boldRegex);
-            const lineContent = parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-white font-bold">{part}</strong> : part);
+            const lineContent = parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-white font-bold"><AutoTranslatedText text={part} /></strong> : <AutoTranslatedText key={i} text={part} />);
 
             return line.trim() ? <p key={idx} className="mb-4 text-white/80 leading-relaxed">{lineContent}</p> : <br key={idx} />;
         });
@@ -111,7 +115,7 @@ const VirtualSajuPage: React.FC = () => {
                 {/* Header (Top UI) */}
                 <header className="absolute top-0 inset-x-0 z-20 p-8 flex justify-between items-start pointer-events-auto">
                     <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(-1)}>
-                        <div className="p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full group-hover:bg-[#FFD700]/20 transition-all">
+                        <div className="p-3 bg-[#111] border border-white/10 rounded-full group-hover:bg-[#FFD700]/20 transition-all">
                             <LogOut size={20} className="rotate-180 group-hover:text-[#FFD700]" />
                         </div>
                         <div>
@@ -135,7 +139,7 @@ const VirtualSajuPage: React.FC = () => {
                             initial={{ x: -30, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="flex-shrink-0 w-full md:w-[400px] bg-black/60 backdrop-blur-3xl border border-white/10 p-8 flex flex-col gap-8 rounded-[2rem] shadow-2xl h-fit relative md:sticky md:top-0"
+                            className="flex-shrink-0 w-full md:w-[400px] bg-[#0a0a0a] border border-white/10 p-8 flex flex-col gap-8 rounded-[2rem] shadow-2xl h-fit relative md:sticky md:top-0"
                         >
                             <div className="flex flex-col gap-2">
                                 <h2 className="text-2xl font-bold tracking-tight text-white"><AutoTranslatedText text="나의 기운 알아보기" /></h2>
@@ -155,7 +159,7 @@ const VirtualSajuPage: React.FC = () => {
                                             onChange={handleChange}
                                             required
                                             className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-[#FFD700]/50 transition-colors placeholder:text-white/20"
-                                            placeholder="이름 입력"
+                                            placeholder={t("Enter name")}
                                         />
                                     </div>
                                 </div>
@@ -276,7 +280,7 @@ const VirtualSajuPage: React.FC = () => {
                                     disabled={loading}
                                     className="mt-4 w-full py-4 bg-gradient-to-r from-[#9C27B0] to-[#FFD700] p-[1px] rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(255,215,0,0.2)] hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] transition-shadow group disabled:opacity-50"
                                 >
-                                    <div className="w-full h-full bg-black/50 backdrop-blur-sm px-6 py-3 rounded-2xl flex items-center justify-center gap-3">
+                                    <div className="w-full h-full bg-black/80 px-6 py-3 rounded-2xl flex items-center justify-center gap-3">
                                         {loading ? (
                                             <>
                                                 <Loader size={20} className="animate-spin text-[#FFD700]" />
@@ -298,7 +302,7 @@ const VirtualSajuPage: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             onClick={() => isMobile && result && setIsModalOpen(true)}
-                            className={`flex-1 bg-black/40 backdrop-blur-xl border border-white/5 p-10 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden ${isMobile && result ? 'cursor-pointer hover:bg-white/5 transition-colors active:scale-[0.98]' : ''}`}
+                            className={`flex-1 bg-[#0a0a0a] border border-white/5 p-10 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden ${isMobile && result ? 'cursor-pointer hover:bg-white/5 transition-colors active:scale-[0.98]' : ''}`}
                         >
                             {isMobile && result && (
                                 <div className="absolute top-6 right-6 p-2 bg-white/5 rounded-full text-[#FFD700] animate-pulse">
@@ -331,7 +335,7 @@ const VirtualSajuPage: React.FC = () => {
                                         <div className="inline-block px-4 py-1 border border-[#FFD700] rounded-full text-[#FFD700] text-[10px] font-bold tracking-[0.3em] uppercase mb-4">
                                             Analysis Completed
                                         </div>
-                                        <h2 className="text-3xl font-black text-white"><span className="text-[#9C27B0]">{formData.name}</span>님을 위한 사주 풀이</h2>
+                                        <h2 className="text-3xl font-black text-white"><span className="text-[#9C27B0]">{formData.name}</span> <AutoTranslatedText text="님을 위한 사주 풀이" /></h2>
                                     </motion.div>
                                     
                                     <div className="prose prose-invert prose-yellow max-w-none">
@@ -353,7 +357,7 @@ const VirtualSajuPage: React.FC = () => {
                             className="fixed inset-0 z-[100] bg-[#050505] flex flex-col overflow-hidden"
                         >
                             {/* Modal Header */}
-                            <div className="flex-shrink-0 p-6 flex justify-between items-center border-b border-white/10 bg-black/40 backdrop-blur-md">
+                            <div className="flex-shrink-0 p-6 flex justify-between items-center border-b border-white/10 bg-[#0a0a0a]">
                                 <div className="flex items-center gap-3">
                                     <Sparkles size={20} className="text-[#FFD700]" />
                                     <h2 className="text-xl font-bold text-white tracking-tight">

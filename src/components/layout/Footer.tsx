@@ -43,16 +43,26 @@ export const Footer: React.FC = () => {
                     <div className="md:col-span-3 space-y-8">
                         <h4 className="text-[10px] font-black tracking-[0.3em] text-dancheong-ink/30 uppercase"><AutoTranslatedText text={t('footer.contact')} /></h4>
                         <div className="space-y-4">
-                            <span className="text-2xl font-serif font-black text-dancheong-ink/80 block">1544-0000</span>
+                            <span className="text-2xl font-serif font-black text-dancheong-ink/80 block"><AutoTranslatedText text="1544-0000" /></span>
                             <p className="text-xs font-medium leading-relaxed text-dancheong-ink/50">
                                 <AutoTranslatedText text={t('footer.weekdays')} />
                             </p>
-                            <a
-                                href="mailto:support@viastation.com"
-                                className="inline-block text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-mugwort hover:bg-dancheong-ink text-white px-10 py-5 rounded-full transition-all shadow-xl shadow-dancheong-mugwort/10 text-center"
-                            >
-                                <AutoTranslatedText text="Send Inquiry" />
-                            </a>
+                            <div className="flex flex-col gap-3">
+                                <a
+                                    href="mailto:support@viastation.com"
+                                    className="inline-block text-[10px] font-black tracking-[0.3em] uppercase bg-dancheong-mugwort hover:bg-dancheong-ink text-white px-8 py-4 rounded-full transition-all shadow-xl shadow-dancheong-mugwort/10 text-center whitespace-nowrap"
+                                >
+                                    <AutoTranslatedText text={t('footer.inquiry')} />
+                                </a>
+                                <a
+                                    href="https://open.kakao.com/o/sLEAsasi"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-block text-[10px] font-black tracking-[0.3em] uppercase bg-[#FEE500] hover:bg-[#FAD000] text-[#3c1e1e] px-8 py-4 rounded-full transition-all shadow-xl shadow-yellow-500/10 text-center whitespace-nowrap"
+                                >
+                                    <AutoTranslatedText text={t('footer.kakao_inquiry')} />
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

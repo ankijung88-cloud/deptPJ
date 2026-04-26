@@ -320,7 +320,7 @@ export const DetailPage: React.FC = () => {
     }
 
     return (
-        <article className="min-h-screen" style={{ backgroundColor: theme.bgColor, color: theme.textPrimary }}>
+        <article className="min-h-screen bg-transparent" style={{ color: theme.textPrimary }}>
             {/* Magazine Hero */}
             <div className="relative h-[45vh] w-full group overflow-hidden">
                 <motion.div 
@@ -329,8 +329,7 @@ export const DetailPage: React.FC = () => {
                     transition={{ duration: 1.5 }}
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ 
-                        backgroundImage: `url(${item.imageUrl})`,
-                        backgroundColor: theme.bgColor 
+                        backgroundImage: `url(${item.imageUrl})`
                     }}
                 >
                     <div className="absolute inset-0 z-10" style={{ background: `linear-gradient(to top, ${theme.bgColor}, ${theme.bgColor}33, transparent)` }} />
@@ -466,7 +465,7 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-4 lg:pl-10">
                         <div className="sticky top-32 space-y-12">
                             {/* Price / Action Card */}
-                            <div className="p-8 rounded-3xl border shadow-sm" style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}>
+                            <div className="p-8 rounded-3xl border shadow-sm bg-white/10" style={{ borderColor: theme.color3 }}>
                                 <div className="space-y-2">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}>{t('common.price')}</span>
                                     <div className="text-3xl font-serif font-bold" style={{ color: theme.highlightColor }}>
@@ -537,7 +536,7 @@ export const DetailPage: React.FC = () => {
 
                             {/* Template Usage Card */}
                             {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
-                                <div className="p-8 rounded-3xl border shadow-sm space-y-6" style={{ backgroundColor: theme.color1, borderColor: theme.color3 }}>
+                                <div className="p-8 rounded-3xl border shadow-sm space-y-6 bg-white/10" style={{ borderColor: theme.color3 }}>
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.highlightColor }}><AutoTranslatedText text="템플릿 선택 사용" /></span>
                                         <p className="text-xs" style={{ color: theme.textMuted }}><AutoTranslatedText text="원하는 테마의 템플릿을 선택하여 제품을 체험해보세요." /></p>
@@ -642,15 +641,15 @@ export const DetailPage: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/95"
                             onClick={() => setShowShareModal(false)}
                         />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative border w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl"
-                            style={{ backgroundColor: theme.bgColor, borderColor: theme.color3, color: theme.textPrimary }}
+                            className="relative border w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl bg-white/80"
+                            style={{ borderColor: theme.color3, color: theme.textPrimary }}
                         >
                             <div className="flex justify-between items-center">
                                 <h3 className="text-xl font-bold"><AutoTranslatedText text="Share" /></h3>

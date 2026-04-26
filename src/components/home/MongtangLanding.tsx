@@ -290,7 +290,7 @@ export const MongtangLanding: React.FC = () => {
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     <div className="absolute top-4 left-4">
-                                        <span className="px-3 py-1 rounded-lg bg-black/50 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest">
+                                        <span className="px-3 py-1 rounded-lg bg-[#111] text-white text-[10px] font-black uppercase tracking-widest">
                                             <AutoTranslatedText text={meeting.category} />
                                         </span>
                                     </div>
@@ -387,7 +387,7 @@ export const MongtangLanding: React.FC = () => {
             {/* User Discovery Modal */}
             {isDiscoveryOpen && (
                 <div 
-                    className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+                    className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-black/95"
                     onClick={() => setIsDiscoveryOpen(false)}
                 >
                     <motion.div 
@@ -426,7 +426,7 @@ export const MongtangLanding: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedMeeting(null)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                            className="absolute inset-0 bg-black/95"
                         />
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -491,7 +491,7 @@ export const MongtangLanding: React.FC = () => {
                 {/* Creation Wizard Modal (Admin/Agency Only) */}
                 {creationState && creationState.step !== 'none' && (
                     <div 
-                        className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+                        className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-black/95"
                         onClick={() => setCreationState(null)}
                     >
                         <motion.div 

@@ -185,8 +185,9 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
                 // @google/genai usage pattern
                 const ai = new GoogleGenAI({ apiKey });
 
-                const prompt = `Translate the following short product title to ${targetLangName}. 
+                const prompt = `Translate the following text to ${targetLangName}. 
                 Output ONLY the translated text without any quotes or explanations.
+                Preserve the original meaning and tone.
                 If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${text}`;
 

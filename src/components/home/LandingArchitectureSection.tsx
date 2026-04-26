@@ -32,7 +32,7 @@ const archFeatures = [
 
 export const LandingArchitectureSection: React.FC = () => {
     return (
-        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center border-t border-dancheong-ink/5">
+        <section className="relative w-full py-32 px-6 bg-transparent flex flex-col items-center border-t border-dancheong-ink/5">
             <div className="max-w-6xl mx-auto w-full relative z-10">
                 <div className="flex flex-col lg:flex-row gap-16 items-start">
                     
@@ -49,7 +49,7 @@ export const LandingArchitectureSection: React.FC = () => {
                             <AutoTranslatedText text="강력하고 유연한" /><br />
                             <AutoTranslatedText text="플랫폼 인프라" />
                         </h2>
-                        <p className="text-dancheong-ink/50 leading-relaxed font-light break-keep">
+                        <p className="text-dancheong-ink/80 leading-relaxed font-medium break-keep">
                             <AutoTranslatedText text="단순한 보여주기식 3D 모델링에서 벗어나, 기업의 실질적인 생산성 향상과 글로벌 비즈니스 영위를 돕기 위한 핵심 기반 기술 4가지를 유기적으로 통합했습니다." />
                         </p>
                     </motion.div>
@@ -62,7 +62,7 @@ export const LandingArchitectureSection: React.FC = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.15 }}
-                                className="bg-dancheong-ivory/40 backdrop-blur-md border border-dancheong-ink/10 rounded-[2rem] p-8 hover:border-dancheong-ink/20 transition-all duration-300 group shadow-lg relative overflow-hidden"
+                                className="bg-white border border-dancheong-ink/10 rounded-[2rem] p-8 hover:border-dancheong-ink/20 transition-all duration-300 group shadow-lg relative overflow-hidden"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-dancheong-ink/5 rounded-full blur-[50px] group-hover:bg-dancheong-ink/10 transition-colors" />
                                 <div className="mb-6 p-4 rounded-full inline-flex bg-dancheong-ink/5 border border-dancheong-ink/5">
@@ -71,7 +71,7 @@ export const LandingArchitectureSection: React.FC = () => {
                                 <h4 className="text-xl font-bold text-dancheong-ink mb-4 tracking-wide">
                                     <AutoTranslatedText text={feature.title} />
                                 </h4>
-                                <p className="text-dancheong-ink/50 text-sm leading-relaxed break-keep font-light">
+                                <p className="text-dancheong-ink/80 text-sm leading-relaxed break-keep font-medium">
                                     <AutoTranslatedText text={feature.desc} />
                                 </p>
                             </motion.div>

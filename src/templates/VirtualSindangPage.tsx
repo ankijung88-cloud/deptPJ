@@ -139,8 +139,9 @@ const VirtualSindangPage: React.FC = () => {
             });
         });
 
-        newSocket.on('meeting-error', (data: { message: string }) => {
-            alert(data.message);
+        newSocket.on('meeting-error', async (data: { message: string }) => {
+            const msg = await translateAsync(data.message);
+            alert(msg);
             if (data.message.includes('토큰') || data.message.includes('정원')) {
                 setIsAuthorized(false);
                 setShowTokenModal(true);
@@ -378,7 +379,7 @@ const VirtualSindangPage: React.FC = () => {
                 >
                     <div className="flex flex-col gap-2 pointer-events-auto">
                         <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(-1)}>
-                            <div className="p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full group-hover:bg-[#FF5252]/20 transition-all">
+                            <div className="p-3 bg-[#111] border border-white/10 rounded-full group-hover:bg-[#FF5252]/20 transition-all">
                                 <LogOut size={20} className="rotate-180 group-hover:text-[#FF5252]" />
                             </div>
                             <div>
@@ -394,7 +395,7 @@ const VirtualSindangPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4 pointer-events-auto">
-                        <div className="bg-black/60 backdrop-blur-2xl px-6 py-3 rounded-2xl border border-[#FFD700]/20 flex items-center gap-8">
+                        <div className="bg-[#0a0a0a] px-6 py-3 rounded-2xl border border-[#FFD700]/20 flex items-center gap-8">
                             <div className="flex flex-col items-center">
                                 <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">
                                     <AutoTranslatedText text="Consultation" />
@@ -419,7 +420,7 @@ const VirtualSindangPage: React.FC = () => {
                 <footer className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20">
                     <motion.div 
                         initial={{ y: 0, opacity: 1 }}
-                        className="flex items-center gap-4 px-8 py-5 bg-black/60 backdrop-blur-3xl rounded-[2.5rem] border border-[#FFD700]/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
+                        className="flex items-center gap-4 px-8 py-5 bg-[#0a0a0a] rounded-[2.5rem] border border-[#FFD700]/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
                         style={{ pointerEvents: 'auto' }}
                     >
                         <div className="flex items-center gap-3 pr-6 border-r border-white/10">
@@ -527,7 +528,7 @@ const VirtualSindangPage: React.FC = () => {
                 <AnimatePresence>
                     {showTokenModal && (
                         <motion.div 
-                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/90 backdrop-blur-3xl p-6"
+                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/95 p-6"
                         >
                             <motion.div 
                                 className="w-full max-w-4xl grid md:grid-cols-2 gap-8"
@@ -594,7 +595,7 @@ const VirtualSindangPage: React.FC = () => {
                 {/* Invite Modal */}
                 <AnimatePresence>
                     {showInviteModal && (
-                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/95">
                             <motion.div
                                 className="w-full max-w-md bg-[#0a0a0a] border border-[#FFD700]/20 rounded-[2.5rem] p-10 relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]"
                             >
@@ -641,7 +642,7 @@ const VirtualSindangPage: React.FC = () => {
                 {/* AI Reading Result Modal */}
                 <AnimatePresence>
                     {aiReadingResult && (
-                        <div className="absolute inset-0 z-[150] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                        <div className="absolute inset-0 z-[150] flex items-center justify-center p-6 bg-black/80">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}

@@ -54,10 +54,8 @@ const BroadwayTicketCard: React.FC<{
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 
                 {/* Category Badge */}
-                <div className="absolute top-8 left-6 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30 backdrop-blur-md">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-yellow-500">
-                        {t('ticket.live_show')}
-                    </span>
+                <div className="absolute top-8 left-6 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30">
+                        <AutoTranslatedText text={t('ticket.live_show')} />
                 </div>
             </div>
 
@@ -75,18 +73,14 @@ const BroadwayTicketCard: React.FC<{
 
                 <div className="flex justify-between items-end pt-4 border-t border-white/10">
                     <div className="space-y-1">
-                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">
-                            {t('ticket.performance_date')}
-                        </span>
+                            <AutoTranslatedText text={t('ticket.performance_date')} />
                         <div className="flex items-center gap-2 text-white/60">
                             <Calendar size={12} />
                             <span className="text-[10px] font-bold uppercase">{getLoc(ticket.date, lang)}</span>
                         </div>
                     </div>
                     <div className="text-right">
-                        <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">
-                            {t('ticket.entry_fee')}
-                        </span>
+                            <AutoTranslatedText text={t('ticket.entry_fee')} />
                         <div className="text-lg font-black text-yellow-500">{getLoc(ticket.price, lang)}</div>
                     </div>
                 </div>
@@ -150,7 +144,7 @@ const ReservationModal: React.FC<{
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl"
+                    className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-black"
                 >
                     <motion.div
                         initial={{ y: 50, scale: 0.9, opacity: 0 }}
@@ -161,7 +155,7 @@ const ReservationModal: React.FC<{
                         {/* Close Button */}
                         <button 
                             onClick={onClose}
-                            className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
+                            className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-[#252525] transition-all"
                         >
                             <X size={24} />
                         </button>
@@ -172,9 +166,7 @@ const ReservationModal: React.FC<{
                             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
                             
                             <div className="absolute bottom-12 left-12 right-12">
-                                <span className="text-[10px] font-black tracking-[0.4em] text-yellow-500 uppercase mb-4 block">
-                                    {t('ticket.official_selection')}
-                                </span>
+                                    <AutoTranslatedText text={t('ticket.official_selection')} />
                                 <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-tight mb-4">
                                     <AutoTranslatedText text={getLoc(ticket.title, lang)} />
                                 </h2>
@@ -195,20 +187,16 @@ const ReservationModal: React.FC<{
                         <div className="w-full md:w-1/2 h-full p-12 flex flex-col justify-between border-l border-white/5">
                             <div className="space-y-10">
                                 <div>
-                                    <span className="text-[10px] font-black tracking-[0.4em] text-white/20 uppercase mb-4 block">
-                                        {t('ticket.event_details')}
-                                    </span>
+                                        <AutoTranslatedText text={t('ticket.event_details')} />
                                     <p className="text-sm text-white/60 font-medium leading-[1.8]">
                                         <AutoTranslatedText text={getLoc(ticket.description, lang) || 'We invite you to a special performance where artisan breath and traditional values harmonize. We promise the best impression.'} />
                                     </p>
                                 </div>
 
                                 {/* Ticket Selection */}
-                                <div className="p-8 rounded-3xl bg-white/5 border border-white/10 space-y-6">
+                                <div className="p-8 rounded-3xl bg-[#141414] border border-white/10 space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                            {t('ticket.ticket_quantity')}
-                                        </span>
+                                            <AutoTranslatedText text={t('ticket.ticket_quantity')} />
                                         <div className="flex items-center gap-6 bg-black border border-white/10 rounded-full px-6 py-3">
                                             <button 
                                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -225,9 +213,7 @@ const ReservationModal: React.FC<{
                                     <div className="h-[1px] w-full bg-white/5" />
 
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-                                            {t('ticket.total_payable')}
-                                        </span>
+                                            <AutoTranslatedText text={t('ticket.total_payable')} />
                                         <div className="text-3xl font-black text-yellow-500">
                                             ₩{totalPrice.toLocaleString()}
                                         </div>
@@ -245,24 +231,22 @@ const ReservationModal: React.FC<{
                                         {isReserving ? (
                                             <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                {t('common.processing')}
+                                                <AutoTranslatedText text={t('common.processing')} />
                                             </motion.div>
                                         ) : reservationComplete ? (
                                             <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <Check size={18} />
-                                                {t('ticket.reservation_complete')}
+                                                <AutoTranslatedText text={t('ticket.reservation_complete')} />
                                             </motion.div>
                                         ) : (
                                             <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
                                                 <Ticket size={18} />
-                                                {t('ticket.confirm_reservation')}
+                                                <AutoTranslatedText text={t('ticket.confirm_reservation')} />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
                                 </button>
-                                <p className="text-center text-[8px] font-bold text-white/20 uppercase tracking-[0.3em]">
-                                    {t('ticket.security_delivery_msg')}
-                                </p>
+                                    <AutoTranslatedText text={t('ticket.security_delivery_msg')} />
                             </div>
                         </div>
                     </motion.div>
@@ -309,7 +293,7 @@ const VirtualTicketPage: React.FC = () => {
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: t('common.details'), type: 'detail' },
         { id: parentProduct.id, label: parentProduct.title, type: 'detail' },
-        { id: 'ticket', label: t('ticket.virtual_ticket'), type: 'template' }
+        { id: 'ticket', label: <AutoTranslatedText text={t('ticket.virtual_ticket')} />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -639,7 +623,7 @@ return (
                                             setIsEditingMetadata(true);
                                         }
                                     }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-[#1a1a1a] transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
                                     style={{ color: theme.highlightColor, borderColor: `${theme.highlightColor}44` }}
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
@@ -648,14 +632,14 @@ return (
                                 {isEditingMetadata && (
                                     <button 
                                         onClick={() => setIsEditingMetadata(false)}
-                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                        className="p-2 rounded-full border border-white/10 hover:bg-[#1a1a1a] text-white/40"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
                                 <button 
                                     onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-[#1a1a1a] transition-all text-[10px] font-black tracking-widest uppercase shadow-xl"
                                     style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
                                 >
                                     <Plus size={14} />
@@ -670,9 +654,9 @@ return (
                             <div className="flex items-center gap-4 mb-6">
                                 <Link 
                                     to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all uppercase relative z-[60]" 
+                                    className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-lg bg-[#1a1a1a] border border-white/10 hover:bg-[#252525] hover:border-white/30 transition-all uppercase relative z-[60]" 
                                      style={{ color: theme.highlightColor }}>
-                                    {t('common.archive')} {floorLabel}
+                                    <AutoTranslatedText text={t('common.archive')} /> {floorLabel}
                                 </Link>
                                 <div className="h-[1px] w-20 bg-white/10" />
                             </div>
@@ -681,7 +665,7 @@ return (
                                 <textarea 
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    className="w-full bg-[#1a1a1a] border border-white/20 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
                                     rows={2}
                                 />
                             ) : (
@@ -695,7 +679,7 @@ return (
                                 <textarea 
                                     value={tempDesc}
                                     onChange={(e) => setTempDesc(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg md:text-xl font-serif italic mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
+                                    className="w-full bg-[#1a1a1a] border border-white/20 rounded-2xl p-4 text-lg md:text-xl font-serif italic mb-10 text-white focus:outline-none focus:border-white transition-all resize-none shadow-2xl"
                                     rows={4}
                                 />
                             ) : (
@@ -711,15 +695,13 @@ return (
                                     const element = document.getElementById('availability-section');
                                     element?.scrollIntoView({ behavior: 'smooth' });
                                 }}
-                                className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-3xl relative overflow-hidden group hover:bg-white/10 hover:border-white/30 transition-all active:scale-95"
+                                className="p-8 rounded-[2rem] bg-[#1a1a1a] border border-white/10 relative overflow-hidden group hover:bg-[#252525] hover:border-white/30 transition-all active:scale-95"
                             >
                                 <div className="absolute top-0 right-0 w-20 h-20 opacity-10 bg-white transform rotate-45 -translate-y-1/2 translate-x-1/2" />
                                 <div className="relative z-10 flex flex-col items-center gap-2">
                                      <Ticket size={24} className="mb-2 opacity-40 group-hover:scale-110 transition-transform" style={{ color: theme.highlightColor }} />
                                      <span className="text-3xl font-black tracking-tighter" style={{ color: theme.highlightColor }}>{ticketItems.length.toString().padStart(2, '0')}</span>
-                                     <span className="text-[10px] font-bold tracking-widest uppercase opacity-40">
-                                         {t('ticket.running_events')}
-                                     </span>
+                                         <AutoTranslatedText text={t('ticket.running_events')} />
                                 </div>
                             </button>
                         </div>
@@ -737,24 +719,22 @@ return (
             <main id="availability-section" className="container mx-auto px-6 md:px-12 py-24">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-10">
                     <div className="flex items-center gap-6">
-                         <div className="w-14 h-14 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center" style={{ color: theme.accentColor }}>
+                         <div className="w-14 h-14 rounded-3xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center" style={{ color: theme.accentColor }}>
                              <Calendar size={28} />
                          </div>
                          <div>
                             <h2 className="text-3xl font-black uppercase tracking-tight">{t('ticket.live_availability')}</h2>
-                            <p className="text-[10px] font-bold tracking-[0.4em] opacity-30 uppercase mt-1">
-                                {t('ticket.realtime_inventory')}
-                            </p>
+                                <AutoTranslatedText text={t('ticket.realtime_inventory')} />
                          </div>
                     </div>
                     
-                    <div className="flex items-center gap-6 px-10 py-4 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+                    <div className="flex items-center gap-6 px-10 py-4 rounded-full bg-[#1a1a1a] border border-white/10">
                         <div className="flex items-center gap-3">
                              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                              <span className="text-[11px] font-black tracking-widest uppercase">{t('ticket.server_online')}</span>
                         </div>
                         <div className="h-4 w-[1px] bg-white/20" />
-                        <span className="text-[11px] font-black tracking-widest uppercase opacity-40">{t('ticket.secure_transaction')}</span>
+                        <span className="text-[11px] font-black tracking-widest uppercase opacity-40"><AutoTranslatedText text={t('ticket.secure_transaction')} /></span>
                     </div>
                 </div>
 
@@ -762,13 +742,11 @@ return (
                 {isLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="h-96 rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
+                            <div key={i} className="h-96 rounded-3xl bg-[#1a1a1a] border border-white/5 animate-pulse" />
                         ))}
                     </div>
                 ) : ticketItems.length === 0 ? (
-                    <div className="flex items-center justify-center p-20 bg-white/5 rounded-3xl border border-white/10 opacity-40">
-                         {t('ticket.no_events')}
-                    </div>
+                         <AutoTranslatedText text={t('ticket.no_events')} />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {ticketItems.map((ticket) => (
@@ -802,9 +780,9 @@ return (
                                 setPreviewUrl(null);
                                 setShowAddModal(true);
                             }}
-                            className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
+                            className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-[#1a1a1a] border border-white/10 hover:border-white/30 hover:bg-[#2a2a2a] transition-all active:scale-95"
                         >
-                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                            <div className="w-8 h-8 rounded-full bg-[#2a2a2a] flex items-center justify-center group-hover:bg-[#3a3a3a] transition-colors">
                                 <Plus size={18} className="text-white" />
                             </div>
                             <span className="text-xs font-black tracking-[0.2em] uppercase text-white/60 group-hover:text-white transition-colors">
@@ -822,7 +800,7 @@ return (
                         { icon: CreditCard, title: "Easy Payment", desc: "We provide various easy payment and card installment benefits." },
                         { icon: Info, title: "Notice", desc: "Check cancellation and refund policies, prohibited items, etc." }
                     ].map((info, idx) => (
-                        <div key={idx} className="p-10 rounded-[2.5rem] bg-white/5 border border-white/5 hover:border-white/20 transition-all duration-700 group hover:-translate-y-2">
+                        <div key={idx} className="p-10 rounded-[2.5rem] bg-[#1a1a1a] border border-white/5 hover:border-white/20 transition-all duration-700 group hover:-translate-y-2">
                              <info.icon className="mb-6 opacity-30 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentColor }} size={24} />
                              <h4 className="text-lg font-bold mb-3"><AutoTranslatedText text={info.title} /></h4>
                              <p className="text-sm opacity-40 leading-relaxed font-light"><AutoTranslatedText text={info.desc} /></p>
@@ -839,7 +817,7 @@ return (
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-[#0a0a0a]"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -857,7 +835,7 @@ return (
                                     </div>
                                     <button 
                                         onClick={() => setShowAddModal(false)}
-                                        className="p-3 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition-colors"
+                                        className="p-3 hover:bg-[#2a2a2a] rounded-full text-white/40 hover:text-white transition-colors"
                                     >
                                         <X size={20} />
                                     </button>
@@ -875,7 +853,7 @@ return (
                                                 onChange={(e) => setNewTitle(e.target.value)}
                                                 placeholder={t("Enter event title...")}
                                                 rows={2}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
+                                                className="w-full bg-[#1a1a1a] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
                                             />
                                         </div>
                                     </div>
@@ -890,7 +868,7 @@ return (
                                                 value={newEventDate}
                                                 onChange={(e) => setNewEventDate(e.target.value)}
                                                 placeholder={t("e.g. 2026.04.15 ~ 2026.04.30")}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                className="w-full bg-[#1a1a1a] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                             />
                                         </div>
                                     </div>
@@ -911,20 +889,20 @@ return (
                                                         if (previewUrl) setPreviewUrl(null);
                                                     }}
                                                     placeholder={t("Thumbnail URL...")}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                    className="w-full bg-[#1a1a1a] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
                                                 />
                                             </div>
 
                                             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
                                             {!previewUrl ? (
-                                                <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
+                                                <button onClick={() => fileInputRef.current?.click()} className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-[#1a1a1a] transition-all group">
                                                     <UploadCloud size={32} className="text-white/20 group-hover:text-white/40 mb-3 transition-colors" />
                                                     <span className="text-xs font-bold text-white/40 group-hover:text-white/60"><AutoTranslatedText text="Upload File" /></span>
                                                 </button>
                                             ) : (
                                                 <div className="relative rounded-2xl overflow-hidden border border-white/20 group">
                                                     <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                                    <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                         <button onClick={() => setPreviewUrl(null)} className="px-4 py-2 rounded-lg bg-red-500/80 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-500"><AutoTranslatedText text="Remove" /></button>
                                                     </div>
                                                 </div>
@@ -958,7 +936,7 @@ return (
             <footer className="mt-40 border-t py-20 px-6" style={{ borderColor: `${theme.accentColor}11` }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
                     <div className="flex flex-col gap-6">
-                        <div className="text-4xl font-black tracking-tighter opacity-10 uppercase">몽땅쏙 TICKETS</div>
+                        <div className="text-4xl font-black tracking-tighter opacity-10 uppercase"><AutoTranslatedText text="몽땅쏙 TICKETS" /></div>
                         <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase max-w-sm leading-loose">
                             <AutoTranslatedText text="Certified Virtual Ticketing Infrastructure for premium cultural heritage events." />
                         </p>

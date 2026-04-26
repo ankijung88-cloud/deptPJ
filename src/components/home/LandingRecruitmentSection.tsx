@@ -4,7 +4,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const LandingRecruitmentSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-dancheong-ivory flex flex-col items-center">
+        <section className="relative w-full py-24 px-6 bg-transparent flex flex-col items-center">
             <div className="w-full max-w-6xl mx-auto relative z-10">
                 {/* Background Details */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -16,7 +16,7 @@ export const LandingRecruitmentSection: React.FC = () => {
                     viewport={{ once: true, amount: 0.2 }}
                     className="mb-12 border-b-4 border-dancheong-ink pb-8"
                 >
-                    <span className="text-dancheong-mugwort text-sm md:text-base font-black tracking-[0.5em] uppercase mb-4 block">Operations & Recruitment</span>
+                    <span className="text-dancheong-mugwort text-sm md:text-base font-black tracking-[0.5em] uppercase mb-4 block"><AutoTranslatedText text="Operations & Recruitment" /></span>
                     <h2 className="text-3xl md:text-5xl font-black text-dancheong-ink leading-tight break-keep">
                         <AutoTranslatedText text="가상오피스 지원 및 입주기업 모집공고" />
                     </h2>
@@ -100,19 +100,19 @@ export const LandingRecruitmentSection: React.FC = () => {
                         <h3 className="text-xl md:text-2xl font-black text-dancheong-ink mb-8 border-l-8 border-dancheong-mugwort pl-6 tracking-tight"><AutoTranslatedText text="3. 신청방법 및 심사과정" /></h3>
 
                         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                            <div className="bg-dancheong-ivory/60 backdrop-blur-md p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
+                            <div className="bg-white p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-dancheong-mugwort/10 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
                                 <div className="text-dancheong-mugwort text-4xl font-black mb-4 drop-shadow-[0_0_10px_rgba(79,109,91,0.2)]">01</div>
                                 <h4 className="text-dancheong-ink font-black mb-3 text-lg"><AutoTranslatedText text="지원서류 이메일 접수" /></h4>
                                 <p className="text-dancheong-ink/80 text-sm break-keep leading-relaxed font-black"><AutoTranslatedText text="사업계획서 및 구비서류를 압축(ZIP)하여 공고된 이메일로 온라인 제출" /></p>
                             </div>
-                            <div className="bg-dancheong-ivory/60 backdrop-blur-md p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
+                            <div className="bg-white p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-dancheong-navy/10 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
                                 <div className="text-dancheong-navy text-4xl font-black mb-4 drop-shadow-[0_0_10px_rgba(0,49,64,0.2)]">02</div>
                                 <h4 className="text-dancheong-ink font-black mb-3 text-lg"><AutoTranslatedText text="서류 및 발표 평가" /></h4>
                                 <p className="text-dancheong-ink/80 text-sm break-keep leading-relaxed font-black"><AutoTranslatedText text="사업성(40점), 시장전망(30점), 공간활용계획(30점)을 종합적으로 심사" /></p>
                             </div>
-                            <div className="bg-dancheong-ivory/60 backdrop-blur-md p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
+                            <div className="bg-white p-8 rounded-2xl border-4 border-dancheong-ink/10 relative overflow-hidden group shadow-lg">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-dancheong-mugwort/20 rounded-bl-full group-hover:scale-150 transition-transform duration-500"></div>
                                 <div className="text-dancheong-mugwort text-4xl font-black mb-4 drop-shadow-[0_0_10px_rgba(79,109,91,0.3)]">03</div>
                                 <h4 className="text-dancheong-ink font-black mb-3 text-lg"><AutoTranslatedText text="결과 통보 및 오리엔테이션" /></h4>

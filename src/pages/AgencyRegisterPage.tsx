@@ -25,7 +25,7 @@ const AgencyRegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
+        <div className="min-h-screen bg-transparent pt-32 pb-20 selection:bg-dancheong-mugwort/20 selection:text-dancheong-ink">
             <div className="lossless-layout">
                 {/* Header Context */}
                 <div className="max-w-4xl mx-auto mb-20 text-center">
@@ -57,7 +57,7 @@ const AgencyRegisterPage: React.FC = () => {
 
                 {/* Multi-step Form / Content */}
                 <div className="max-w-5xl mx-auto">
-                    <div className="bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                    <div className="bg-white border border-dancheong-ink/5 rounded-[64px] p-8 md:p-16 shadow-[0_60px_120px_rgba(0,0,0,0.05)] relative overflow-hidden">
                         {/* Decorative Pattern */}
                         <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                             <BrandLogo size={300} />
@@ -93,7 +93,7 @@ const AgencyRegisterPage: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="p-8 bg-dancheong-ivory/40 backdrop-blur-sm rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
+                                        <div className="p-8 bg-dancheong-ink/5 rounded-[32px] border border-dancheong-ink/5 italic font-light text-dancheong-ink/50 text-sm leading-relaxed">
                                             <AutoTranslatedText text="등록 신청 후 영업일 기준 3~5일 내에 담당자의 개별 연락이 진행됩니다. 원활한 심사를 위해 정확한 정보를 입력해 주시기 바랍니다." />
                                         </div>
                                     </div>

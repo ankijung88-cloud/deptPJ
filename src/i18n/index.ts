@@ -92,7 +92,8 @@ const resources = {
                 "description": "대한민국의 아름다운 문화와 예술을 세계에 알리는 프리미엄 문화 플랫폼입니다.",
                 "notice": "공지사항",
                 "faq": "자주 묻는 질문",
-                "inquiry": "1:1 문의",
+                "inquiry": "이메일 문의",
+                "kakao_inquiry": "카카오톡 문의",
                 "weekdays": "평일 10:00 - 18:00 (주말/공휴일 휴무)",
                 "representative": "대표자: 안기정",
                 "business_id": "사업자등록번호: 123-45-67890",
@@ -390,6 +391,8 @@ const resources = {
                 "category": "Category"
             },
             "footer": {
+                "inquiry": "Email Inquiry",
+                "kakao_inquiry": "KakaoTalk Inquiry",
                 "partnership": "Partner Registration"
             },
             "audition": {

@@ -27,14 +27,14 @@ const InspirationPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center">
+            <div className="min-h-screen bg-transparent flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-dancheong-mugwort"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-[100dvh] lg:h-screen w-full bg-dancheong-ivory text-dancheong-ink font-sans overflow-x-hidden lg:overflow-hidden flex flex-col lg:flex-row">
+        <div className="min-h-[100dvh] lg:h-screen w-full bg-transparent text-dancheong-ink font-sans overflow-x-hidden lg:overflow-hidden flex flex-col lg:flex-row">
             
             {/* Left Side: Title & Info */}
             <aside className="lg:w-1/2 w-full lg:h-full h-auto flex flex-col px-8 py-20 lg:p-24 relative border-b lg:border-b-0 lg:border-r border-dancheong-ink/5 lg:overflow-y-auto no-scrollbar">
@@ -118,7 +118,7 @@ const InspirationPage: React.FC = () => {
             </aside>
 
             {/* Right Side: Floors */}
-            <main className="lg:w-1/2 w-full lg:h-full h-auto px-6 py-20 lg:p-16 lg:overflow-y-auto no-scrollbar relative flex flex-col justify-center bg-white/30 backdrop-blur-sm">
+            <main className="lg:w-1/2 w-full lg:h-full h-auto px-6 py-20 lg:p-16 lg:overflow-y-auto no-scrollbar relative flex flex-col justify-center bg-transparent">
                 <div className="w-full max-w-xl mx-auto space-y-3">
                     {sortedFloors.map((floor, index) => {
                         const isActive = hoveredFloor === floor.id;
@@ -138,9 +138,8 @@ const InspirationPage: React.FC = () => {
                                 <div 
                                     className={`w-full p-4 lg:p-5 rounded-2xl lg:rounded-3xl transition-all duration-500 relative overflow-hidden flex flex-row justify-between items-center ${isActive ? 'shadow-[0_10px_30px_rgba(23,23,23,0.08)] translate-y-[-2px]' : 'border-transparent'}`}
                                     style={{ 
-                                        backgroundColor: isActive ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.4)',
-                                        border: isActive ? `1px solid ${floor.color}` : '1px solid rgba(23,23,23,0.04)',
-                                        backdropFilter: 'blur(10px)'
+                                        backgroundColor: isActive ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.1)',
+                                        border: isActive ? `1px solid ${floor.color}` : '1px solid rgba(23,23,23,0.04)'
                                     }}
                                 >
                                     <div className="flex items-center gap-4 lg:gap-6 w-full">

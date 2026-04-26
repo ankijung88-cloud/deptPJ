@@ -259,7 +259,7 @@ const DeskGroup = ({ position, rotation = [0, 0, 0], color, participant, assigne
       {/* Status Notification Box */}
       {participant?.status && participant.status !== 'working' && (
         <Html position={[0, 2.5, 0]} center>
-          <div className="bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-2xl flex items-center gap-2 whitespace-nowrap scale-75">
+          <div className="bg-[#0a0a0a] px-3 py-1.5 rounded-xl border border-white/20 shadow-2xl flex items-center gap-2 whitespace-nowrap scale-75">
              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
              <span className="text-[10px] font-black tracking-widest uppercase text-white/60">
                {participant.status}

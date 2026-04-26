@@ -32,7 +32,7 @@ const features = [
 
 export const LandingFeaturesSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-dancheong-ivory flex flex-col items-center">
+        <section className="relative w-full py-24 px-6 bg-transparent flex flex-col items-center">
             <div className="max-w-6xl mx-auto w-full">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -64,7 +64,7 @@ export const LandingFeaturesSection: React.FC = () => {
                             <h4 className="text-xl font-black text-dancheong-ink mb-3 tracking-wide">
                                 <AutoTranslatedText text={feature.title} />
                             </h4>
-                            <p className="text-dancheong-ink/70 text-sm leading-relaxed break-keep font-medium">
+                            <p className="text-dancheong-ink text-sm leading-relaxed break-keep font-medium">
                                 <AutoTranslatedText text={feature.desc} />
                             </p>
                         </motion.div>

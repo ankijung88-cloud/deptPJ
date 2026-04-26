@@ -366,7 +366,7 @@ const VirtualInterviewPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setShowSettings(!showSettings)}
-                            className="p-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white/60 hover:text-white transition-colors"
+                            className="p-4 bg-[#111] border border-white/10 rounded-2xl text-white/60 hover:text-white transition-colors"
                         >
                             <Settings size={20} />
                         </motion.button>
@@ -383,7 +383,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                 {/* Bottom Controls */}
                 <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-6 pointer-events-auto">
-                    <div className="bg-black/60 backdrop-blur-3xl border border-white/10 p-4 rounded-[2.5rem] flex items-center gap-3 shadow-2xl">
+                    <div className="bg-black/90 border border-white/10 p-4 rounded-[2.5rem] flex items-center gap-3 shadow-2xl">
                         <ControlBtn 
                             active={!isMuted} 
                             onClick={() => setIsMuted(!isMuted)} 
@@ -511,7 +511,7 @@ const VirtualInterviewPage: React.FC = () => {
                             animate={{ opacity: 1, x: 0 }}
                             className="bg-[#00D2FF] text-black px-6 py-4 rounded-2xl font-black text-xs tracking-tighter shadow-[0_0_30px_rgba(0,210,255,0.3)]"
                         >
-                            <AutoTranslatedText text="원하시는 좌석을 선택하여 착석해주세요" />
+                                                        <AutoTranslatedText text="원하시는 좌석을 선택하여 착석해주세요" />
                         </motion.div>
                     )}
                 </div>
@@ -524,7 +524,7 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
-                        className="absolute top-0 right-0 w-80 h-full bg-black/80 backdrop-blur-3xl border-l border-white/10 p-10 z-50 flex flex-col gap-8"
+                        className="absolute top-0 right-0 w-80 h-full bg-[#111] border-l border-white/10 p-10 z-50 flex flex-col gap-8"
                     >
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-[#00D2FF]">Settings</h2>
@@ -559,7 +559,7 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        className="absolute top-0 left-0 w-80 h-full bg-black/60 backdrop-blur-3xl border-r border-white/10 p-10 z-50 flex flex-col gap-6"
+                        className="absolute top-0 left-0 w-80 h-full bg-[#111] border-r border-white/10 p-10 z-50 flex flex-col gap-6"
                     >
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
@@ -596,7 +596,7 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        className="absolute top-0 left-0 w-80 h-full bg-black/60 backdrop-blur-3xl border-r border-white/10 p-10 z-50 flex flex-col gap-6"
+                        className="absolute top-0 left-0 w-80 h-full bg-[#111] border-r border-white/10 p-10 z-50 flex flex-col gap-6"
                     >
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
@@ -656,7 +656,7 @@ const VirtualInterviewPage: React.FC = () => {
                         exit={{ opacity: 0, y: 50 }}
                         className="absolute bottom-40 left-1/2 -translate-x-1/2 z-[50] flex flex-col items-center"
                     >
-                        <div className="px-10 py-5 bg-black/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] flex items-center gap-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+                        <div className="px-10 py-5 bg-black border border-white/10 rounded-[2rem] flex items-center gap-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
                             <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-400 group relative">
                                 <Users size={24} className="animate-pulse" />
                                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-black flex items-center justify-center">
@@ -686,7 +686,7 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-[100] bg-black/95 backdrop-blur-3xl flex flex-col p-12"
+                        className="absolute inset-0 z-[100] bg-black flex flex-col p-12"
                     >
                         <div className="flex justify-between items-center mb-10">
                             <div className="space-y-1">
@@ -720,7 +720,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                         <div className="mt-8 flex justify-center">
                             <div className="px-8 py-3 bg-white/5 rounded-full border border-white/10 text-[10px] text-white/40 font-black uppercase tracking-widest">
-                                {activeMaterial.name} - <AutoTranslatedText text="마우스를 굴려 확대/축소할 수 있습니다 (준비 중)" />
+                                                                {activeMaterial.name} - <AutoTranslatedText text="마우스를 굴려 확대/축소할 수 있습니다 (준비 중)" />
                             </div>
                         </div>
                     </motion.div>
@@ -734,12 +734,12 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-[150] flex items-center justify-center bg-[#050505]/80 backdrop-blur-3xl p-6"
+                        className="absolute inset-0 z-[150] flex items-center justify-center bg-[#050505]/95 p-6"
                     >
                         <motion.div 
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="w-full max-w-md p-12 bg-white/5 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-10"
+                            className="w-full max-w-md p-12 bg-[#111] border border-white/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-10"
                         >
                             <div className="w-24 h-24 bg-emerald-500/10 rounded-3xl flex items-center justify-center text-emerald-400 border border-emerald-500/20 rotate-12">
                                 <Lock size={48} className="-rotate-12" />
@@ -750,7 +750,7 @@ const VirtualInterviewPage: React.FC = () => {
                                     <AutoTranslatedText text="보안 입장" />
                                 </h2>
                                 <p className="text-white/40 text-sm font-medium leading-relaxed">
-                                    <AutoTranslatedText text="이 인터뷰 룸은 승인된 지원자만 접근할 수 있습니다." /><br />
+                                                                        <AutoTranslatedText text="이 인터뷰 룸은 승인된 지원자만 접근할 수 있습니다." /><br />
                                     <AutoTranslatedText text="초대장에 기재된 고유 토큰을 입력해 주세요." />
                                 </p>
                             </div>
@@ -789,7 +789,7 @@ const VirtualInterviewPage: React.FC = () => {
             {/* Invite Token Management Modal */}
             <AnimatePresence>
                 {showInviteModal && (
-                    <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                    <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/90">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}

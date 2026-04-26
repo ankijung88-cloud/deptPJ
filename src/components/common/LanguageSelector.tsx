@@ -48,7 +48,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             <button
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${isFloating
-                    ? 'bg-zinc-900/80 backdrop-blur-xl border border-white/10 text-white hover:bg-zinc-800 shadow-2xl px-3 md:px-5 py-2.5 rounded-full active:scale-95 transition-transform'
+                    ? 'bg-zinc-900 border border-white/10 text-white hover:bg-zinc-800 shadow-2xl px-3 md:px-5 py-2.5 rounded-full active:scale-95 transition-transform'
                     : 'rounded-full text-[#171717]/80 hover:text-[#171717]'
                     }`}
             >
@@ -59,7 +59,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </button>
 
             {isMenuOpen && (
-                <div className={`absolute right-0 bg-zinc-900 backdrop-blur-2xl border-t-2 border-dancheong-red shadow-[0_30px_80px_rgba(0,0,0,0.7)] p-4 z-[10000] transition-all duration-300 origin-bottom-right md:origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[280px] md:w-[320px] bottom-full md:bottom-auto md:top-full mb-4 md:mb-0 md:mt-4 rounded-xl md:rounded-l-xl md:rounded-r-none border-r-0' : 'w-[450px] top-full mt-4 rounded-b-xl'
+                <div className={`absolute right-0 bg-zinc-900 border-t-2 border-dancheong-red shadow-[0_30px_80px_rgba(0,0,0,0.7)] p-4 z-[10000] transition-all duration-300 origin-bottom-right md:origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[280px] md:w-[320px] bottom-full md:bottom-auto md:top-full mb-4 md:mb-0 md:mt-4 rounded-xl md:rounded-l-xl md:rounded-r-none border-r-0' : 'w-[450px] top-full mt-4 rounded-b-xl'
                     }`}>
                     <div className={`grid ${isFloating ? 'grid-cols-2' : 'grid-cols-3'} gap-1`}>
                         {supportedLanguages.map((lang) => (

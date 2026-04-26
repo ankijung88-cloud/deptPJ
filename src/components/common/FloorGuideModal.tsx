@@ -70,7 +70,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        className="absolute inset-0 bg-dancheong-ink/40 backdrop-blur-sm"
                     />
 
                     {/* Modal Content */}
@@ -83,16 +83,16 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                         {/* Header */}
                         <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#2a2a2a]">
                             <div>
-                                <h2 className="text-2xl font-serif font-bold text-white tracking-tight">
+                                <h2 className="text-2xl font-serif font-black text-white tracking-tight">
                                     <AutoTranslatedText text={t('floor_guide')} />
                                 </h2>
-                                <p className="text-white/60 text-sm mt-1">
+                                <p className="text-white/80 text-sm mt-1 font-medium">
                                     <AutoTranslatedText text={t('floor_guide_subtitle')} />
                                 </p>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white"
+                                className="p-2 hover:bg-dancheong-ink/5 rounded-full transition-colors text-dancheong-ink/30 hover:text-dancheong-ink"
                             >
                                 <X size={24} />
                             </button>
@@ -112,7 +112,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="bg-[#2a2a2a]/50 p-5 rounded-2xl border border-white/5 flex flex-col gap-6"
+                                    className="bg-white/40 p-5 rounded-2xl border border-dancheong-ink/5 flex flex-col gap-4 hover:bg-white/60 transition-colors"
                                 >
                                     {/* Floor Header */}
                                     <div className="flex items-center gap-5">
@@ -123,10 +123,10 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                         </div>
 
                                         <div className="flex-grow">
-                                            <h3 className="text-lg font-bold text-white mb-1">
+                                            <h3 className="text-xl font-black text-white mb-1 tracking-tight">
                                                 <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
                                             </h3>
-                                            <p className="text-xs text-white/40 font-light line-clamp-1 italic">
+                                            <p className="text-sm text-white/80 font-medium line-clamp-2">
                                                 <AutoTranslatedText text={getLocalizedText(floor.description, i18n.language)} />
                                             </p>
                                         </div>
@@ -147,23 +147,23 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                                         <Link
                                                             to={`/category/${sub.id}`}
                                                             onClick={onClose}
-                                                            className="inline-flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-sm font-bold rounded-lg border border-white/5 transition-all mb-2"
+                                                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-dancheong-ink/5 hover:bg-dancheong-ink/10 text-dancheong-ink/60 hover:text-dancheong-ink text-sm font-bold rounded-lg border border-dancheong-ink/5 transition-all mb-2"
                                                         >
-                                                            <ChevronRight size={14} className="text-white/30 group-hover/sub:text-white/60 transition-colors" />
+                                                            <ChevronRight size={14} className="text-dancheong-ink/20 group-hover/sub:text-dancheong-ink/40 transition-colors" />
                                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                                         </Link>
 
                                                         {/* Product Titles List */}
                                                         {subProducts.length > 0 && (
-                                                            <div className="flex flex-wrap gap-x-4 gap-y-2 pl-4 border-l border-white/10">
+                                                            <div className="flex flex-wrap gap-x-4 gap-y-2 pl-4 border-l border-dancheong-ink/10">
                                                                 {subProducts.map(product => (
                                                                     <Link
                                                                         key={product.id}
                                                                         to={`/product/${product.id}`}
                                                                         onClick={onClose}
-                                                                        className="text-[11px] text-white/40 hover:text-dancheong-mugwort transition-colors flex items-center gap-1.5 py-1"
+                                                                        className="text-[12px] text-white/60 hover:text-dancheong-mugwort hover:bg-white/5 px-2 py-1 rounded transition-all flex items-center gap-1.5"
                                                                     >
-                                                                        <Hash size={10} className="opacity-30" />
+                                                                        <Hash size={10} className="opacity-50" />
                                                                         <AutoTranslatedText text={getLocalizedText(product.title, i18n.language)} />
                                                                     </Link>
                                                                 ))}

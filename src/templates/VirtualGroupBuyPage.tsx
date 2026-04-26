@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit3, Check, Users, Clock, ShoppingCart, Plus, Calendar } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
@@ -95,6 +96,7 @@ const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
 const VirtualGroupBuyPage: React.FC = () => {
     useImmersiveMode(true);
     const { i18n, t } = useTranslation();
+    const { translateAsync } = useAutoTranslate('');
     const { id: routeId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
@@ -141,7 +143,7 @@ const VirtualGroupBuyPage: React.FC = () => {
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: t('common.details'), type: 'detail' },
         { id: parentProduct.id, label: getLoc(parentProduct.title, i18n.language), type: 'detail' },
-        { id: 'groupbuy', label: '공동구매', type: 'template' }
+                { id: 'groupbuy', label: <AutoTranslatedText text="공동구매" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -228,7 +230,8 @@ const VirtualGroupBuyPage: React.FC = () => {
 
     const handleAddItem = async () => {
         if (!formData.title || !formData.imageUrl || !formData.deadline) {
-            alert("상품명, 이미지 URL, 마감 기한을 모두 입력해주세요.");
+            const msg = await translateAsync("상품명, 이미지 URL, 마감 기한을 모두 입력해주세요.");
+            alert(msg);
             return;
         }
 
@@ -262,22 +265,26 @@ const VirtualGroupBuyPage: React.FC = () => {
             });
 
             if (res.ok) {
-                alert("공동구매 상품이 성공적으로 등록되었습니다.");
+                const msg = await translateAsync("공동구매 상품이 성공적으로 등록되었습니다.");
+                alert(msg);
                 setShowAddModal(false);
                 fetchItems();
             } else {
-                alert("등록 실패");
+                const msg = await translateAsync("등록 실패");
+                alert(msg);
             }
         } catch (error) {
             console.error('Create error:', error);
-            alert("오류가 발생했습니다.");
+            const msg = await translateAsync("오류가 발생했습니다.");
+            alert(msg);
         }
     };
 
     const handleJoinGroupBuy = async (item: FeaturedItem) => {
         const adminToken = sessionStorage.getItem('admin_token');
         if (!adminToken) {
-            alert("테스트 환경: 로그인이 필요한 기능입니다.");
+            const msg = await translateAsync("테스트 환경: 로그인이 필요한 기능입니다.");
+            alert(msg);
             return;
         }
 
@@ -308,14 +315,17 @@ const VirtualGroupBuyPage: React.FC = () => {
             await fetchItems();
             
             if (isClosing) {
-                alert(`🎉 축하합니다! [${getLoc(item.title, i18n.language)}] 목표 인원이 달성되어 공동구매 결제가 확정되었습니다! (가상 결제 완료)`);
+                const msg = await translateAsync(`🎉 축하합니다! [${getLoc(item.title, i18n.language)}] 목표 인원이 달성되어 공동구매 결제가 확정되었습니다! (가상 결제 완료)`);
+                alert(msg);
             } else {
-                alert(`✅ 참여 예약이 완료되었습니다! (현재 참여: ${updatedGbData.currentParticipants}명)`);
+                const msg = await translateAsync(`✅ 참여 예약이 완료되었습니다! (현재 참여: ${updatedGbData.currentParticipants}명)`);
+                alert(msg);
             }
             
         } catch (error) {
             console.error("Failed to join group buy:", error);
-            alert("참여 처리 중 오류가 발생했습니다.");
+            const msg = await translateAsync("참여 처리 중 오류가 발생했습니다.");
+            alert(msg);
         } finally {
             setProcessingId(null);
         }
@@ -326,7 +336,7 @@ const VirtualGroupBuyPage: React.FC = () => {
             <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none" />
 
             {/* Header */}
-            <header className="relative w-full py-12 px-6 md:px-12 border-b border-white/10 z-10 backdrop-blur-xl">
+            <header className="relative w-full py-12 px-6 md:px-12 border-b border-white/10 z-10 bg-[#0a0a0a]">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         <button
@@ -341,7 +351,7 @@ const VirtualGroupBuyPage: React.FC = () => {
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-xl bg-white/5 backdrop-blur-md"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-xl bg-[#111]"
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
@@ -351,7 +361,7 @@ const VirtualGroupBuyPage: React.FC = () => {
                                     className="flex items-center gap-2 px-6 py-2 rounded-full border border-transparent bg-[#FF6B6B] hover:bg-[#ff5555] transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-[0_0_20px_rgba(255,107,107,0.3)]"
                                 >
                                     <Plus size={14} />
-                                    <AutoTranslatedText text="상품 추가" />
+                                                                        <AutoTranslatedText text={t('common.add_product', '상품 추가')} />
                                 </button>
                             </div>
                         )}
@@ -359,7 +369,7 @@ const VirtualGroupBuyPage: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row items-end justify-between gap-8">
                         <div className="w-full md:w-2/3">
-                            <h2 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#FF6B6B]">GROUP BUY EVENT</h2>
+                                                        <h2 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#FF6B6B]"><AutoTranslatedText text="GROUP BUY EVENT" /></h2>
                             {isEditingMetadata ? (
                                 <input
                                     type="text"
@@ -392,9 +402,9 @@ const VirtualGroupBuyPage: React.FC = () => {
             {/* List */}
             <main className="relative z-10 container mx-auto px-6 md:px-12 py-16">
                 {isLoading ? (
-                    <div className="text-center text-white/50 text-sm tracking-widest uppercase">Loading items...</div>
+                                        <div className="text-center text-white/50 text-sm tracking-widest uppercase"><AutoTranslatedText text="Loading items..." /></div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-24 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md">
+                    <div className="text-center py-24 bg-[#111] rounded-3xl border border-white/10">
                         <ShoppingCart size={48} className="mx-auto text-white/20 mb-6" />
                         <h3 className="text-xl font-light text-white mb-2"><AutoTranslatedText text="등록된 공동구매 상품이 없습니다" /></h3>
                         <p className="text-sm text-white/50"><AutoTranslatedText text="관리자 권한으로 로그인하여 새 공동구매를 열어보세요." /></p>
@@ -414,12 +424,12 @@ const VirtualGroupBuyPage: React.FC = () => {
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="group relative bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden"
+                                        className="group relative bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden"
                                     >
                                         <div className="aspect-[4/3] overflow-hidden relative">
                                             <img src={item.imageUrl} alt="Group Buy Product" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                             {isGoalMet && (
-                                                <div className="absolute inset-0 bg-[#FF6B6B]/80 backdrop-blur-sm flex flex-col justify-center items-center">
+                                                <div className="absolute inset-0 bg-[#FF6B6B] flex flex-col justify-center items-center">
                                                     <Check size={48} className="text-white mb-4" />
                                                     <span className="text-white font-bold tracking-widest text-lg"><AutoTranslatedText text="목표 인원 달성 (공동구매 성공!)" /></span>
                                                 </div>
@@ -432,7 +442,7 @@ const VirtualGroupBuyPage: React.FC = () => {
                                                     <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
                                                 </h3>
                                                 <div className="text-right flex-shrink-0">
-                                                    <span className="text-[10px] uppercase tracking-widest text-[#FF6B6B] block mb-1">공동구매 특가</span>
+                                                                                                        <span className="text-[10px] uppercase tracking-widest text-[#FF6B6B] block mb-1"><AutoTranslatedText text="공동구매 특가" /></span>
                                                     <span className="font-mono text-xl">{getLoc(item.price, i18n.language)}</span>
                                                 </div>
                                             </div>
@@ -449,8 +459,8 @@ const VirtualGroupBuyPage: React.FC = () => {
                                             {/* Progress Bar */}
                                             <div className="mb-8">
                                                 <div className="flex justify-between text-xs tracking-widest text-white/60 mb-3 uppercase">
-                                                    <span>참여: {gbData.currentParticipants}명</span>
-                                                    <span>목표: {gbData.targetParticipants}명</span>
+                                                                                                        <span><AutoTranslatedText text="참여" />: {gbData.currentParticipants}<AutoTranslatedText text="명" /></span>
+                                                    <span><AutoTranslatedText text="목표" />: {gbData.targetParticipants}<AutoTranslatedText text="명" /></span>
                                                 </div>
                                                 <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                                                     <motion.div 
@@ -475,7 +485,7 @@ const VirtualGroupBuyPage: React.FC = () => {
                                             >
                                                 <Users size={16} />
                                                 {processingId === item.id ? (
-                                                    <span>처리중...</span>
+                                                                                                        <span><AutoTranslatedText text="처리중..." /></span>
                                                 ) : isGoalMet ? (
                                                     <AutoTranslatedText text="참여 마감" />
                                                 ) : isExpired ? (
@@ -497,41 +507,41 @@ const VirtualGroupBuyPage: React.FC = () => {
             <AnimatePresence>
                 {showAddModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
+                        <div className="absolute inset-0 bg-black/90" />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="relative w-full max-w-xl bg-[#111] border border-white/10 rounded-3xl p-8"
                         >
-                            <h3 className="text-xl text-white mb-6 font-light tracking-tight">공동구매 상품 추가</h3>
+                                                        <h3 className="text-xl text-white mb-6 font-light tracking-tight"><AutoTranslatedText text="공동구매 상품 추가" /></h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">상품명</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="상품명" /></label>
                                     <input type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                 </div>
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">이미지 URL</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="이미지 URL" /></label>
                                     <input type="text" value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-xs text-white/50 block mb-2 tracking-widest">결제 가격 표기</label>
+                                                                                <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="결제 가격 표기" /></label>
                                         <input type="text" placeholder="₩99,000" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-white/50 block mb-2 tracking-widest">목표 참여 인원</label>
+                                                                                <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="목표 참여 인원" /></label>
                                         <input type="number" value={formData.targetParticipants} onChange={e => setFormData({ ...formData, targetParticipants: parseInt(e.target.value) || 10 })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">마감 기한 (YYYY-MM-DDTHH:mm)</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="마감 기한 (YYYY-MM-DDTHH:mm)" /></label>
                                     <input type="datetime-local" value={formData.deadline} onChange={e => setFormData({ ...formData, deadline: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" style={{ colorScheme: 'dark' }} />
                                 </div>
 
                                 <div className="flex justify-end gap-3 mt-8">
-                                    <button onClick={() => setShowAddModal(false)} className="px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase text-white/50 hover:text-white transition-colors">취소</button>
-                                    <button onClick={handleAddItem} className="px-6 py-3 rounded-full bg-[#FF6B6B] hover:bg-[#ff5555] text-white text-xs font-black tracking-widest uppercase shadow-lg transition-colors">등록하기</button>
+                                                                        <button onClick={() => setShowAddModal(false)} className="px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase text-white/50 hover:text-white transition-colors"><AutoTranslatedText text="취소" /></button>
+                                    <button onClick={handleAddItem} className="px-6 py-3 rounded-full bg-[#FF6B6B] hover:bg-[#ff5555] text-white text-xs font-black tracking-widest uppercase shadow-lg transition-colors"><AutoTranslatedText text="등록하기" /></button>
                                 </div>
                             </div>
                         </motion.div>

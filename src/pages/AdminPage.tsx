@@ -711,7 +711,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} 
+                className="absolute inset-0 bg-black/95" onClick={onClose} 
             />
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -1388,7 +1388,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
 
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
@@ -1439,7 +1439,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                         <>
                                             <img src={formData.bgImage} alt="" className="w-full h-full object-cover" />
                                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label className="cursor-pointer p-3 bg-white/20 hover:bg-white/30 rounded-full text-dancheong-ink backdrop-blur-md">
+                                                <label className="cursor-pointer p-3 bg-white hover:bg-white/80 rounded-full text-dancheong-ink">
                                                     <Upload size={20} />
                                                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
                                                 </label>
@@ -1738,7 +1738,7 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
 
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit Notice' : 'Add Notice'} />
@@ -1960,7 +1960,7 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
 
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit FAQ' : 'Add FAQ'} />
@@ -2187,7 +2187,7 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
 
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">Update Order Status</h3>
                 
@@ -2403,7 +2403,7 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
 
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
@@ -2461,9 +2461,9 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
 export const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState('products');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
+
     const navigate = useNavigate();
-    const { floors } = useFloors();
+    useFloors();
     const { isAdmin, isAuthenticated, logout } = useAdmin();
 
     useEffect(() => {
@@ -2499,7 +2499,7 @@ export const AdminPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory lg:flex relative overflow-x-hidden">
+        <div className="min-h-screen bg-transparent lg:flex relative overflow-x-hidden">
             {/* Mobile Sidebar Overlay (Left) */}
             <AnimatePresence>
                 {isSidebarOpen && (
@@ -2508,75 +2508,16 @@ export const AdminPage: React.FC = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsSidebarOpen(false)}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] lg:hidden"
+                        className="fixed inset-0 bg-black/60 z-[100] lg:hidden"
                     />
                 )}
             </AnimatePresence>
 
-            {/* Global Category Menu Overlay (Right) */}
-            <AnimatePresence>
-                {isGlobalMenuOpen && (
-                    <>
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsGlobalMenuOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[120]"
-                        />
-                        <motion.div 
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 right-0 w-80 bg-white/80 backdrop-blur-md shadow-2xl z-[130] flex flex-col"
-                        >
-                            <div className="p-6 border-b border-dancheong-ink/5 flex items-center justify-between">
-                                <h2 className="text-lg font-serif font-bold text-dancheong-ink">Category Menu</h2>
-                                <button 
-                                    onClick={() => setIsGlobalMenuOpen(false)}
-                                    className="p-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                                {floors.map(floor => (
-                                    <div key={floor.id} className="space-y-3">
-                                        <div className="flex items-center gap-2 text-dancheong-mugwort font-bold text-sm tracking-widest uppercase opacity-80">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2]" />
-                                            {floor.floor} | {displayLocalized(floor.title)}
-                                        </div>
-                                        <div className="grid grid-cols-1 gap-2 pl-4">
-                                            {(floor.subitems || []).map(sub => (
-                                                <button
-                                                    key={sub.id}
-                                                    onClick={() => navigate(`/category/${sub.id}`)}
-                                                    className="w-full text-left px-4 py-3 rounded-xl bg-dancheong-ink/5 text-dancheong-ink/60 text-sm hover:text-dancheong-ink hover:bg-dancheong-mugwort/10 transition-all border border-transparent hover:border-[#00FFC2]/20"
-                                                >
-                                                    {displayLocalized(sub.label)}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="p-4 border-t border-dancheong-ink/5">
-                                <button
-                                    onClick={() => navigate('/')}
-                                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-dancheong-ink/5 text-dancheong-ink/80 font-bold hover:bg-white/10 transition-all"
-                                >
-                                    Go to Front Page
-                                </button>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+
 
             {/* Sidebar */}
             <aside className={`
-                fixed inset-y-0 left-0 w-72 border-r border-dancheong-ink/5 bg-white flex flex-col z-[110] 
+                fixed inset-y-0 left-0 w-72 border-r border-dancheong-ink/5 bg-white/10 flex flex-col z-[110] 
                 transition-transform duration-300 transform
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                 lg:relative lg:translate-x-0 lg:h-screen lg:sticky lg:top-0 overflow-y-auto
@@ -2639,8 +2580,8 @@ export const AdminPage: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-dancheong-ivory">
-                <header className="px-6 md:px-10 py-6 md:py-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/40 backdrop-blur-md sticky top-0 z-50">
+            <main className="flex-1 overflow-y-auto bg-transparent">
+                <header className="px-6 md:px-10 py-6 md:py-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/10 sticky top-0 z-50">
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => setIsSidebarOpen(true)}
@@ -2657,13 +2598,7 @@ export const AdminPage: React.FC = () => {
                             </h3>
                         </div>
                     </div>
-                    <button 
-                        onClick={() => setIsGlobalMenuOpen(true)}
-                        className="p-3 text-dancheong-ink/60 hover:text-dancheong-ink hover:bg-dancheong-ink/5 rounded-xl transition-all flex items-center gap-2 font-bold text-xs"
-                    >
-                        <span className="hidden sm:inline opacity-60">CATEGORIES</span>
-                        <Menu size={24} />
-                    </button>
+
                 </header>
 
                 <div className="p-10">

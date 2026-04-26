@@ -164,8 +164,9 @@ const VirtualMeetingPage: React.FC = () => {
             });
         });
 
-        newSocket.on('meeting-error', (data: { message: string }) => {
-            alert(data.message);
+        newSocket.on('meeting-error', async (data: { message: string }) => {
+            const msg = await translateAsync(data.message);
+            alert(msg);
             if (data.message.includes('토큰') || data.message.includes('정원')) {
                 sessionStorage.removeItem(roomKey);
                 setIsAuthorized(false);
@@ -237,10 +238,11 @@ const VirtualMeetingPage: React.FC = () => {
         }
     };
 
-    const handleTokenSubmit = (e: React.FormEvent) => {
+    const handleTokenSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!entryToken.trim()) {
-            setTokenError('Please enter a token.');
+            const errorMsg = await translateAsync('Please enter a token.');
+            setTokenError(errorMsg);
             return;
         }
         
@@ -340,7 +342,7 @@ const VirtualMeetingPage: React.FC = () => {
                     
                     <div className="flex flex-col gap-2 pointer-events-auto">
                         <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(-1)}>
-                            <div className="p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full group-hover:bg-[#FF4757]/20 transition-all">
+                            <div className="p-3 bg-[#111] border border-white/10 rounded-full group-hover:bg-[#FF4757]/20 transition-all">
                                 <LogOut size={20} className="rotate-180 group-hover:text-[#FF4757]" />
                             </div>
                             <div>
@@ -351,7 +353,7 @@ const VirtualMeetingPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4 pointer-events-auto">
-                        <div className="bg-black/40 backdrop-blur-2xl px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-8">
+                        <div className="bg-[#0a0a0a] px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-8">
                             <div className="flex flex-col items-center">
                                 <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest"><AutoTranslatedText text={t('meeting.active_members')} /></span>
                                 <div className="flex items-center gap-2">
@@ -361,7 +363,7 @@ const VirtualMeetingPage: React.FC = () => {
                             </div>
                             <div className="w-[1px] h-8 bg-white/10" />
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest">{t('meeting.room_quality')}</span>
+                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest"><AutoTranslatedText text={t('meeting.room_quality')} /></span>
                                 <span className="text-sm font-bold text-[#2ECC71]">Ultra HD</span>
                             </div>
                         </div>
@@ -377,7 +379,7 @@ const VirtualMeetingPage: React.FC = () => {
                             opacity: 1 
                         }}
                         transition={{ duration: 0.5, ease: "circOut" }}
-                        className="flex items-center gap-4 px-8 py-5 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] pointer-events-auto"
+                        className="flex items-center gap-4 px-8 py-5 bg-[#0a0a0a] rounded-[2.5rem] border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] pointer-events-auto"
                         onMouseMove={resetUiTimer}
                         style={{ pointerEvents: 'auto' }}
                     >
@@ -459,7 +461,7 @@ const VirtualMeetingPage: React.FC = () => {
                             initial={{ x: 400 }}
                             animate={{ x: 0 }}
                             exit={{ x: 400 }}
-                            className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-black/40 backdrop-blur-3xl border-l border-white/10 p-8 flex flex-col gap-8 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
+                            className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-[#0a0a0a] border-l border-white/10 p-8 flex flex-col gap-8 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
                         >
                             <div className="flex items-center justify-between">
                                 <h3 className="text-xl font-black tracking-tight">{t('common.participants')}</h3>
@@ -544,7 +546,7 @@ const VirtualMeetingPage: React.FC = () => {
                                 initial={{ opacity: 0 }} 
                                 animate={{ opacity: 1 }} 
                                 exit={{ opacity: 0 }} 
-                                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                                className="absolute inset-0 bg-black/80"
                                 onClick={() => setIsShareModalOpen(false)}
                             />
                             <motion.div 
@@ -612,7 +614,7 @@ const VirtualMeetingPage: React.FC = () => {
 
                                     <div className="relative flex items-center justify-center my-4">
                                         <div className="absolute inset-x-0 h-[1px] bg-white/10" />
-                                        <span className="relative bg-[#1A1A1A] px-4 text-xs font-bold text-white/30 uppercase tracking-widest">or</span>
+                                                                                <span className="relative bg-[#1A1A1A] px-4 text-xs font-bold text-white/30 uppercase tracking-widest"><AutoTranslatedText text="or" /></span>
                                     </div>
 
                                     <button 
@@ -625,7 +627,7 @@ const VirtualMeetingPage: React.FC = () => {
 
                                     <div className="relative flex items-center justify-center my-4">
                                         <div className="absolute inset-x-0 h-[1px] bg-white/10" />
-                                        <span className="relative bg-[#1A1A1A] px-4 text-xs font-bold text-white/30 uppercase tracking-widest">or paste link</span>
+                                                                                <span className="relative bg-[#1A1A1A] px-4 text-xs font-bold text-white/30 uppercase tracking-widest"><AutoTranslatedText text="or paste link" /></span>
                                     </div>
 
                                     <form onSubmit={(e) => {
@@ -668,7 +670,7 @@ const VirtualMeetingPage: React.FC = () => {
                 {/* Invite Link Modal */}
                 <AnimatePresence>
                     {showInviteModal && (
-                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/95">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -741,7 +743,7 @@ const VirtualMeetingPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="absolute inset-0 z-[100] bg-black/95 backdrop-blur-3xl flex items-center justify-center p-8 md:p-12"
+                            className="absolute inset-0 z-[100] bg-black/95 flex items-center justify-center p-8 md:p-12"
                         >
                             <button 
                                 onClick={() => setIsScreenMaximized(false)}
@@ -767,7 +769,7 @@ const VirtualMeetingPage: React.FC = () => {
                                 ) : screenData.type === 'video' ? (
                                     <video src={screenData.url} autoPlay loop muted playsInline className="w-full h-full object-contain" />
                                 ) : (
-                                    <img src={screenData.url} alt="Presentation" className="w-full h-full object-contain" />
+                                                                        <img src={screenData.url} alt="Presentation" className="w-full h-full object-contain" />
                                 )}
                             </div>
                         </motion.div>
@@ -780,12 +782,12 @@ const VirtualMeetingPage: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/80 backdrop-blur-3xl"
+                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/95"
                         >
                             <motion.div 
                                 initial={{ scale: 0.9, y: 20 }}
                                 animate={{ scale: 1, y: 0 }}
-                                className="w-full max-w-md p-10 bg-white/5 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-8"
+                                className="w-full max-w-md p-10 bg-[#111] border border-white/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-8"
                             >
                                 <div className="w-20 h-20 bg-emerald-500/20 rounded-3xl flex items-center justify-center text-emerald-400 border border-emerald-500/30">
                                     <Lock size={40} />

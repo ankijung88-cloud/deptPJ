@@ -146,7 +146,7 @@ const VirtualFundingPage: React.FC = () => {
         { id: currentCategory?.id || parentProduct.subcategory, label: currentCategory?.label || parentProduct.subcategory, type: 'category' },
         { id: 'detail', label: t('common.details'), type: 'detail' },
         { id: parentProduct.id, label: getLoc(parentProduct.title, i18n.language), type: 'detail' },
-        { id: 'funding', label: '크라우드펀딩', type: 'template' }
+                { id: 'funding', label: <AutoTranslatedText text="크라우드펀딩" />, type: 'template' }
     ] : []);
 
     useEffect(() => {
@@ -334,7 +334,7 @@ const VirtualFundingPage: React.FC = () => {
             <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none" />
 
             {/* Header */}
-            <header className="relative w-full py-12 px-6 md:px-12 border-b border-white/10 z-10 backdrop-blur-xl">
+            <header className="relative w-full py-12 px-6 md:px-12 border-b border-white/10 z-10 bg-black/95">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         <button
@@ -349,7 +349,7 @@ const VirtualFundingPage: React.FC = () => {
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-xl bg-white/5 backdrop-blur-md"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-xl bg-[#111]"
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
@@ -359,7 +359,7 @@ const VirtualFundingPage: React.FC = () => {
                                     className="flex items-center gap-2 px-6 py-2 rounded-full border border-transparent bg-[#FF6B6B] hover:bg-[#ff5555] transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-[0_0_20px_rgba(255,107,107,0.3)]"
                                 >
                                     <Plus size={14} />
-                                    <AutoTranslatedText text="상품 추가" />
+                                                                        <AutoTranslatedText text={t('common.add_product', '상품 추가')} />
                                 </button>
                             </div>
                         )}
@@ -367,7 +367,7 @@ const VirtualFundingPage: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row items-end justify-between gap-8">
                         <div className="w-full md:w-2/3">
-                            <h2 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#FF6B6B]">CROWD FUNDING EVENT</h2>
+                                                        <h2 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#FF6B6B]"><AutoTranslatedText text="CROWD FUNDING EVENT" /></h2>
                             {isEditingMetadata ? (
                                 <input
                                     type="text"
@@ -400,9 +400,9 @@ const VirtualFundingPage: React.FC = () => {
             {/* List */}
             <main className="relative z-10 container mx-auto px-6 md:px-12 py-16">
                 {isLoading ? (
-                    <div className="text-center text-white/50 text-sm tracking-widest uppercase">Loading items...</div>
+                                        <div className="text-center text-white/50 text-sm tracking-widest uppercase"><AutoTranslatedText text="Loading items..." /></div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-24 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md">
+                    <div className="text-center py-24 bg-[#0a0a0a] rounded-3xl border border-white/10">
                         <ShoppingCart size={48} className="mx-auto text-white/20 mb-6" />
                         <h3 className="text-xl font-light text-white mb-2"><AutoTranslatedText text="등록된 크라우드펀딩 상품이 없습니다" /></h3>
                         <p className="text-sm text-white/50"><AutoTranslatedText text="관리자 권한으로 로그인하여 새 크라우드펀딩를 열어보세요." /></p>
@@ -424,12 +424,12 @@ const VirtualFundingPage: React.FC = () => {
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="group relative bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden"
+                                        className="group relative bg-[#0a0a0a] border border-white/10 rounded-[2rem] overflow-hidden"
                                     >
                                         <div className="aspect-[4/3] overflow-hidden relative">
                                             <img src={item.imageUrl} alt="Funding Project" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                             {isGoalMet && (
-                                                <div className="absolute inset-0 bg-[#FF6B6B]/80 backdrop-blur-sm flex flex-col justify-center items-center">
+                                                <div className="absolute inset-0 bg-[#FF6B6B] flex flex-col justify-center items-center">
                                                     <Check size={48} className="text-white mb-4" />
                                                     <span className="text-white font-bold tracking-widest text-lg"><AutoTranslatedText text="목표 달성 (펀딩 성공!)" /></span>
                                                 </div>
@@ -442,7 +442,7 @@ const VirtualFundingPage: React.FC = () => {
                                                     <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
                                                 </h3>
                                                 <div className="text-right flex-shrink-0">
-                                                    <span className="text-[10px] uppercase tracking-widest text-[#FF6B6B] block mb-1">크라우드펀딩 특가</span>
+                                                                                                        <span className="text-[10px] uppercase tracking-widest text-[#FF6B6B] block mb-1"><AutoTranslatedText text="크라우드펀딩 특가" /></span>
                                                     <span className="font-mono text-xl">{getLoc(item.price, i18n.language)}</span>
                                                 </div>
                                             </div>
@@ -459,8 +459,8 @@ const VirtualFundingPage: React.FC = () => {
                                             {/* Progress Bar */}
                                             <div className="mb-8">
                                                 <div className="flex justify-between text-xs tracking-widest text-white/60 mb-3 uppercase">
-                                                    <span>참여자: {gbData.backerCount}명</span>
-                                                    <span>{progressPercentageVisual}% 달성</span>
+                                                                                                        <span><AutoTranslatedText text="참여자" />: {gbData.backerCount}<AutoTranslatedText text="명" /></span>
+                                                    <span>{progressPercentageVisual}% <AutoTranslatedText text="달성" /></span>
                                                 </div>
                                                 <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden relative">
                                                     <motion.div 
@@ -471,8 +471,8 @@ const VirtualFundingPage: React.FC = () => {
                                                     />
                                                 </div>
                                                 <div className="flex justify-between text-[10px] tracking-widest text-white/40 mt-2 uppercase">
-                                                    <span>현재 {gbData.currentAmount.toLocaleString()}원</span>
-                                                    <span>목표 {gbData.targetAmount.toLocaleString()}원</span>
+                                                                                                        <span><AutoTranslatedText text="현재" /> {gbData.currentAmount.toLocaleString()}<AutoTranslatedText text="원" /></span>
+                                                    <span><AutoTranslatedText text="목표" /> {gbData.targetAmount.toLocaleString()}<AutoTranslatedText text="원" /></span>
                                                 </div>
                                             </div>
 
@@ -487,7 +487,7 @@ const VirtualFundingPage: React.FC = () => {
                                             >
                                                 <TrendingUp size={16} />
                                                 {processingId === item.id ? (
-                                                    <span>처리중...</span>
+                                                                                                        <span><AutoTranslatedText text="처리중..." /></span>
                                                 ) : isExpired ? (
                                                     <AutoTranslatedText text="기간 종료" />
                                                 ) : (
@@ -507,41 +507,41 @@ const VirtualFundingPage: React.FC = () => {
             <AnimatePresence>
                 {showAddModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
+                        <div className="absolute inset-0 bg-black/95" />
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="relative w-full max-w-xl bg-[#111] border border-white/10 rounded-3xl p-8"
                         >
-                            <h3 className="text-xl text-white mb-6 font-light tracking-tight">크라우드펀딩 상품 추가</h3>
+                                                        <h3 className="text-xl text-white mb-6 font-light tracking-tight"><AutoTranslatedText text="크라우드펀딩 상품 추가" /></h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">상품명</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="상품명" /></label>
                                     <input type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                 </div>
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">이미지 URL</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="이미지 URL" /></label>
                                     <input type="text" value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-xs text-white/50 block mb-2 tracking-widest">결제 가격 표기</label>
+                                                                                <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="결제 가격 표기" /></label>
                                         <input type="text" placeholder="₩99,000" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" />
                                     </div>
                                     <div>
-                                        <label className="text-xs text-white/50 block mb-2 tracking-widest">목표 모금액</label>
+                                                                                <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="목표 모금액" /></label>
                                         <input type="number" value={formData.targetAmount} onChange={e => setFormData({ ...formData, targetAmount: parseInt(e.target.value) || 1000000 })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#10B981] outline-none" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-xs text-white/50 block mb-2 tracking-widest">마감 기한 (YYYY-MM-DDTHH:mm)</label>
+                                                                        <label className="text-xs text-white/50 block mb-2 tracking-widest"><AutoTranslatedText text="마감 기한 (YYYY-MM-DDTHH:mm)" /></label>
                                     <input type="datetime-local" value={formData.deadline} onChange={e => setFormData({ ...formData, deadline: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#FF6B6B] outline-none" style={{ colorScheme: 'dark' }} />
                                 </div>
 
                                 <div className="flex justify-end gap-3 mt-8">
-                                    <button onClick={() => setShowAddModal(false)} className="px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase text-white/50 hover:text-white transition-colors">취소</button>
-                                    <button onClick={handleAddItem} className="px-6 py-3 rounded-full bg-[#FF6B6B] hover:bg-[#ff5555] text-white text-xs font-black tracking-widest uppercase shadow-lg transition-colors">등록하기</button>
+                                                                        <button onClick={() => setShowAddModal(false)} className="px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase text-white/50 hover:text-white transition-colors"><AutoTranslatedText text="취소" /></button>
+                                    <button onClick={handleAddItem} className="px-6 py-3 rounded-full bg-[#FF6B6B] hover:bg-[#ff5555] text-white text-xs font-black tracking-widest uppercase shadow-lg transition-colors"><AutoTranslatedText text="등록하기" /></button>
                                 </div>
                             </div>
                         </motion.div>

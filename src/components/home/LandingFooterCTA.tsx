@@ -8,7 +8,7 @@ interface LandingFooterCTAProps {
 
 export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore }) => {
     return (
-        <section className="relative w-full py-32 px-6 bg-dancheong-ivory flex flex-col items-center justify-center border-t border-dancheong-ink/10">
+        <section className="relative w-full py-32 px-6 bg-transparent flex flex-col items-center justify-center border-t border-dancheong-ink/10">
             <div className="absolute inset-0 pointer-events-none z-0">
                 <div className="absolute bottom-[-20%] left-[20%] w-[60%] h-[60%] bg-[#FFD700]/5 blur-[200px] rounded-full" />
             </div>
@@ -41,8 +41,8 @@ export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore })
                 </motion.div>
             </div>
             
-            <div className="absolute bottom-8 w-full text-center text-dancheong-ink/20 text-xs tracking-widest font-light">
-                © {new Date().getFullYear()} 몽땅쏙. ALL RIGHTS RESERVED.
+            <div className="absolute bottom-8 w-full text-center text-dancheong-ink/20 text-[10px] font-black uppercase tracking-widest">
+                © {new Date().getFullYear()} <AutoTranslatedText text="몽땅쏙" />. <AutoTranslatedText text="ALL RIGHTS RESERVED." />
             </div>
         </section>
     );

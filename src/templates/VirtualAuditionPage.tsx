@@ -498,7 +498,7 @@ const VirtualAuditionPage: React.FC = () => {
                                 <div className="flex flex-col gap-4 items-start pointer-events-auto max-w-[50%]">
                                     <div className="flex items-center gap-4">
                                         <motion.div 
-                                            className="p-3 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl hover:bg-[#FF4757]/20 transition-all cursor-pointer"
+                                            className="p-3 bg-[#111] border border-white/10 rounded-2xl hover:bg-[#FF4757]/20 transition-all cursor-pointer"
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                             onClick={() => navigate(-1)}
@@ -538,7 +538,7 @@ const VirtualAuditionPage: React.FC = () => {
                                                 className="px-4 py-2 bg-[#FFD700] text-black rounded-full flex items-center gap-2 shadow-[0_0_20px_rgba(255,215,0,0.4)]"
                                             >
                                                 <Video size={14} fill="black" className="animate-pulse" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">{t('audition.judge_on_screen')}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">                                                <AutoTranslatedText text={t('audition.judge_on_screen')} /></span>
                                             </motion.div>
                                         )}
                                     </div>
@@ -547,14 +547,14 @@ const VirtualAuditionPage: React.FC = () => {
                                 </div>
 
                                 <div className="flex items-center justify-end gap-6 pointer-events-auto">
-                                    <div className="flex bg-black/40 backdrop-blur-3xl p-1 rounded-2xl border border-white/10">
+                                    <div className="flex bg-[#111] p-1 rounded-2xl border border-white/10">
                                         {(['judge', 'candidate', 'audience'] as const).map(r => (
                                             <button 
                                                 key={r}
                                                 onClick={() => setCurrentRole(r)}
                                                 className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${currentRole === r ? 'bg-[#FFD700] text-black shadow-lg shadow-[#FFD700]/20' : 'text-white/40 hover:text-white'}`}
                                             >
-                                                {t(`audition.${r}`)}
+                                                                                                <AutoTranslatedText text={t(`audition.${r}`)} />
                                             </button>
                                         ))}
                                     </div>
@@ -573,18 +573,18 @@ const VirtualAuditionPage: React.FC = () => {
                             exit={{ x: -300, opacity: 0 }}
                             className="absolute left-8 top-32 bottom-32 w-72 z-20 flex flex-col gap-6 pointer-events-none"
                         >
-                            <div className="pointer-events-auto bg-black/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 flex flex-col gap-6 shadow-2xl overflow-hidden">
+                            <div className="pointer-events-auto bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-6 flex flex-col gap-6 shadow-2xl overflow-hidden">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <ClipboardList size={18} className="text-[#FFD700]" />
-                                        <h3 className="text-sm font-black uppercase tracking-widest">{t('audition.queue')}</h3>
+                                                                                <h3 className="text-sm font-black uppercase tracking-widest"><AutoTranslatedText text={t('audition.queue')} /></h3>
                                     </div>
                                     <span className="bg-white/10 px-2 py-1 rounded text-[10px] font-black">{queue.length}</span>
                                 </div>
                                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                                     {queue.length === 0 ? (
                                         <p className="text-center text-white/50 text-xs py-4">
-                                            {t('audition.waiting_candidates', 'Waiting for candidates...')}
+                                                                                        <AutoTranslatedText text={t('audition.waiting_candidates', 'Waiting for candidates...')} />
                                         </p>
                                     ) : (
                                         queue.map((p, idx) => (
@@ -600,7 +600,7 @@ const VirtualAuditionPage: React.FC = () => {
                                                     </div>
                                                     <div className="flex flex-col">
                                                         <span className="text-xs font-bold tracking-tight">{p.name}</span>
-                                                        {activeCandidateId === p.id && <span className="text-[9px] text-[#FFD700] font-black uppercase tracking-widest animate-pulse">{t('audition.performing')}</span>}
+                                                                                                                {activeCandidateId === p.id && <span className="text-[9px] text-[#FFD700] font-black uppercase tracking-widest animate-pulse"><AutoTranslatedText text={t('audition.performing')} /></span>}
                                                     </div>
                                                 </div>
                                                 {currentRole === 'judge' && (
@@ -626,12 +626,12 @@ const VirtualAuditionPage: React.FC = () => {
                                             >
                                                 {activeCandidateId ? (
                                                     <>
-                                                        <span>{t('audition.next_candidate', 'Next Candidate')}</span>
+                                                                                                                <span><AutoTranslatedText text={t('audition.next_candidate', 'Next Candidate')} /></span>
                                                         <SkipForward size={14} fill="black" />
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <span>{t('audition.start_audition', 'Start Audition')}</span>
+                                                                                                                <span><AutoTranslatedText text={t('audition.start_audition', 'Start Audition')} /></span>
                                                         <Play size={14} fill="black" />
                                                     </>
                                                 )}
@@ -641,7 +641,7 @@ const VirtualAuditionPage: React.FC = () => {
                                                 className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all"
                                                 onClick={() => setShowScoring(!showScoring)}
                                             >
-                                                {showScoring ? t('audition.close_evaluation', 'Close Evaluation') : t('audition.judge_evaluation', 'Judge Evaluation')}
+                                                                                                <AutoTranslatedText text={showScoring ? t('audition.close_evaluation', 'Close Evaluation') : t('audition.judge_evaluation', 'Judge Evaluation')} />
                                             </button>
                                         </>
                                     )}
@@ -662,7 +662,7 @@ const VirtualAuditionPage: React.FC = () => {
                         >
                             {/* Evaluation Panel */}
                             <motion.div 
-                                className="pointer-events-auto bg-black/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-6 flex flex-col gap-4 shadow-2xl relative overflow-hidden"
+                                className="pointer-events-auto bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-6 flex flex-col gap-4 shadow-2xl relative overflow-hidden"
                             >
                                 <div className="absolute top-0 right-0 p-2 opacity-5">
                                     <Trophy size={40} />
@@ -671,7 +671,7 @@ const VirtualAuditionPage: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                     <Award size={16} className="text-[#FF4757]" />
                                     <h3 className="text-[11px] font-black uppercase tracking-widest">
-                                        {t('audition.grading_tool')}
+                                                                                <AutoTranslatedText text={t('audition.grading_tool')} />
                                     </h3>
                                 </div>
 
@@ -680,7 +680,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         <div key={type} className="flex flex-col gap-1">
                                             <div className="flex justify-between items-center px-1">
                                                 <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                                    {t(`audition.score.${type}`, type.toUpperCase())}
+                                                                                                        <AutoTranslatedText text={t(`audition.score.${type}`, type.toUpperCase())} />
                                                 </span>
                                                 <span className="text-xs font-black text-[#FFD700]">{scores[type]}<span className="text-[9px] opacity-30 ml-0.5">/ 10</span></span>
                                             </div>
@@ -695,7 +695,7 @@ const VirtualAuditionPage: React.FC = () => {
                                 </div>
 
                                 <div className="p-2 bg-[#FFD700]/10 border border-[#FFD700]/30 rounded-xl flex justify-between items-center mt-1">
-                                    <span className="text-[9px] font-black uppercase tracking-wider text-[#FFD700]">{t('audition.score.total')}</span>
+                                                                        <span className="text-[9px] font-black uppercase tracking-wider text-[#FFD700]"><AutoTranslatedText text={t('audition.score.total')} /></span>
                                     <span className="text-lg font-black text-white">{scores.vocal + scores.dance + scores.acting + scores.visual} <span className="text-[9px] opacity-30">/ 40</span></span>
                                 </div>
 
@@ -704,16 +704,16 @@ const VirtualAuditionPage: React.FC = () => {
                                     disabled={!activeCandidateId}
                                     className="w-full py-2.5 bg-[#FFD700] hover:bg-[#FFD700]/80 disabled:opacity-30 disabled:cursor-not-allowed text-black font-black rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-lg"
                                 >
-                                    {t('audition.score.submit')}
+                                                                        <AutoTranslatedText text={t('audition.score.submit')} />
                                 </button>
                             </motion.div>
 
                             {/* Materials & Record Panel */}
-                            <div className="pointer-events-auto bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-4 flex flex-col gap-2 shadow-xl">
+                            <div className="pointer-events-auto bg-[#111] border border-white/10 rounded-[2rem] p-4 flex flex-col gap-2 shadow-xl">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Settings size={14} className="text-white/40" />
                                     <h4 className="text-[9px] font-black uppercase tracking-widest text-white/40">
-                                        {t('audition.tool_box')}
+                                                                                <AutoTranslatedText text={t('audition.tool_box')} />
                                     </h4>
                                 </div>
                                 
@@ -722,7 +722,7 @@ const VirtualAuditionPage: React.FC = () => {
                                     className={`w-full py-3 flex items-center justify-center gap-2 rounded-xl border transition-all ${isRecording ? 'bg-[#FF4757] border-[#FF4757] shadow-lg' : 'bg-white/5 border-white/10 hover:border-[#FF4757]/40 ring-0 hover:ring-2 hover:ring-[#FF4757]/20'}`}
                                 >
                                     {isRecording ? <Square size={14} fill="white" /> : <div className="w-3 h-3 rounded-full bg-[#FF4757] animate-pulse" />}
-                                    <span className="text-[9px] font-black uppercase tracking-widest">{isRecording ? t('audition.record.stop') : t('audition.record.start')}</span>
+                                                                        <span className="text-[9px] font-black uppercase tracking-widest"><AutoTranslatedText text={isRecording ? t('audition.record.stop') : t('audition.record.start')} /></span>
                                 </button>
 
                                 {/* Lighting Controls (Judge Only) */}
@@ -730,7 +730,7 @@ const VirtualAuditionPage: React.FC = () => {
                                     <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                                         <div className="w-1 h-3 bg-[#FFD700] rounded-full" />
                                         <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#FFD700]">
-                                            {t('common.lighting')}
+                                                                                        <AutoTranslatedText text={t('common.lighting')} />
                                         </h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
@@ -740,7 +740,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         >
                                             <Lamp size={14} />
                                             <span className="text-[10px] font-bold mt-1">
-                                                {t('audition.stage', 'Stage')}
+                                                                                                <AutoTranslatedText text={t('audition.stage', 'Stage')} />
                                             </span>
                                         </button>
                                         <button 
@@ -749,7 +749,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         >
                                             <Sun size={14} />
                                             <span className="text-[10px] font-bold mt-1">
-                                                {t('audition.ambient', 'Ambient')}
+                                                                                                <AutoTranslatedText text={t('audition.ambient', 'Ambient')} />
                                             </span>
                                         </button>
                                         <button 
@@ -758,7 +758,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         >
                                             <ArrowDown size={14} />
                                             <span className="text-[10px] font-bold mt-1">
-                                                {t('audition.top_down', 'Top-Down')}
+                                                                                                <AutoTranslatedText text={t('audition.top_down', 'Top-Down')} />
                                             </span>
                                         </button>
                                         <button 
@@ -767,7 +767,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         >
                                             <Zap size={14} />
                                             <span className="text-[10px] font-bold mt-1">
-                                                {t('audition.diagonal', 'Diagonal')}
+                                                                                                <AutoTranslatedText text={t('audition.diagonal', 'Diagonal')} />
                                             </span>
                                         </button>
                                     </div>
@@ -779,7 +779,7 @@ const VirtualAuditionPage: React.FC = () => {
                                         className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex flex-col items-center gap-1.5 group transition-all"
                                     >
                                         <FileText size={14} className="group-hover:text-[#00D2FF]" />
-                                        <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100">{t('audition.materials.title')}</span>
+                                                                                <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100"><AutoTranslatedText text={t('audition.materials.title')} /></span>
                                     </button>
                                     <button 
                                         onClick={() => setShowParticipants(!showParticipants)}
@@ -787,7 +787,7 @@ const VirtualAuditionPage: React.FC = () => {
                                     >
                                         <Users size={14} className="group-hover:text-[#00FF88]" />
                                         <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100">
-                                            {t('common.participants')}
+                                                                                        <AutoTranslatedText text={t('common.participants')} />
                                         </span>
                                     </button>
                                 </div>
@@ -833,7 +833,7 @@ const VirtualAuditionPage: React.FC = () => {
                             exit={{ y: 200, x: '-50%', opacity: 0 }}
                             className="absolute bottom-32 left-1/2 -translate-x-1/2 w-full max-w-2xl px-8 z-30"
                         >
-                            <div className="bg-black/60 backdrop-blur-3xl border border-[#FFD700]/30 rounded-3xl p-8 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] flex flex-col gap-6">
+                            <div className="bg-[#0a0a0a] border border-[#FFD700]/30 rounded-3xl p-8 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] flex flex-col gap-6">
                                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 bg-[#FFD700]/10 rounded-full flex items-center justify-center text-[#FFD700]">
@@ -886,7 +886,7 @@ const VirtualAuditionPage: React.FC = () => {
                             exit={{ y: 100, x: '-50%', opacity: 0 }}
                             className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4"
                         >
-                            <div className="flex items-center gap-3 px-6 py-4 bg-white/5 backdrop-blur-3xl rounded-3xl border border-white/10 shadow-2xl pointer-events-auto">
+                            <div className="flex items-center gap-3 px-6 py-4 bg-[#0a0a0a] rounded-3xl border border-white/10 shadow-2xl pointer-events-auto">
                                 <button 
                                     onClick={() => setIsMuted(!isMuted)}
                                     className={`p-3 rounded-xl transition-all ${isMuted ? 'bg-[#FF4757] text-white shadow-lg shadow-[#FF4757]/20' : 'bg-white/5 hover:bg-white/10'}`}
@@ -932,7 +932,7 @@ const VirtualAuditionPage: React.FC = () => {
                 {/* Materials Uploader Modal */}
                 <AnimatePresence>
                     {showMaterials && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95">
                             <motion.div 
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -996,7 +996,7 @@ const VirtualAuditionPage: React.FC = () => {
                     {showParticipants && (
                         <motion.div 
                             initial={{ x: 400 }} animate={{ x: 0 }} exit={{ x: 400 }}
-                            className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-black/40 backdrop-blur-3xl border-l border-white/10 p-10 flex flex-col gap-10"
+                            className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-[#0a0a0a] border-l border-white/10 p-10 flex flex-col gap-10"
                         >
                             <div className="flex items-center justify-between">
                                 <h3 className="text-2xl font-black italic tracking-tighter">
@@ -1039,12 +1039,12 @@ const VirtualAuditionPage: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 z-[150] flex items-center justify-center bg-[#050505]/80 backdrop-blur-3xl p-6"
+                            className="absolute inset-0 z-[150] flex items-center justify-center bg-black/95 p-6"
                         >
                             <motion.div 
                                 initial={{ scale: 0.9, y: 20 }}
                                 animate={{ scale: 1, y: 0 }}
-                                className="w-full max-w-md p-12 bg-white/5 border border-white/10 rounded-[40px] shadow-2xl backdrop-blur-xl flex flex-col items-center text-center gap-10"
+                                className="w-full max-w-md p-12 bg-[#0a0a0a] border border-white/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-10"
                             >
                                 <div className="w-24 h-24 bg-yellow-500/10 rounded-3xl flex items-center justify-center text-yellow-400 border border-yellow-500/20 rotate-12">
                                     <Lock size={48} className="-rotate-12" />
@@ -1094,7 +1094,7 @@ const VirtualAuditionPage: React.FC = () => {
                 {/* Invite Token Management Modal */}
                 <AnimatePresence>
                     {showInviteModal && (
-                        <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                        <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/95">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}

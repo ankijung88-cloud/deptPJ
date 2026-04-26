@@ -113,7 +113,7 @@ export const VirtualInquiryPage: React.FC = () => {
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[3rem] p-10 md:p-16 shadow-2xl space-y-10"
+                        className="bg-[#0a0a0a] border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-2xl space-y-10"
                     >
                         <AnimatePresence mode="wait">
                             {sent ? (

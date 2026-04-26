@@ -23,7 +23,7 @@ const FloorContentPage: React.FC = () => {
     if (!floorData) return null;
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pt-32 pb-20">
+        <div className="min-h-screen bg-transparent text-dancheong-ink pt-32 pb-20">
             <div className="lossless-layout">
                 {/* Editorial Header */}
                 <header className="mb-24">
@@ -51,7 +51,7 @@ const FloorContentPage: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="max-w-md md:text-right"
                         >
-                            <p className="text-dancheong-ink font-black italic text-xl leading-relaxed opacity-80">
+                            <p className="text-dancheong-ink font-black italic text-xl leading-relaxed">
                                 <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                             </p>
                         </motion.div>
@@ -74,7 +74,7 @@ const FloorContentPage: React.FC = () => {
                                 transition={{ delay: idx * 0.1, duration: 0.7 }}
                                 className="group cursor-pointer"
                             >
-                                <div className="bg-white/60 backdrop-blur-2xl border-2 border-dancheong-ink/20 rounded-[48px] overflow-hidden transition-all duration-700 hover:shadow-[0_60px_100px_rgba(23,23,23,0.12)] hover:-translate-y-3 hover:bg-white/90 h-full flex flex-col">
+                                <div className="bg-white/10 border-2 border-dancheong-ink/20 rounded-[48px] overflow-hidden transition-all duration-700 hover:shadow-[0_60px_100px_rgba(23,23,23,0.12)] hover:-translate-y-3 hover:bg-white/30 h-full flex flex-col">
                                     <div className="aspect-[3/4] overflow-hidden relative">
                                         <img 
                                             src={article.imageUrl} 
@@ -86,7 +86,7 @@ const FloorContentPage: React.FC = () => {
                                         <div className="absolute top-10 left-10">
                                             <div className="px-5 py-2 bg-white rounded-full border-2 border-dancheong-ink shadow-lg">
                                                 <span className="text-[10px] font-black text-dancheong-ink uppercase tracking-[0.2em]">
-                                                    {article.category || 'Editorial'}
+                                                    <AutoTranslatedText text={article.category || 'Editorial'} />
                                                 </span>
                                             </div>
                                         </div>
@@ -100,7 +100,7 @@ const FloorContentPage: React.FC = () => {
                                         <h3 className="text-3xl font-serif font-black text-dancheong-ink mb-6 group-hover:text-dancheong-mugwort transition-colors duration-500 leading-[1.1] text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.title, i18n.language)} />
                                         </h3>
-                                        <p className="text-dancheong-ink font-black opacity-80 leading-relaxed text-lg line-clamp-3 mb-10 text-left">
+                                        <p className="text-dancheong-ink font-black leading-relaxed text-lg line-clamp-3 mb-10 text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.description, i18n.language)} />
                                         </p>
                                         <div className="mt-auto flex items-center gap-4 text-dancheong-ink/50 group-hover:text-dancheong-ink transition-colors duration-500 font-black text-[11px] uppercase tracking-[0.3em]">
@@ -113,7 +113,7 @@ const FloorContentPage: React.FC = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="py-40 text-center border-4 border-dancheong-ink/20 rounded-[48px] bg-white/60 backdrop-blur-2xl shadow-xl">
+                    <div className="py-40 text-center border-4 border-dancheong-ink/20 rounded-[48px] bg-white/10 shadow-xl">
                         <div className="w-24 h-24 bg-dancheong-ink/[0.05] rounded-full flex items-center justify-center mx-auto mb-8">
                             <Archive size={40} className="text-dancheong-ink/20" />
                         </div>

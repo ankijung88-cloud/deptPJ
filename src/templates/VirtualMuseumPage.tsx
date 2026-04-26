@@ -45,7 +45,7 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                     style={{ 
                         backgroundColor: `${theme.color1}ee`, 
                         borderColor: `${theme.color3}44`,
-                        backdropFilter: 'blur(10px)',
+                        // backdropFilter: 'blur(10px)',
                         backfaceVisibility: 'hidden',
                         zIndex: isFlipped ? 0 : 1
                     }}
@@ -617,7 +617,7 @@ const VirtualMuseumPage: React.FC = () => {
                         { icon: Compass, title: t("고해상도 뷰어"), desc: t("이미지를 클릭하면 실제 박물관 부럽지 않은 선명한 화질을 경험할 수 있습니다.") },
                         { icon: Plus, title: t("콘텐츠 확장"), desc: t("언제든지 새로운 유물을 추가하여 나만의 가상 전시장을 꾸며보세요.") }
                     ].map((feature, idx) => (
-                        <div key={idx} className="p-8 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-sm group hover:bg-white/10 transition-all duration-500">
+                        <div key={idx} className="p-8 rounded-3xl border border-white/5 bg-[#111] group hover:bg-white/10 transition-all duration-500">
                              <feature.icon className="mb-6 opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentColor }} size={32} />
                              <h3 className="text-xl font-serif font-bold mb-3"><AutoTranslatedText text={feature.title} /></h3>
                              <p className="text-sm opacity-50 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
@@ -632,7 +632,7 @@ const VirtualMuseumPage: React.FC = () => {
                     <motion.div
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[11000] bg-black/80 backdrop-blur-xl flex items-center justify-center p-6"
+                        className="fixed inset-0 z-[11000] bg-black/90 flex items-center justify-center p-6"
                     >
                         <motion.div 
                             initial={{ scale: 0.9, y: 20 }}
@@ -717,7 +717,7 @@ const VirtualMuseumPage: React.FC = () => {
                                         ) : (
                                             <div className="relative rounded-2xl overflow-hidden border border-white/20 group">
                                                 <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                     <button 
                                                         onClick={() => {
                                                             setPreviewUrl(null);

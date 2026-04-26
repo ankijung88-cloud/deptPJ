@@ -159,7 +159,7 @@ function buildTheme(data: PaletteData): JoseonTheme {
         textMuted: text.muted,
 
         // Style objects
-        bgStyle: { backgroundColor: bgColor, color: text.primary },
+        bgStyle: { backgroundColor: 'transparent', color: text.primary },
         accentStyle: { color: accentColor },
         highlightStyle: { color: highlightColor },
         borderStyle: { borderColor: accentColor },

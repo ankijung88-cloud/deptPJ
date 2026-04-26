@@ -41,14 +41,14 @@ export const TemplateListModal: React.FC<TemplateListModalProps> = ({ isOpen, on
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+                    className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/95"
                     onClick={onClose}
                 >
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="bg-dancheong-ivory border border-dancheong-ink/10 w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl"
+                        className="bg-white border border-dancheong-ink/10 w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-8 md:p-12">

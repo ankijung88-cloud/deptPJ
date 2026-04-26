@@ -4,7 +4,6 @@ import LandingPage from './pages/LandingPage';
 import { lazy, Suspense } from 'react';
 
 import FloorContentPage from './pages/FloorContentPage';
-import SubCategoryPage from './pages/SubCategoryPage';
 import InspirationPage from './pages/InspirationPage';
 const DetailPage = lazy(() => import('./pages/DetailPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -55,7 +54,6 @@ function App() {
                                         <Route path="/detail/:id" element={<DetailPage />} />
                                         <Route path="/floor/:floorId/articles" element={<FloorContentPage />} />
                                         <Route path="/floor/:floorId" element={<FloorGuidePage />} />
-                                        <Route path="/category/:subId" element={<SubCategoryPage />} />
 
                                         <Route path="/notice" element={<NoticePage />} />
                                         <Route path="/faq" element={<FAQPage />} />

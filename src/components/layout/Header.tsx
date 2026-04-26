@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, Search, Volume2, VolumeX, Shield, LogOut } from 'lucide-react';
+import { Menu, X, Search, Volume2, VolumeX, Shield, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
@@ -122,7 +122,7 @@ const Header: React.FC = () => {
         }
     }, [isSearchOpen]);
 
-    const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | null>(null);
+
     const { floors } = useFloors();
     const { t, i18n } = useTranslation();
 
@@ -172,9 +172,7 @@ const Header: React.FC = () => {
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    const toggleMobileSubMenu = (menu: string) => {
-        setExpandedMobileMenu(expandedMobileMenu === menu ? null : menu);
-    };
+
 
     const navItems: NavItem[] = useMemo(() => {
         // Sort floors by numeric level (1, 2, 3...) ascending
@@ -204,9 +202,7 @@ const Header: React.FC = () => {
             onMouseEnter={() => resetUiTimer()}
             onMouseLeave={() => resetUiTimer()}
             style={{
-                backgroundColor: isScrolled ? `rgba(255, 255, 255, 0.6)` : `rgba(242, 231, 213, 0.4)`,
-                backdropFilter: 'blur(16px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                backgroundColor: isScrolled ? '#FFFFFF' : '#F2E7D5',
                 boxShadow: isScrolled ? '0 10px 30px rgba(23,23,23,0.05)' : 'none',
                 borderBottom: `1px solid ${theme.borderColor}22`,
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s'
@@ -238,11 +234,10 @@ const Header: React.FC = () => {
                                         style={{
                                             background: isActive
                                                 ? theme.accentColor
-                                                : 'rgba(255, 255, 255, 0.4)',
+                                                : '#FFFFFF',
                                             boxShadow: isActive
                                                 ? `inset 0 0 0 1px ${theme.accentColor}`
                                                 : 'inset 0 0 0 1.5px rgba(23,23,23,0.3)',
-                                            backdropFilter: 'blur(8px)',
                                             transform: isActive ? 'scale(1.05)' : 'scale(1)',
                                         }}
                                         onClick={() => {
@@ -267,26 +262,6 @@ const Header: React.FC = () => {
                                         <AutoTranslatedText text={floorTitle} className="!whitespace-nowrap" />
                                     </div>
 
-                                    <div
-                                        className={`absolute top-full left-1/2 -translate-x-1/2 w-48 rounded-b-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] overflow-hidden transition-all duration-300 origin-top ${isActive ? 'opacity-100 visible mt-10 scale-100' : 'opacity-0 invisible mt-8 scale-95'}`}
-                                        style={{ backgroundColor: theme.bgColor, borderTop: `2px solid ${theme.accentColor}`, border: `1px solid rgba(23,23,23,0.1)` }}
-                                    >
-                                        <div className="py-2 flex flex-col relative font-sans">
-                                            {item.subitems.map((sub) => (
-                                                <Link
-                                                    key={sub.id}
-                                                    to={`/category/${sub.id}`}
-                                                    className="px-5 py-3 text-sm tracking-wide text-dancheong-ink/70 hover:bg-dancheong-ink/5 transition-all duration-200 text-left relative group/item"
-                                                    onMouseEnter={e => (e.currentTarget.style.color = theme.accentColor)}
-                                                    onMouseLeave={e => (e.currentTarget.style.color = '')}
-                                                    onClick={() => setActiveDropdown(null)}
-                                                >
-                                                    <span className="relative z-10"><AutoTranslatedText text={sub.label} /></span>
-                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 transition-all duration-300 group-hover/item:h-3/5" style={{ backgroundColor: theme.accentColor }} />
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
                                 </div>
                             );
                         })}
@@ -461,7 +436,6 @@ const Header: React.FC = () => {
                     <div className="flex flex-col p-6 space-y-6">
                         {navItems.map((item) => (
                             <div key={item.id} className="space-y-2">
-                                <div className="flex items-center justify-between">
                                     <Link
                                         to={`/floor/${item.id}`}
                                         className="text-dancheong-white/90 text-lg font-serif font-medium tracking-wide py-1 transition-colors"
@@ -471,32 +445,7 @@ const Header: React.FC = () => {
                                     >
                                         <AutoTranslatedText text={item.label} />
                                     </Link>
-                                    <button
-                                        onClick={() => toggleMobileSubMenu(item.id)}
-                                        className="p-2 text-dancheong-white/40 transition-colors"
-                                        onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
-                                        onMouseLeave={e => e.currentTarget.style.color = ''}
-                                    >
-                                        <ChevronDown size={20} className={`transition-transform ${expandedMobileMenu === item.id ? 'rotate-180' : ''}`} style={expandedMobileMenu === item.id ? theme.highlightStyle : {}} />
-                                    </button>
                                 </div>
-                                {expandedMobileMenu === item.id && (
-                                    <div className={`flex flex-col mt-3 pl-4 space-y-4 ml-1`} style={{ borderLeft: `2px solid ${theme.accentColor}33` }}>
-                                        {item.subitems.map((sub) => (
-                                            <Link
-                                                key={sub.id}
-                                                to={`/category/${sub.id}`}
-                                                className="text-dancheong-white/60 text-base tracking-wide transition-colors"
-                                                onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
-                                                onMouseLeave={e => e.currentTarget.style.color = ''}
-                                                onClick={() => setIsMenuOpen(false)}
-                                            >
-                                                <AutoTranslatedText text={sub.label} />
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
                         ))}
 
                         <hr className="border-dancheong-gold/10 my-4" />

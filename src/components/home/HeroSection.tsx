@@ -13,7 +13,7 @@ export const HeroSection: React.FC = () => {
     };
 
     return (
-        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-dancheong-ivory">
+        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-transparent">
             <div className="absolute inset-0 flex items-center justify-center">
                 {/* Main UI */}
                 <div className="relative z-20 container mx-auto px-6 text-center">
@@ -48,7 +48,7 @@ export const HeroSection: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-dancheong-ink opacity-80 leading-relaxed font-medium break-keep px-4 sm:px-0"
+                        className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-dancheong-ink leading-relaxed font-bold break-keep px-4 sm:px-0"
                     >
                         <AutoTranslatedText text={t('hero.description')} />
                     </motion.p>

@@ -118,7 +118,7 @@ export const GlobalMiniMap: React.FC<{
                             initial={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
                             animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, x: -20, y: 20 }}
-                            className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
+                            className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 mb-2 shadow-2xl min-w-[400px] max-w-[500px] max-h-[80vh] flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4 shrink-0">
@@ -213,7 +213,7 @@ export const GlobalMiniMap: React.FC<{
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-black/60 backdrop-blur-xl border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
+                            className="absolute bottom-[calc(100%+0.5rem)] left-0 px-4 py-2.5 bg-[#0a0a0a] border-white/20 rounded-2xl whitespace-nowrap pointer-events-none shadow-2xl"
                             style={{ borderColor: `${compColor}44` }}
                         >
                             <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export const GlobalMiniMap: React.FC<{
                                 </span>
                             </div>
                             {/* Speech Bubble Arrow */}
-                            <div className="absolute left-6 -bottom-1 w-2 h-2 bg-black/60 border-r border-b border-white/20 rotate-45 backdrop-blur-md" style={{ borderColor: `${compColor}44` }} />
+                            <div className="absolute left-6 -bottom-1 w-2 h-2 bg-[#0a0a0a] border-r border-b border-white/20 rotate-45" style={{ borderColor: `${compColor}44` }} />
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -234,7 +234,7 @@ export const GlobalMiniMap: React.FC<{
                             e.stopPropagation();
                             handleToggle(!isExpanded);
                         }}
-                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-black/40 backdrop-blur-xl border-white/10 hover:scale-105'}`}
+                        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border relative ${isExpanded ? 'bg-white border-white scale-110' : 'bg-[#111] border-white/10 hover:scale-105'}`}
                         style={!isExpanded ? { borderColor: `${compColor}44` } : {}}
                     >
                         <Compass

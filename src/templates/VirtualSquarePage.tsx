@@ -141,7 +141,7 @@ const VirtualSquarePage: React.FC = () => {
                     >
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     </button>
-                    <div className="h-12 bg-black/40 backdrop-blur-md px-6 rounded-2xl border border-white/5 flex items-center gap-3 shadow-2xl">
+                    <div className="h-12 bg-[#0a0a0a] px-6 rounded-2xl border border-white/5 flex items-center gap-3 shadow-2xl">
                         <div className="w-2.5 h-2.5 bg-[#00FFC2] rounded-full animate-pulse" />
                         <h1 className="text-white text-base font-black tracking-tight leading-none">
                             <AutoTranslatedText text="광화문 광장 (Gwanghwamun Square)" />
@@ -152,7 +152,7 @@ const VirtualSquarePage: React.FC = () => {
                 <div className="flex gap-2 pointer-events-auto">
                     <button 
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="p-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-2xl text-white transition-all border border-white/10 relative"
+                        className="p-4 bg-[#111] hover:bg-white/20 rounded-2xl text-white transition-all border border-white/10 relative"
                     >
                         <Users size={20} />
                         {participants.length > 0 && (
@@ -166,7 +166,7 @@ const VirtualSquarePage: React.FC = () => {
 
             {/* Chat Overlay */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 flex gap-3 items-end">
-                <div className="flex-1 bg-black/40 backdrop-blur-2xl rounded-3xl border border-white/10 p-2 flex items-center gap-2 shadow-2xl">
+                <div className="flex-1 bg-[#0a0a0a] rounded-3xl border border-white/10 p-2 flex items-center gap-2 shadow-2xl">
                     <div className="pl-4 text-white/40">
                         <MessageSquare size={20} />
                     </div>
@@ -204,7 +204,7 @@ const VirtualSquarePage: React.FC = () => {
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
-                        className="absolute top-0 right-0 w-80 h-full bg-black/80 backdrop-blur-3xl border-l border-white/10 p-8 z-50 shadow-2xl"
+                        className="absolute top-0 right-0 w-80 h-full bg-[#0a0a0a] border-l border-white/10 p-8 z-50 shadow-2xl"
                     >
                         <div className="flex justify-between items-center mb-8">
                             <h2 className="text-white text-xl font-black"><AutoTranslatedText text="참여자 목록" /></h2>

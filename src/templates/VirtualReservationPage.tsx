@@ -91,7 +91,7 @@ export const VirtualReservationPage: React.FC = () => {
 
     const handleBook = async () => {
         if (!selectedTime) {
-            const msg = await translateAsync('시간을 선택해주세요.');
+                        const msg = await translateAsync('시간을 선택해주세요.');
             alert(msg);
             return;
         }
@@ -135,7 +135,7 @@ export const VirtualReservationPage: React.FC = () => {
             setIsManageModalOpen(false);
         } catch (error) {
             console.error('Failed to save reservation settings:', error);
-            const errorMsg = await translateAsync('저장에 실패했습니다.');
+                        const errorMsg = await translateAsync('저장에 실패했습니다.');
             alert(errorMsg);
         } finally {
             setIsSaving(false);
@@ -188,7 +188,7 @@ export const VirtualReservationPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
                     {/* Reservation Form Column */}
                     <div className="lg:col-span-7 space-y-12">
-                        <section className="bg-white/5 border border-white/10 backdrop-blur-3xl rounded-[3rem] p-10 md:p-16 shadow-2xl">
+                        <section className="bg-[#0a0a0a] border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-2xl">
                             <AnimatePresence mode="wait">
                                 {booked ? (
                                     <motion.div 
@@ -248,7 +248,7 @@ export const VirtualReservationPage: React.FC = () => {
                                                                     setSelectedProgram(prog);
                                                                     setStep('calendar');
                                                                 }}
-                                                                className={`w-full text-left p-6 rounded-[1.5rem] border transition-all duration-300 group relative overflow-hidden backdrop-blur-md ${
+                                                                className={`w-full text-left p-6 rounded-[1.5rem] border transition-all duration-300 group relative overflow-hidden bg-[#111] ${
                                                                     selectedProgram?.id === prog.id 
                                                                         ? 'bg-[#00FFC2]/10 border-[#00FFC2] ring-1 ring-[#00FFC2] shadow-[0_0_30px_rgba(0,255,194,0.1)]' 
                                                                         : 'bg-white/5 border-white/10 hover:border-white/30'
@@ -348,7 +348,7 @@ export const VirtualReservationPage: React.FC = () => {
                                                             onClick={() => setGuests(Math.min(8, guests + 1))}
                                                             className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
                                                         >+</button>
-                                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4">Limit: 8 Persons</span>
+                                                                                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-4"><AutoTranslatedText text="Limit: 8 Persons" /></span>
                                                     </div>
                                                 </div>
 
@@ -415,7 +415,7 @@ export const VirtualReservationPage: React.FC = () => {
                                                 <div className="text-[10px] text-white/40 leading-relaxed font-light"><AutoTranslatedText text={getLocalizedText(selectedProgram.description, i18n.language)} /></div>
                                                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
                                                     <span className="text-xs font-bold text-[#00FFC2]">{selectedProgram.price}</span>
-                                                    <span className="text-[10px] font-black text-white/20 uppercase">Per Session</span>
+                                                                                                        <span className="text-[10px] font-black text-white/20 uppercase"><AutoTranslatedText text="Per Session" /></span>
                                                 </div>
                                             </div>
                                         )}
@@ -441,7 +441,7 @@ export const VirtualReservationPage: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsManageModalOpen(false)}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-3xl"
+                            className="absolute inset-0 bg-black/95"
                         />
                         <motion.div 
                             initial={{ opacity: 0, y: 50, scale: 0.9 }}
@@ -518,7 +518,7 @@ const ManageReservationContent: React.FC<{
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <input 
-                                        placeholder={getLocalizedText({ ko: "프로그램 명 (한글)", en: "Program Title (KO)" }, i18n.language)}
+                                                                                placeholder={getLocalizedText({ ko: "프로그램 명 (한글)", en: "Program Title (KO)" }, i18n.language)}
                                         value={prog.title?.ko || ''}
                                         onChange={e => {
                                             const updated = [...programs];
@@ -528,7 +528,7 @@ const ManageReservationContent: React.FC<{
                                         className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm focus:border-[#00FFC2]"
                                     />
                                     <input 
-                                        placeholder={getLocalizedText({ ko: "가격 (예: 50,000원)", en: "Price (e.g. 50,000 KRW)" }, i18n.language)}
+                                                                                placeholder={getLocalizedText({ ko: "가격 (예: 50,000원)", en: "Price (e.g. 50,000 KRW)" }, i18n.language)}
                                         value={prog.price || ''}
                                         onChange={e => {
                                             const updated = [...programs];
@@ -539,7 +539,7 @@ const ManageReservationContent: React.FC<{
                                     />
                                 </div>
                                 <textarea 
-                                    placeholder={getLocalizedText({ ko: "프로그램 설명 (한글)", en: "Program Description (KO)" }, i18n.language)}
+                                                                        placeholder={getLocalizedText({ ko: "프로그램 설명 (한글)", en: "Program Description (KO)" }, i18n.language)}
                                     rows={4}
                                     value={prog.description?.ko || ''}
                                     onChange={e => {

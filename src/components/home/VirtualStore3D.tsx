@@ -259,7 +259,7 @@ const ModalBackground3D = ({ activeFloorData, onClose, buttonTextColor, i18nLang
                                 {hoveredCatId && productGroupedTitles[hoveredCatId]?.map((title: string, idx: number) => (
                                     <div
                                         key={idx}
-                                        className="px-6 py-3 border border-white/20 rounded-xl text-white font-bold tracking-widest backdrop-blur-xl bg-white/5 animate-in fade-in zoom-in duration-300"
+                                        className="px-6 py-3 border border-white/20 rounded-xl text-white font-bold tracking-widest bg-[#111]/80 animate-in fade-in zoom-in duration-300"
                                         style={{ boxShadow: `0 0 20px ${activeFloorData.color}20` }}
                                     >
                                         <AutoTranslatedText text={title} />
@@ -653,7 +653,7 @@ const FloorUnit = ({ floor, yPos, isSelected, isHovered, onHover, onToggleModal,
                                     borderRadius: '50%',
                                     border: `1.5px solid ${(isHovered || isMainButtonHovered) ? floor.color : 'rgba(255, 255, 255, 0.3)'}`,
                                     backgroundColor: (isHovered || isMainButtonHovered) ? `${floor.color}22` : 'rgba(20, 28, 25, 0.6)',
-                                    backdropFilter: 'blur(10px)',
+                                    backdropFilter: 'none',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -1108,7 +1108,7 @@ const MobileFloorModal = ({ activeFloorData, onClose }: { activeFloorData: any, 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 z-[1000] flex lg:hidden items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[1000] flex lg:hidden items-center justify-center p-6 bg-black/95"
             onClick={onClose}
         >
             <motion.div
@@ -1453,14 +1453,14 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileHover={{ opacity: 1 }}
-                            className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center border border-white/50"
+                            className="w-16 h-16 rounded-full bg-[#111] flex items-center justify-center border border-white/50"
                         >
                             <Play fill="white" size={24} className="text-white ml-1" />
                         </motion.div>
                     </div>
 
                     <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#FFD700] bg-black/60 px-6 py-2 rounded-full border border-[#FFD700]/40 backdrop-blur-md shadow-[0_0_20px_rgba(255,215,0,0.2)]">
+                        <span className="font-mono text-[10px] tracking-[0.4em] uppercase font-bold text-[#FFD700] bg-black/95 px-6 py-2 rounded-full border border-[#FFD700]/40 shadow-[0_0_20px_rgba(255,215,0,0.2)]">
                             <AutoTranslatedText text="Click to Expand View" />
                         </span>
                     </div>
@@ -1486,7 +1486,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                             animate={{ opacity: 1, scale: 1 }}
                             whileHover={{ scale: 1.1, rotate: 90 }}
                             whileTap={{ scale: 0.9 }}
-                            className="absolute top-8 right-8 md:top-12 md:right-12 text-white/70 hover:text-white z-[2100] bg-white/10 backdrop-blur-xl w-14 h-14 rounded-full flex items-center justify-center border border-white/20 shadow-2xl transition-all cursor-pointer pointer-events-auto"
+                            className="absolute top-8 right-8 md:top-12 md:right-12 text-white/70 hover:text-white z-[2100] bg-[#111] w-14 h-14 rounded-full flex items-center justify-center border border-white/20 shadow-2xl transition-all cursor-pointer pointer-events-auto"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -1561,7 +1561,7 @@ const DesktopVirtualSpace = ({ activeFloorData, onClose, productCounts, productG
                                     window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: nextMuted }));
                                 }}
 
-                                className="p-4 md:p-5 rounded-full bg-white/10 backdrop-blur-3xl border border-white/20 text-white hover:bg-white/20 transition-all shadow-2xl active:scale-90"
+                                className="p-4 md:p-5 rounded-full bg-[#111] border border-white/20 text-white hover:bg-[#222] transition-all shadow-2xl active:scale-90"
                             >
                                 {isMuted ? <VolumeX size={28} /> : <Volume2 size={28} />}
                             </button>
@@ -1815,7 +1815,7 @@ export const VirtualStore3D: React.FC = () => {
 
                     <button
                         onClick={() => setResetKey(prev => prev + 1)}
-                        className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300 backdrop-blur-md"
+                        className="group flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 hover:border-[#00FFC2]/40 hover:bg-[#00FFC2]/5 transition-all duration-300"
                     >
                         <div className="w-1.5 h-1.5 rounded-full bg-[#00FFC2] group-hover:shadow-[0_0_8px_#00FFC2] transition-all" />
                         <span className="text-[#00FFC2] font-bold text-[10px] md:text-sm tracking-widest uppercase">

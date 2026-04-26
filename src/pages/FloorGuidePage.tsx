@@ -27,18 +27,18 @@ const VisitorCounter: React.FC = () => {
         <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 py-4 px-6 bg-white/30 backdrop-blur-md rounded-2xl border border-dancheong-ink/5 mb-12 w-fit"
+            className="flex items-center gap-4 py-4 px-6 bg-white/10 rounded-2xl border border-dancheong-ink/5 mb-12 w-fit"
         >
             <div className="relative flex items-center justify-center">
                 <span className="absolute inline-flex h-2 w-2 rounded-full bg-red-500 opacity-75 animate-ping"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </div>
             <div className="flex items-center gap-2 text-xs font-bold tracking-tight">
-                <span className="text-dancheong-ink/40 uppercase tracking-[0.1em]">Live Presence</span>
-                <span className="w-[1px] h-3 bg-dancheong-ink/10 mx-1"></span>
+                <span className="text-dancheong-ink/60 uppercase tracking-[0.1em]"><AutoTranslatedText text="Live Presence" /></span>
+                <span className="w-[1px] h-3 bg-dancheong-ink/20 mx-1"></span>
                 <span className="text-dancheong-ink">
                     <AutoTranslatedText text="Currently" />
-                    <span className="mx-1.5 text-dancheong-mugwort font-black">{count}</span>
+                    <span className="mx-1.5 text-dancheong-mugwort font-black text-sm">{count}</span>
                     <AutoTranslatedText text="visitors exploring this floor" />
                 </span>
             </div>
@@ -53,8 +53,13 @@ const FloorGuidePage: React.FC = () => {
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
 
     const floorData = floors.find(f => f.id === floorId);
+
+    // Filter products for the selected subcategory
+    const collectionItems = liveProducts.filter(p => p.subcategory === selectedSubId);
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -62,7 +67,7 @@ const FloorGuidePage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center">
+            <div className="min-h-screen bg-transparent flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-dancheong-mugwort"></div>
             </div>
         );
@@ -70,7 +75,7 @@ const FloorGuidePage: React.FC = () => {
 
     if (!floorData) {
         return (
-            <div className="min-h-screen bg-dancheong-ivory flex items-center justify-center flex-col gap-8">
+            <div className="min-h-screen bg-transparent flex items-center justify-center flex-col gap-8">
                 <div className="w-20 h-20 bg-dancheong-ink/10 rounded-full flex items-center justify-center">
                     <Archive size={32} className="text-dancheong-ink/20" />
                 </div>
@@ -83,7 +88,7 @@ const FloorGuidePage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-dancheong-ivory text-dancheong-ink pb-20 pt-32">
+        <div className="min-h-screen bg-transparent text-dancheong-ink pb-20 pt-32">
             <div className="lossless-layout">
                 <header>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-12 pb-24">
@@ -95,7 +100,7 @@ const FloorGuidePage: React.FC = () => {
                                 className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[11px] tracking-[0.5em] uppercase mb-6"
                             >
                                 <Archive size={14} />
-                                <span>FLOOR DIRECTORY</span>
+                                <span><AutoTranslatedText text="FLOOR DIRECTORY" /></span>
                             </motion.div>
 
                             <motion.h1
@@ -112,7 +117,7 @@ const FloorGuidePage: React.FC = () => {
                                 transition={{ delay: 0.3 }}
                                 className="md:text-left"
                             >
-                                <p className="text-dancheong-ink/80 font-light italic text-xl leading-relaxed mb-12">
+                                <p className="text-dancheong-ink font-bold text-lg leading-relaxed mb-12 max-w-xl">
                                     <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                                 </p>
 
@@ -140,7 +145,7 @@ const FloorGuidePage: React.FC = () => {
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             className="relative flex-grow max-w-2xl h-[400px] md:h-[500px]"
                         >
-                            <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-[40px] border border-dancheong-ink/5 p-4 shadow-2xl shadow-dancheong-ink/10">
+                            <div className="absolute inset-0 bg-white/10 rounded-[40px] border border-dancheong-ink/5 p-4 shadow-2xl shadow-dancheong-ink/10">
                                 <div className="w-full h-full rounded-[30px] overflow-hidden relative group">
                                     <img 
                                         src={floorData.bgImage || '/placeholder_floor.jpg'} 
@@ -148,8 +153,8 @@ const FloorGuidePage: React.FC = () => {
                                         className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                                     />
                                     {/* Glass Overlay with Floor Title */}
-                                    <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1">CURRENT VIEW</p>
+                                    <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/10 rounded-2xl border border-white/20 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1"><AutoTranslatedText text="CURRENT VIEW" /></p>
                                         <h4 className="text-xl font-serif font-bold text-white">
                                             <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                                         </h4>
@@ -176,10 +181,10 @@ const FloorGuidePage: React.FC = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.05, duration: 0.5 }}
-                            onClick={() => navigate(`/category/${sub.id}`)}
+                            onClick={() => setSelectedSubId(sub.id)}
                             className="group/card cursor-pointer"
                         >
-                            <div className="aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white/40 backdrop-blur-md transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2">
+                            <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white/10 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
                                 {/* Background Image */}
                                 <div className="absolute inset-0 z-0">
                                     <img 
@@ -192,16 +197,16 @@ const FloorGuidePage: React.FC = () => {
 
                                 {/* Content Overlay */}
                                 <div className="relative z-10">
-                                    <div className="text-[8px] font-black uppercase tracking-[0.3em] text-dancheong-mugwort mb-2 group-hover/card:text-white/50 transition-colors">
-                                        SEC {idx + 1}
-                                    </div>
-                                    <h3 className="text-sm md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 leading-tight tracking-tight">
-                                        <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                    </h3>
+                                    <div className="text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
+                                         {idx + 1}F
+                                     </div>
+                                     <h3 className="text-sm md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 leading-tight tracking-tight">
+                                         <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                     </h3>
                                     
-                                    <div className="mt-3 flex items-center gap-2 text-dancheong-ink/40 group-hover/card:text-white/60 transition-colors duration-300 font-black text-[8px] uppercase tracking-[0.2em]">
+                                    <div className="mt-4 flex items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
                                         <AutoTranslatedText text="Explore" />
-                                        <ArrowRight size={10} className="group-hover/card:translate-x-1 transition-transform" />
+                                        <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
 
@@ -213,6 +218,69 @@ const FloorGuidePage: React.FC = () => {
                         </motion.div>
                     ))}
                 </div>
+
+                {/* Collection List Section - Appears when a subcategory is selected */}
+                {selectedSubId && (
+                    <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mb-32 overflow-hidden"
+                    >
+                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-dancheong-ink/10">
+                            <div className="flex items-center gap-4">
+                                <Archive size={20} className="text-dancheong-mugwort" />
+                                <h2 className="text-2xl font-serif font-black text-dancheong-ink">
+                                    <AutoTranslatedText text={getLocalizedText(floorData.subitems?.find(s => s.id === selectedSubId)?.label, i18n.language) || 'Collection'} />
+                                </h2>
+                            </div>
+                            <button 
+                                onClick={() => setSelectedSubId(null)}
+                                className="text-[10px] font-black uppercase tracking-[0.2em] text-dancheong-ink/30 hover:text-dancheong-ink transition-colors"
+                            >
+                                <AutoTranslatedText text="Close List" />
+                            </button>
+                        </div>
+
+                        {collectionItems.length > 0 ? (
+                            <div className="space-y-4">
+                                {collectionItems.map((item, idx) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className="group p-6 bg-white/5 rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white/10 transition-all flex items-center justify-between"
+                                    >
+                                        <div className="flex-1">
+                                            <h3 
+                                                onClick={() => navigate(`/detail/${item.id}`)}
+                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors"
+                                            >
+                                                <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                            </h3>
+                                            <p className="text-sm text-dancheong-ink font-bold mt-1 line-clamp-2 leading-relaxed">
+                                                <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
+                                            </p>
+                                        </div>
+                                        <button 
+                                            onClick={() => navigate(`/detail/${item.id}`)}
+                                            className="p-3 bg-dancheong-ink/5 text-dancheong-ink rounded-full group-hover:bg-dancheong-ink group-hover:text-white transition-all"
+                                        >
+                                            <ArrowRight size={16} />
+                                        </button>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
+                                <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
+                                    <AutoTranslatedText text="No items currently in this archive section." />
+                                </p>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
+
 
                 {/* Live Products Section - 4 Column Grid */}
                 {liveProducts.length > 0 && (
@@ -229,7 +297,7 @@ const FloorGuidePage: React.FC = () => {
                                     <AutoTranslatedText text="Live Now" />
                                 </h2>
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/40">
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/70 bg-dancheong-ink/5 px-3 py-1 rounded-full">
                                 <AutoTranslatedText text="현재 진행중" />
                             </div>
                         </motion.div>
@@ -260,14 +328,14 @@ const FloorGuidePage: React.FC = () => {
                                         <div className="absolute inset-0 p-8 flex flex-col justify-end">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70">Live Archive</span>
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70"><AutoTranslatedText text="Live Archive" /></span>
                                             </div>
                                             <h4 className="text-xl font-serif font-bold text-white leading-tight mb-2">
                                                 <AutoTranslatedText text={getLocalizedText(product.title, i18n.language)} />
                                             </h4>
                                             <div className="h-[1px] w-0 group-hover:w-full bg-white/30 transition-all duration-500 mb-4"></div>
                                             <div className="flex items-center justify-between opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                                                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/60">View Details</span>
+                                                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/60"><AutoTranslatedText text="View Details" /></span>
                                                 <ArrowRight size={14} className="text-white/60" />
                                             </div>
                                         </div>

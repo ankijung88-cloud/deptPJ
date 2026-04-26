@@ -60,7 +60,7 @@ const ProductDetailViewer: React.FC<{ item: FeaturedItem | null }> = ({ item }) 
                 </div>
             </div>
             
-            <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-black/40 border border-[#00FFC2]/20 backdrop-blur-md">
+            <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-black/95 border border-[#00FFC2]/20">
                 <span className="text-[10px] font-black uppercase tracking-widest text-[#00FFC2]"><AutoTranslatedText text="Detail Information" /></span>
             </div>
         </div>
@@ -774,7 +774,7 @@ const VirtualStorePage: React.FC = () => {
 
                         <button 
                             onClick={() => setShowCartDrawer(true)}
-                            className="flex bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl hover:bg-white/10 transition-all active:scale-95 group relative"
+                            className="flex bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all active:scale-95 group relative"
                         >
                             <div className="px-6 py-4 flex flex-col items-center border-r border-white/10">
                                 <span className="text-xl font-black" style={{ color: theme.highlightColor }}>{totalItems}</span>
@@ -1004,7 +1004,7 @@ const VirtualStorePage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-[#050505]/95"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -1207,7 +1207,7 @@ const VirtualStorePage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl"
+                        className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-[#050505]/98"
                     >
                         <motion.div
                             initial={{ y: 50, opacity: 0 }}
@@ -1300,7 +1300,7 @@ const VirtualStorePage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-[#050505]/95"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -1417,7 +1417,7 @@ const VirtualStorePage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-[#050505]/95"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -1539,7 +1539,7 @@ const VirtualStorePage: React.FC = () => {
 
 
 
-            <footer className="mt-40 border-t py-20 px-6 backdrop-blur-3xl" style={{ borderColor: `${theme.color3}11` }}>
+            <footer className="mt-40 border-t py-20 px-6 bg-[#0a0a0a]" style={{ borderColor: `${theme.color3}11` }}>
                 <div className="container mx-auto flex flex-col items-center gap-6">
                     <div className="text-4xl font-black tracking-tighter opacity-10 uppercase"><AutoTranslatedText text="몽땅쏙 IMMERSIVE" /></div>
                     <p className="text-[9px] font-bold tracking-[0.5em] opacity-30 uppercase text-center max-w-lg leading-loose">
@@ -1557,14 +1557,14 @@ const VirtualStorePage: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowCartDrawer(false)}
-                            className="fixed inset-0 z-[50000] bg-black/60 backdrop-blur-md"
+                            className="fixed inset-0 z-[50000] bg-black/80"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 bottom-0 w-full max-w-md z-[51000] bg-[#111]/90 backdrop-blur-2xl border-l border-white/10 shadow-2xl flex flex-col"
+                            className="fixed top-0 right-0 bottom-0 w-full max-w-md z-[51000] bg-[#111] border-l border-white/10 shadow-2xl flex flex-col"
                         >
                             <div className="p-8 border-b border-white/5 flex justify-between items-center">
                                 <div className="space-y-1">

@@ -539,7 +539,7 @@ const VirtualCinemaPage: React.FC = () => {
                         <div className="shrink-0 flex items-center gap-6">
                             <div
                                 onClick={() => setIsVideoPlaying(true)}
-                                className="w-24 h-24 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-md border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl"
+                                className="w-24 h-24 rounded-full flex items-center justify-center bg-black/95 border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl"
                             >
                                 <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
                             </div>
@@ -607,7 +607,7 @@ const VirtualCinemaPage: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => setIsExplorationMode(true)}
-                                className="flex items-center gap-3 px-8 py-3 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
+                                className="flex items-center gap-3 px-8 py-3 rounded-full bg-[#0a0a0a] border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
                             >
                                 <Monitor size={16} className="opacity-60 group-hover/btn:scale-110 transition-transform" />
                                 <span className="text-[10px] font-black tracking-[0.2em] uppercase whitespace-nowrap"><AutoTranslatedText text="전체화면으로 보기" /></span>
@@ -655,13 +655,13 @@ const VirtualCinemaPage: React.FC = () => {
                                         <div className="absolute top-3 left-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
-                                                className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500/80 transition-all backdrop-blur-md"
+                                                className="w-8 h-8 rounded-lg bg-[#111] border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500/80 transition-all"
                                             >
                                                 <Edit3 size={14} />
                                             </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                                                className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500/80 transition-all backdrop-blur-md"
+                                                className="w-8 h-8 rounded-lg bg-[#111] border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500/80 transition-all"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -800,7 +800,7 @@ const VirtualCinemaPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/95"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -920,7 +920,7 @@ const VirtualCinemaPage: React.FC = () => {
                                                             }}
                                                         />
                                                         <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm"><AutoTranslatedText text="Preview Loaded" /></span>
+                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/80 px-3 py-1 rounded-full"><AutoTranslatedText text="Preview Loaded" /></span>
                                                         <button
                                                             onClick={() => {
                                                                 setNewVideoUrl('');
