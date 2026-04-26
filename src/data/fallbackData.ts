@@ -1,4 +1,4 @@
-﻿import { FloorCategory, NavItem, Notice, FAQ } from '../types';
+import { FloorCategory, NavItem, Notice, FAQ } from '../types';
 
 export const FALLBACK_FLOORS: FloorCategory[] = [
     {
@@ -133,6 +133,14 @@ export const FALLBACK_NAV: NavItem[] = [
 ];
 
 export const FALLBACK_PRODUCTS: any[] = [
+    // 7F Communication Lounge
+    { id: 'p7-1', subcategory: 'meeting-room', category: 'floor-7', title: { ko: '스마트 스터디 룸 예약권', en: 'Smart Study Room Reservation' }, description: { ko: '최적의 몰입을 위한 프라이빗 스터디 공간입니다.', en: 'A private study space for optimal immersion.' }, image_url: '/via_station_logo_portal.png', price: '20,000₩' },
+    { id: 'p7-2', subcategory: 'meeting-room', category: 'floor-7', title: { ko: '다인용 협업 테이블 세트', en: 'Multi-person Collaboration Table Set' }, description: { ko: '창의적인 아이디어 도출을 돕는 회의용 테이블입니다.', en: 'A meeting table that helps generate creative ideas.' }, image_url: '/via_station_logo_portal.png', price: '1,500,000₩' },
+    { id: 'p7-3', subcategory: 'audio-room', category: 'floor-7', title: { ko: '프리미엄 팟캐스트 장비 대여', en: 'Premium Podcast Equipment Rental' }, description: { ko: '전문가급 음향 녹음이 가능한 렌탈 서비스입니다.', en: 'A rental service allowing professional-grade audio recording.' }, image_url: '/via_station_logo_portal.png', price: '50,000₩' },
+    { id: 'p7-4', subcategory: 'interview-room', category: 'floor-7', title: { ko: 'AI 모의 면접 솔루션', en: 'AI Mock Interview Solution' }, description: { ko: '가상 면접관과 함께하는 실전 대비 시뮬레이션입니다.', en: 'A practical preparation simulation with a virtual interviewer.' }, image_url: '/via_station_logo_portal.png', price: '30,000₩' },
+    { id: 'p7-5', subcategory: 'square', category: 'floor-7', title: { ko: '오픈 네트워킹 라운지 패스', en: 'Open Networking Lounge Pass' }, description: { ko: '다양한 크리에이터들과 교류할 수 있는 네트워킹 라운지입니다.', en: 'A networking lounge to interact with various creators.' }, image_url: '/via_station_logo_portal.png', price: '15,000₩' },
+    { id: 'p7-6', subcategory: 'office', category: 'floor-7', title: { ko: '프리미엄 공유 오피스 월간권', en: 'Premium Shared Office Monthly Pass' }, description: { ko: '효율적인 업무 환경을 제공하는 프리미엄 오피스 공간입니다.', en: 'A premium office space providing an efficient work environment.' }, image_url: '/via_station_logo_portal.png', price: '300,000₩' },
+
     // 4F Local Heritage
     { id: 'p6-1', subcategory: 'heritage', category: 'floor-4', title: { ko: '경복궁 근정전 축소 모형', en: 'Gyeongbokgung Geunjeongjeon Scale Model' }, description: { ko: '정교한 세공으로 완성된 조선 왕실 건축의 정수입니다.', en: 'The essence of Joseon royal architecture completed with exquisite craftsmanship.' }, image_url: '/via_station_logo_portal.png', price: '2,500,000₩' },
     { id: 'p6-2', subcategory: 'travel', category: 'floor-6', title: { ko: '서울 골목길 가상 투어 패키지', en: 'Seoul Alleyway Virtual Tour Package' }, description: { ko: '숨겨진 서울의 매력을 VR로 탐험하는 프리미엄 투어입니다.', en: 'A premium VR tour exploring the hidden charms of Seoul.' }, image_url: '/via_station_logo_portal.png', price: '45,000₩' },

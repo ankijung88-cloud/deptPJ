@@ -270,30 +270,7 @@ const SubCategoryPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Floor Navigation - Subcategories on the same floor */}
-                                    <div className="py-2 border-b border-dancheong-ink/5">
-                                        <div className="text-[10px] font-black tracking-[0.2em] text-dancheong-ink/30 uppercase mb-3 px-1">
-                                            <AutoTranslatedText text={`${parentFloor.floor} Archive Menu`} />
-                                        </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {parentFloor.subitems?.map((sub) => {
-                                                const isCurrent = sub.id?.toLowerCase() === targetSubId?.toLowerCase();
-                                                return (
-                                                    <button
-                                                        key={sub.id}
-                                                        onClick={() => navigate(`/category/${sub.id}`)}
-                                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase transition-all duration-300 ${
-                                                            isCurrent 
-                                                            ? 'bg-dancheong-ink text-white shadow-md' 
-                                                            : 'bg-dancheong-ink/5 text-dancheong-ink/40 hover:bg-dancheong-ink/10 hover:text-dancheong-ink'
-                                                        }`}
-                                                    >
-                                                        <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
+
                                     
                                     <div className="relative">
                                         <div 

@@ -40,18 +40,24 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                             const fallbackSubitems = fallback.subitems || [];
                             const dynamicSubitems = (dynamic.subitems || []) as any[];
                             
-                            // Use fallback subitems as the primary source of truth
-                            // and only augment with dynamic data if ID matches
-                            return fallbackSubitems.map(fbSub => {
-                                const dynSub = dynamicSubitems.find(d => d.id?.toString().toLowerCase() === fbSub.id?.toString().toLowerCase());
-                                return {
-                                    ...fbSub,
-                                    ...(dynSub || {}),
-                                    // Ensure fallback labels are preserved unless dynamic explicitly provides them
-                                    label: fbSub.label,
-                                    bgImage: dynSub?.bgImage || dynSub?.bg_image || fbSub?.bgImage
-                                };
-                            });
+                            // If we have dynamic subitems, use them as the primary source
+                            // but enrich with fallback data for missing fields
+                            if (dynamicSubitems && dynamicSubitems.length > 0) {
+                                return dynamicSubitems.map(dynSub => {
+                                    const fbSub = fallbackSubitems.find(f => f.id?.toString().toLowerCase() === dynSub.id?.toString().toLowerCase());
+                                    return {
+                                        ...(fbSub || {}),
+                                        ...dynSub,
+                                        // Ensure labels and descriptions from dynamic data take precedence
+                                        label: dynSub.label || fbSub?.label,
+                                        description: dynSub.description || fbSub?.description,
+                                        bgImage: dynSub.bgImage || dynSub.bg_image || fbSub?.bgImage
+                                    };
+                                });
+                            }
+                            
+                            // If no dynamic subitems, return fallbacks
+                            return fallbackSubitems;
                         })()
                     };
                 }

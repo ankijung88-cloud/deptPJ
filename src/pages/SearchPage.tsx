@@ -6,11 +6,12 @@ import { Search, ArrowRight, Archive } from 'lucide-react';
 import { searchProducts } from '../api/products';
 import { getNotices } from '../api/notices';
 import { getFaqs } from '../api/faqs';
-import { FeaturedItem, Notice, FAQ, FloorCategory, StaticPage } from '../types';
+import { FeaturedItem, Notice, FAQ, StaticPage } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_FLOORS, FALLBACK_PAGES } from '../data/fallbackData';
+import { FALLBACK_PRODUCTS, FALLBACK_NOTICES, FALLBACK_FAQS, FALLBACK_PAGES } from '../data/fallbackData';
+import { useFloors } from '../context/FloorContext';
 
 type SearchResultType = 'product' | 'notice' | 'faq' | 'floor' | 'page';
 
@@ -32,7 +33,7 @@ const SearchPage: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [notices, setNotices] = useState<Notice[]>([]);
     const [faqs, setFaqs] = useState<FAQ[]>([]);
-    const [floors, setFloors] = useState<FloorCategory[]>([]);
+    const { floors: allFloors } = useFloors();
     const [pages, setPages] = useState<StaticPage[]>([]);
     const [loading, setLoading] = useState(true);
     const { translateAsync } = useAutoTranslate(null);
@@ -80,9 +81,7 @@ const SearchPage: React.FC = () => {
                 setFaqs((faqData.length > 0 ? faqData : FALLBACK_FAQS).filter(f => 
                     filterText(f.question) || filterText(f.answer)
                 ));
-                setFloors(FALLBACK_FLOORS.filter(f => 
-                    filterText(f.title) || filterText(f.description) || f.floor.toLowerCase().includes(lowerQuery)
-                ));
+                // setFloors is removed as we'll filter allFloors directly in useMemo or local const
                 setPages(FALLBACK_PAGES.filter(p => 
                     filterText(p.title) || filterText(p.description)
                 ));
@@ -101,14 +100,24 @@ const SearchPage: React.FC = () => {
     const allResults = useMemo(() => {
         const results: UnifiedSearchResult[] = [];
         
-        floors.forEach(f => results.push({ id: f.id, type: 'floor', title: `${f.floor} ${getLocalizedText(f.title, i18n.language)}`, description: getLocalizedText(f.description, i18n.language), link: `/floor/${f.id}/articles` }));
+        const lowerQuery = query.toLowerCase().trim();
+        const filterText = (text: any) => {
+            const val = getLocalizedText(text, i18n.language).toLowerCase();
+            return val.includes(lowerQuery);
+        };
+
+        const filteredFloors = allFloors.filter(f => 
+            filterText(f.title) || filterText(f.description) || f.floor.toLowerCase().includes(lowerQuery)
+        );
+
+        filteredFloors.forEach(f => results.push({ id: f.id, type: 'floor', title: `${f.floor} ${getLocalizedText(f.title, i18n.language)}`, description: getLocalizedText(f.description, i18n.language), link: `/floor/${f.id}/articles` }));
         products.forEach(p => results.push({ id: p.id, type: 'product', title: getLocalizedText(p.title, i18n.language), description: getLocalizedText(p.description, i18n.language), category: getLocalizedText(p.category || 'Product', i18n.language), date: getLocalizedText(p.date, i18n.language), link: `/detail/${p.id}` }));
         notices.forEach(n => results.push({ id: n.id, type: 'notice', title: getLocalizedText(n.title, i18n.language), description: getLocalizedText(n.content, i18n.language), category: n.category, date: n.date, link: `/notice#notice-${n.id}` }));
         faqs.forEach(f => results.push({ id: f.id, type: 'faq', title: getLocalizedText(f.question, i18n.language), description: getLocalizedText(f.answer, i18n.language), category: f.category || 'FAQ', link: `/faq#faq-${f.id}` }));
         pages.forEach(p => results.push({ id: p.id, type: 'page', title: getLocalizedText(p.title, i18n.language), description: getLocalizedText(p.description, i18n.language), link: p.url }));
 
         return results;
-    }, [products, notices, faqs, floors, pages, i18n.language]);
+    }, [products, notices, faqs, allFloors, pages, i18n.language, query]);
 
     return (
         <div className="min-h-screen bg-dancheong-ivory pt-32 pb-20 text-dancheong-ink">
