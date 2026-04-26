@@ -31,14 +31,18 @@ export const HeroSection: React.FC = () => {
                     </motion.div>
 
 
-                    <motion.h1
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black mb-4 leading-[1.1] tracking-tighter break-keep text-dancheong-ink"
+                        className="mb-8 flex justify-center"
                     >
-                        몽땅쏙
-                    </motion.h1>
+                        <img
+                            src="/titlelogo_clean.png"
+                            alt="몽땅쏙"
+                            className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto object-contain"
+                        />
+                    </motion.div>
 
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
