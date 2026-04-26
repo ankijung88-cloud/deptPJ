@@ -24,9 +24,9 @@ export const HeroSection: React.FC = () => {
                         className="mb-2 flex justify-center"
                     >
                         <img
-                            src="/sample.png"
+                            src="/stamplogo_clean.png"
                             alt="몽땅쏙 Logo"
-                            className="h-32 w-auto grayscale contrast-125 brightness-75 opacity-80"
+                            className="h-32 w-auto opacity-90"
                         />
                     </motion.div>
 
