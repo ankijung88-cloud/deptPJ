@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '../components/home/HeroSection';
 import { LandingVisionSection } from '../components/home/LandingVisionSection';
 import { LandingFeaturesSection } from '../components/home/LandingFeaturesSection';
@@ -7,15 +8,10 @@ import { LandingRecruitmentSection } from '../components/home/LandingRecruitment
 import { LandingFooterCTA } from '../components/home/LandingFooterCTA';
 
 const LandingPage: React.FC = () => {
-    const [triggerWarp, setTriggerWarp] = useState(false);
+    const navigate = useNavigate();
 
     const handleExplore = () => {
-        // Scroll to top to ensure warp animation aligns correctly
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        // Slight delay to allow scroll to settle before warping
-        setTimeout(() => {
-            setTriggerWarp(true);
-        }, 500);
+        navigate('/inspiration');
     };
 
     return (
@@ -29,7 +25,7 @@ const LandingPage: React.FC = () => {
             </div>
 
             <main className="relative z-10 w-full pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-                <HeroSection externalTrigger={triggerWarp} />
+                <HeroSection />
                 <LandingVisionSection />
                 <LandingFeaturesSection />
                 <LandingArchitectureSection />

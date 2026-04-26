@@ -230,7 +230,7 @@ const FloorGuidePage: React.FC = () => {
                                 </h2>
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/40">
-                                <AutoTranslatedText text="Explore Current Exhibits" />
+                                <AutoTranslatedText text="현재 진행중" />
                             </div>
                         </motion.div>
 
@@ -242,10 +242,10 @@ const FloorGuidePage: React.FC = () => {
                                     whileInView={{ opacity: 1, scale: 1 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.1 }}
-                                    onClick={() => navigate(`/product/${product.id}`)}
+                                    onClick={() => navigate(`/detail/${product.id}`)}
                                     className="group cursor-pointer"
                                 >
-                                    <div className="relative aspect-[4/5] rounded-[32px] overflow-hidden shadow-xl shadow-dancheong-ink/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-dancheong-ink/10 group-hover:-translate-y-2">
+                                    <div className="relative aspect-square rounded-[32px] overflow-hidden shadow-xl shadow-dancheong-ink/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-dancheong-ink/10 group-hover:-translate-y-2">
                                         {/* Image */}
                                         <img 
                                             src={product.imageUrl || '/placeholder_product.jpg'} 

@@ -351,11 +351,11 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         placeholder={searchPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
 
-                <div className="flex items-center gap-2 bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
+                <div className="flex items-center gap-2 bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 shrink-0 h-[56px]">
                     <input 
                         type="checkbox" 
                         id="bypass-filters"
@@ -379,7 +379,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                                 setSelectedTemplate('');
                             }}
-                            className="bg-white/60 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-dancheong-mugwort focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
+                            className="bg-black/5 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-dancheong-mugwort focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
                         >
                             <option value="">{allAgenciesLabel}</option>
                             {agencies.map(a => (
@@ -396,7 +396,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedSubcategory('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allFloorsLabel}</option>
                         {floorOptions.map(f => (
@@ -412,7 +412,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType('');
                             setSelectedTemplate('');
                         }}
-                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[150px]"
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[150px]"
                         disabled={!selectedFloor}
                     >
                         <option value="">{allSubCatsLabel}</option>
@@ -428,7 +428,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedProductType(e.target.value);
                             setSelectedTemplate('');
                         }}
-                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[200px]"
                     >
                         <option value="">{allProductTypesLabel}</option>
                         {productTitleOptions.map(title => (
@@ -447,7 +447,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                 setSelectedProductType('');
                             }
                         }}
-                        className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[180px]"
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[180px]"
                     >
                         <option value="">{allTemplatesLabel}</option>
                         {templateOptions.map(opt => (
@@ -473,9 +473,9 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                 </div>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4">Image</th>
                             <th className="px-6 py-4">Title</th>
@@ -569,7 +569,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between bg-white/60 border border-dancheong-ink/10 rounded-2xl px-6 py-4">
+                <div className="flex items-center justify-between bg-black/5 border border-dancheong-ink/10 rounded-2xl px-6 py-4">
                     <div className="text-dancheong-ink/40 text-sm">
                         Showing <span className="text-dancheong-ink font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-dancheong-ink font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="text-dancheong-ink font-medium">{filteredProducts.length}</span> results
                     </div>
@@ -717,7 +717,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-4xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                className="relative w-full max-w-4xl bg-white border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
                 <div className="p-6 border-b border-dancheong-ink/10 flex justify-between items-center">
                     <h3 className="text-xl font-serif font-bold text-dancheong-ink">
@@ -732,21 +732,21 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <div className="space-y-4">
                             {!isEdit && (
                                 <div>
-                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
                                     <input 
                                         type="text" required
                                         value={formData.id} onChange={(e) => setFormData({...formData, id: e.target.value})}
-                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                         placeholder="e.g. k-heritage-001"
                                     />
                                 </div>
                             )}
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="2. 제목" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="2. 제목" /></label>
                                 <input 
                                     type="text" required
                                     value={formData.title.ko} onChange={(e) => setFormData({...formData, title: {...formData.title, ko: e.target.value}})}
-                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 />
                             </div>
                         </div>
@@ -759,7 +759,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                     <select 
                                         value={formData.agency_id || ''} 
                                         onChange={(e) => setFormData({...formData, agency_id: e.target.value})}
-                                        className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
+                                        className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                                     >
                                         <option value="">Admin (Default)</option>
                                         {agencies.map(a => (
@@ -769,7 +769,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 </div>
                             )}
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
                                 <select 
                                     required
                                     value={formData.category} 
@@ -782,7 +782,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             subcategory: floor?.subitems?.[0]?.id || ''
                                         });
                                     }}
-                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 >
                                     <option value="">Select Floor</option>
                                     {floors.map(floor => (
@@ -798,12 +798,12 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 </select>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="4. Subcategory ID" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="4. Subcategory ID" /></label>
                                 <select 
                                     required
                                     value={formData.subcategory} 
                                     onChange={(e) => setFormData({...formData, subcategory: e.target.value})}
-                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                     disabled={!formData.category}
                                 >
                                     <option value="">Select Subcategory</option>
@@ -823,25 +823,25 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
                     {/* 5. Description */}
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5. 설명" /></label>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5. 설명" /></label>
                         <textarea 
                             rows={4} required
                             value={formData.description.ko} onChange={(e) => setFormData({...formData, description: {...formData.description, ko: e.target.value}})}
-                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
                         />
                     </div>
 
                     {/* Template specific fields: Parent ID */}
                     {TEMPLATE_CATEGORIES.includes(formData.category) && (
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block">
                                 <AutoTranslatedText text="Template Linked Parent ID (필수)" />
                             </label>
                             <input 
                                 type="text" 
                                 value={formData.parent_id || ''} 
                                 onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
-                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="연결할 상위 제품의 ID를 입력하세요 (예: car-care-exchange-week)"
                             />
                             <p className="text-[10px] text-dancheong-ink/30 mt-2 px-1">
@@ -852,47 +852,47 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
 
                     {/* 5-2. Detailed Description */}
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
                         <textarea 
                             rows={8}
                             value={formData.long_description.ko} onChange={(e) => setFormData({...formData, long_description: {...formData.long_description, ko: e.target.value}})}
-                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
                             placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
                         />
                     </div>
 
                     {/* 5-3. 상세 미디어 (상세 설명 하단) */}
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-6 rounded-2xl border border-dancheong-ink/5">
                             <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-dancheong-ink/40 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
+                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
                                 <div className="flex gap-4">
                                     <button 
                                         type="button"
                                         onClick={() => setFormData({...formData, detail_media_type: 'image'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-white/60 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-black/5 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
                                     >
                                         이미지 (Image)
                                     </button>
                                     <button 
                                         type="button"
                                         onClick={() => setFormData({...formData, detail_media_type: 'video'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-white/60 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
+                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-black/5 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
                                     >
                                         영상 (Video)
                                     </button>
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-dancheong-ink/40 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
+                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
                                 <div className="flex gap-2">
                                     <div className="flex-1 relative group">
                                         <input 
                                             type="text" 
                                             value={formData.detail_media_url || ''} 
                                             onChange={(e) => setFormData({...formData, detail_media_url: e.target.value})}
-                                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50 pr-12"
+                                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50 pr-12"
                                             placeholder="https://..."
                                         />
                                         <label className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg cursor-pointer text-dancheong-ink/40 hover:text-dancheong-mugwort transition-all">
@@ -929,9 +929,9 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* 6. Main Image */}
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="6. Main Image" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="6. Main Image" /></label>
                             <div className="space-y-4">
-                                <div className="relative group aspect-video bg-white/60 border border-dancheong-ink/10 rounded-2xl overflow-hidden flex items-center justify-center">
+                                <div className="relative group aspect-video bg-black/5 border border-dancheong-ink/10 rounded-2xl overflow-hidden flex items-center justify-center">
                                     {formData.image_url ? (
                                         <>
                                             <img src={formData.image_url} alt="" className="w-full h-full object-cover" />
@@ -944,7 +944,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                             </div>
                                         </>
                                     ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-3 text-dancheong-ink/20 hover:text-dancheong-mugwort transition-colors">
+                                        <label className="cursor-pointer flex flex-col items-center gap-3 text-dancheong-ink/50 hover:text-dancheong-mugwort transition-colors">
                                             <div className="w-16 h-16 rounded-2xl bg-dancheong-ink/5 flex items-center justify-center">
                                                 {uploading === 'image_url' ? <div className="w-8 h-8 border-4 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
                                             </div>
@@ -956,7 +956,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 <input 
                                     type="text" placeholder="https://..."
                                     value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                                    className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
+                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                 />
                             </div>
                         </div>
@@ -965,20 +965,20 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     {/* 8. Event Date & 9. Location */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="8. 행사 기간" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="8. 행사 기간" /></label>
                             <input 
                                 type="text" 
                                 value={formData.event_date.ko} onChange={(e) => setFormData({...formData, event_date: {...formData.event_date, ko: e.target.value}})}
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 2025.03.15 - 04.30"
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="9. 장소" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="9. 장소" /></label>
                             <input 
                                 type="text" 
                                 value={formData.location.ko} onChange={(e) => setFormData({...formData, location: {...formData.location, ko: e.target.value}})}
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 6층 K-컬처 센터"
                             />
                         </div>
@@ -987,16 +987,16 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                     {/* 10. Price, 11. Closed Days, 12. Video URL */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="10. Price" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="10. Price" /></label>
                             <input 
                                 type="text" 
                                 value={formData.price || ''} onChange={(e) => setFormData({...formData, price: e.target.value})}
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="예: 50,000원"
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="11. Closed Days" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="11. Closed Days" /></label>
                             <input 
                                 type="text"
                                 value={Array.isArray(formData.closed_days) ? JSON.stringify(formData.closed_days) : (formData.closed_days || '[]')} 
@@ -1006,16 +1006,16 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                         if (Array.isArray(parsed)) setFormData({...formData, closed_days: parsed});
                                     } catch(err) { /* ignore parse errors while typing */ }
                                 }}
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-sm focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-sm focus:border-[#00FFC2]/50"
                                 placeholder='["2025-03-25"]'
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
                             <input 
                                 type="text" 
                                 value={formData.video_url || ''} onChange={(e) => setFormData({...formData, video_url: e.target.value})}
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                                 placeholder="https://youtube.com/..."
                             />
                         </div>
@@ -1032,7 +1032,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             {/* Programs Management */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1">Programs</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1">Programs</label>
                                     <button 
                                         type="button"
                                         onClick={() => {
@@ -1076,7 +1076,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], title: { ...updated[idx].title, ko: e.target.value } };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
+                                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                                     />
                                                     <input 
                                                         type="text"
@@ -1087,7 +1087,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], price: e.target.value };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
+                                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                                     />
                                                 </div>
                                                 <div>
@@ -1100,7 +1100,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], description: { ...updated[idx].description, ko: e.target.value } };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full h-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50 resize-none"
+                                                        className="w-full h-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50 resize-none"
                                                     />
                                                 </div>
                                             </div>
@@ -1117,7 +1117,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                             {/* Time Slots Management */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest pl-1">Time Slots</label>
+                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1">Time Slots</label>
                                     <button 
                                         type="button"
                                         onClick={() => {
@@ -1133,7 +1133,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {formData.reservation_slots.map((slot: string, idx: number) => (
-                                        <div key={idx} className="flex items-center gap-2 bg-white/60 border border-dancheong-ink/10 rounded-xl p-1 pl-3">
+                                        <div key={idx} className="flex items-center gap-2 bg-black/5 border border-dancheong-ink/10 rounded-xl p-1 pl-3">
                                             <input 
                                                 type="text"
                                                 value={slot}
@@ -1211,9 +1211,9 @@ const FloorManager = () => {
                 </button>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Floor" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
@@ -1392,7 +1392,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
-                className="relative w-full max-w-4xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                className="relative w-full max-w-4xl bg-white border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
                 <div className="p-6 border-b border-dancheong-ink/10 flex justify-between items-center">
                     <h3 className="text-xl font-serif font-bold text-dancheong-ink">
@@ -1404,37 +1404,37 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                     <div className="flex flex-col gap-8 flex-1 overflow-y-auto pr-2 custom-scrollbar p-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Floor Level (e.g. 6F)</label>
-                                <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block">Floor Level (e.g. 6F)</label>
+                                <input type="text" value={formData.floor} onChange={e => setFormData({...formData, floor: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">ID (Unique)</label>
-                                <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" disabled={isEdit} required />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block">ID (Unique)</label>
+                                <input type="text" value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" disabled={isEdit} required />
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">제목</label>
-                            <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block">제목</label>
+                            <input type="text" value={formData.title.ko || ''} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Theme Color (HEX)</label>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block">Theme Color (HEX)</label>
                                 <div className="flex gap-2">
-                                    <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
+                                    <input type="text" value={formData.color || ''} onChange={e => setFormData({...formData, color: e.target.value})} className="flex-1 bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono focus:border-[#00FFC2]/50" placeholder="#00FFC2" />
                                     <div className="w-14 h-14 rounded-xl border border-dancheong-ink/10" style={{ backgroundColor: formData.color || '#000' }} />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="사이트 URL" /></label>
-                                <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" placeholder="https://..." />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="사이트 URL" /></label>
+                                <input type="text" value={formData.video_url || ''} onChange={e => setFormData({...formData, video_url: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" placeholder="https://..." />
                             </div>
                         </div>
 
                         {/* Floor Background Image */}
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block">Floor Background Image</label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block">Floor Background Image</label>
                             <div className="flex gap-4 items-start">
-                                <div className="flex-1 relative group bg-white/60 border border-dancheong-ink/10 rounded-xl overflow-hidden aspect-[21/9] flex items-center justify-center">
+                                <div className="flex-1 relative group bg-black/5 border border-dancheong-ink/10 rounded-xl overflow-hidden aspect-[21/9] flex items-center justify-center">
                                     {formData.bgImage ? (
                                         <>
                                             <img src={formData.bgImage} alt="" className="w-full h-full object-cover" />
@@ -1446,7 +1446,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                             </div>
                                         </>
                                     ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-dancheong-ink/20 hover:text-dancheong-mugwort transition-colors">
+                                        <label className="cursor-pointer flex flex-col items-center gap-2 text-dancheong-ink/50 hover:text-dancheong-mugwort transition-colors">
                                             {uploading === 'bgImage' ? <div className="w-6 h-6 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={24} />}
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Upload Image</span>
                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage')} />
@@ -1458,7 +1458,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                         type="text" 
                                         value={formData.bgImage || ''} 
                                         onChange={e => setFormData({...formData, bgImage: e.target.value})}
-                                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50"
+                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50"
                                         placeholder="https://..."
                                     />
                                     <p className="text-[10px] text-dancheong-ink/20 px-1 italic">* 층 전체의 배경으로 사용되는 이미지입니다. 가로가 긴 이미지 권장.</p>
@@ -1466,14 +1466,14 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                             </div>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
-                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
+                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                         </div>
                         
                         {/* Sub-items Management */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center pr-2">
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase tracking-widest block"><AutoTranslatedText text="Sub-items (Categories)" /></label>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest block"><AutoTranslatedText text="Sub-items (Categories)" /></label>
                                 <button type="button" onClick={addSubitem} className="flex items-center gap-1 text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all border-none cursor-pointer">
                                     <Plus size={14} /> <AutoTranslatedText text="Add Category" />
                                 </button>
@@ -1481,7 +1481,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                             
                             <div className="space-y-4">
                                 {(formData.subitems || []).map((sub: any, idx: number) => (
-                                    <div key={idx} className="bg-white/60 border border-dancheong-ink/10 rounded-2xl p-6 space-y-4 relative group/sub">
+                                    <div key={idx} className="bg-black/5 border border-dancheong-ink/10 rounded-2xl p-6 space-y-4 relative group/sub">
                                         <button 
                                             type="button" 
                                             onClick={() => removeSubitem(idx)}
@@ -1492,7 +1492,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                         
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">ID</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase mb-2 block">ID</label>
                                                 <input 
                                                     type="text" 
                                                     value={sub.id} 
@@ -1502,7 +1502,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">Label (KO)</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase mb-2 block">Label (KO)</label>
                                                 <input 
                                                     type="text" 
                                                     value={typeof sub.label === 'string' ? sub.label : (sub.label?.ko || '')} 
@@ -1512,7 +1512,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                 />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase mb-2 block">Description (KO)</label>
+                                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase mb-2 block">Description (KO)</label>
                                                 <textarea 
                                                     rows={2}
                                                     value={typeof sub.description === 'string' ? sub.description : (sub.description?.ko || '')} 
@@ -1528,7 +1528,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
 
                                         {/* Sub-item Background Image */}
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-bold text-dancheong-ink/20 uppercase block tracking-wider">Sub-category Background Image</label>
+                                            <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase block tracking-wider">Sub-category Background Image</label>
                                             <div className="flex gap-4 items-start">
                                                 <div className="w-32 h-20 bg-black/20 border border-dancheong-ink/5 rounded-xl overflow-hidden flex items-center justify-center relative group">
                                                     {sub.bgImage ? (
@@ -1542,7 +1542,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                             </div>
                                                         </>
                                                     ) : (
-                                                        <label className="cursor-pointer flex flex-col items-center gap-1 text-dancheong-ink/10 hover:text-dancheong-mugwort transition-colors">
+                                                        <label className="cursor-pointer flex flex-col items-center gap-1 text-dancheong-ink/40 hover:text-dancheong-mugwort transition-colors">
                                                             {uploading === `bgImage-${idx}` ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
                                                             <span className="text-[8px] font-bold uppercase">Upload</span>
                                                             <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'bgImage', idx)} />
@@ -1661,14 +1661,14 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
                         placeholder={searchNoticesPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
                 
                 <select 
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
                     <option value="">{allCategoriesNoticeLabel}</option>
                     {categories.map(cat => (
@@ -1677,9 +1677,9 @@ const NoticeManager = ({ agencies }: { agencies: any[] }) => {
                 </select>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Title" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
@@ -1739,7 +1739,7 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit Notice' : 'Add Notice'} />
                 </h3>
@@ -1750,7 +1750,7 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
                             <select 
                                 value={formData.agency_id || ''} 
                                 onChange={e => setFormData({...formData, agency_id: e.target.value})}
-                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
+                                className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                             >
                                 <option value="">Admin (Default)</option>
                                 {agencies.map((a: any) => (
@@ -1761,11 +1761,11 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
                     )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
                             <select 
                                 value={formData.category} 
                                 onChange={e => setFormData({...formData, category: e.target.value})} 
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -1777,21 +1777,21 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Date" /></label>
-                            <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Date" /></label>
+                            <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
-                        <input type="text" value={formData.title.ko} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="제목" /></label>
+                        <input type="text" value={formData.title.ko} onChange={e => setFormData({...formData, title: {...formData.title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="내용" /></label>
-                        <textarea rows={4} value={formData.content.ko} onChange={e => setFormData({...formData, content: {...formData.content, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="내용" /></label>
+                        <textarea rows={4} value={formData.content.ko} onChange={e => setFormData({...formData, content: {...formData.content, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                     </div>
                     <div className="flex items-center gap-3">
-                        <input type="checkbox" checked={formData.is_important} onChange={e => setFormData({...formData, is_important: e.target.checked})} className="w-5 h-5 rounded border-dancheong-ink/10 bg-white/60 text-dancheong-mugwort focus:ring-[#00FFC2]" />
-                        <label className="text-sm text-dancheong-ink/60"><AutoTranslatedText text="Important Notice (Shows indicator)" /></label>
+                        <input type="checkbox" checked={formData.is_important} onChange={e => setFormData({...formData, is_important: e.target.checked})} className="w-5 h-5 rounded border-dancheong-ink/10 bg-black/5 text-dancheong-mugwort focus:ring-[#00FFC2]" />
+                        <label className="text-sm text-dancheong-ink/70"><AutoTranslatedText text="Important Notice (Shows indicator)" /></label>
                     </div>
                     <div className="flex justify-end gap-4 pt-4 border-t border-dancheong-ink/5">
                         <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
@@ -1881,14 +1881,14 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
                         placeholder={searchFaqsPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-white/60 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-2xl py-4 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     />
                 </div>
                 
                 <select 
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-white/60 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
+                    className="bg-black/5 border border-dancheong-ink/10 rounded-2xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50 appearance-none min-w-[150px]"
                 >
                     <option value="">{allCategoriesFaqLabel}</option>
                     {categories.map(cat => (
@@ -1897,9 +1897,9 @@ const FAQManager = ({ agencies }: { agencies: any[] }) => {
                 </select>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Question" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="Category" /></th>
@@ -1961,7 +1961,7 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">
                     <AutoTranslatedText text={isEdit ? 'Edit FAQ' : 'Add FAQ'} />
                 </h3>
@@ -1972,7 +1972,7 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                             <select 
                                 value={formData.agency_id || ''} 
                                 onChange={e => setFormData({...formData, agency_id: e.target.value})}
-                                className="w-full bg-white/60 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
+                                className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
                             >
                                 <option value="">Admin (Default)</option>
                                 {agencies.map((a: any) => (
@@ -1983,11 +1983,11 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                     )}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Category" /></label>
                             <select 
                                 value={formData.category} 
                                 onChange={e => setFormData({...formData, category: e.target.value})} 
-                                className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" 
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -1998,17 +1998,17 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                             </select>
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Display Order" /></label>
-                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value)})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Display Order" /></label>
+                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value)})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="질문" /></label>
-                        <input type="text" value={formData.question.ko} onChange={e => setFormData({...formData, question: {...formData.question, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="질문" /></label>
+                        <input type="text" value={formData.question.ko} onChange={e => setFormData({...formData, question: {...formData.question, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                     </div>
                     <div>
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="답변" /></label>
-                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="답변" /></label>
+                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
                     </div>
                     <div className="flex justify-end gap-4 pt-4 border-t border-dancheong-ink/5">
                         <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
@@ -2084,13 +2084,13 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
                             placeholder="Search orders..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-white/60 border border-dancheong-ink/10 rounded-xl py-2 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                            className="bg-black/5 border border-dancheong-ink/10 rounded-xl py-2 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                         />
                     </div>
                     <select 
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="bg-white/60 border border-dancheong-ink/10 rounded-xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
                     >
                         <option value="">All Statuses</option>
                         <option value="PENDING">PENDING</option>
@@ -2102,10 +2102,10 @@ const OrderManager = ({ agencies }: { agencies: any[] }) => {
                 </div>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                        <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                             <tr>
                                 <th className="px-6 py-4">Order Info</th>
                                 <th className="px-6 py-4">Customer</th>
@@ -2188,7 +2188,7 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">Update Order Status</h3>
                 
                 <div className="space-y-6">
@@ -2199,7 +2199,7 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Product</span>
-                            <span className="text-sm text-dancheong-ink/60">{order.product_name}</span>
+                            <span className="text-sm text-dancheong-ink/70">{order.product_name}</span>
                         </div>
                         <div className="flex justify-between border-t border-dancheong-ink/5 pt-2">
                             <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Address</span>
@@ -2208,11 +2208,11 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-dancheong-ink/40 uppercase block">Status</label>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Status</label>
                         <select 
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                         >
                             <option value="PENDING">PENDING</option>
                             <option value="PAID">PAID</option>
@@ -2286,9 +2286,9 @@ const AgencyManager = () => {
                 </button>
             </div>
 
-            <div className="bg-[#1A2420]/40 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
-                    <thead className="bg-white/60 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
                         <tr>
                             <th className="px-6 py-4"><AutoTranslatedText text="Agency" /></th>
                             <th className="px-6 py-4"><AutoTranslatedText text="ID / PW" /></th>
@@ -2407,7 +2407,7 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }} 
                 animate={{ opacity: 1, scale: 1 }} 
-                className="relative w-full max-w-2xl bg-[#1A2420] border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+                className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
             >
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-serif font-bold text-dancheong-ink uppercase tracking-widest">
@@ -2420,27 +2420,27 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
-                                <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Agency Name" /></label>
+                                <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
-                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Username" /></label>
+                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
-                                <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required={!isEdit} />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text={isEdit ? "New Password (Optional)" : "Password"} /></label>
+                                <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required={!isEdit} />
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Birth Date" /></label>
-                                <input type="text" placeholder="YYYY.MM.DD" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Birth Date" /></label>
+                                <input type="text" placeholder="YYYY.MM.DD" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-dancheong-ink/40 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
-                                <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-white/60 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
+                                <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
                             </div>
                         </div>
                     </div>
