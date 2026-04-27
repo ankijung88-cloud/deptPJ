@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Building2, User, Mail, Phone, Globe, ArrowRight, ShieldCheck, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { BrandLogo } from '../components/common/BrandLogo';
+import { registerAgency } from '../api/auth';
 
 const AgencyRegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -16,12 +17,28 @@ const AgencyRegisterPage: React.FC = () => {
         website: '',
         address: '',
         category: 'Fashion',
-        description: ''
+        description: '',
+        logoUrl: ''
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setStep(3); // Show success state
+        try {
+            await registerAgency({
+                agency_name: formData.agencyName,
+                representative: formData.representative,
+                email: formData.email,
+                phone: formData.phone,
+                website: formData.website,
+                address: formData.address,
+                category: formData.category,
+                description: formData.description,
+                logo_url: formData.logoUrl
+            });
+            setStep(3); // Show success state
+        } catch (err: any) {
+            alert(err.message || 'Registration failed. Please try again.');
+        }
     };
 
     return (
@@ -156,6 +173,19 @@ const AgencyRegisterPage: React.FC = () => {
                                                         placeholder="대표자 성함을 입력해 주십시오"
                                                         value={formData.representative}
                                                         onChange={(e) => setFormData({...formData, representative: e.target.value})}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="md:col-span-2 space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Brand Logo URL (Optional)</label>
+                                                <div className="relative group">
+                                                    <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                    <input 
+                                                        type="url" 
+                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                        placeholder="https://..."
+                                                        value={formData.logoUrl}
+                                                        onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
                                                     />
                                                 </div>
                                             </div>

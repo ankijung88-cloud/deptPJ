@@ -32,8 +32,21 @@ const features = [
 
 export const LandingFeaturesSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-transparent flex flex-col items-center">
+        <section id="features" className="relative w-full pt-28 lg:pt-36 pb-24 px-6 bg-transparent flex flex-col items-center">
             <div className="max-w-6xl mx-auto w-full">
+                {/* Visual Asset: Secondary Logo */}
+                <div className="flex justify-center mb-10 lg:mb-16">
+                    <motion.img
+                        src="/stamplogo_clean.png"
+                        alt="Stamp Logo"
+                        className="w-32 lg:w-48 object-contain"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
+                    />
+                </div>
+
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}

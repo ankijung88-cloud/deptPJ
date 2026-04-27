@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 
 import { LanguageSelector } from '../common/LanguageSelector';
 import { useNavigationState } from '../../context/NavigationActionContext';
-// import { GlobalMiniMap } from '../common/GlobalMiniMap';
 
 
 export const Layout: React.FC = () => {
@@ -16,10 +15,10 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive, isUiVisible } = useNavigationState();
     
-    const { hideHeader, isAdminPage, isMuseumPage, isSquarePage } = React.useMemo(() => {
+    const { hideHeader, isAdminPage, isMuseumPage, isSquarePage, isLandingPage } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
-        const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath.endsWith('/');
-        const inspiration = normalizedPath.endsWith('/inspiration');
+        const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath === '/inspiration' || normalizedPath === '/floor-guide' || normalizedPath.endsWith('/');
+        const inspiration = normalizedPath === '/inspiration';
         const museum = normalizedPath.endsWith('/museum');
         const square = normalizedPath.endsWith('/square');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register') || normalizedPath.startsWith('/agency');
@@ -32,7 +31,8 @@ export const Layout: React.FC = () => {
             hideHeader: shouldHideHeader,
             isAdminPage: admin,
             isMuseumPage: museum,
-            isSquarePage: square
+            isSquarePage: square,
+            isLandingPage: landing
         };
     }, [location.pathname]);
 
@@ -43,7 +43,7 @@ export const Layout: React.FC = () => {
         >
 
             {!hideHeader && !isImmersive && <Header />}
-            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && !isSquarePage && (
+            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && !isSquarePage && !isLandingPage && (
                 <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
                     <LanguageSelector variant="floating" />
                 </div>

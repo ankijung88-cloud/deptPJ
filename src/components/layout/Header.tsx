@@ -64,9 +64,6 @@ const Header: React.FC = () => {
         return getJoseonThemeById(themeId, themeFloor);
     }, [location.pathname, breadcrumbPath]);
 
-    const is3DStorePage = location.pathname === '/inspiration';
-
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -214,8 +211,7 @@ const Header: React.FC = () => {
                 </Link>
 
                 {/* Desktop Navigation */}
-                {!is3DStorePage && (
-                    <nav className="hidden xl:flex items-center space-x-8 font-serif">
+                <nav className="hidden xl:flex items-center space-x-8 font-serif">
                         {navItems.map((item) => {
                             const floorNum = item.label.split(' | ')[0];   // "1F"
                             const floorTitle = item.label.split(' | ')[1]; // "K-컬처 트렌드"
@@ -266,9 +262,6 @@ const Header: React.FC = () => {
                             );
                         })}
                     </nav>
-                )}
-
-                {/* User Actions & Utilities */}
                 <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
                         {/* Compact Breadcrumbs in Top Right */}
                         <div className="opacity-100 transition-opacity">
@@ -283,15 +276,15 @@ const Header: React.FC = () => {
                                     localStorage.setItem('isGlobalMuted', String(next));
                                     window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
                                 }}
-                                className={`flex items-center transition-colors gap-1 p-2 ${is3DStorePage ? 'text-[#171717]/80 hover:text-[#171717]' : 'text-dancheong-ink'}`}
-                                onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.accentColor; }}
-                                onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
+                                className={`flex items-center transition-colors gap-1 p-2 text-dancheong-ink`}
+                                onMouseEnter={e => { e.currentTarget.style.color = theme.accentColor; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = ''; }}
                                 title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                             >
                                 {isGlobalMuted ? <VolumeX size={20} strokeWidth={2.5} /> : <Volume2 size={20} strokeWidth={2.5} />}
                             </button>
 
-                            <div className={`h-6 w-[2px] ${is3DStorePage ? 'bg-[#171717]/20' : 'bg-dancheong-ink/20'}`} />
+                            <div className={`h-6 w-[2px] bg-dancheong-ink/20`} />
 
                             {/* Search */}
                             <div className="relative flex items-center justify-end">
@@ -302,7 +295,7 @@ const Header: React.FC = () => {
                                 >
                                     <button
                                         onClick={() => setIsSearchOpen(!isSearchOpen)}
-                                        className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-3 text-[#171717]' : (is3DStorePage ? 'text-[#171717]/80 hover:text-[#171717]' : 'text-dancheong-ink')}`}
+                                        className={`flex items-center justify-center shrink-0 transition-colors ${isSearchOpen ? 'mr-3 text-[#171717]' : 'text-dancheong-ink'}`}
                                         title={t('nav.search')}
                                     >
                                         <Search size={20} strokeWidth={2.5} />
@@ -329,14 +322,14 @@ const Header: React.FC = () => {
                             </div>
 
                             <div className="ml-auto flex items-center gap-4">
-                                <div className={`h-6 w-[2px] ${is3DStorePage ? 'bg-[#171717]/20' : 'bg-dancheong-ink/20'}`} />
+                                <div className={`h-6 w-[2px] bg-dancheong-ink/20`} />
                                 <LanguageSelector />
                             </div>
 
                             {/* Admin & Agency Controls */}
                             {(isAdminLoggedIn || isAgencyLoggedIn) && (
                                 <div className="flex items-center gap-2">
-                                    <div className={`h-4 w-[1px] ${is3DStorePage ? 'bg-[#2c3e50]/30' : 'bg-dancheong-gold/30'}`} />
+                                    <div className={`h-4 w-[1px] bg-dancheong-gold/30`} />
                                     {isAdminLoggedIn ? (
                                         <Link
                                             to="/admin"
@@ -384,9 +377,9 @@ const Header: React.FC = () => {
                                 localStorage.setItem('isGlobalMuted', String(next));
                                 window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
                             }}
-                            className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
-                            onMouseEnter={e => { if (!is3DStorePage) e.currentTarget.style.color = theme.highlightColor; }}
-                            onMouseLeave={e => { if (!is3DStorePage) e.currentTarget.style.color = ''; }}
+                            className={`transition-colors relative z-10 text-dancheong-white/70`}
+                            onMouseEnter={e => { e.currentTarget.style.color = theme.highlightColor; }}
+                            onMouseLeave={e => { e.currentTarget.style.color = ''; }}
                             title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
@@ -409,13 +402,12 @@ const Header: React.FC = () => {
                         </div>
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
-                            className={`transition-colors relative z-10 ${is3DStorePage ? 'text-[#2c3e50]/70 hover:text-[#2c3e50]' : 'text-dancheong-white/70'}`}
+                            className={`transition-colors relative z-10 text-dancheong-white/70`}
                             style={isSearchOpen ? theme.highlightStyle : {}}
                         >
                             {isSearchOpen ? <X size={20} /> : <Search size={20} />}
                         </button>
-                        {!is3DStorePage && (
-                            <button
+                        <button
                                 className="text-dancheong-white/90 transition-colors relative z-10"
                                 onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
                                 onMouseLeave={e => e.currentTarget.style.color = ''}
@@ -423,7 +415,6 @@ const Header: React.FC = () => {
                             >
                                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                             </button>
-                        )}
                     </div>
             </div>
 

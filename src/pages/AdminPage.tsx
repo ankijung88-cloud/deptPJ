@@ -2385,7 +2385,8 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
         password: '',
         agencyName: agency?.agency_name || '',
         birthDate: agency?.birth_date || '',
-        phoneMobile: agency?.phone_mobile || ''
+        phoneMobile: agency?.phone_mobile || '',
+        logoUrl: agency?.logo_url || ''
     });
 
     // Manual address entry enabled; no additional scripts needed.
@@ -2395,8 +2396,12 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (isEdit) await updateAgency(agency.id, formData);
-            else await createAgency(formData);
+            const dataToSubmit = {
+                ...formData,
+                logo_url: formData.logoUrl // Map to backend field name if different
+            };
+            if (isEdit) await updateAgency(agency.id, dataToSubmit);
+            else await createAgency(dataToSubmit);
             onSuccess();
         } catch (err: any) { alert(err.message || 'Operation failed'); }
     };
@@ -2441,6 +2446,10 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
                             <div>
                                 <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Phone (Mobile)" /></label>
                                 <input type="text" value={formData.phoneMobile} onChange={e => setFormData({...formData, phoneMobile: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Logo Image URL (Optional)" /></label>
+                                <input type="text" placeholder="https://..." value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
                             </div>
                         </div>
                     </div>

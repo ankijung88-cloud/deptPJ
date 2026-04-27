@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Building, Archive, Search } from 'lucide-react';
+import { ArrowRight, Building, Archive } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { FloorGuideModal } from '../components/common/FloorGuideModal';
 
 const VisitorCounter: React.FC = () => {
     const [count, setCount] = useState(Math.floor(Math.random() * 15) + 8);
@@ -52,13 +51,11 @@ const FloorGuidePage: React.FC = () => {
     const { items: liveProducts } = useEditorial(floorId);
     const { i18n } = useTranslation();
     const navigate = useNavigate();
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
 
     const floorData = floors.find(f => f.id === floorId);
 
     // Filter products for the selected subcategory
-    const collectionItems = liveProducts.filter(p => p.subcategory === selectedSubId);
 
 
     useEffect(() => {
@@ -121,20 +118,6 @@ const FloorGuidePage: React.FC = () => {
                                     <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                                 </p>
 
-                                {/* Search / Minimap Button */}
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => setIsModalOpen(true)}
-                                    className="inline-flex items-center gap-3 px-8 py-4 bg-dancheong-ink text-white rounded-full transition-all duration-300 shadow-xl shadow-dancheong-ink/10 group"
-                                >
-                                    <div className="p-2 bg-white/10 rounded-full group-hover:bg-dancheong-mugwort transition-colors">
-                                        <Search size={16} strokeWidth={3} />
-                                    </div>
-                                    <span className="font-black text-[11px] uppercase tracking-[0.3em] pr-2">
-                                        <AutoTranslatedText text="Floor Search Map" />
-                                    </span>
-                                </motion.button>
                             </motion.div>
                         </div>
 
@@ -175,111 +158,118 @@ const FloorGuidePage: React.FC = () => {
                 {/* Zones Grid - Compact 6-Column Layout */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-32">
                     {(floorData.subitems || []).map((sub: any, idx: number) => (
-                        <motion.div
-                            key={sub.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.05, duration: 0.5 }}
-                            onClick={() => setSelectedSubId(sub.id)}
-                            className="group/card cursor-pointer"
-                        >
-                            <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white/10 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
-                                {/* Background Image */}
-                                <div className="absolute inset-0 z-0">
-                                    <img 
-                                        src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                        alt={getLocalizedText(sub.label, i18n.language)}
-                                        className="w-full h-full object-cover grayscale opacity-20 group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-110 transition-all duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent opacity-80 group-hover/card:from-dancheong-ink/90 group-hover/card:to-dancheong-ink/40 group-hover/card:opacity-100 transition-all duration-500" />
-                                </div>
+                        <React.Fragment key={sub.id}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.05, duration: 0.5 }}
+                                onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
+                                className="group/card cursor-pointer"
+                            >
+                                <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white/10 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                    {/* Background Image */}
+                                    <div className="absolute inset-0 z-0">
+                                        <img 
+                                            src={sub.bgImage || '/placeholder_floor.jpg'} 
+                                            alt={getLocalizedText(sub.label, i18n.language)}
+                                            className="w-full h-full object-cover grayscale opacity-20 group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-110 transition-all duration-700"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent opacity-80 group-hover/card:from-dancheong-ink/90 group-hover/card:to-dancheong-ink/40 group-hover/card:opacity-100 transition-all duration-500" />
+                                    </div>
 
-                                {/* Content Overlay */}
-                                <div className="relative z-10">
-                                    <div className="text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
-                                         {idx + 1}F
-                                     </div>
-                                     <h3 className="text-sm md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 leading-tight tracking-tight">
-                                         <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                     </h3>
-                                    
-                                    <div className="mt-4 flex items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
-                                        <AutoTranslatedText text="Explore" />
-                                        <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
+                                    {/* Content Overlay */}
+                                    <div className="relative z-10">
+                                        <div className="text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
+                                             {idx + 1}F
+                                         </div>
+                                         <h3 className="text-sm md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 leading-tight tracking-tight">
+                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                         </h3>
+                                        
+                                        <div className="mt-4 flex items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
+                                            <AutoTranslatedText text="Explore" />
+                                            <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
+                                        </div>
+                                    </div>
+
+                                    {/* Decorative Icon - Smaller for 6-col */}
+                                    <div className="absolute top-6 right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
+                                        <Building size={40} className="text-dancheong-ink group-hover/card:text-white" />
                                     </div>
                                 </div>
+                            </motion.div>
 
-                                {/* Decorative Icon - Smaller for 6-col */}
-                                <div className="absolute top-6 right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                    <Building size={40} className="text-dancheong-ink group-hover/card:text-white" />
-                                </div>
-                            </div>
-                        </motion.div>
+                            {/* Inline Collection List for Mobile/Desktop Push Layout */}
+                            {selectedSubId === sub.id && (
+                                <motion.div 
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    className="col-span-full mb-12 overflow-hidden"
+                                >
+                                    <div className="mt-8 p-8 md:p-12 bg-dancheong-ink/[0.02] rounded-[40px] border border-dancheong-ink/5">
+                                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-dancheong-ink/10">
+                                            <div className="flex items-center gap-4">
+                                                <Archive size={20} className="text-dancheong-mugwort" />
+                                                <h2 className="text-2xl font-serif font-black text-dancheong-ink">
+                                                    <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                                </h2>
+                                            </div>
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedSubId(null);
+                                                }}
+                                                className="text-[10px] font-black uppercase tracking-[0.2em] text-dancheong-ink/30 hover:text-dancheong-ink transition-colors"
+                                            >
+                                                <AutoTranslatedText text="Close List" />
+                                            </button>
+                                        </div>
+
+                                        {liveProducts.filter(p => p.subcategory === sub.id).length > 0 ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {liveProducts.filter(p => p.subcategory === sub.id).map((item, idx) => (
+                                                    <motion.div
+                                                        key={item.id}
+                                                        initial={{ opacity: 0, x: -20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.05 }}
+                                                        className="group p-6 bg-white/40 backdrop-blur-sm rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white/60 transition-all flex items-center justify-between shadow-sm"
+                                                    >
+                                                        <div className="flex-1">
+                                                            <h3 
+                                                                onClick={() => navigate(`/detail/${item.id}`)}
+                                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors"
+                                                            >
+                                                                <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                            </h3>
+                                                            <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-relaxed">
+                                                                <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
+                                                            </p>
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => navigate(`/detail/${item.id}`)}
+                                                            className="p-3 bg-dancheong-ink/5 text-dancheong-ink rounded-full group-hover:bg-dancheong-ink group-hover:text-white transition-all"
+                                                        >
+                                                            <ArrowRight size={16} />
+                                                        </button>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
+                                                <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
+                                                    <AutoTranslatedText text="No items currently in this archive section." />
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </React.Fragment>
                     ))}
                 </div>
 
-                {/* Collection List Section - Appears when a subcategory is selected */}
-                {selectedSubId && (
-                    <motion.div 
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mb-32 overflow-hidden"
-                    >
-                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-dancheong-ink/10">
-                            <div className="flex items-center gap-4">
-                                <Archive size={20} className="text-dancheong-mugwort" />
-                                <h2 className="text-2xl font-serif font-black text-dancheong-ink">
-                                    <AutoTranslatedText text={getLocalizedText(floorData.subitems?.find(s => s.id === selectedSubId)?.label, i18n.language) || 'Collection'} />
-                                </h2>
-                            </div>
-                            <button 
-                                onClick={() => setSelectedSubId(null)}
-                                className="text-[10px] font-black uppercase tracking-[0.2em] text-dancheong-ink/30 hover:text-dancheong-ink transition-colors"
-                            >
-                                <AutoTranslatedText text="Close List" />
-                            </button>
-                        </div>
-
-                        {collectionItems.length > 0 ? (
-                            <div className="space-y-4">
-                                {collectionItems.map((item, idx) => (
-                                    <motion.div
-                                        key={item.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className="group p-6 bg-white/5 rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white/10 transition-all flex items-center justify-between"
-                                    >
-                                        <div className="flex-1">
-                                            <h3 
-                                                onClick={() => navigate(`/detail/${item.id}`)}
-                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors"
-                                            >
-                                                <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                            </h3>
-                                            <p className="text-sm text-dancheong-ink font-bold mt-1 line-clamp-2 leading-relaxed">
-                                                <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
-                                            </p>
-                                        </div>
-                                        <button 
-                                            onClick={() => navigate(`/detail/${item.id}`)}
-                                            className="p-3 bg-dancheong-ink/5 text-dancheong-ink rounded-full group-hover:bg-dancheong-ink group-hover:text-white transition-all"
-                                        >
-                                            <ArrowRight size={16} />
-                                        </button>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
-                                <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
-                                    <AutoTranslatedText text="No items currently in this archive section." />
-                                </p>
-                            </div>
-                        )}
-                    </motion.div>
-                )}
 
 
                 {/* Live Products Section - 4 Column Grid */}
@@ -361,11 +351,6 @@ const FloorGuidePage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Minimap Modal */}
-            <FloorGuideModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-            />
         </div>
     );
 };

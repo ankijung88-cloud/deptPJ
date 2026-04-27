@@ -4,7 +4,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const LandingRecruitmentSection: React.FC = () => {
     return (
-        <section className="relative w-full py-24 px-6 bg-transparent flex flex-col items-center">
+        <section id="recruitment" className="relative w-full py-24 px-6 bg-transparent flex flex-col items-center">
             <div className="w-full max-w-6xl mx-auto relative z-10">
                 {/* Background Details */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none">

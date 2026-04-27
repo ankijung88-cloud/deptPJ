@@ -4,7 +4,6 @@ import LandingPage from './pages/LandingPage';
 import { lazy, Suspense } from 'react';
 
 import FloorContentPage from './pages/FloorContentPage';
-import InspirationPage from './pages/InspirationPage';
 const DetailPage = lazy(() => import('./pages/DetailPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -49,8 +48,8 @@ function App() {
                                     {/* Public Store Routes */}
                                     <Route element={<Layout />}>
                                         <Route path="/" element={<LandingPage />} />
-                                        <Route path="/inspiration" element={<InspirationPage />} />
-                                        <Route path="/floor-guide" element={<InspirationPage />} />
+                                        <Route path="/inspiration" element={<LandingPage />} />
+                                        <Route path="/floor-guide" element={<LandingPage />} />
                                         <Route path="/detail/:id" element={<DetailPage />} />
                                         <Route path="/floor/:floorId/articles" element={<FloorContentPage />} />
                                         <Route path="/floor/:floorId" element={<FloorGuidePage />} />

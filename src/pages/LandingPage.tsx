@@ -1,17 +1,31 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { HeroSection } from '../components/home/HeroSection';
-import { LandingVisionSection } from '../components/home/LandingVisionSection';
 import { LandingFeaturesSection } from '../components/home/LandingFeaturesSection';
-import { LandingArchitectureSection } from '../components/home/LandingArchitectureSection';
 import { LandingRecruitmentSection } from '../components/home/LandingRecruitmentSection';
+import { LandingPartnerSection } from '../components/home/LandingPartnerSection';
+import { LandingFloorSection } from '../components/home/LandingFloorSection';
 import { LandingFooterCTA } from '../components/home/LandingFooterCTA';
+import { LandingHeader } from '../components/layout/LandingHeader';
 
 const LandingPage: React.FC = () => {
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        const path = window.location.pathname;
+        if (path === '/inspiration' || path === '/floor-guide') {
+            const floorSection = document.getElementById('floors');
+            if (floorSection) {
+                setTimeout(() => {
+                    floorSection.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        }
+    }, []);
 
     const handleExplore = () => {
-        navigate('/inspiration');
+        const floorSection = document.getElementById('floors');
+        if (floorSection) {
+            floorSection.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     return (
@@ -25,10 +39,11 @@ const LandingPage: React.FC = () => {
             </div>
 
             <main className="relative z-10 w-full pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+                <LandingHeader />
                 <HeroSection />
-                <LandingVisionSection />
+                <LandingFloorSection />
                 <LandingFeaturesSection />
-                <LandingArchitectureSection />
+                <LandingPartnerSection />
                 <LandingRecruitmentSection />
                 <LandingFooterCTA onExplore={handleExplore} />
             </main>

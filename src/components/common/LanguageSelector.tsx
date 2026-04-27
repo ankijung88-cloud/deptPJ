@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 
 interface LanguageSelectorProps {
-    variant?: 'header' | 'floating';
+    variant?: 'header' | 'floating' | 'landing';
 }
 
 /**
@@ -42,18 +42,22 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }, []);
 
     const isFloating = variant === 'floating';
+    const isLanding = variant === 'landing';
 
     return (
         <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed bottom-6 right-6 md:top-32 md:right-8 md:bottom-auto z-[10000]' : 'relative'}`}>
             <button
                 onClick={toggleMenu}
-                className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${isFloating
+                className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 ${
+                    isFloating
                     ? 'bg-zinc-900 border border-white/10 text-white hover:bg-zinc-800 shadow-2xl px-3 md:px-5 py-2.5 rounded-full active:scale-95 transition-transform'
+                    : isLanding
+                    ? 'text-dancheong-ink/60 hover:text-dancheong-ink'
                     : 'rounded-full text-[#171717]/80 hover:text-[#171717]'
-                    }`}
+                }`}
             >
                 <Globe size={isFloating ? 20 : 18} />
-                <span className={`${isFloating ? 'hidden md:inline' : 'hidden xl:inline'} tracking-wider`}>
+                <span className={`${isFloating || isLanding ? 'inline' : 'hidden xl:inline'} tracking-wider text-[10px] sm:text-xs font-black uppercase`}>
                     {getCurrentLangLabel()}
                 </span>
             </button>

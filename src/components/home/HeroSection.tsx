@@ -1,77 +1,57 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 export const HeroSection: React.FC = () => {
-    const navigate = useNavigate();
-    const { t } = useTranslation();
-
-    const handleExplore = () => {
-        navigate('/inspiration');
-    };
 
     return (
-        <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-transparent">
-            <div className="absolute inset-0 flex items-center justify-center">
+        <section id="hero" className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-transparent">
+            <div className="absolute inset-0 flex items-center justify-center pb-16 lg:pb-24">
                 {/* Main UI */}
                 <div className="relative z-20 container mx-auto px-6 text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="mb-2 flex justify-center"
+                        className="-mb-16 lg:-mb-24 flex justify-center"
                     >
                         <img
-                            src="/stamplogo_clean.png"
-                            alt="몽땅쏙 Logo"
-                            className="h-32 w-auto opacity-90"
+                            src="/door.png"
+                            alt="Door Logo"
+                            className="h-72 sm:h-96 lg:h-[36rem] xl:h-[42rem] w-auto opacity-100 drop-shadow-[0_35px_35px_rgba(0,0,0,0.15)]"
                         />
                     </motion.div>
 
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="tracking-tight break-keep flex flex-col items-center gap-4 lg:gap-8 text-dancheong-ink"
+                    >
+                        <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold opacity-90">
+                            <AutoTranslatedText text="모든 가치와 사람이 어우러지는 통합 연결 플랫폼" />
+                        </span>
+                        <img
+                            src="/titlelogo_clean.png"
+                            alt="몽땅쏙"
+                            className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
+                        />
+                    </motion.h1>
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="mb-8 flex justify-center"
-                    >
-                        <img
-                            src="/titlelogo_clean.png"
-                            alt="몽땅쏙"
-                            className="h-24 sm:h-32 md:h-40 lg:h-48 w-auto object-contain"
-                        />
-                    </motion.div>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 text-dancheong-ink leading-relaxed font-bold break-keep px-4 sm:px-0"
+                        className="max-w-3xl mx-auto mt-12"
                     >
-                        <AutoTranslatedText text={t('hero.description')} />
-                    </motion.p>
-
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 }}
-                        className="flex flex-col md:flex-row items-center justify-center gap-6"
-                    >
-                        <button
-                            onClick={handleExplore}
-                            className="w-48 py-5 bg-dancheong-ink text-white font-black rounded-full hover:bg-dancheong-mugwort transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-dancheong-ink/20 tracking-[0.2em] uppercase"
-                        >
-                            <AutoTranslatedText text={t('hero.explore')} />
-                        </button>
-                        <button
-                            onClick={() => navigate('/admin/login')}
-                            className="heritage-button-outline w-48 py-5 font-black rounded-full shadow-xl shadow-dancheong-ink/5"
-                        >
-                            <AutoTranslatedText text={t('hero.story')} />
-                        </button>
+                        <p className="text-sm sm:text-base text-dancheong-ink/70 leading-[1.8] font-medium break-keep">
+                            <AutoTranslatedText text="몽땅쏙은 비즈니스, 예술, 소통 등 분야의 경계 없이 누구나 주인공이 되어 함께 어울릴 수 있는 열린 공간입니다. 각자의 고유한 이야기가 하나로 모여 새로운 가능성을 만드는, 우리 모두를 위한 디지털 생태계를 경험해 보세요." />
+                        </p>
                     </motion.div>
+
+
+
+
                 </div>
             </div>
         </section>

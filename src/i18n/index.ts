@@ -30,7 +30,10 @@ const resources = {
                 "philosophy": "모집 공고",
                 "welcome": "Welcome to 몽땅쏙",
                 "site_description": "다양한 아카이브를 자유롭게 넘나들며 나만의 라이프스타일을 완성하는 메타 게이트웨이. 모든 여정이 특별한 발견과 연결로 이어지는 프리미엄 통합 플랫폼, 몽땅쏙입니다.",
-                "start": "시작하기"
+                "start": "시작하기",
+                "vision": "비전",
+                "features": "기능",
+                "partners": "입점사"
             },
             "subcategory": {
                 ...categoriesJson.ko.subcategory
@@ -329,9 +332,12 @@ const resources = {
                 "warping": "Warping...",
                 "explore": "Explore",
                 "story": "Partner Login",
-                "philosophy": "Philosophy",
+                "philosophy": "Recruitment",
                 "welcome": "Welcome to 몽땅쏙",
-                "start": "Get Started"
+                "start": "Get Started",
+                "vision": "Vision",
+                "features": "Features",
+                "partners": "Partners"
             },
             "subcategory": {
                 ...categoriesJson.en.subcategory
