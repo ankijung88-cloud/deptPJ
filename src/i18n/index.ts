@@ -33,7 +33,9 @@ const resources = {
                 "start": "시작하기",
                 "vision": "비전",
                 "features": "기능",
-                "partners": "입점사"
+                "partners": "입점사",
+                "apply": "지원하기",
+                "apply_now": "지금 지원하기"
             },
             "subcategory": {
                 ...categoriesJson.ko.subcategory
@@ -78,7 +80,7 @@ const resources = {
                 "subheadline": "우리는 단순한 가상 공간을 넘어, 가상융합(XR) 및 첨단기술 창업가들이 직접 모이고 성장하는 압도적인 비즈니스 허브를 구축합니다.",
                 "metadata": "SPECIAL REPORT | 몽땅쏙 OPERATION TEAM",
                 "body_intro": "몽땅쏙은 단순한 3D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
-                "body_philosophy": "투명하게 비치는 유리 너머로 시야가 확장되듯, 몽땅쏙의 글래스모피즘(Glassmorphism) UI는 한계 없는 아이디어의 확장을 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
+                "body_philosophy": "전통 한지의 질감을 현대적으로 재해석한 몽땅쏙의 솔리드 디자인은 흔들리지 않는 비즈니스의 본질과 신뢰를 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 단단하고 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
                 "body_future": "오프라인 지정 사무공간의 효율성과 온라인 가상 플랫폼의 무한한 네트워크를 빈틈없이 동기화하는 '하이브리드 워크플레이스'의 새로운 기준입니다. 기술은 도구를 넘어 살아 숨 쉬는 유기적 성장의 원동력이 될 것입니다.",
                 "body_essential": "빠르게 변화하는 시장 환경 속에서, 스타트업과 창업가들은 오직 혁신에만 집중해야 합니다. 사업자 단위의 비상주 오피스부터 프리미엄 3D 비즈니스 캔버스 지원까지, 우리는 혁신가들의 도약을 위한 가장 완벽한 베이스캠프이자 필수 불가결한 엑셀러레이터입니다.",
                 "pull_quote": "성장하는 기업을 위한 제약 없는 3D 캔버스, 시공간을 초월한 혁신적 비즈니스 생태계.",
@@ -337,7 +339,9 @@ const resources = {
                 "start": "Get Started",
                 "vision": "Vision",
                 "features": "Features",
-                "partners": "Partners"
+                "partners": "Partners",
+                "apply": "Apply",
+                "apply_now": "Apply Now"
             },
             "subcategory": {
                 ...categoriesJson.en.subcategory

@@ -26,7 +26,7 @@ const VisitorCounter: React.FC = () => {
         <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 py-4 px-6 bg-white/10 rounded-2xl border border-dancheong-ink/5 mb-12 w-fit"
+            className="flex items-center gap-4 py-4 px-6 bg-white shadow-lg rounded-2xl border border-dancheong-ink/10 mb-12 w-fit"
         >
             <div className="relative flex items-center justify-center">
                 <span className="absolute inline-flex h-2 w-2 rounded-full bg-red-500 opacity-75 animate-ping"></span>
@@ -128,7 +128,7 @@ const FloorGuidePage: React.FC = () => {
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             className="relative flex-grow max-w-2xl h-[400px] md:h-[500px]"
                         >
-                            <div className="absolute inset-0 bg-white/10 rounded-[40px] border border-dancheong-ink/5 p-4 shadow-2xl shadow-dancheong-ink/10">
+                            <div className="absolute inset-0 bg-white rounded-[40px] border border-dancheong-ink/10 p-4 shadow-2xl shadow-dancheong-ink/10">
                                 <div className="w-full h-full rounded-[30px] overflow-hidden relative group">
                                     <img 
                                         src={floorData.bgImage || '/placeholder_floor.jpg'} 
@@ -136,7 +136,7 @@ const FloorGuidePage: React.FC = () => {
                                         className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                                     />
                                     {/* Glass Overlay with Floor Title */}
-                                    <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/10 rounded-2xl border border-white/20 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                    <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#0a0a0a] rounded-2xl border border-white/10 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1"><AutoTranslatedText text="CURRENT VIEW" /></p>
                                         <h4 className="text-xl font-serif font-bold text-white">
                                             <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
@@ -167,7 +167,7 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer"
                             >
-                                <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white/10 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
                                     {/* Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         <img 
@@ -234,7 +234,7 @@ const FloorGuidePage: React.FC = () => {
                                                         initial={{ opacity: 0, x: -20 }}
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: idx * 0.05 }}
-                                                        className="group p-6 bg-white/40 backdrop-blur-sm rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white/60 transition-all flex items-center justify-between shadow-sm"
+                                                        className="group p-6 bg-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white transition-all flex items-center justify-between shadow-sm"
                                                     >
                                                         <div className="flex-1">
                                                             <h3 

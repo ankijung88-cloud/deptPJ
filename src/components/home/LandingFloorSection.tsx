@@ -44,29 +44,37 @@ export const LandingFloorSection: React.FC = () => {
                     </div>
 
                     <div className="w-full mb-10">
-                        <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-serif font-black tracking-tighter leading-none text-dancheong-ink flex flex-row items-center justify-center gap-x-2 sm:gap-x-4 lg:gap-x-8 whitespace-nowrap px-4">
+                        <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold tracking-tighter leading-[1.2] text-dancheong-ink flex flex-col items-center justify-center px-4">
                             <motion.span
-                                initial={{ opacity: 0, x: -30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
                             >
-                                인클루전
+                                완벽한 해결,
                             </motion.span>
                             <motion.span
-                                initial={{ opacity: 0, x: 30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                                transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                                 className="text-dancheong-mugwort"
                             >
-                                아카이브
+                                당신의 Needs를
+                            </motion.span>
+                            <motion.span
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                            >
+                                설계합니다.
                             </motion.span>
                         </h2>
                     </div>
 
-                    <p className="max-w-2xl mx-auto text-base md:text-lg text-dancheong-ink/60 font-light leading-relaxed px-4">
-                        <AutoTranslatedText text="Discover the vertical narrative of 몽땅쏙. Each floor represents a curated sanctuary where tradition meets contemporary innovation." />
+                    <p className="max-w-2xl mx-auto text-base md:text-lg text-dancheong-ink/60 font-bold leading-relaxed px-4 whitespace-pre-line">
+                        <AutoTranslatedText text={"몽땅쏙의 각 층은 당신의 영감과 비즈니스를 위한 최적의 목적지로 설계되었습니다.\n아래의 층별 카드를 클릭하여 지금 바로 가상 공간으로의 몰입형 탐험을 시작해 보세요."} />
                     </p>
                 </header>
 
@@ -89,10 +97,10 @@ export const LandingFloorSection: React.FC = () => {
                             >
                                     {/* Square Floor Card */}
                                     <div
-                                        className={`w-full aspect-square p-4 lg:p-6 rounded-[2rem] lg:rounded-[2.5rem] transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center justify-center ${isActive ? 'shadow-[0_20px_50px_rgba(23,23,23,0.15)] -translate-y-4' : 'shadow-[0_4px_20px_rgba(23,23,23,0.05)]'}`}
+                                        className={`w-full aspect-square p-4 lg:p-6 rounded-[2rem] lg:rounded-[2.5rem] transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center justify-center ${isActive ? 'shadow-[0_20px_50px_rgba(26,26,26,0.1)] -translate-y-4' : 'shadow-[0_4px_20px_rgba(26,26,26,0.03)]'}`}
                                         style={{
-                                            backgroundColor: isActive ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.5)',
-                                            border: isActive ? `2px solid ${floor.color}` : '1.5px solid rgba(23,23,23,0.12)'
+                                            backgroundColor: isActive ? '#FFFFFF' : '#F9F6F1',
+                                            border: isActive ? `2px solid ${floor.color}` : '1.5px solid #E5E1DA'
                                         }}
                                     >
                                         {/* Content Wrapper: Standardized Alignment */}

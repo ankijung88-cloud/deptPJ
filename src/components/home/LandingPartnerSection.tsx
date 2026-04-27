@@ -28,7 +28,7 @@ const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items
                         {items.map((partner, pIdx) => (
                             <div 
                                 key={`${i}-${pIdx}`} 
-                                className="flex items-center gap-5 px-8 py-4 bg-white/60 backdrop-blur-md border border-dancheong-ink/5 rounded-3xl shadow-sm hover:border-dancheong-ink/10 transition-all cursor-default group min-w-[280px]"
+                                className="flex items-center gap-5 px-8 py-4 bg-white border-2 border-dancheong-ink/10 rounded-3xl shadow-xl hover:border-dancheong-mugwort transition-all cursor-default group min-w-[280px]"
                             >
                                 <div className="w-12 h-12 rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort/10 transition-colors overflow-hidden">
                                     {partner.logo_url ? (

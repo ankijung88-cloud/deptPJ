@@ -120,6 +120,25 @@ export const LandingRecruitmentSection: React.FC = () => {
                             </div>
                         </div>
                     </motion.div>
+                    {/* CTA Button */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="flex justify-center pt-12"
+                    >
+                        <button 
+                            onClick={() => window.location.href = 'mailto:contact@mongtangssok.com'}
+                            className="group relative px-12 py-5 bg-dancheong-ink text-white rounded-full text-sm font-black uppercase tracking-[0.3em] overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_rgba(26,26,26,0.2)] active:scale-95"
+                        >
+                            <span className="relative z-10 flex items-center gap-3">
+                                <AutoTranslatedText text="지금 지원하기" />
+                                <div className="w-6 h-[2px] bg-white/30 group-hover:w-10 transition-all duration-500" />
+                            </span>
+                            <div className="absolute inset-0 bg-dancheong-mugwort translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                        </button>
+                    </motion.div>
                 </div>
             </div>
         </section>

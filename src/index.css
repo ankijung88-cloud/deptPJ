@@ -91,6 +91,6 @@
   }
 
   .heritage-card {
-    @apply bg-white/20 border border-[#171717] border-opacity-10 shadow-[0_8px_32px_rgba(23,23,23,0.04)] hover:shadow-[0_20px_60px_rgba(23,23,23,0.08)] hover:bg-white/30 transition-all duration-700 rounded-[32px];
+    @apply bg-white border border-[#171717] border-opacity-10 shadow-[0_8px_32px_rgba(23,23,23,0.04)] hover:shadow-[0_20px_60px_rgba(23,23,23,0.08)] hover:bg-[#F9F6F1] transition-all duration-700 rounded-[32px];
   }
 }

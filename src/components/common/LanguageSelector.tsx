@@ -63,21 +63,27 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </button>
 
             {isMenuOpen && (
-                <div className={`absolute right-0 bg-zinc-900 border-t-2 border-dancheong-red shadow-[0_30px_80px_rgba(0,0,0,0.7)] p-4 z-[10000] transition-all duration-300 origin-bottom-right md:origin-top-right animate-in fade-in zoom-in-95 font-sans ${isFloating ? 'w-[280px] md:w-[320px] bottom-full md:bottom-auto md:top-full mb-4 md:mb-0 md:mt-4 rounded-xl md:rounded-l-xl md:rounded-r-none border-r-0' : 'w-[450px] top-full mt-4 rounded-b-xl'
-                    }`}>
+                <div className={`absolute right-0 shadow-[0_30px_80px_rgba(26,26,26,0.15)] p-4 z-[10000] transition-all duration-300 origin-bottom-right md:origin-top-right animate-in fade-in zoom-in-95 font-sans ${
+                    isFloating 
+                    ? 'bg-zinc-900 border-t-2 border-dancheong-red text-white w-[280px] md:w-[320px] bottom-full md:bottom-auto md:top-full mb-4 md:mb-0 md:mt-4 rounded-xl md:rounded-l-xl md:rounded-r-none border-r-0' 
+                    : isLanding
+                    ? 'bg-white border-t-2 border-dancheong-ink w-[450px] top-full mt-4 rounded-b-xl'
+                    : 'bg-zinc-900 border-t-2 border-dancheong-red text-white w-[450px] top-full mt-4 rounded-b-xl'
+                }`}>
                     <div className={`grid ${isFloating ? 'grid-cols-2' : 'grid-cols-3'} gap-1`}>
                         {supportedLanguages.map((lang) => (
                             <button
                                 key={lang.code}
                                 onClick={() => changeLanguage(lang.code)}
-                                className={`flex items-center px-4 py-2.5 text-xs hover:bg-white/10 rounded-lg transition-all duration-300 relative group/lang tracking-wider ${i18n.language === lang.code
-                                    ? 'text-[#D4AF37] font-extrabold bg-white/10'
-                                    : 'text-zinc-400 hover:text-white hover:translate-x-1'
-                                    }`}
+                                className={`flex items-center px-4 py-2.5 text-xs rounded-lg transition-all duration-300 relative group/lang tracking-wider ${
+                                    i18n.language === lang.code
+                                    ? (isLanding ? 'text-dancheong-ink font-black bg-dancheong-ink/5' : 'text-[#D4AF37] font-extrabold bg-white/10')
+                                    : (isLanding ? 'text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-dancheong-ink/5' : 'text-zinc-400 hover:text-white hover:bg-white/10 hover:translate-x-1')
+                                }`}
                             >
                                 <span className="relative z-10 truncate">{lang.label}</span>
                                 {i18n.language === lang.code && (
-                                    <div className="absolute left-1 top-1/2 -translate-y-1/2 w-[2px] h-2/5 bg-dancheong-red" />
+                                    <div className={`absolute left-1 top-1/2 -translate-y-1/2 w-[2px] h-2/5 ${isLanding ? 'bg-dancheong-ink' : 'bg-dancheong-red'}`} />
                                 )}
                             </button>
                         ))}

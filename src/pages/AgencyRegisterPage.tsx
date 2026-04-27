@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Building2, User, Mail, Phone, Globe, ArrowRight, ShieldCheck, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { Building2, User, Mail, Phone, Globe, ArrowRight, ShieldCheck, CheckCircle2, ChevronLeft, Upload } from 'lucide-react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { BrandLogo } from '../components/common/BrandLogo';
 import { registerAgency } from '../api/auth';
@@ -18,7 +18,9 @@ const AgencyRegisterPage: React.FC = () => {
         address: '',
         category: 'Fashion',
         description: '',
-        logoUrl: ''
+        logoUrl: '',
+        logoFile: null as File | null,
+        logoPreview: ''
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +35,7 @@ const AgencyRegisterPage: React.FC = () => {
                 address: formData.address,
                 category: formData.category,
                 description: formData.description,
-                logo_url: formData.logoUrl
+                logo_url: formData.logoPreview || formData.logoUrl // Use preview (base64) or URL
             });
             setStep(3); // Show success state
         } catch (err: any) {
@@ -176,17 +178,78 @@ const AgencyRegisterPage: React.FC = () => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="md:col-span-2 space-y-2">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Brand Logo URL (Optional)</label>
-                                                <div className="relative group">
-                                                    <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
-                                                    <input 
-                                                        type="url" 
-                                                        className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
-                                                        placeholder="https://..."
-                                                        value={formData.logoUrl}
-                                                        onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
-                                                    />
+                                            
+                                            <div className="md:col-span-2 space-y-6">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Brand Logo URL (Optional)</label>
+                                                        <div className="relative group">
+                                                            <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-dancheong-ink/20 group-focus-within:text-dancheong-mugwort transition-colors" size={18} />
+                                                            <input 
+                                                                type="url" 
+                                                                className="w-full bg-white/60 border border-dancheong-ink/15 rounded-3xl py-5 pl-16 pr-8 text-dancheong-ink placeholder:text-dancheong-ink/20 outline-none focus:border-dancheong-mugwort focus:ring-4 focus:ring-dancheong-mugwort/5 transition-all font-sans shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                                                                placeholder="https://..."
+                                                                value={formData.logoUrl}
+                                                                onChange={(e) => setFormData({...formData, logoUrl: e.target.value})}
+                                                                disabled={!!formData.logoFile}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/30 ml-4">Direct File Upload</label>
+                                                        <div className="relative group">
+                                                            <input 
+                                                                type="file" 
+                                                                id="logo-upload"
+                                                                className="hidden"
+                                                                accept="image/*"
+                                                                onChange={(e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file) {
+                                                                        const reader = new FileReader();
+                                                                        reader.onloadend = () => {
+                                                                            setFormData({
+                                                                                ...formData, 
+                                                                                logoFile: file,
+                                                                                logoPreview: reader.result as string
+                                                                            });
+                                                                        };
+                                                                        reader.readAsDataURL(file);
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <label 
+                                                                htmlFor="logo-upload"
+                                                                className="w-full bg-white/60 border border-dancheong-ink/15 border-dashed rounded-3xl py-5 px-8 flex items-center justify-between cursor-pointer hover:border-dancheong-mugwort transition-all group-focus-within:border-dancheong-mugwort"
+                                                            >
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-8 h-8 rounded-full bg-dancheong-ink/5 flex items-center justify-center text-dancheong-ink/40 group-hover:text-dancheong-mugwort transition-colors">
+                                                                        {formData.logoPreview ? (
+                                                                            <img src={formData.logoPreview} alt="Preview" className="w-full h-full rounded-full object-cover" />
+                                                                        ) : (
+                                                                            <Upload size={16} />
+                                                                        )}
+                                                                    </div>
+                                                                    <span className="text-xs font-medium text-dancheong-ink/40 truncate max-w-[150px]">
+                                                                        {formData.logoFile ? formData.logoFile.name : 'Select image file'}
+                                                                    </span>
+                                                                </div>
+                                                                {formData.logoFile && (
+                                                                    <button 
+                                                                        type="button"
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            setFormData({...formData, logoFile: null, logoPreview: ''});
+                                                                        }}
+                                                                        className="text-[9px] font-black uppercase text-red-500 hover:text-red-600 transition-colors"
+                                                                    >
+                                                                        Remove
+                                                                    </button>
+                                                                )}
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

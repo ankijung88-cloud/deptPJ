@@ -39,7 +39,7 @@ export const LandingHeader: React.FC = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${isScrolled
-                    ? 'py-3 bg-white/80 backdrop-blur-lg shadow-sm border-b border-dancheong-ink/5'
+                    ? 'py-3 bg-white shadow-md border-b border-dancheong-ink/5'
                     : 'py-6 bg-transparent'
                 }`}
         >
@@ -69,8 +69,14 @@ export const LandingHeader: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <LanguageSelector variant="landing" />
                         <button
+                            onClick={() => scrollToSection('floors')}
+                            className="heritage-button-fill px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full bg-dancheong-ink text-white hover:bg-dancheong-mugwort transition-all duration-500 tracking-widest uppercase shadow-lg shadow-dancheong-ink/10"
+                        >
+                            <AutoTranslatedText text={t('hero.start')} />
+                        </button>
+                        <button
                             onClick={() => navigate('/admin/login')}
-                            className="heritage-button-outline px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full border border-dancheong-ink/20 hover:border-dancheong-ink transition-all duration-500 tracking-widest uppercase bg-white/50 backdrop-blur-sm"
+                            className="heritage-button-outline px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full border border-dancheong-ink/20 hover:border-dancheong-ink transition-all duration-500 tracking-widest uppercase bg-white"
                         >
                             <AutoTranslatedText text={t('hero.story')} />
                         </button>

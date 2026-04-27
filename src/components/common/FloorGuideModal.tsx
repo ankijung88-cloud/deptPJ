@@ -70,7 +70,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-dancheong-ink/40 backdrop-blur-sm"
+                        className="absolute inset-0 bg-dancheong-ink/80"
                     />
 
                     {/* Modal Content */}
@@ -112,11 +112,11 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="bg-white/40 p-5 rounded-2xl border border-dancheong-ink/5 flex flex-col gap-4 hover:bg-white/60 transition-colors"
+                                    className="bg-[#2a2a2a] p-5 rounded-2xl border border-white/5 flex flex-col gap-4 hover:bg-[#333333] transition-colors"
                                 >
                                     {/* Floor Header */}
                                     <div className="flex items-center gap-5">
-                                        <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-white/5 rounded-2xl border border-white/5">
+                                        <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-black/20 rounded-2xl border border-white/5">
                                             <span className="text-xl font-black text-white/60">
                                                 {floor.floor}
                                             </span>
@@ -161,7 +161,7 @@ export const FloorGuideModal: React.FC<FloorGuideModalProps> = ({ isOpen, onClos
                                                                         key={product.id}
                                                                         to={`/product/${product.id}`}
                                                                         onClick={onClose}
-                                                                        className="text-[12px] text-white/60 hover:text-dancheong-mugwort hover:bg-white/5 px-2 py-1 rounded transition-all flex items-center gap-1.5"
+                                                                        className="text-[12px] text-white/60 hover:text-dancheong-mugwort hover:bg-white/10 px-2 py-1 rounded transition-all flex items-center gap-1.5"
                                                                     >
                                                                         <Hash size={10} className="opacity-50" />
                                                                         <AutoTranslatedText text={getLocalizedText(product.title, i18n.language)} />
