@@ -70,13 +70,13 @@ export const LandingHeader: React.FC = () => {
                     </nav>
 
                     <div className="hidden xl:flex items-center gap-4">
+                        <LanguageSelector variant="landing" />
                         <button
                             onClick={() => scrollToSection('floors')}
                             className="text-xs sm:text-sm font-black text-dancheong-ink/60 hover:text-dancheong-ink transition-colors duration-300 uppercase tracking-widest px-2"
                         >
                             {t('floor_guide')}
                         </button>
-                        <LanguageSelector variant="landing" />
                         <button
                             onClick={() => navigate('/admin/login')}
                             className="heritage-button-outline px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full border border-dancheong-ink/20 hover:border-dancheong-ink transition-all duration-500 tracking-widest uppercase bg-white"
