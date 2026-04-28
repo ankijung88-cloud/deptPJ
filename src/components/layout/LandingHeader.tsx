@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo';
 import { LanguageSelector } from '../common/LanguageSelector';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
@@ -10,6 +11,7 @@ export const LandingHeader: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -20,6 +22,7 @@ export const LandingHeader: React.FC = () => {
     }, []);
 
     const scrollToSection = (id: string) => {
+        setIsMenuOpen(false);
         const element = document.getElementById(id);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
@@ -66,14 +69,8 @@ export const LandingHeader: React.FC = () => {
                         ))}
                     </nav>
 
-                    <div className="flex items-center gap-3">
+                    <div className="hidden xl:flex items-center gap-3">
                         <LanguageSelector variant="landing" />
-                        <button
-                            onClick={() => scrollToSection('floors')}
-                            className="heritage-button-fill px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full bg-dancheong-ink text-white hover:bg-dancheong-mugwort transition-all duration-500 tracking-widest uppercase shadow-lg shadow-dancheong-ink/10"
-                        >
-                            <AutoTranslatedText text={t('hero.start')} />
-                        </button>
                         <button
                             onClick={() => navigate('/admin/login')}
                             className="heritage-button-outline px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full border border-dancheong-ink/20 hover:border-dancheong-ink transition-all duration-500 tracking-widest uppercase bg-white"
@@ -81,8 +78,53 @@ export const LandingHeader: React.FC = () => {
                             <AutoTranslatedText text={t('hero.story')} />
                         </button>
                     </div>
+
+                    {/* Mobile Menu Toggle */}
+                    <div className="xl:hidden flex items-center gap-3">
+                        <LanguageSelector variant="landing" />
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="text-dancheong-ink p-2 -mr-2"
+                        >
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            {/* Mobile Menu */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="xl:hidden bg-white border-t border-dancheong-ink/5 overflow-hidden"
+                    >
+                        <div className="container mx-auto px-6 py-4 flex flex-col gap-4">
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => scrollToSection(item.id)}
+                                    className="text-left py-2 font-bold text-dancheong-ink/80 text-sm"
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                            <hr className="border-dancheong-ink/10" />
+                            <button
+                                onClick={() => {
+                                    setIsMenuOpen(false);
+                                    navigate('/admin/login');
+                                }}
+                                className="heritage-button-outline px-6 py-3 text-xs font-black rounded-full border border-dancheong-ink/20 text-center uppercase"
+                            >
+                                <AutoTranslatedText text={t('hero.story')} />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.header>
     );
 };

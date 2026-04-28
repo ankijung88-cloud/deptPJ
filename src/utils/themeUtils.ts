@@ -222,7 +222,7 @@ export const getJoseonThemeById = (id: string, _fallbackFloor?: string | number)
 
 export const getJoseonTheme = (floor: string | number): JoseonTheme => {
     const f = parseInt(floor.toString(), 10);
-    if (isNaN(f) || f < 1 || f > 7) return DEFAULT_THEME;
+    if (isNaN(f) || f < 1 || f > 6) return DEFAULT_THEME;
     return JOSEON_THEMES[(f - 1) % JOSEON_THEMES.length];
 };
 export const getFloorBySubId = (subId: string): string | undefined => {
@@ -233,6 +233,5 @@ export const getFloorBySubId = (subId: string): string | undefined => {
     if (subId.startsWith('f4_') || ['b2b-mall', 'interview', 'talk', 'travel'].includes(subId)) return '6';
     if (subId.startsWith('f5_') || ['archive', 'collection'].includes(subId)) return '5';
     if (subId.startsWith('f6_') || ['heritage'].includes(subId)) return '4';
-    if (subId.startsWith('f7_') || ['meeting-room'].includes(subId)) return '7';
     return undefined;
 };

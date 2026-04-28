@@ -1,22 +1,7 @@
 import { FloorCategory, Notice, FAQ, StaticPage } from '../types';
 
 export const FALLBACK_FLOORS: FloorCategory[] = [
-    {
-        id: 'floor-7',
-        floor: '7F',
-        title: { ko: '커뮤니케이션 라운지', en: 'COMMUNICATION LOUNGE' },
-        description: { ko: '실시간 가상 회의와 아바타 기반의 소통이 이루어지는 협업 공간입니다.', en: 'A collaborative space for real-time virtual meetings and avatar-based communication.' },
-        videoUrl: '/uploads/meeting_room.mp4',
-        color: '#FF3B30',
-        content: [],
-        subitems: [
-            { id: 'meeting-room', label: { ko: '회의실', en: 'Meeting Room' } },
-            { id: 'audio-room', label: { ko: '오디오룸', en: 'Audio Room' } },
-            { id: 'interview-room', label: { ko: '면접실', en: 'Interview Room' } },
-            { id: 'square', label: { ko: '모두의 광장', en: 'Square' } },
-            { id: 'office', label: { ko: '오피스', en: 'Office' } }
-        ]
-    },
+
     {
         id: 'floor-6',
         floor: '6F',
@@ -122,7 +107,7 @@ export const FALLBACK_PARTNERS = [
 ];
 
 export const FALLBACK_PRODUCTS: any[] = [
-    { id: 'p7-1', subcategory: 'meeting-room', category: 'floor-7', title: { ko: '스마트 스터디 룸 예약권', en: 'Smart Study Room Reservation' }, description: { ko: '최적의 몰입을 위한 프라이빗 스터디 공간입니다.', en: 'A private study space for optimal immersion.' }, image_url: '/via_station_logo_portal.png', price: '20,000₩' },
+
     { id: 'p4-1', subcategory: 'heritage', category: 'floor-4', title: { ko: '경복궁 근정전 축소 모형', en: 'Gyeongbokgung Geunjeongjeon Scale Model' }, description: { ko: '정교한 세공으로 완성된 조선 왕실 건축의 정수입니다.', en: 'The essence of Joseon royal architecture.' }, image_url: '/via_station_logo_portal.png', price: '2,500,000₩' },
     { id: 'p2-1', subcategory: 'skincare', category: 'floor-2', title: { ko: '프리미엄 밸런싱 세럼', en: 'Premium Balancing Serum' }, description: { ko: '피부 속 깊은 곳까지 수분을 채워주는 고농축 영양 세럼입니다.', en: 'A highly concentrated nourishing serum.' }, image_url: '/via_station_logo_portal.png', price: '120,000₩' }
 ];
