@@ -1,6 +1,4 @@
-import React, { useEffect, useState, Suspense, useCallback } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
     Search,
@@ -11,19 +9,21 @@ import {
     Monitor, 
     Coffee, 
     Wind, 
-    Mic,
     MoreVertical,
-    Send
+    Send,
+    Video,
+    Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import io from 'socket.io-client';
 
-import { OfficeEnvironment } from '../components/gallery/OfficeEnvironment';
+import { OfficeEnvironment2D } from '../components/gallery/OfficeEnvironment2D';
 import { useNavigationState, useImmersiveMode } from '../context/NavigationActionContext';
 import { useAdmin } from '../hooks/useAdmin';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import { LanguageSelector } from '../components/common/LanguageSelector';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
 const socket = io();
@@ -267,44 +267,19 @@ const TeamWorkspacePage: React.FC = () => {
         });
     };
 
-    const [cameraTarget, setCameraTarget] = useState<[number, number, number]>([0, 0, 8]);
-    const [activeDeptId, setActiveDeptId] = useState<string | null>(null);
+
 
     const handleMove = (point: [number, number, number]) => {
-        // Enforce Walls & Boundaries
-        if (activeDeptId) {
-            const currentDept = DEPARTMENTS.find(d => d.id === activeDeptId);
-            if (!currentDept) return;
-
-            const dx = Math.abs(point[0] - currentDept.offset[0]);
-            const dz = Math.abs(point[2] - currentDept.offset[2]);
-
-            // EXIT LOGIC: Clicking clearly in the hallway
-            const isTopRow = currentDept.offset[2] < 10;
-            const isExit = isTopRow ? point[2] > 6 : point[2] < 10;
-
-            if (isExit) {
-                setActiveDeptId(null);
-                setCameraTarget([0, 0, 8]); // Return to hub view
-            } else if (dx > 4.2 || dz > 8.2) {
-                // BLOCKED: Trying to walk through private walls to other rooms
-                return;
-            }
-        } else {
-            // HALLWAY MODE: Block clicking inside rooms directly (must use door)
-            if (point[2] < 3.5 || point[2] > 12.5) {
-                return;
-            }
+        // In 2D mode, movement logic can be simplified or used for avatars
+        if (socket) {
+            socket.emit('move', { position: point });
+            
+            socket.emit('office-move-user', {
+                roomId: parentId,
+                position: point,
+                seatId: null // Standing up
+            });
         }
-
-        // Dynamic Tracking: Camera follows the EXACT moved point
-        setCameraTarget([point[0], 0.8, point[2]]);
-
-        socket.emit('office-move-user', {
-            roomId: parentId,
-            position: point,
-            seatId: null // Standing up
-        });
         
         setParticipants(prev => prev.map(p => 
             p.id === user?.uid 
@@ -317,39 +292,21 @@ const TeamWorkspacePage: React.FC = () => {
     return (
         <div className="fixed inset-0 bg-[#050505] text-white overflow-hidden font-sans" onMouseMove={handleActivity}>
             <ErrorBoundary>
-                <div className="absolute inset-0 z-0">
-                    <Canvas shadows gl={{ antialias: true, alpha: true }}>
-                        <PerspectiveCamera makeDefault position={[0, 20, 35]} fov={45} />
-                        <OrbitControls 
-                            makeDefault 
-                            enablePan={true} 
-                            maxPolarAngle={Math.PI / 2.1} 
-                            target={cameraTarget as any}
-                            // Adaptive Zoom: Closer inspection inside rooms, wider view outside
-                            minDistance={activeDeptId ? 2 : 5}
-                            maxDistance={activeDeptId ? 15 : 40}
-                            enableDamping 
-                            dampingFactor={0.05}
-                            panSpeed={0.8}
-                        />
-                        
-                        <Suspense fallback={null}>
-                            <OfficeEnvironment 
-                                seats={seats}
-                                participants={participants}
-                                departments={DEPARTMENTS}
-                                onAddSeat={handleAddSeat}
-                                onRemoveSeat={handleRemoveSeat}
-                                onAssignUser={(id: string) => setAssigningSeatId(id)}
-                                onSit={handleSit}
-                                onMove={handleMove}
-                                onEnterRoom={setActiveDeptId}
-                                user={user}
-                                isAdmin={isAdmin}
-                                isAgency={isAgency}
-                            />
-                        </Suspense>
-                    </Canvas>
+                <div className="absolute inset-0 z-0 pt-24">
+                    <OfficeEnvironment2D 
+                        seats={seats}
+                        participants={participants}
+                        departments={DEPARTMENTS}
+                        onAddSeat={handleAddSeat}
+                        onRemoveSeat={handleRemoveSeat}
+                        onAssignUser={(id: string) => setAssigningSeatId(id)}
+                        onSit={handleSit}
+                        onMove={handleMove}
+                        onEnterRoom={() => {}}
+                        user={user}
+                        isAdmin={isAdmin}
+                        isAgency={isAgency}
+                    />
                 </div>
             </ErrorBoundary>
 
@@ -452,11 +409,13 @@ const TeamWorkspacePage: React.FC = () => {
                         ))}
                     </div>
                 </header>
-
-                {/* Bottom Controls */}
-                <footer className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 pointer-events-auto">
-                    <div className="px-6 py-4 rounded-3xl bg-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6">
-                        <div className="flex items-center gap-4 border-r border-white/10 pr-6 mr-2">
+                {/* Main Action Controls (Right Sidebar) */}
+                <aside className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20">
+                    <div className="px-5 py-8 rounded-[2.5rem] bg-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center gap-6">
+                        <div className="pb-4 mb-2 border-b border-white/10 w-full flex justify-center">
+                            <LanguageSelector variant="sidebar" />
+                        </div>
+                        <div className="flex flex-col items-center gap-4 border-b border-white/10 pb-6 mb-2">
                             {[
                                 { id: 'working', icon: Monitor, color: '#00D2FF', label: <AutoTranslatedText text="Working" /> },
                                 { id: 'break', icon: Coffee, color: '#FF9500', label: <AutoTranslatedText text="Break" /> },
@@ -466,35 +425,54 @@ const TeamWorkspacePage: React.FC = () => {
                                 <button
                                     key={status.id}
                                     onClick={() => setUserStatus(status.id)}
-                                    className={`relative group p-2 rounded-xl transition-all ${userStatus === status.id ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                    className={`relative group p-4 rounded-2xl transition-all ${userStatus === status.id ? 'bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'hover:bg-white/5'}`}
                                     title={typeof status.label === 'string' ? status.label : ''}
                                 >
-                                    <status.icon className={`w-5 h-5 ${userStatus === status.id ? '' : 'opacity-40'}`} style={{ color: status.color }} />
+                                    <status.icon className={`w-6 h-6 ${userStatus === status.id ? '' : 'opacity-40'}`} style={{ color: status.color }} />
                                     {userStatus === status.id && (
-                                        <motion.div layoutId="status-indicator" className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white" />
+                                        <motion.div layoutId="status-indicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-white" />
                                     )}
+                                    
+                                    {/* Tooltip on hover */}
+                                    <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                        {status.label}
+                                    </div>
                                 </button>
                             ))}
                         </div>
-
-                        <div className="flex items-center gap-3">
-                            <button className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all">
-                                <Mic className="w-5 h-5" />
+                        <div className="flex flex-col items-center gap-4">
+                            <button 
+                                onClick={() => navigate('/virtual-meeting/default-room')}
+                                className="group relative p-4 rounded-2xl bg-[#00D2FF] text-black hover:bg-[#00D2FF]/80 transition-all shadow-[0_10px_20px_rgba(0,210,255,0.2)]"
+                            >
+                                <Video className="w-6 h-6" />
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                    <AutoTranslatedText text="Meeting Room" />
+                                </div>
                             </button>
+
                             <button 
                                 onClick={() => setIsChatOpen(!isChatOpen)}
-                                className={`p-2 rounded-xl transition-all ${isChatOpen ? 'bg-[#00D2FF] text-black shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-white/5 text-white/60 hover:text-white'}`}
+                                className={`group relative p-4 rounded-2xl transition-all ${isChatOpen ? 'bg-[#00D2FF] text-black shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-white/5 text-white/60 hover:text-white'}`}
                             >
-                                <MessageCircle className="w-5 h-5" />
+                                <MessageCircle className="w-6 h-6" />
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                    <AutoTranslatedText text="Office Chat" />
+                                </div>
                             </button>
-                            {isAdmin && (
-                                <button className="p-2 rounded-xl bg-[#7000FF]/20 text-[#7000FF] border border-[#7000FF]/40 hover:bg-[#7000FF]/40 transition-all">
-                                    <Plus className="w-5 h-5" />
-                                </button>
-                            )}
+                            
+                            <button 
+                                onClick={() => {/* Settings logic */}}
+                                className="group relative p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                            >
+                                <Settings className="w-6 h-6 text-white/60" />
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                    <AutoTranslatedText text="Settings" />
+                                </div>
+                            </button>
                         </div>
                     </div>
-                </footer>
+                </aside>
 
                 {/* Chat Sidebar Overlay */}
                 <AnimatePresence>

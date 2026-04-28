@@ -100,8 +100,8 @@ const VirtualCinemaPage: React.FC = () => {
 
                         const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
                         // Always load Korean for the editable fields to ensure consistency
-                        setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "3D 가상 시네마");
-                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 3D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
+                        setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "2D 가상 시네마");
+                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 2D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
                     }
                 } catch (error) {
                     console.error("Failed to fetch parent product:", error);

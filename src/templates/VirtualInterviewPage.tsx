@@ -387,12 +387,13 @@ const VirtualInterviewPage: React.FC = () => {
                         <ControlBtn 
                             active={!isMuted} 
                             onClick={() => setIsMuted(!isMuted)} 
+                            label={isMuted ? t('common.mic_on') : t('common.mic_off')}
                             icon={isMuted ? <MicOff size={22} /> : <Mic size={22} />} 
                         />
                         <ControlBtn 
                             active={!isVideoOff} 
                             onClick={toggleCamera} 
-                            label={isVideoOff ? t('audition.control.camera_on') : t('audition.control.camera_off')}
+                            label={isVideoOff ? t('common.camera_on') : t('common.camera_off')}
                             icon={isVideoOff ? <VideoOff size={22} /> : <Video size={22} />} 
                         />
                         <div className="w-px h-8 bg-white/10 mx-2" />

@@ -109,7 +109,7 @@ export const Breadcrumbs: React.FC = () => {
 
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-widest text-dancheong-ink/60">
                 <Link to="/" className="transition-colors whitespace-nowrap hover:brightness-125" style={{ color: 'inherit' }} onMouseEnter={e => e.currentTarget.style.color = theme.accentColor} onMouseLeave={e => e.currentTarget.style.color = ''}>
-                    <AutoTranslatedText text="3D포털" />
+                    <AutoTranslatedText text="2D포털" />
                 </Link>
                 
                 <ChevronRight className="w-3 h-3 shrink-0" style={{ color: `${theme.accentColor}80` }} />

@@ -2552,7 +2552,7 @@ export const AdminPage: React.FC = () => {
                             className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-dancheong-mugwort border border-dancheong-mugwort/20 hover:bg-dancheong-mugwort/10 transition-all font-bold group shadow-[0_4px_12px_rgba(79,109,91,0.1)] hover:shadow-[0_4px_20px_rgba(79,109,91,0.2)]"
                         >
                             <LayoutGrid size={20} className="group-hover:rotate-12 transition-transform" />
-                            <span className="text-sm tracking-tight"><AutoTranslatedText text="Visit 3D Portal" /></span>
+                            <span className="text-sm tracking-tight"><AutoTranslatedText text="Visit 2D Portal" /></span>
                             <ExternalLink size={14} className="ml-auto opacity-40 group-hover:opacity-100 transition-opacity" />
                         </button>
                     </div>

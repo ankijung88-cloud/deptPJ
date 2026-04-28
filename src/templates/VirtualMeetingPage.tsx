@@ -1,7 +1,4 @@
-import React, { useState, useEffect, Suspense, useCallback } from 'react';
-import * as THREE from 'three';
-import { Canvas } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -12,21 +9,24 @@ import {
     Video, 
     VideoOff, 
     LogOut, 
-    Settings,
     MessageSquare,
     Hand,
     MonitorUp,
     ChevronRight,
-    Search,
     Upload,
     Link,
     X,
-    Maximize,
     Minimize,
     UserMinus,
-    Lock
+    Lock,
+    Trash2,
+    Square,
+    Columns2,
+    LayoutGrid,
+    MonitorPlay
 } from 'lucide-react';
-import { MeetingRoomEnvironment } from '../components/gallery/MeetingRoomEnvironment';
+import { MeetingRoomEnvironment2D } from '../components/gallery/MeetingRoomEnvironment2D';
+import { LanguageSelector } from '../components/common/LanguageSelector';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,7 +34,7 @@ import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { useAdmin } from '../hooks/useAdmin';
 import { useWebRTCScreenShare } from '../hooks/useWebRTCScreenShare';
-import { useNavigationState, useImmersiveMode } from '../context/NavigationActionContext';
+import { useImmersiveMode } from '../context/NavigationActionContext';
 
 interface Participant {
     id: string;
@@ -44,6 +44,13 @@ interface Participant {
     position?: [number, number, number];
     isMuted: boolean;
     isVideoOff: boolean;
+}
+
+interface ChatMessage {
+    id: number;
+    sender: string;
+    content: string;
+    timestamp: string;
 }
 
 const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'];
@@ -60,6 +67,9 @@ const VirtualMeetingPage: React.FC = () => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [showParticipants, setShowParticipants] = useState(false);
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [newMessage, setNewMessage] = useState('');
+    const [showChat, setShowChat] = useState(true);
     
     // Authorization States
     const [isAuthorized, setIsAuthorized] = useState(false);
@@ -67,7 +77,6 @@ const VirtualMeetingPage: React.FC = () => {
     const [showTokenModal, setShowTokenModal] = useState(false);
     const [tokenError, setTokenError] = useState('');
     
-    const { resetUiTimer } = useNavigationState();
     useImmersiveMode(true);
     
     const [localParticipant, setLocalParticipant] = useState<Participant>({
@@ -81,8 +90,10 @@ const VirtualMeetingPage: React.FC = () => {
     });
     
     const [participants, setParticipants] = useState<Participant[]>([]);
-    const [screenData, setScreenData] = useState<{ url: string; type: string }>({ url: '', type: 'none' });
+    const [splitMode, setSplitMode] = useState<1 | 2 | 4>(1);
+    const [screenData, setScreenData] = useState<{ url: string; type: string; presenterId?: string }>({ url: '', type: 'none' });
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isScreenListModalOpen, setIsScreenListModalOpen] = useState(false);
     const [isScreenMaximized, setIsScreenMaximized] = useState(false);
     const [inviteLink, setInviteLink] = useState<string | null>(null);
     const [showInviteModal, setShowInviteModal] = useState(false);
@@ -96,7 +107,10 @@ const VirtualMeetingPage: React.FC = () => {
     
     const { isAdmin, isAgency } = useAdmin();
     const isHost = isAdmin || isAgency;
-    const hasScreenControl = isHost;
+    
+    // Everyone can share screen now, but Host has upload permissions for files if needed
+    const canShareScreen = true; 
+    const hasScreenControl = isHost; // Host still controls global settings if any
 
     // WebRTC Screen Sharing Hook
     const { 
@@ -197,9 +211,21 @@ const VirtualMeetingPage: React.FC = () => {
             }
         });
 
-        newSocket.on('screen-update', (data: { url: string, type: string }) => {
+        newSocket.on('screen-update', (data: { url: string, type: string, presenterId?: string }) => {
             console.log('[Socket] Screen update:', data);
             setScreenData(data);
+        });
+
+        newSocket.on('meeting-chat-received', (msg: ChatMessage) => {
+            setChatMessages(prev => {
+                // Prevent duplicate if already added by optimistic update
+                if (prev.some(m => m.id === msg.id)) return prev;
+                return [...prev, msg].slice(-100);
+            });
+        });
+
+        newSocket.on('meeting-chat-deleted', (messageId: number) => {
+            setChatMessages(prev => prev.filter(m => m.id !== messageId));
         });
 
         return () => {
@@ -225,17 +251,38 @@ const VirtualMeetingPage: React.FC = () => {
     };
 
     const handleKickParticipant = (participantId: string) => {
-        if (!isHost || !socket) {
-            console.warn('[Meeting] Kick blocked: Not host or socket disconnected', { isHost, socketId: socket?.id });
-            return;
-        }
-        
-        const finalRoomId = roomId || 'default-room';
+        if (!isHost || !socket) return;
         const confirmMsg = t('meeting.kick_confirm', '해당 참가자를 내보내시겠습니까?');
         if (window.confirm(confirmMsg)) {
-            console.log(`[Meeting] Emitting kick-participant: room=${finalRoomId}, target=${participantId}`);
-            socket.emit('kick-participant', { participantId, roomId: finalRoomId });
+            socket.emit('kick-participant', { participantId, roomId: roomId || 'default-room' });
         }
+    };
+
+    const handleSendMessage = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!newMessage.trim() || !socket) return;
+
+        const msg: ChatMessage = {
+            id: Date.now(),
+            sender: localParticipant.name,
+            content: newMessage,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        // Optimistic Update: 본인의 메시지는 즉시 화면에 표시
+        setChatMessages(prev => [...prev, msg].slice(-100));
+
+        socket.emit('meeting-chat-send', { roomId, msg });
+        setNewMessage('');
+    };
+
+    const handleDeleteMessage = (messageId: number) => {
+        if (!socket) return;
+        
+        // Optimistic delete
+        setChatMessages(prev => prev.filter(m => m.id !== messageId));
+        
+        socket.emit('meeting-chat-delete', { roomId, messageId });
     };
 
     const handleTokenSubmit = async (e: React.FormEvent) => {
@@ -253,7 +300,7 @@ const VirtualMeetingPage: React.FC = () => {
         setTokenError('');
     };
 
-    const handleShareScreen = (url: string, manualType?: string) => {
+    const handleShareScreen = (url: string, manualType?: string, presenterId?: string) => {
         let type = manualType || 'image';
         if (url === '') {
             type = 'none';
@@ -263,7 +310,11 @@ const VirtualMeetingPage: React.FC = () => {
             type = 'video';
         }
         if (socket) {
-            socket.emit('share-screen', { url, type });
+            socket.emit('share-screen', { 
+                url, 
+                type, 
+                presenterId: presenterId || (url !== '' ? socket.id : undefined)
+            });
         }
         setIsShareModalOpen(false);
     };
@@ -280,263 +331,359 @@ const VirtualMeetingPage: React.FC = () => {
 
     return (
         <ErrorBoundary>
-            <div className="relative w-full h-screen bg-[#050505] overflow-hidden text-white font-sans">
-                {/* 3D Scene Layer */}
-                <div className="absolute inset-0 z-0 bg-[#050505]">
-                    <Canvas 
-                        shadows 
-                        gl={{ antialias: true, alpha: true }}
-                        onCreated={({ gl, scene }) => {
-                            gl.setClearColor('#041f18');
-                            scene.background = new THREE.Color('#031510');
-                            scene.fog = new THREE.FogExp2('#031510', 0.05);
-                        }}
-                    >
-                        <Suspense fallback={
-                            <Html center>
-                                <div className="flex flex-col items-center justify-center gap-6 w-screen h-screen bg-[#050505]">
-                                    <div className="relative">
-                                        <div className="w-20 h-20 border-4 border-[#00D2FF]/10 border-t-[#00D2FF] rounded-full animate-spin" />
-                                        <div className="absolute inset-0 w-20 h-20 border-4 border-[#00D2FF]/5 rounded-full animate-pulse shadow-[0_0_20px_#00D2FF22]" />
-                                    </div>
-                                    <div className="flex flex-col items-center gap-2">
-                                        <p className="text-[#00D2FF] font-black tracking-[0.4em] uppercase animate-pulse text-lg">{t('common.loading_space')}</p>
-                                        <p className="text-[#00D2FF]/40 text-xs tracking-widest uppercase">{t('common.loading_content')}</p>
-                                    </div>
-                                </div>
-                            </Html>
-                        }>
-                            <MeetingRoomEnvironment 
-                                participants={participants}
-                                localParticipant={localParticipant}
-                                onSeatSelect={handleSeatSelect}
-                                meetingMode={meetingMode}
-                                screenData={screenData}
-                                webrtcStream={(screenData.type === 'webrtc' && isSharing) ? localStream : (Object.values(remoteStreams)[0] || null)}
-                            />
-                        </Suspense>
-                    </Canvas>
-                </div>
-
-                {/* Header / HUD Layer */}
-                <motion.header 
-                    initial={{ y: 0, opacity: 1 }}
-                    animate={{ 
-                        y: 0, 
-                        opacity: 1 
-                    }}
-                    transition={{ duration: 0.5, ease: "circOut" }}
-                    className="absolute top-0 inset-x-0 z-10 p-10 flex justify-between items-start pointer-events-none bg-gradient-to-b from-emerald-500/20 via-emerald-500/5 to-transparent h-64"
-                    onMouseMove={resetUiTimer}
-                    style={{ pointerEvents: 'auto' }}
-                >
-                    {/* Top Neon Light Bar (Self-Illuminating) */}
-                    <div className="absolute top-0 inset-x-0 h-[4px] flex items-center justify-center">
-                        <motion.div 
-                            initial={{ opacity: 0.8 }}
-                            animate={{ opacity: [0.8, 1, 0.8] }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                            className="w-full h-full bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_15px_rgba(255,255,255,0.8),0_0_30px_rgba(52,211,153,0.6),0_0_60px_rgba(52,211,153,0.4)]" 
-                        />
-                    </div>
-                    
-                    <div className="flex flex-col gap-2 pointer-events-auto">
-                        <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(-1)}>
-                            <div className="p-3 bg-[#111] border border-white/10 rounded-full group-hover:bg-[#FF4757]/20 transition-all">
-                                <LogOut size={20} className="rotate-180 group-hover:text-[#FF4757]" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl font-black tracking-tight"><AutoTranslatedText text={t('meeting.meeting_room')} /></h1>
-                                <p className="text-xs font-bold tracking-[0.2em] uppercase opacity-40 text-[#00D2FF]"><AutoTranslatedText text={t('meeting.lounge_desc')} /></p>
+            <div className="relative w-full h-screen bg-[#050505] overflow-hidden text-white font-sans flex">
+                
+                {/* 1. Left Sidebar - Controls */}
+                <aside className="w-40 h-full bg-[#0a0a0a] border-r border-white/5 flex flex-col items-center py-8 z-50">
+                    <div className="flex flex-col items-center w-full gap-8 px-4">
+                        {/* Logout & Language */}
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                            <button 
+                                onClick={() => navigate(-1)} 
+                                className="group relative flex items-center justify-center p-3 bg-white/5 rounded-xl hover:bg-[#FF4757]/20 transition-all"
+                            >
+                                <LogOut size={18} className="rotate-180 group-hover:text-[#FF4757]" />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.back')}
+                                </span>
+                            </button>
+                            <div className="group relative flex items-center justify-center p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                                <LanguageSelector variant="sidebar" />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.language')}
+                                </span>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex items-center gap-4 pointer-events-auto">
-                        <div className="bg-[#0a0a0a] px-6 py-3 rounded-2xl border border-white/5 flex items-center gap-8">
-                            <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest"><AutoTranslatedText text={t('meeting.active_members')} /></span>
-                                <div className="flex items-center gap-2">
-                                    <Users size={14} className="text-[#00D2FF]" />
-                                    <span className="text-xl font-black">{participants.length + 1} <span className="text-sm opacity-40">/ 10</span></span>
-                                </div>
-                            </div>
-                            <div className="w-[1px] h-8 bg-white/10" />
-                            <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-black opacity-30 text-white uppercase tracking-widest"><AutoTranslatedText text={t('meeting.room_quality')} /></span>
-                                <span className="text-sm font-bold text-[#2ECC71]">Ultra HD</span>
-                            </div>
-                        </div>
-                    </div>
-                </motion.header>
+                        <div className="w-full h-[1px] bg-white/5" />
 
-                {/* Main Action Controls (Bottom Bar) */}
-                <footer className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20">
-                    <motion.div 
-                        initial={{ y: 0, opacity: 1 }}
-                        animate={{ 
-                            y: 0, 
-                            opacity: 1 
-                        }}
-                        transition={{ duration: 0.5, ease: "circOut" }}
-                        className="flex items-center gap-4 px-8 py-5 bg-[#0a0a0a] rounded-[2.5rem] border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] pointer-events-auto"
-                        onMouseMove={resetUiTimer}
-                        style={{ pointerEvents: 'auto' }}
-                    >
-                        <div className="flex items-center gap-3 pr-6 border-r border-white/10">
+                        {/* Main Grid Controls */}
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                            {/* Audio/Video */}
                             <button 
                                 onClick={toggleMute}
-                                className={`p-4 rounded-2xl transition-all duration-300 ${isMuted ? 'bg-[#FF4757] text-white shadow-[0_0_20px_#FF475744]' : 'bg-white/5 hover:bg-white/10'}`}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${isMuted ? 'bg-[#FF4757]' : 'bg-white/5 hover:bg-white/10'}`}
                             >
-                                {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
+                                {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {isMuted ? t('Unmute') : t('Mute')}
+                                </span>
                             </button>
+                            
                             <button 
                                 onClick={toggleVideo}
-                                className={`p-4 rounded-2xl transition-all duration-300 ${isVideoOff ? 'bg-[#FF4757] text-white shadow-[0_0_20px_#FF475744]' : 'bg-white/5 hover:bg-white/10'}`}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${isVideoOff ? 'bg-[#FF4757]' : 'bg-white/5 hover:bg-white/10'}`}
                             >
-                                {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
+                                {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {isVideoOff ? t('Start Video') : t('Stop Video')}
+                                </span>
                             </button>
-                        </div>
 
-                        <div className="flex items-center gap-3 px-3">
-                            <button className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all relative">
-                                <MessageSquare size={24} />
-                                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-[#00D2FF] rounded-full border-2 border-black" />
+                            {/* Split Modes */}
+                            <button 
+                                onClick={() => setSplitMode(1)}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${splitMode === 1 ? 'bg-[#00D2FF]/20 text-[#00D2FF] border-[#00D2FF]/30 border' : 'bg-white/5 hover:bg-white/10'}`}
+                            >
+                                <Square size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.screen_1')}
+                                </span>
                             </button>
-                            <button className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all"><Hand size={24} /></button>
-                            {screenData.type !== 'none' && (
+
+                            <button 
+                                onClick={() => setSplitMode(2)}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${splitMode === 2 ? 'bg-[#00D2FF]/20 text-[#00D2FF] border-[#00D2FF]/30 border' : 'bg-white/5 hover:bg-white/10'}`}
+                            >
+                                <Columns2 size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.screen_2')}
+                                </span>
+                            </button>
+
+                            <button 
+                                onClick={() => setSplitMode(4)}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${splitMode === 4 ? 'bg-[#00D2FF]/20 text-[#00D2FF] border-[#00D2FF]/30 border' : 'bg-white/5 hover:bg-white/10'}`}
+                            >
+                                <LayoutGrid size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.screen_4')}
+                                </span>
+                            </button>
+
+                            {/* Chat */}
+                            <button 
+                                onClick={() => setShowChat(!showChat)}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${showChat ? 'bg-[#00D2FF]/20 text-[#00D2FF]' : 'bg-white/5 hover:bg-white/10'}`}
+                            >
+                                <MessageSquare size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('Chat')}
+                                </span>
+                            </button>
+
+                            {/* Interaction & Share */}
+                            <button className="group relative flex items-center justify-center p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all">
+                                <Hand size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('Raise Hand')}
+                                </span>
+                            </button>
+
+                            {canShareScreen && (
                                 <button 
-                                    onClick={() => setIsScreenMaximized(true)}
-                                    title={t("전체화면으로 보기")}
-                                    className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-transparent hover:border-[#00D2FF]/30 active:scale-95 text-[#00D2FF]"
+                                    onClick={() => setIsShareModalOpen(true)}
+                                    className={`group relative flex items-center justify-center p-4 rounded-xl transition-all border ${screenData.type !== 'none' && screenData.presenterId === socket?.id ? 'bg-[#00D2FF]/20 border-[#00D2FF] text-[#00D2FF]' : 'bg-white/5 hover:bg-white/10 border-transparent'}`}
                                 >
-                                    <Maximize size={24} />
+                                    <MonitorUp size={20} />
+                                    <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                        {t('Share Screen')}
+                                    </span>
                                 </button>
                             )}
-                        </div>
 
-                        <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+                            {/* Screen Selection Button */}
+                            <button 
+                                onClick={() => setIsScreenListModalOpen(true)}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${isScreenListModalOpen ? 'bg-[#00D2FF]/20 text-[#00D2FF]' : 'bg-white/5 hover:bg-white/10'}`}
+                            >
+                                <MonitorPlay size={20} />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('meeting.screen_selector', 'Screen Selector')}
+                                </span>
+                            </button>
+
+                            {/* Invite & Participants */}
                             <button 
                                 onClick={() => {
-                                    // Generate token and register on server
                                     const token = Math.random().toString(36).substring(2, 10);
-                                    if (socket) socket.emit('register-invite-token', { roomId: 'default-room', token });
-
+                                    if (socket) socket.emit('register-invite-token', { roomId: roomId || 'default-room', token });
                                     const url = `${window.location.origin}${window.location.pathname}?invite=${token}`;
                                     setInviteLink(url);
                                     setShowInviteModal(true);
                                 }}
-                                disabled={participants.length >= 9}
-                                className={`flex items-center gap-3 px-6 py-4 font-black rounded-2xl transition-all shadow-[0_5px_15px_#00D2FF33] ${participants.length >= 9 ? 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50' : 'bg-[#00D2FF] hover:bg-[#00D2FF]/80 text-black'}`}
+                                className="group relative flex items-center justify-center p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all"
                             >
                                 <UserPlus size={20} />
-                                <span className="text-sm uppercase tracking-widest hidden md:block">
-                                    {participants.length >= 9 ? t('common.full', 'Room Full') : t('common.invite')}
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('Invite')}
                                 </span>
                             </button>
+
                             <button 
                                 onClick={() => setShowParticipants(!showParticipants)}
-                                className={`flex items-center gap-3 px-6 py-4 rounded-2xl transition-all ${showParticipants ? 'bg-white/20 text-white font-black' : 'bg-white/5 hover:bg-white/10'}`}
+                                className={`group relative flex items-center justify-center p-4 rounded-xl transition-all ${showParticipants ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'}`}
                             >
                                 <Users size={20} />
-                                <span className="text-sm uppercase tracking-widest hidden md:block">{t('common.participants')}</span>
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('Participants')}
+                                </span>
                             </button>
-                            {hasScreenControl && (
-                                <button 
-                                    onClick={() => setIsShareModalOpen(true)}
-                                    title={t("PT Management")}
-                                    className={`p-4 rounded-2xl transition-all border ${screenData.type !== 'none' ? 'bg-[#00D2FF]/20 border-[#00D2FF] text-[#00D2FF]' : 'bg-white/5 hover:bg-white/10 border-transparent hover:border-[#00D2FF]/30 active:scale-95'}`}
-                                >
-                                    <Settings size={24} />
-                                </button>
-                            )}
                         </div>
-                    </motion.div>
-                </footer>
+                    </div>
+                </aside>
 
-                {/* Sidebar (Participants List) */}
-                <AnimatePresence>
-                    {showParticipants && (
-                        <motion.aside 
-                            initial={{ x: 400 }}
-                            animate={{ x: 0 }}
-                            exit={{ x: 400 }}
-                            className="absolute right-0 top-0 bottom-0 w-80 z-30 bg-[#0a0a0a] border-l border-white/10 p-8 flex flex-col gap-8 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
-                        >
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-black tracking-tight">{t('common.participants')}</h3>
-                                <button onClick={() => setShowParticipants(false)} className="p-2 hover:bg-white/10 rounded-lg transition-all"><ChevronRight size={24} /></button>
+                {/* 2. Main Content Area (Center + Bottom) */}
+                <main className="flex-1 flex flex-col relative overflow-hidden bg-[#050505]">
+                    
+                    {/* Top Status Bar (Minimal) */}
+                    <div className="h-16 border-b border-white/5 flex items-center justify-between px-10 bg-black/20 backdrop-blur-md">
+                        <div className="flex items-center gap-6">
+                            <h2 className="text-sm font-black uppercase tracking-widest opacity-60"><AutoTranslatedText text={t('meeting.meeting_room')} /></h2>
+                            <div className="w-[1px] h-4 bg-white/10" />
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-widest">Live Connection</span>
                             </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-black opacity-30 uppercase tracking-widest">{t('meeting.room_quality')} : ULTRA HD</span>
+                        </div>
+                    </div>
 
-                            <div className="relative">
-                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30" />
-                                <input 
-                                    type="text" 
-                                    placeholder={t("common.search_placeholder")} 
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm outline-none focus:border-[#00D2FF]/50 transition-all font-sans"
-                                />
+                    {/* Center: Presentation (Monitor) */}
+                    <div className="flex-1 relative flex items-center justify-center p-10 overflow-hidden">
+                        <MeetingRoomEnvironment2D 
+                            participants={participants}
+                            localParticipant={localParticipant}
+                            onSeatSelect={handleSeatSelect}
+                            meetingMode={meetingMode}
+                            screenData={screenData}
+                            webrtcStream={
+                                screenData.type === 'webrtc' 
+                                    ? (screenData.presenterId === socket?.id ? localStream : (screenData.presenterId ? remoteStreams[screenData.presenterId] : null))
+                                    : null
+                            }
+                            splitMode={splitMode}
+                        />
+                    </div>
+
+                    {/* Bottom: Participant Videos (1-Row Grid) */}
+                    <div className="h-48 border-t border-white/5 bg-[#0a0a0a] flex items-center px-6 gap-4 overflow-x-auto custom-scrollbar">
+                        {/* Local Participant */}
+                        <div className="flex-shrink-0 w-64 h-36 bg-black rounded-2xl border-2 border-[#00D2FF]/50 relative overflow-hidden group">
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
+                                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black text-black" style={{ backgroundColor: localParticipant.color }}>
+                                    {localParticipant.name[0].toUpperCase()}
+                                </div>
                             </div>
+                            <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                                <span className="text-[10px] font-bold tracking-tight">{localParticipant.name} (Me)</span>
+                                {isMuted && <MicOff size={10} className="text-[#FF4757]" />}
+                                {isVideoOff && <VideoOff size={10} className="text-[#FF4757]" />}
+                            </div>
+                        </div>
 
-                            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                                {/* Local User */}
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-[#00D2FF]/30">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: localParticipant.color }}>
-                                            {localParticipant.name[0].toUpperCase()}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-sm tracking-tight">{localParticipant.name} ({t('common.me')})</p>
-                                            <p className="text-[10px] uppercase tracking-widest text-[#00D2FF]">{t('meeting.host')}</p>
-                                        </div>
+                        {/* Remote Participants */}
+                        {participants.map(p => (
+                            <div key={p.id} className="flex-shrink-0 w-64 h-36 bg-black rounded-2xl border border-white/10 relative overflow-hidden group hover:border-[#00D2FF]/30 transition-colors">
+                                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black text-black" style={{ backgroundColor: p.color }}>
+                                        {p.name[0].toUpperCase()}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        {isMuted && <MicOff size={14} className="text-[#FF4757]" />}
-                                        {isVideoOff && <VideoOff size={14} className="text-[#FF4757]" />}
+                                    {p.isVideoOff && (
+                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                                            <VideoOff size={32} className="text-white/20" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                                    <span className="text-[10px] font-bold tracking-tight">{p.name}</span>
+                                    <div className="flex items-center gap-1">
+                                        {p.isMuted && <MicOff size={10} className="text-[#FF4757]" />}
+                                        {p.isVideoOff && <VideoOff size={10} className="text-[#FF4757]" />}
                                     </div>
                                 </div>
+                                {isHost && (
+                                    <button 
+                                        onClick={() => handleKickParticipant(p.id)}
+                                        className="absolute top-3 right-3 p-2 bg-black/40 hover:bg-[#FF4757] text-white/40 hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                        <UserMinus size={14} />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </main>
 
-                                {/* Remote Users */}
-                                {participants.map(p => (
-                                    <div key={p.id} className="flex items-center justify-between p-4 rounded-full bg-white/5 border border-white/5 hover:border-white/10 transition-all">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: p.color }}>
-                                                {p.name[0].toUpperCase()}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-sm tracking-tight">{p.name}</p>
-                                                <p className="text-[10px] uppercase opacity-30 tracking-widest">{p.seatId !== null ? <>{t('meeting.seat')} {p.seatId + 1}</> : t('meeting.observing')}</p>
-                                            </div>
+                {/* 3. Right Sidebar - Chat */}
+                <AnimatePresence>
+                    {showChat && (
+                        <motion.aside 
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 360, opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            className="h-full bg-[#0a0a0a] border-l border-white/5 flex flex-col z-50 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
+                        >
+                            <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <MessageSquare size={20} className="text-[#00D2FF]" />
+                                    <h3 className="text-xl font-black tracking-tight">{t('common.chat')}</h3>
+                                </div>
+                                <button onClick={() => setShowChat(false)} className="p-2 hover:bg-white/5 rounded-lg opacity-40 hover:opacity-100 transition-all">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+                                {chatMessages.length === 0 && (
+                                    <div className="h-full flex flex-col items-center justify-center gap-4 opacity-20">
+                                        <MessageSquare size={48} strokeWidth={1} />
+                                        <p className="text-[10px] font-black uppercase tracking-widest">{t('meeting.no_messages')}</p>
+                                    </div>
+                                )}
+                                {chatMessages.map(msg => (
+                                    <div key={msg.id} className={`flex flex-col gap-1 group relative ${msg.sender === localParticipant.name ? 'items-end' : 'items-start'}`}>
+                                        <div className="flex items-center gap-2 px-1">
+                                            <span className="text-[10px] font-black opacity-30 uppercase tracking-widest">{msg.sender}</span>
+                                            <span className="text-[8px] opacity-20 font-mono">{msg.timestamp}</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            {isHost && (
+                                        <div className="flex items-center gap-2 max-w-[85%] group">
+                                            {msg.sender === localParticipant.name && (
                                                 <button 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleKickParticipant(p.id);
-                                                    }}
-                                                    className="p-1.5 hover:bg-[#FF4757]/20 text-white/20 hover:text-[#FF4757] rounded-lg transition-all"
-                                                    title={t("Kick Member")}
+                                                    onClick={() => handleDeleteMessage(msg.id)}
+                                                    className="opacity-0 group-hover:opacity-40 hover:!opacity-100 p-1.5 hover:bg-white/5 rounded-lg transition-all order-first"
                                                 >
-                                                    <UserMinus size={14} />
+                                                    <Trash2 size={12} className="text-[#FF4757]" />
                                                 </button>
                                             )}
-                                            {p.isMuted && <MicOff size={14} className="opacity-40" />}
-                                            {p.isVideoOff && <VideoOff size={14} className="opacity-40" />}
+                                            <div className={`flex-1 px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed ${msg.sender === localParticipant.name ? 'bg-[#00D2FF] text-black rounded-tr-none' : 'bg-white/5 text-white/80 rounded-tl-none border border-white/5'}`}>
+                                                {msg.content}
+                                            </div>
+                                            {(msg.sender !== localParticipant.name && isHost) && (
+                                                <button 
+                                                    onClick={() => handleDeleteMessage(msg.id)}
+                                                    className="opacity-0 group-hover:opacity-40 hover:!opacity-100 p-1.5 hover:bg-white/5 rounded-lg transition-all"
+                                                >
+                                                    <Trash2 size={12} className="text-[#FF4757]" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
+
+                            <form onSubmit={handleSendMessage} className="p-6 border-t border-white/5 bg-black/20">
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        placeholder={t('meeting.chat_placeholder')}
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-sm outline-none focus:border-[#00D2FF]/50 transition-all"
+                                    />
+                                    <button 
+                                        type="submit"
+                                        disabled={!newMessage.trim()}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#00D2FF] text-black rounded-xl disabled:opacity-30 disabled:grayscale transition-all active:scale-95"
+                                    >
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            </form>
                         </motion.aside>
                     )}
                 </AnimatePresence>
 
-                {/* Interaction Tooltip */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none">
-                    <div className="flex flex-col items-center gap-4 animate-bounce">
-                        <div className="w-1.5 h-1.5 bg-[#00D2FF] rounded-full shadow-[0_0_15px_#00D2FF]" />
-                        <span className="text-[10px] font-black tracking-[0.4em] uppercase opacity-20">{t('common.interaction_active')}</span>
-                    </div>
-                </div>
+                {/* Overlays (Modals etc.) */}
+                <AnimatePresence>
+                    {showParticipants && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className="w-full max-w-lg bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-10 relative shadow-2xl"
+                            >
+                                <button onClick={() => setShowParticipants(false)} className="absolute top-8 right-8 p-3 hover:bg-white/5 rounded-full transition-colors">
+                                    <X size={20} />
+                                </button>
+                                <h3 className="text-3xl font-black mb-8 tracking-tight">{t('common.participants')}</h3>
+                                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
+                                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-[#00D2FF]/30">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: localParticipant.color }}>{localParticipant.name[0]}</div>
+                                            <span className="font-bold">{localParticipant.name} (Me)</span>
+                                        </div>
+                                    </div>
+                                    {participants.map(p => (
+                                        <div key={p.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: p.color }}>{p.name[0]}</div>
+                                                <span className="font-bold">{p.name}</span>
+                                            </div>
+                                            {isHost && (
+                                                <button onClick={() => handleKickParticipant(p.id)} className="p-2 hover:bg-[#FF4757]/20 text-[#FF4757] rounded-lg transition-all"><UserMinus size={18} /></button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
 
                 {/* Share PT Modal */}
                 <AnimatePresence>
@@ -670,18 +817,18 @@ const VirtualMeetingPage: React.FC = () => {
                 {/* Invite Link Modal */}
                 <AnimatePresence>
                     {showInviteModal && (
-                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/95">
+                        <div className="absolute inset-0 z-[120] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                className="w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-10 relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]"
+                                className="w-full max-w-md bg-dancheong-ivory border border-dancheong-ink/10 rounded-[2.5rem] p-10 relative shadow-2xl text-dancheong-ink"
                             >
                                 <button 
                                     onClick={() => setShowInviteModal(false)}
-                                    className="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors group"
+                                    className="absolute top-8 right-8 p-3 hover:bg-dancheong-ink/5 rounded-full transition-colors group"
                                 >
-                                    <X size={20} className="group-active:scale-90 transition-transform" />
+                                    <X size={20} className="text-dancheong-ink/40 group-hover:text-dancheong-ink group-active:scale-90 transition-transform" />
                                 </button>
                                 
                                 <div className="flex flex-col items-center text-center gap-8">
@@ -690,13 +837,13 @@ const VirtualMeetingPage: React.FC = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="text-3xl font-black tracking-tight">{t('common.invite')}</h3>
-                                        <p className="text-sm text-white/40 font-medium">{t('common.invite_desc')}</p>
+                                        <p className="text-sm text-dancheong-ink/40 font-medium">{t('common.invite_desc')}</p>
                                     </div>
                                     
-                                    <div className="w-full bg-white/5 border border-white/10 p-5 rounded-2xl flex items-center justify-between gap-4 overflow-hidden group hover:border-[#00D2FF]/30 transition-colors">
+                                    <div className="w-full bg-white/40 border border-dancheong-ink/5 p-5 rounded-2xl flex items-center justify-between gap-4 overflow-hidden group hover:border-[#00D2FF]/30 transition-colors">
                                         <div className="flex-1 overflow-hidden">
-                                            <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block">{t('common.secure_link')}</span>
-                                            <span className="text-xs font-mono text-[#00D2FF] truncate block">
+                                            <span className="text-[10px] uppercase font-black tracking-widest text-dancheong-ink/20 mb-2 block">{t('common.secure_link')}</span>
+                                            <span className="text-xs font-mono text-dancheong-mugwort truncate block text-left">
                                                 {inviteLink}
                                             </span>
                                         </div>
@@ -720,13 +867,13 @@ const VirtualMeetingPage: React.FC = () => {
                                         </button>
                                     </div>
                                     
-                                    <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+                                    <p className="text-[10px] text-dancheong-ink/20 font-bold uppercase tracking-[0.2em]">
                                         {t('common.invite_validity')}
                                     </p>
                                     
                                     <button 
                                         onClick={() => setShowInviteModal(false)}
-                                        className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
+                                        className="w-full py-5 bg-dancheong-ink text-white font-black rounded-2xl transition-all hover:bg-dancheong-mugwort"
                                     >
                                         {t('common.confirm')}
                                     </button>
@@ -760,7 +907,7 @@ const VirtualMeetingPage: React.FC = () => {
                                         muted
                                         className="w-full h-full object-contain"
                                         ref={(video) => {
-                                            const stream = isSharing ? localStream : (Object.values(remoteStreams)[0] || null);
+                                            const stream = screenData.presenterId === socket?.id ? localStream : (screenData.presenterId ? remoteStreams[screenData.presenterId] : null);
                                             if (video && stream && video.srcObject !== stream) {
                                                 video.srcObject = stream;
                                             }
@@ -782,20 +929,20 @@ const VirtualMeetingPage: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050505]/95"
+                            className="absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md"
                         >
                             <motion.div 
                                 initial={{ scale: 0.9, y: 20 }}
                                 animate={{ scale: 1, y: 0 }}
-                                className="w-full max-w-md p-10 bg-[#111] border border-white/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-8"
+                                className="w-full max-w-md p-10 bg-dancheong-ivory border border-dancheong-ink/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-8 text-dancheong-ink"
                             >
-                                <div className="w-20 h-20 bg-emerald-500/20 rounded-3xl flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                                <div className="w-20 h-20 bg-dancheong-mugwort/10 rounded-3xl flex items-center justify-center text-dancheong-mugwort border border-dancheong-mugwort/20">
                                     <Lock size={40} />
                                 </div>
                                 
                                 <div className="flex flex-col gap-2">
                                     <h2 className="text-3xl font-black tracking-tight">{t('common.secure_entry')}</h2>
-                                    <p className="text-white/40 text-sm tracking-wide">
+                                    <p className="text-dancheong-ink/40 text-sm tracking-wide">
                                         {t('common.entry_desc')}
                                     </p>
                                 </div>
@@ -808,7 +955,7 @@ const VirtualMeetingPage: React.FC = () => {
                                             value={entryToken}
                                             onChange={(e) => setEntryToken(e.target.value)}
                                             placeholder={t("Enter Access Token")}
-                                            className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/20"
+                                            className="w-full h-16 bg-white/50 border border-dancheong-ink/5 rounded-2xl px-6 font-mono tracking-widest text-center text-lg focus:outline-none focus:border-dancheong-mugwort/30 focus:bg-white transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-dancheong-ink/20"
                                         />
                                         {tokenError && (
                                             <p className="absolute -bottom-6 left-0 right-0 text-[#FF4757] text-xs font-bold uppercase tracking-widest">{tokenError}</p>
@@ -817,7 +964,7 @@ const VirtualMeetingPage: React.FC = () => {
 
                                     <button 
                                         type="submit"
-                                        className="h-16 bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#050505] font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(16,185,129,0.3)] mt-2"
+                                        className="h-16 bg-dancheong-ink text-white font-black rounded-2xl hover:bg-dancheong-mugwort transition-all shadow-lg mt-2"
                                     >
                                         <AutoTranslatedText text="입장하기" />
                                     </button>
@@ -825,13 +972,83 @@ const VirtualMeetingPage: React.FC = () => {
                                     <button 
                                         type="button"
                                         onClick={() => navigate(-1)}
-                                        className="text-white/20 hover:text-white/60 text-xs font-bold uppercase tracking-[0.2em] mt-2 transition-all"
+                                        className="text-dancheong-ink/30 hover:text-dancheong-ink text-xs font-bold uppercase tracking-[0.2em] mt-2 transition-all"
                                     >
                                         <AutoTranslatedText text="돌아가기" />
                                     </button>
                                 </form>
                             </motion.div>
                         </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Screen Selection Modal */}
+                <AnimatePresence>
+                    {isScreenListModalOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md">
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className="w-full max-w-lg bg-dancheong-ivory border border-dancheong-ink/10 rounded-[2.5rem] p-10 relative shadow-2xl text-dancheong-ink"
+                            >
+                                <button onClick={() => setIsScreenListModalOpen(false)} className="absolute top-8 right-8 p-3 hover:bg-dancheong-ink/5 rounded-full transition-colors group">
+                                    <X size={20} className="text-dancheong-ink/40 group-hover:text-dancheong-ink transition-colors" />
+                                </button>
+                                <h3 className="text-3xl font-black mb-8 tracking-tight">{t('meeting.screen_selector', 'Screen Selector')}</h3>
+                                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
+                                    {/* Local Screen */}
+                                    <div 
+                                        onClick={() => {
+                                            if (isSharing) handleShareScreen('live-broadcast', 'webrtc', socket?.id);
+                                            setIsScreenListModalOpen(false);
+                                        }}
+                                        className={`flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${screenData.presenterId === socket?.id ? 'bg-dancheong-mugwort border-dancheong-mugwort shadow-lg' : 'bg-white/40 border-dancheong-ink/5 hover:bg-white hover:border-dancheong-mugwort/30'}`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: localParticipant.color }}>{localParticipant.name[0]}</div>
+                                            <div className="flex flex-col">
+                                                <span className={`font-bold transition-colors ${screenData.presenterId === socket?.id ? 'text-white' : 'text-dancheong-ink'}`}>{localParticipant.name} (Me)</span>
+                                                <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${screenData.presenterId === socket?.id ? 'text-white/60' : (isSharing ? 'text-dancheong-mugwort' : 'text-dancheong-ink/20')}`}>
+                                                    {isSharing ? t('meeting.currently_sharing', 'Currently Sharing') : t('meeting.not_sharing', 'Not Sharing')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {screenData.presenterId === socket?.id && (
+                                            <div className="px-3 py-1 bg-white text-dancheong-mugwort text-[10px] font-black rounded-full uppercase shadow-sm">Active</div>
+                                        )}
+                                    </div>
+
+                                    {/* Remote Screens */}
+                                    {participants.map(p => {
+                                        const isSharing = !!remoteStreams[p.id];
+                                        return (
+                                            <div 
+                                                key={p.id} 
+                                                onClick={() => {
+                                                    if (isSharing) handleShareScreen('live-broadcast', 'webrtc', p.id);
+                                                    setIsScreenListModalOpen(false);
+                                                }}
+                                                className={`flex items-center justify-between p-5 rounded-2xl border transition-all cursor-pointer ${screenData.presenterId === p.id ? 'bg-dancheong-mugwort border-dancheong-mugwort shadow-lg' : 'bg-white/40 border-dancheong-ink/5 hover:bg-white hover:border-dancheong-mugwort/30'} ${!isSharing ? 'opacity-30 cursor-not-allowed grayscale' : ''}`}
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-black font-black" style={{ backgroundColor: p.color }}>{p.name[0]}</div>
+                                                    <div className="flex flex-col">
+                                                        <span className={`font-bold transition-colors ${screenData.presenterId === p.id ? 'text-white' : 'text-dancheong-ink'}`}>{p.name}</span>
+                                                        <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${screenData.presenterId === p.id ? 'text-white/60' : (isSharing ? 'text-dancheong-mugwort' : 'text-dancheong-ink/20')}`}>
+                                                            {isSharing ? t('meeting.currently_sharing', 'Currently Sharing') : t('meeting.not_sharing', 'Not Sharing')}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {screenData.presenterId === p.id && (
+                                                    <div className="px-3 py-1 bg-white text-dancheong-mugwort text-[10px] font-black rounded-full uppercase shadow-sm">Active</div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
+                        </div>
                     )}
                 </AnimatePresence>
             </div>

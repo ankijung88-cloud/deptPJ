@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
-import { Store, Building2, Briefcase, Users } from 'lucide-react';
+import { Store, Briefcase, Users } from 'lucide-react';
 
 const features = [
     {
@@ -14,13 +14,7 @@ const features = [
         id: 'commerce',
         icon: <Store className="w-8 h-8 text-dancheong-navy" />,
         title: 'Digital Commerce',
-        desc: '3D 공간상에 구현된 인터랙티브 쇼룸과 팝업 스토어를 통해 고객에게 입체적인 브랜드 세일즈 경험을 직접 제공합니다.'
-    },
-    {
-        id: 'square',
-        icon: <Building2 className="w-8 h-8 text-dancheong-mugwort" />,
-        title: 'Brand Lounge',
-        desc: '기업의 브랜드 정체성을 담은 거대한 메타버스 광장을 구축하여, 클라이언트 접객 및 대규모 아카이브 미디어 홍보에 활용하세요.'
+        desc: '2D 공간상에 구현된 인터랙티브 쇼룸과 팝업 스토어를 통해 고객에게 입체적인 브랜드 세일즈 경험을 직접 제공합니다.'
     },
     {
         id: 'conference',

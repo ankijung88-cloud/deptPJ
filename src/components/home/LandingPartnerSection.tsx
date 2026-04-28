@@ -7,29 +7,30 @@ import { FALLBACK_PARTNERS } from '../../data/fallbackData';
 const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items: any[] }> = ({ direction, speed, items }) => {
     if (!items || items.length === 0) return null;
     
+    // Duplicate items to ensure smooth infinite loop
+    const displayItems = [...items, ...items, ...items, ...items];
+    
     return (
         <div className="flex relative overflow-hidden h-28 items-center">
             <motion.div 
                 className="flex gap-8 whitespace-nowrap absolute left-0"
                 animate={{ 
-                    x: direction === 'left' ? [0, -2500] : [-2500, 0] 
+                    x: direction === 'left' ? [0, -items.length * 312] : [-items.length * 312, 0] 
                 }}
                 transition={{ 
                     x: {
                         repeat: Infinity,
                         repeatType: "loop",
-                        duration: speed,
+                        duration: speed * (items.length / 4), // Adjust duration based on item count
                         ease: "linear",
                     },
                 }}
             >
-                {[...Array(8)].map((_, i) => (
-                    <div key={i} className="flex gap-8 items-center">
-                        {items.map((partner, pIdx) => (
-                            <div 
-                                key={`${i}-${pIdx}`} 
-                                className="flex items-center gap-5 px-8 py-4 bg-white border-2 border-dancheong-ink/10 rounded-3xl shadow-xl hover:border-dancheong-mugwort transition-all cursor-default group min-w-[280px]"
-                            >
+                {displayItems.map((partner, pIdx) => (
+                    <div 
+                        key={pIdx} 
+                        className="flex items-center gap-5 px-8 py-4 bg-white border-2 border-dancheong-ink/10 rounded-3xl shadow-xl hover:border-dancheong-mugwort transition-all cursor-default group min-w-[280px]"
+                    >
                                 <div className="w-12 h-12 rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort/10 transition-colors overflow-hidden">
                                     {partner.logo_url ? (
                                         <img src={partner.logo_url} alt={partner.agency_name || partner.name} className="w-full h-full object-contain p-1" />
@@ -46,8 +47,6 @@ const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items
                                     </span>
                                 </div>
                             </div>
-                        ))}
-                    </div>
                 ))}
             </motion.div>
         </div>
@@ -74,15 +73,19 @@ export const LandingPartnerSection: React.FC = () => {
         fetchPartners();
     }, []);
 
-    // Split partners into 3 rows
-    const row1 = partners.length > 0 ? partners.slice(0, Math.ceil(partners.length / 3)) : [];
-    const row2 = partners.length > 0 ? partners.slice(Math.ceil(partners.length / 3), Math.ceil(partners.length * 2 / 3)) : [];
-    const row3 = partners.length > 0 ? partners.slice(Math.ceil(partners.length * 2 / 3)) : [];
-
-    // Ensure rows have at least some items if splitting static data
-    const finalRow1 = row1.length > 0 ? row1 : FALLBACK_PARTNERS.slice(0, 4);
-    const finalRow2 = row2.length > 0 ? row2 : FALLBACK_PARTNERS.slice(4, 8);
-    const finalRow3 = row3.length > 0 ? row3 : FALLBACK_PARTNERS.slice(8, 12);
+    // Combine dynamic and fallback to ensure rows are rich and unique
+    // Filter out fallbacks that might overlap with dynamic ones by name
+    const uniqueFallback = FALLBACK_PARTNERS.filter(f => 
+        !partners.some(p => (p.agency_name || p.name) === f.name)
+    );
+    
+    // Create a diverse pool
+    const pool = partners.length > 0 ? [...partners, ...uniqueFallback] : FALLBACK_PARTNERS;
+    
+    // Distribute across 3 rows using modulo for variety
+    const finalRow1 = pool.filter((_, i) => i % 3 === 0);
+    const finalRow2 = pool.filter((_, i) => i % 3 === 1);
+    const finalRow3 = pool.filter((_, i) => i % 3 === 2);
 
     return (
         <section id="partners" className="relative w-full py-24 bg-transparent overflow-hidden border-t border-dancheong-ink/5">

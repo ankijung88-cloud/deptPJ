@@ -144,9 +144,6 @@ export const useWebRTCScreenShare = (socket: any, participants: any[]) => {
         // Close all presenter outbound connections
         Object.values(peerConnections.current).forEach(pc => pc.close());
         peerConnections.current = {};
-        
-        // Let the socket room know stream is cleared
-        socket?.emit('share-screen', { url: '', type: 'none' });
     };
 
     useEffect(() => {

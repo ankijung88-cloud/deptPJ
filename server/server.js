@@ -140,15 +140,7 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('audition-start', ({ candidateId }) => {
-    for (const [roomId, roomData] of rooms.entries()) {
-      const participants = roomData?.participants;
-      if (participants && participants.has(socket.id)) {
-        io.to(roomId).emit('audition-start', { candidateId });
-        break;
-      }
-    }
-  });
+
 
   socket.on('submit-score', ({ candidateId, scores }) => {
     for (const [roomId, roomData] of rooms.entries()) {
@@ -180,15 +172,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('audition-cheer', ({ candidateId }) => {
-    for (const [roomId, roomData] of rooms.entries()) {
-      const participants = roomData?.participants;
-      if (participants && participants.has(socket.id)) {
-        io.to(roomId).emit('cheer-received', { candidateId, senderId: socket.id });
-        break;
-      }
-    }
-  });
+
 
   socket.on('kick-participant', ({ participantId, roomId }) => {
     console.log(`[Socket] Kick request: From ${socket.id} for target ${participantId} in room ${roomId}`);

@@ -963,7 +963,7 @@ const VirtualGallery = ({
                 <div className="flex items-center justify-center w-full h-full text-white bg-red-900/20 p-8 text-center rounded-xl border border-red-500/30">
                     <div className="max-w-md">
                         <Box className="w-12 h-12 mx-auto mb-4 text-red-500 opacity-50" />
-                        <h3 className="text-xl font-bold mb-2">3D Gallery Interrupted</h3>
+                        <h3 className="text-xl font-bold mb-2">2D Gallery Interrupted</h3>
                         <p className="opacity-70 mb-4">The exhibition environment encountered a rendering issue. Please try refreshing or check back in a moment.</p>
                         <button 
                             onClick={() => window.location.reload()}

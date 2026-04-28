@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Play, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -232,7 +232,6 @@ export const DetailPage: React.FC = () => {
         saju: `/detail/${item.id}/saju`,
         groupbuy: `/detail/${item.id}/groupbuy`,
         funding: `/detail/${item.id}/funding`,
-        audition: `/detail/${item.id}/audition`,
         interview: `/detail/${item.id}/interview`,
         square: `/detail/${item.id}/square`,
         office: `/detail/${item.id}/office`
@@ -502,9 +501,7 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
                                                 { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
                                                 { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
-                                                { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                                 { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                                { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },
                                                 { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
                                             ].find(t => t.id === tpl.id);
                                             
@@ -555,9 +552,7 @@ export const DetailPage: React.FC = () => {
                                             { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
                                             { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
                                             { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
-                                            { id: 'audition', label: '오디션참가', icon: Play, color: '#FFD700' },
                                             { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                            { id: 'square', label: '광장입장', icon: MapPin, color: '#00FFC2' },
                                             { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
                                         ].map((tpl) => {
                                             const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
@@ -570,7 +565,7 @@ export const DetailPage: React.FC = () => {
                                                         onClick={() => toggleTemplateSelection(tpl.id)}
                                                         className={`w-full flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
                                                             isSelected 
-                                                                ? 'bg-dancheong-ink border-dancheong-ink' 
+                                                                ? 'bg-[#FFF9C4] border-dancheong-ink/20 shadow-lg' 
                                                                 : 'bg-white border-dancheong-ink/15 hover:border-dancheong-ink/30'
                                                         }`}
                                                         style={isSelected ? { borderColor: theme.highlightColor } : {}}

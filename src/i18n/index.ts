@@ -23,7 +23,7 @@ const resources = {
 
             "hero": {
                 "title_main": "몽땅쏙",
-                "description": "별도의 앱 설치 없이 웹 브라우저에서 바로 경험하는 프리미엄 3D 비즈니스 플랫폼. 기업과 브랜드를 위한 통합 가상 오피스 및 쇼룸을 마우스 클릭으로 직관적으로 구축하고 탐험해 보세요.",
+                "description": "별도의 앱 설치 없이 웹 브라우저에서 바로 경험하는 프리미엄 2D 비즈니스 플랫폼. 기업과 브랜드를 위한 통합 가상 오피스 및 쇼룸을 마우스 클릭으로 직관적으로 구축하고 탐험해 보세요.",
                 "warping": "워핑 중...",
                 "explore": "탐험하기",
                 "story": "입점사 로그인",
@@ -41,7 +41,7 @@ const resources = {
                 ...categoriesJson.ko.subcategory
             },
             "subcategory_desc": "새로운 영감이 깨어나는 특별한 공간, 인사이트 챔버\"\n\n일상의 소음에서 벗어나 오직 대화와 사유에 집중할 수 있는 독립된 공간을 만나보십시오. 인사이트 챔버는 다양한 관점이 부딪히며 새로운 가치를 창조하는 지적인 아지트입니다. 세미나, 독서 모임, 전략 회의 등 영감이 필요한 모든 순간에 당신의 영토가 되어 드립니다.",
-            "subcategory_guide": "하단의 3D 가상공간 미리보기를 클릭하여 시공간을 넘나드는 몰입형 검색을 시작해보세요.",
+            "subcategory_guide": "하단의 2D 가상공간 미리보기를 클릭하여 시공간을 넘나드는 몰입형 검색을 시작해보세요.",
             "subcategory_msg": {
                 "car-care": "자동차 테크와 라이프스타일 케어의 품격 있는 조화를 한눈에 조망합니다.",
                 "window": "기술과 예술이 결합된 가상 공간에서 만나는 새로운 브랜드의 시각적 경험입니다.",
@@ -79,11 +79,11 @@ const resources = {
                 "headline": "디지털 비즈니스의 새로운 지평: 시공간을 초월한 혁신",
                 "subheadline": "우리는 단순한 가상 공간을 넘어, 가상융합(XR) 및 첨단기술 창업가들이 직접 모이고 성장하는 압도적인 비즈니스 허브를 구축합니다.",
                 "metadata": "SPECIAL REPORT | 몽땅쏙 OPERATION TEAM",
-                "body_intro": "몽땅쏙은 단순한 3D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
+                "body_intro": "몽땅쏙은 단순한 2D 홍보관이 아닙니다. 물리적 제약을 부수고 기업의 아이덴티티가 살아 숨쉬는 혁신적인 가상 오피스 모델을 제시합니다. 전 세계 어디서나 직관적으로 접속하여 협업하고 차원 높은 비즈니스를 전개하는 것. 그것이 우리의 시작입니다.",
                 "body_philosophy": "전통 한지의 질감을 현대적으로 재해석한 몽땅쏙의 솔리드 디자인은 흔들리지 않는 비즈니스의 본질과 신뢰를 상징합니다. 입주 기업들은 단순한 오피스를 임대하는 것을 넘어, 브랜드의 철학이 단단하고 입체적으로 구현된 프리미엄 비즈니스 환경을 경험하게 됩니다.",
                 "body_future": "오프라인 지정 사무공간의 효율성과 온라인 가상 플랫폼의 무한한 네트워크를 빈틈없이 동기화하는 '하이브리드 워크플레이스'의 새로운 기준입니다. 기술은 도구를 넘어 살아 숨 쉬는 유기적 성장의 원동력이 될 것입니다.",
-                "body_essential": "빠르게 변화하는 시장 환경 속에서, 스타트업과 창업가들은 오직 혁신에만 집중해야 합니다. 사업자 단위의 비상주 오피스부터 프리미엄 3D 비즈니스 캔버스 지원까지, 우리는 혁신가들의 도약을 위한 가장 완벽한 베이스캠프이자 필수 불가결한 엑셀러레이터입니다.",
-                "pull_quote": "성장하는 기업을 위한 제약 없는 3D 캔버스, 시공간을 초월한 혁신적 비즈니스 생태계.",
+                "body_essential": "빠르게 변화하는 시장 환경 속에서, 스타트업과 창업가들은 오직 혁신에만 집중해야 합니다. 사업자 단위의 비상주 오피스부터 프리미엄 2D 비즈니스 캔버스 지원까지, 우리는 혁신가들의 도약을 위한 가장 완벽한 베이스캠프이자 필수 불가결한 엑셀러레이터입니다.",
+                "pull_quote": "성장하는 기업을 위한 제약 없는 2D 캔버스, 시공간을 초월한 혁신적 비즈니스 생태계.",
                 "body_conclusion": ""
             },
             "footer": {
@@ -142,7 +142,6 @@ const resources = {
                 "copy": "복사",
                 "upload_pc": "파일 업로드",
                 "link_placeholder": "URL 링크를 입력하세요",
-                "interaction_active": "3D 인터랙티브 활성",
                 "token_error": "유효한 액세스 토큰을 입력해주세요.",
                 "secure_entry": "보안 입장",
                 "entry_desc": "이 공간은 승인된 사용자만 입장형 가능합니다.",
@@ -160,45 +159,18 @@ const resources = {
                 "delete": "삭제",
                 "remove": "삭제",
                 "uploading": "업로드 중...",
-                "category": "카테고리"
-            },
-            "audition": {
-                "title": "실시간 화상 오디션",
-                "audition_room": "오디션 룸",
-                "judge": "심사위원",
-                "candidate": "참가자",
-                "audience": "관람객",
-                "score": {
-                    "vocal": "보컬",
-                    "dance": "댄스",
-                    "acting": "연기",
-                    "visual": "비주얼",
-                    "total": "합계",
-                    "submit": "채점 완료"
-                },
-                "record": {
-                    "start": "녹화 시작",
-                    "stop": "녹화 중지",
-                    "saving": "녹화 파일 저장 중..."
-                },
-                "materials": {
-                    "title": "오디션 자료",
-                    "attachment": "대본/악보 첨부",
-                    "share": "무대 공유"
-                },
-                "teleprompter": "프롬프터 (대본 출력)",
-                "queue": "오디션 대기열",
-                "next": "다음 참가자 시작",
-                "performing": "현재 진행 중",
-                "take_stage": "무대 화면 점유",
-                "release_stage": "무대 점유 해제",
-                "judge_on_screen": "심사위원 발언 중",
-                "start_audition": "오디션 시작",
-                "grading_tool": "채점 도구",
-                "tool_box": "도구 보관함"
+                "category": "카테고리",
+                "chat": "실시간 채팅",
+                "screen_1": "1개 화면",
+                "screen_2": "2개 화면 분할",
+                "screen_4": "4개 화면 분할",
+                "camera_on": "카메라 켜기",
+                "camera_off": "카메라 끄기",
+                "mic_on": "마이크 켜기",
+                "mic_off": "마이크 끄기"
             },
             "meeting": {
-                "meeting_room": "3D 가상 회의실",
+                "meeting_room": "2D 가상 회의실",
                 "active_members": "현재 접속 인원",
                 "room_quality": "회의 환경 품질",
                 "premium": "프리미엄",
@@ -206,17 +178,19 @@ const resources = {
                 "guest": "게스트",
                 "lounge_desc": "7층 커뮤니케이션 라운지",
                 "upload_pt": "프레젠테이션 업로드",
-                "select_media_desc": "3D 스크린에 공유할 미디어를 선택하세요.",
+                "select_media_desc": "2D 스크린에 공유할 미디어를 선택하세요.",
                 "live_broadcast": "라이브 방송",
                 "stream_external": "외부 링크 송출",
                 "stop_sharing": "화면 공유 종료",
                 "seat": "좌석",
                 "observing": "관람 중",
                 "kick_confirm": "해당 참가자를 퇴장시키겠습니까?",
-                "kicked_msg": "호스트에 의해 퇴장되었습니다."
+                "kicked_msg": "호스트에 의해 퇴장되었습니다.",
+                "no_messages": "메시지가 없습니다",
+                "chat_placeholder": "메시지를 입력하세요..."
             },
             "ticket": {
-                "ticket_booth": "3D 가상 티켓 부스",
+                "ticket_booth": "2D 가상 티켓 부스",
                 "live_show": "라이브 공연",
                 "performance_date": "공연 일시",
                 "entry_fee": "관람료",
@@ -238,9 +212,9 @@ const resources = {
                 "virtual_ticket": "가상 티켓"
             },
             "store": {
-                "store_title": "3D 버추얼 스토어",
-                "store_desc": "브랜드 스토리와 제품을 혁신적인 3D 공간에서 만나보세요.",
-                "select_item_3d": "3D로 볼 제품을 선택하세요",
+                "store_title": "2D 버추얼 스토어",
+                "store_desc": "브랜드 스토리와 제품을 혁신적인 2D 공간에서 만나보세요.",
+                "select_item_3d": "2D로 볼 제품을 선택하세요",
                 "preview_mode_2d": "2D 미리보기 모드",
                 "holographic_engine_active": "홀로그래픽 엔진 활성",
                 "orders_shipping": "주문 및 배송 조회",
@@ -306,11 +280,6 @@ const resources = {
                 "complete_order": "주문 완료",
                 "enter_name": "성함을 입력해주세요.",
                 "order_id": "주문 번호"
-            },
-            "square": {
-                "title": "광화문 광장",
-                "chat_placeholder": "이곳에 의견을 입력하세요 (바닥을 클릭하면 이동합니다)...",
-                "guide_msg": "바닥을 마우스로 클릭하여 원하는 위치로 이동할 수 있습니다. 입력된 대화 내용은 아바타 머리 위에 말풍선으로 표시됩니다."
             }
         }
     },
@@ -330,7 +299,7 @@ const resources = {
             },
             "hero": {
                 "title_main": "몽땅쏙",
-                "description": "A premium 3D business platform experienced directly in your web browser without installing any apps. Intuitively build and explore integrated virtual offices and showrooms for enterprises and brands with a single click.",
+                "description": "A premium 2D business platform experienced directly in your web browser without installing any apps. Intuitively build and explore integrated virtual offices and showrooms for enterprises and brands with a single click.",
                 "warping": "Warping...",
                 "explore": "Explore",
                 "story": "Partner Login",
@@ -380,7 +349,6 @@ const resources = {
                 "copy": "COPY",
                 "upload_pc": "Upload PC File",
                 "link_placeholder": "Enter URL link",
-                "interaction_active": "3D Interaction Active",
                 "token_error": "Please enter a valid access token.",
                 "secure_entry": "Secure Entry",
                 "entry_desc": "This space is for authorized users only.",
@@ -398,50 +366,23 @@ const resources = {
                 "delete": "Delete",
                 "remove": "Remove",
                 "uploading": "Uploading...",
-                "category": "Category"
+                "category": "Category",
+                "chat": "Live Chat",
+                "screen_1": "Single Screen",
+                "screen_2": "Dual Screen Split",
+                "screen_4": "Quad Screen Split",
+                "camera_on": "Camera On",
+                "camera_off": "Camera Off",
+                "mic_on": "Mic On",
+                "mic_off": "Mic Off"
             },
             "footer": {
                 "inquiry": "Email Inquiry",
                 "kakao_inquiry": "KakaoTalk Inquiry",
                 "partnership": "Partner Registration"
             },
-            "audition": {
-                "title": "Real-time Virtual Audition",
-                "audition_room": "Audition Room",
-                "judge": "Judge",
-                "candidate": "Candidate",
-                "audience": "Audience",
-                "score": {
-                    "vocal": "Vocal",
-                    "dance": "Dance",
-                    "acting": "Acting",
-                    "visual": "Visual",
-                    "total": "Total",
-                    "submit": "Submit Score"
-                },
-                "record": {
-                    "start": "Start Record",
-                    "stop": "Stop Record",
-                    "saving": "Saving Record..."
-                },
-                "materials": {
-                    "title": "Audition Materials",
-                    "attachment": "Attach Script/Music",
-                    "share": "Share to Stage"
-                },
-                "teleprompter": "Teleprompter",
-                "queue": "Performance Queue",
-                "next": "Start Next",
-                "performing": "Performing",
-                "take_stage": "Take over Stage",
-                "release_stage": "Release Stage",
-                "judge_on_screen": "Judge Speaking",
-                "start_audition": "Start Audition",
-                "grading_tool": "Grading Tool",
-                "tool_box": "Toolbox"
-            },
             "meeting": {
-                "meeting_room": "3D Virtual Meeting Room",
+                "meeting_room": "2D Virtual Meeting Room",
                 "active_members": "Active Participants",
                 "room_quality": "Room Environment Quality",
                 "premium": "Premium",
@@ -449,17 +390,19 @@ const resources = {
                 "guest": "Guest",
                 "lounge_desc": "7F Communication Lounge",
                 "upload_pt": "Presentation Upload",
-                "select_media_desc": "Select media to share on 3D screen.",
+                "select_media_desc": "Select media to share on 2D screen.",
                 "live_broadcast": "Live Broadcast",
                 "stream_external": "Stream External",
                 "stop_sharing": "Stop Sharing",
                 "seat": "Seat",
                 "observing": "Observing",
                 "kick_confirm": "Are you sure you want to kick this participant?",
-                "kicked_msg": "You have been kicked by the host."
+                "kicked_msg": "You have been kicked by the host.",
+                "no_messages": "No messages yet",
+                "chat_placeholder": "Type a message..."
             },
             "ticket": {
-                "ticket_booth": "3D Virtual Ticket Booth",
+                "ticket_booth": "2D Virtual Ticket Booth",
                 "live_show": "Live Show",
                 "performance_date": "Performance Date",
                 "entry_fee": "Entry Fee",
@@ -481,9 +424,9 @@ const resources = {
                 "virtual_ticket": "Virtual Ticket"
             },
             "store": {
-                "store_title": "3D Virtual Store",
-                "store_desc": "Experience brand stories and products in an innovative 3D space.",
-                "select_item_3d": "Select an item to view in 3D",
+                "store_title": "2D Virtual Store",
+                "store_desc": "Experience brand stories and products in an innovative 2D space.",
+                "select_item_3d": "Select an item to view in 2D",
                 "preview_mode_2d": "2D Preview Mode",
                 "holographic_engine_active": "Holographic Engine Active",
                 "orders_shipping": "Orders & Shipping",
@@ -549,11 +492,6 @@ const resources = {
                 "complete_order": "Complete Order",
                 "enter_name": "Enter your name",
                 "order_id": "Order ID"
-            },
-            "square": {
-                "title": "Gwanghwamun Square",
-                "chat_placeholder": "Enter your opinion here (Click floor to move)...",
-                "guide_msg": "Click the floor with your mouse to move to the desired location. Chat content is displayed in speech bubbles above the avatar."
             }
         }
     }

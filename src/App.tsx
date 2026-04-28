@@ -15,9 +15,7 @@ const VirtualInquiryPage = lazy(() => import('./templates/VirtualInquiryPage'));
 const VirtualReservationPage = lazy(() => import('./templates/VirtualReservationPage'));
 const VirtualMeetingPage = lazy(() => import('./templates/VirtualMeetingPage'));
 const VirtualSindangPage = lazy(() => import('./templates/VirtualSindangPage'));
-const VirtualAuditionPage = lazy(() => import('./templates/VirtualAuditionPage'));
 const VirtualInterviewPage = lazy(() => import('./templates/VirtualInterviewPage'));
-const VirtualSquarePage = lazy(() => import('./templates/VirtualSquarePage'));
 const VirtualSajuPage = lazy(() => import('./templates/VirtualSajuPage'));
 
 const VirtualGroupBuyPage = lazy(() => import('./templates/VirtualGroupBuyPage'));
@@ -70,9 +68,7 @@ function App() {
                                         <Route path="/detail/:id/reservation" element={<VirtualReservationPage />} />
                                         <Route path="/detail/:id/meeting" element={<VirtualMeetingPage />} />
                                         <Route path="/detail/:id/sindang" element={<VirtualSindangPage />} />
-                                        <Route path="/detail/:id/audition" element={<VirtualAuditionPage />} />
                                         <Route path="/detail/:id/interview" element={<VirtualInterviewPage />} />
-                                        <Route path="/detail/:id/square" element={<VirtualSquarePage />} />
                                         <Route path="/detail/:id/saju" element={<VirtualSajuPage />} />
                                         <Route path="/detail/:id/groupbuy" element={<VirtualGroupBuyPage />} />
                                         <Route path="/detail/:id/funding" element={<VirtualFundingPage />} />

@@ -1,1 +1,1 @@
-export const TEMPLATE_CATEGORIES = ['cinema', 'museum', 'store', 'ticket', 'audition'];
+export const TEMPLATE_CATEGORIES = ['cinema', 'museum', 'store', 'ticket'];
