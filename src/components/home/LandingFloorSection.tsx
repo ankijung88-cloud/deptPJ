@@ -108,22 +108,52 @@ export const LandingFloorSection: React.FC = () => {
                                                 />
                                             </div>
                                             
-                                            {/* Middle: Title - Centered in remaining space */}
+                                            {/* Middle: Title */}
                                             <div className="flex-grow flex items-center justify-center w-full py-2">
                                                 <h3 className={`text-[11px] lg:text-sm font-serif font-black tracking-tight leading-tight transition-all duration-500 max-w-[95%] ${isActive ? 'text-dancheong-ink' : 'text-dancheong-ink/60'}`}>
                                                     <AutoTranslatedText text={getLocalizedText(floor.title, i18n.language)} />
                                                 </h3>
                                             </div>
 
-                                            {/* Bottom Navigation - Fixed Position */}
+                                            {/* Compact Detailed Wax Seal Button */}
                                             <div
-                                                className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${isActive ? 'rotate-[-45deg] shadow-lg' : ''}`}
+                                                className={`w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center transition-all duration-700 relative ${isActive ? 'scale-110' : ''}`}
                                                 style={{
-                                                    borderColor: isActive ? floor.color : 'rgba(23,23,23,0.1)',
-                                                    backgroundColor: isActive ? `${floor.color}10` : 'transparent'
+                                                    filter: "url(#compact-seal-filter)",
+                                                    WebkitFilter: "url(#compact-seal-filter)",
                                                 }}
                                             >
-                                                <ArrowRight size={isActive ? 14 : 10} className={isActive ? '' : 'text-dancheong-ink/30'} style={{ color: isActive ? floor.color : undefined }} />
+                                                {/* Wax Body */}
+                                                <div 
+                                                    className="absolute inset-0 rounded-full overflow-hidden"
+                                                    style={{
+                                                        background: isActive 
+                                                            ? 'radial-gradient(circle at 35% 35%, #ff5252 0%, #b71c1c 50%, #7f0000 100%)' 
+                                                            : 'radial-gradient(circle at 35% 35%, #d32f2f 0%, #8b0000 60%, #4a0000 100%)',
+                                                        boxShadow: `
+                                                            0 2px 4px rgba(0,0,0,0.4),
+                                                            inset 1.5px 1.5px 3px rgba(255,255,255,0.4),
+                                                            inset -2px -2px 5px rgba(0,0,0,0.6)
+                                                        `
+                                                    }}
+                                                >
+                                                    {/* Glossy Shine */}
+                                                    <div className="absolute top-[10%] left-[15%] w-[40%] h-[25%] bg-gradient-to-br from-white/30 to-transparent rounded-full blur-[1px]" />
+                                                </div>
+
+                                                {/* Inner Stamped Ring */}
+                                                <div className="absolute inset-[4px] lg:inset-[5px] rounded-full border border-black/10 shadow-inner" />
+
+                                                {/* Icon: Recessed Stamp Effect */}
+                                                <div className="relative z-10 flex items-center justify-center">
+                                                    <ArrowRight 
+                                                        size={isActive ? 14 : 12} 
+                                                        className="text-white/90" 
+                                                        style={{
+                                                            filter: 'drop-shadow(0 -1px 0.5px rgba(0,0,0,0.7))'
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
 
@@ -147,8 +177,15 @@ export const LandingFloorSection: React.FC = () => {
                         <AutoTranslatedText text={"몽땅쏙의 각 층은 당신의 영감과 비즈니스를 위한 최적의 목적지로 설계되었습니다.\n위의 층별 카드를 클릭하여 지금 바로 가상 공간으로의 몰입형 탐험을 시작해 보세요."} />
                     </p>
                 </div>
-
             </div>
+
+            {/* Compact SVG Filter for Wax Seal */}
+            <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+                <filter id="compact-seal-filter">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="3" result="noise" />
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+                </filter>
+            </svg>
         </section>
     );
 };
