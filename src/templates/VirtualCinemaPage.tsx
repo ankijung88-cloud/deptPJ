@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Play, Film, ArrowLeft, Monitor, Maximize, Minimize, Music, Plus, Image as ImageIcon, Type, Edit3, Trash2, Check } from 'lucide-react';
+import { X, Play, ArrowLeft, Plus, Image as ImageIcon, Edit3, Trash2, Check } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { JOSEON_THEMES } from '../utils/themeUtils';
+
 import VirtualGallery from '../components/gallery/VirtualGallery';
 import { FeaturedItem } from '../types';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
@@ -22,11 +22,18 @@ const VirtualCinemaPage: React.FC = () => {
     const [isExplorationMode, setIsExplorationMode] = useState(false);
     useImmersiveMode(isExplorationMode);
 
-    // Determine the effective parent ID (favor route params, fallback to state)
     const parentId = routeId || location.state?.parentId;
 
-    // Using "Night Sky" (index 11) theme for Cinema - deep, immersive, and cinematic
-    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);;
+    const theme = {
+        bgStyle: { backgroundColor: '#F2E7D5' },
+        color1: '#FFFFFF',
+        color2: '#F2E7D5',
+        color3: '#000000',
+        accentColor: '#DC2626',
+        highlightColor: '#171717',
+        textPrimary: '#171717',
+        glowColor: '#DC2626'
+    };
 
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const [cinemaItems, setCinemaItems] = useState<FeaturedItem[]>([]);
@@ -38,23 +45,21 @@ const VirtualCinemaPage: React.FC = () => {
     const [newThumbnailUrl, setNewThumbnailUrl] = useState('');
     const [newVideoUrl, setNewVideoUrl] = useState('');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [selectedCinemaItem, setSelectedCinemaItem] = useState<FeaturedItem | null>(null);
-    const [isZoomed, setIsZoomed] = useState(false);
+
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
     const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
 
-    // Inline Editing for Page Metadata
     const [isEditingMetadata, setIsEditingMetadata] = useState(false);
     const [tempTitle, setTempTitle] = useState('');
     const [tempDesc, setTempDesc] = useState('');
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const { floors } = useFloors();
 
-    // Set Breadcrumb Path
     const currentFloor = floors.find(f => f.floor.toLowerCase() === parentProduct?.category?.toLowerCase());
     const currentCategory = currentFloor?.subitems?.find(s => s.id === parentProduct?.subcategory);
     const floorNum = parentProduct?.category?.replace('floor-', '') || currentFloor?.floor?.replace('F', '').replace('f', '') || '';
@@ -75,15 +80,12 @@ const VirtualCinemaPage: React.FC = () => {
                     const data = await getProductById(parentId);
                     if (data) {
                         setParentProduct(data);
-
-                        // Safe parsing of selected_templates
                         let templates = [];
                         try {
                             const selectedTemplatesRaw = typeof data.selected_templates === 'string'
                                 ? JSON.parse(data.selected_templates)
                                 : (data.selected_templates as any);
 
-                            // Standardize as array
                             templates = Array.isArray(selectedTemplatesRaw)
                                 ? selectedTemplatesRaw
                                 : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
@@ -99,9 +101,8 @@ const VirtualCinemaPage: React.FC = () => {
                         }
 
                         const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
-                        // Always load Korean for the editable fields to ensure consistency
                         setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "2D 가상 시네마");
-                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요. 최첨단 2D 기술로 재현된 역사적 순간들이 당신의 눈앞에 펼쳐집니다.");
+                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요.");
                     }
                 } catch (error) {
                     console.error("Failed to fetch parent product:", error);
@@ -114,48 +115,11 @@ const VirtualCinemaPage: React.FC = () => {
     const fetchItems = async () => {
         setIsLoading(true);
         try {
-            const url = parentId
-                ? `/api/products/category/cinema?parentId=${parentId}`
-                : '/api/products/category/cinema';
-            
-            console.log(`[VirtualCinema] Fetching from: ${url}`);
-            
-            const response = await fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                }
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(`HTTP ${response.status}: ${text}`);
-            }
-
+            const url = parentId ? `/api/products/category/cinema?parentId=${parentId}` : '/api/products/category/cinema';
+            const response = await fetch(url, { headers: { 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}` } });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
-            console.log(`[VirtualCinema] Received ${data?.length} items:`, data);
-            
-            if (!Array.isArray(data)) {
-                console.error('[VirtualCinema] Data is not an array:', data);
-                setCinemaItems([]);
-                return;
-            }
-
-
-            const safeParse = (str: any) => {
-                if (!str) return null;
-                if (typeof str !== 'string') return str;
-                try {
-                    // Try to parse if it looks like JSON
-                    if (str.trim().startsWith('{') || str.trim().startsWith('[')) {
-                        return JSON.parse(str);
-                    }
-                    return str;
-                } catch (e) {
-                    console.error('Safe JSON parse failed for:', str);
-                    return str;
-                }
-            };
-
+            const safeParse = (str: any) => { try { return typeof str === 'string' ? JSON.parse(str) : str; } catch { return str; } };
             const normalizedData = data.map((dbItem: any) => ({
                 id: dbItem.id,
                 title: safeParse(dbItem.title),
@@ -168,42 +132,16 @@ const VirtualCinemaPage: React.FC = () => {
                 videoUrl: dbItem.video_url,
                 agency_id: dbItem.agency_id
             }));
-            
-            console.log(`[VirtualCinema] Loaded ${normalizedData.length} items`);
             setCinemaItems(normalizedData);
-
         } catch (error) {
-            console.error('Failed to fetch cinema items:', error);
+            console.error('Failed to fetch:', error);
             setCinemaItems([]);
         } finally {
             setIsLoading(false);
         }
     };
 
-
-    useEffect(() => {
-        fetchItems();
-    }, [parentId, i18n.language]);
-
-
-    // Set default selection if none exists
-    useEffect(() => {
-        if (!isLoading && cinemaItems.length > 0 && !selectedCinemaItem && !location.state?.initialId) {
-            setSelectedCinemaItem(cinemaItems[0]);
-        }
-    }, [isLoading, cinemaItems, selectedCinemaItem, location.state]);
-
-    // Handle initial item selection if passed via navigation state
-    useEffect(() => {
-        if (!isLoading && cinemaItems.length > 0 && location.state?.initialId) {
-            const initialItem = cinemaItems.find(item => item.id === location.state.initialId);
-            if (initialItem) {
-                setSelectedCinemaItem(initialItem);
-                // Optionally enter immersive mode automatically for interaction
-                // setIsExplorationMode(true); 
-            }
-        }
-    }, [isLoading, cinemaItems, location.state]);
+    useEffect(() => { fetchItems(); }, [parentId, i18n.language]);
 
     const handleEditInitiate = (item: FeaturedItem) => {
         setIsEditMode(true);
@@ -213,744 +151,290 @@ const VirtualCinemaPage: React.FC = () => {
         setNewThumbnailUrl(item.imageUrl || (item as any).image_url || '');
         setNewVideoUrl(item.videoUrl || (item as any).video_url || '');
         setPreviewUrl(null);
-        setVideoPreviewUrl(null);
         setShowAddModal(true);
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.url) {
+                setNewThumbnailUrl(data.url);
+                setPreviewUrl(data.url);
+            }
+        } catch (error) { console.error("Upload failed:", error); } finally { setIsUploading(false); }
+    };
+
+    const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.url) {
+                setNewVideoUrl(data.url);
+            }
+        } catch (error) { console.error("Upload failed:", error); } finally { setIsUploading(false); }
     };
 
     const handleDelete = async (id: string) => {
         const confirmMsg = await translateAsync('정말 삭제하시겠습니까?');
         if (!window.confirm(confirmMsg)) return;
         try {
-            const adminToken = sessionStorage.getItem('admin_token');
-            const res = await fetch(`/api/products/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${adminToken}` }
-            });
-            if (res.ok) {
-                const successMsg = await translateAsync('삭제되었습니다.');
-                alert(successMsg);
-                fetchItems();
-            } else {
-                throw new Error('Delete failed');
-            }
-        } catch (error) {
-            console.error('Delete error:', error);
-            const errorMsg = await translateAsync('삭제에 실패했습니다.');
-            alert(errorMsg);
-        }
-    };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
-        const file = e.target.files?.[0];
-        if (file) {
-            if (type === 'image') {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setPreviewUrl(reader.result as string);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
-                setVideoPreviewUrl(URL.createObjectURL(file));
-            }
-        }
+            const res = await fetch(`/api/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}` } });
+            if (res.ok) { alert(await translateAsync('삭제되었습니다.')); fetchItems(); }
+        } catch (error) { alert(await translateAsync('삭제에 실패했습니다.')); }
     };
 
     const handleAddItem = async () => {
-        if (!newTitle) {
-            const msg = await translateAsync('영상 명칭을 입력해주세요.');
-            alert(msg);
-            return;
-        }
-
+        if (!newTitle) { alert(await translateAsync('영상 명칭을 입력해주세요.')); return; }
         setIsUploading(true);
         try {
+            const adminToken = sessionStorage.getItem('admin_token');
             let finalImageUrl = newThumbnailUrl;
             let finalVideoUrl = newVideoUrl;
-
-            const adminToken = sessionStorage.getItem('admin_token');
-
-            // Handle Image Upload
-            const imageFile = fileInputRef.current?.files?.[0];
-            if (imageFile) {
-                try {
-                    const formData = new FormData();
-                    formData.append('file', imageFile);
-                    const uploadRes = await fetch('/api/upload', {
-                        method: 'POST', body: formData,
-                        headers: { 'Authorization': `Bearer ${adminToken}` }
-                    });
-                    if (uploadRes.ok) {
-                        const data = await uploadRes.json();
-                        finalImageUrl = data.url;
-                    } else {
-                        const errorData = await uploadRes.json().catch(() => ({ message: 'Image upload failed' }));
-                        const msg = await translateAsync(`이미지 업로드 실패: ${errorData.message || 'Unknown error'}`);
-                        alert(msg);
-                        setIsUploading(false);
-                        return;
-                    }
-                } catch (err: any) { 
-                    console.error('Image upload failed:', err); 
-                    const msg = await translateAsync(`이미지 업로드 중 오류가 발생했습니다: ${err.message}`);
-                    alert(msg);
-                    setIsUploading(false);
-                    return;
-                }
-            }
-
-            // Handle Video Upload
-            const videoFile = videoInputRef.current?.files?.[0];
-            if (videoFile) {
-                try {
-                    const formData = new FormData();
-                    formData.append('file', videoFile);
-                    const uploadRes = await fetch('/api/upload', {
-                        method: 'POST', body: formData,
-                        headers: { 'Authorization': `Bearer ${adminToken}` }
-                    });
-                    if (uploadRes.ok) {
-                        const data = await uploadRes.json();
-                        finalVideoUrl = data.url;
-                    } else {
-                        const errorData = await uploadRes.json().catch(() => ({ message: 'Video upload failed' }));
-                        const baseMsg = await translateAsync(`영상 업로드 실패: ${errorData.message || 'Unknown error'}\n\n팁: 대용량 영상은 타용환경에 따라 타임아웃이 발생할 수 있으니 WinSCP를 통한 직접 업로드를 권장합니다.`);
-                        alert(baseMsg);
-                        setIsUploading(false);
-                        return;
-                    }
-                } catch (err: any) { 
-                    console.error('Video upload failed:', err); 
-                    const msg = await translateAsync(`영상 업로드 중 오류가 발생했습니다: ${err.message}`);
-                    alert(msg);
-                    setIsUploading(false);
-                    return;
-                }
-            }
-
-            if (!finalImageUrl) {
-                const msg = await translateAsync('썸네일 이미지가 필요합니다.');
-                alert(msg);
-                return;
-            }
-
+            
             const itemData = {
                 id: isEditMode ? editingId : `cinema-${Date.now()}`,
                 title: { ko: newTitle, en: newTitle },
                 category: 'cinema',
                 subcategory: 'general',
-                description: { ko: '', en: '' },
                 image_url: finalImageUrl,
                 video_url: finalVideoUrl,
-                event_date: { ko: 'Now Playing', en: 'Now Playing' },
-                location: { ko: 'Theatre 01', en: 'Theatre 01' },
-                price: '4K HD',
                 parent_id: parentId || null
             };
 
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
-            const method = isEditMode ? 'PUT' : 'POST';
-
             const res = await fetch(endpoint, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${adminToken}`
-                },
+                method: isEditMode ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
                 body: JSON.stringify(itemData)
             });
             if (res.ok) {
-                const successMsg = await translateAsync(isEditMode ? '수정 성공' : '등록 성공');
-                alert(successMsg);
-                await fetchItems();
-                setNewTitle('');
-                setNewThumbnailUrl('');
-                setNewVideoUrl('');
-                setPreviewUrl(null);
-                setVideoPreviewUrl(null);
+                alert(await translateAsync(isEditMode ? '수정 성공' : '등록 성공'));
+                fetchItems();
                 setShowAddModal(false);
-                setIsEditMode(false);
-                setEditingId(null);
             }
-        } catch (error) {
-            console.error('Save failed:', error);
-            const msg = await translateAsync('서버 연결에 실패했습니다.');
-            alert(msg);
-        } finally {
-            setIsUploading(false);
-        }
+        } catch (error) { alert(await translateAsync('서버 연결 실패')); } finally { setIsUploading(false); }
     };
 
     const handleSaveMetadata = async () => {
         if (!parentProduct || !parentId) return;
-
-        try {
-            const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string'
-                ? JSON.parse(parentProduct.selected_templates)
-                : (parentProduct.selected_templates as any) || [];
-
-            // Standardize as array
-            let templates = Array.isArray(selectedTemplatesRaw)
-                ? selectedTemplatesRaw
-                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                        id,
-                        status: val.status || 'visible',
-                        title: val.title,
-                        description: val.description
-                    }))
-                    : []);
-
-            // Check if cinema template already exists in the selection
-            const hasCinema = templates.some((t: any) => t.id === 'cinema');
-
-            const updatedTemplates = hasCinema
-                ? templates.map((t: any) => t.id === 'cinema' ? {
-                    ...t,
-                    title: { ...(typeof t.title === 'object' ? t.title : {}), ko: tempTitle },
-                    description: { ...(typeof t.description === 'object' ? t.description : {}), ko: tempDesc }
-                } : t)
-                : [...templates, {
-                    id: 'cinema',
-                    status: 'visible',
-                    title: { ko: tempTitle },
-                    description: { ko: tempDesc }
-                }];
-
-            const updatedProduct = {
-                ...parentProduct,
-                selected_templates: updatedTemplates
-            };
-
-            await updateProduct(parentId, updatedProduct);
-            setParentProduct(updatedProduct as any);
-            setIsEditingMetadata(false);
-            const successMsg = await translateAsync('변경사항이 저장되었습니다.');
-            alert(successMsg);
-        } catch (error) {
-            console.error('Failed to save metadata:', error);
-            const errorMsg = await translateAsync('저장에 실패했습니다.');
-            alert(errorMsg);
-        }
+        const selectedTemplatesRaw = typeof parentProduct.selected_templates === 'string' ? JSON.parse(parentProduct.selected_templates) : (parentProduct.selected_templates as any) || [];
+        let templates = Array.isArray(selectedTemplatesRaw) ? selectedTemplatesRaw : [];
+        const updatedTemplates = templates.map((t: any) => t.id === 'cinema' ? { ...t, title: { ko: tempTitle }, description: { ko: tempDesc } } : t);
+        if (!templates.find((t: any) => t.id === 'cinema')) updatedTemplates.push({ id: 'cinema', title: { ko: tempTitle }, description: { ko: tempDesc } });
+        
+        await updateProduct(parentId, { ...parentProduct, selected_templates: updatedTemplates });
+        setIsEditingMetadata(false);
+        alert(await translateAsync('변경사항이 저장되었습니다.'));
     };
 
     return (
-        <div className="min-h-screen font-sans overflow-hidden" style={theme.bgStyle}>
-            {/* Cinema Header */}
-            <header className="relative w-full py-20 px-6 md:px-12 z-[50]" style={{ borderBottom: `1px solid ${theme.color3}44` }}>
+        <div className="min-h-screen font-sans" style={theme.bgStyle}>
+            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto relative z-10">
-                    <div className="flex justify-between items-center mb-10 relative z-[60]">
-                        <button
-                            onClick={() => {
-                                if (window.history.state && window.history.state.idx > 0) {
-                                    navigate(-1);
-                                } else if (parentId) {
-                                    navigate(`/detail/${parentId}`);
-                                } else if (currentFloor) {
-                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                                } else {
-                                    navigate('/inspiration');
-                                }
-                            }}
-                            className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.3em]"
-                            style={{ color: theme.highlightColor }}
+                    <div className="flex justify-between items-start mb-8">
+                        <button 
+                            onClick={() => navigate(-1)}
+                            className="flex items-center gap-2 text-neutral-900 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                         >
-                            <ArrowLeft size={12} />
+                            <ArrowLeft size={14} />
                             <AutoTranslatedText text="Back" />
                         </button>
-
                         {isManagementAllowed && (
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => {
-                                        if (isEditingMetadata) {
-                                            handleSaveMetadata();
-                                        } else {
-                                            setIsEditingMetadata(true);
-                                        }
-                                    }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
-                                    style={{ color: theme.highlightColor }}
-                                >
+                            <div className="flex gap-2 relative z-[70]">
+                                <button onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)} className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-neutral-900 shadow-sm">
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
                                 </button>
-                                {isEditingMetadata && (
-                                    <button
-                                        onClick={() => setIsEditingMetadata(false)}
-                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                )}
-                                <button 
-                                    onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
-                                    style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
-                                >
+                                <button onClick={() => { setIsEditMode(false); setShowAddModal(true); }} className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-lg">
                                     <Plus size={14} />
                                     <AutoTranslatedText text="Add Video" />
                                 </button>
                             </div>
                         )}
                     </div>
-
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-                        <div className="max-w-4xl">
-                            <div className="flex items-center gap-4 mb-6">
-                                <Link
-                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all relative z-[60]"
-                                    style={{ color: theme.highlightColor }}>
-                                    <AutoTranslatedText text="아카이브" /> {floorLabel}
-                                </Link>
-                                <div className="h-4 w-[1px] bg-white/20" />
-                                <span className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40"><AutoTranslatedText text="Now Streaming in 4K" /></span>
-                            </div>
-
-                            {isEditingMetadata ? (
-                                <textarea
-                                    value={tempTitle}
-                                    onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/30 rounded-2xl p-4 text-4xl md:text-6xl font-black mb-8 text-white focus:outline-none focus:border-white transition-all resize-none"
-                                    rows={2}
-                                />
-                            ) : (
-                                <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap break-keep"
-                                    style={{ color: theme.highlightColor, textShadow: `0 0 60px ${theme.glowColor}44` }}>
-                                    <AutoTranslatedText text={tempTitle} />
-                                </h1>
-                            )}
-
-                            {isEditingMetadata ? (
-                                <textarea
-                                    value={tempDesc}
-                                    onChange={(e) => setTempDesc(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg font-serif italic text-white/80 focus:outline-none focus:border-white/50 transition-all resize-none"
-                                    rows={3}
-                                />
-                            ) : (
-                                <p className="text-xl md:text-2xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
-                                    <AutoTranslatedText text={tempDesc} />
-                                </p>
-                            )}
+                    
+                    <div className="max-w-4xl">
+                        <div className="flex items-center gap-4 mb-4">
+                            <Link to="/" className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase border border-neutral-200 bg-neutral-100 text-neutral-900">
+                                <AutoTranslatedText text="시네마" /> {floorLabel}
+                            </Link>
+                            <div className="h-[1px] w-12 bg-neutral-200" />
                         </div>
-
-                        <div className="shrink-0 flex items-center gap-6">
-                            <div
-                                onClick={() => setIsVideoPlaying(true)}
-                                className="w-24 h-24 rounded-full flex items-center justify-center bg-black/95 border border-white/20 group cursor-pointer hover:bg-black/80 hover:scale-105 transition-all duration-500 shadow-2xl"
-                            >
-                                <Play size={40} className="text-white fill-white ml-1.5 opacity-90 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                        </div>
+                        {isEditingMetadata ? (
+                            <textarea value={tempTitle} onChange={(e) => setTempTitle(e.target.value)} className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-4 text-4xl md:text-5xl font-serif font-black mb-6 text-neutral-900 focus:outline-none focus:border-red-600 transition-all shadow-inner" rows={2} />
+                        ) : (
+                            <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight text-neutral-900">
+                                <AutoTranslatedText text={tempTitle} />
+                            </h1>
+                        )}
+                        {isEditingMetadata ? (
+                            <textarea value={tempDesc} onChange={(e) => setTempDesc(e.target.value)} className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-4 text-lg font-serif italic text-neutral-700 focus:outline-none focus:border-red-600 transition-all shadow-inner" rows={3} />
+                        ) : (
+                            <p className="text-lg md:text-xl font-serif italic text-neutral-600 max-w-2xl leading-tight">
+                                <AutoTranslatedText text={tempDesc} />
+                            </p>
+                        )}
                     </div>
-                </div>
-
-                {/* Ambient Cinematic Glow */}
-                <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
-                    <div className="absolute -top-1/2 -right-1/4 w-[100%] h-[150%] opacity-20" style={{
-                        background: `radial-gradient(circle at center, ${theme.accentColor} 0%, transparent 60%)`,
-                        filter: 'blur(120px)',
-                    }} />
                 </div>
             </header>
 
-            {/* Theatre Selection Section */}
             <main className="container mx-auto px-6 md:px-12 py-20">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <Film size={20} className="text-white/30" />
-                            <h2 className="text-2xl font-black uppercase tracking-tight"><AutoTranslatedText text="Cinema Selection" /></h2>
-                        </div>
-                        <p className="text-sm font-medium opacity-40 tracking-widest uppercase"><AutoTranslatedText text="Interactive Video Theatre" /></p>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full border border-black bg-white/10" />)}
-                        </div>
-                        <span className="text-[10px] font-black tracking-widest uppercase opacity-40"><AutoTranslatedText text="1,248 Viewers Online" /></span>
-                    </div>
+                <div className="h-[65vh] rounded-[2rem] overflow-hidden bg-white shadow-xl border border-neutral-100 relative">
+                    {isLoading ? <div className="flex items-center justify-center h-full">Loading...</div> : (
+                        <VirtualGallery items={cinemaItems} stories={[]} theme={theme} lang={i18n.language} onClick={() => setIsExplorationMode(true)} cinemaItem={selectedCinemaItem} playing={isVideoPlaying} setPlaying={setIsVideoPlaying} isTheaterMode={true} />
+                    )}
                 </div>
 
-                {/* 3D Cinema Corridor */}
-                <div className="h-[65vh] md:h-[85vh] rounded-[4rem] overflow-hidden border shadow-[0_0_100px_rgba(0,0,0,0.8)] relative group"
-                    style={{ borderColor: `${theme.color3}33`, backgroundColor: '#020202' }}>
-
-                    {isLoading ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/20" />
-                        </div>
-                    ) : (
-                        <VirtualGallery
-                            items={cinemaItems}
-                            stories={[]}
-                            theme={theme}
-                            lang={i18n.language}
-                            onClick={() => setIsExplorationMode(true)}
-                            cinemaItem={selectedCinemaItem}
-                            playing={isVideoPlaying}
-                            setPlaying={setIsVideoPlaying}
-                            defaultActivated={true}
-                            isTheaterMode={true}
-                        />
-                    )}
-
-                    {/* Fullscreen Toggle Button */}
-                    {!isLoading && cinemaItems.length > 0 && (
-                        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4">
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-black tracking-[0.5em] text-[#00D2FF] opacity-40 uppercase"><AutoTranslatedText text="VIRTUAL CINEMA EXPERIENCE" /></span>
-                                <h1 className="text-3xl font-black tracking-tight text-white uppercase"><AutoTranslatedText text="Cinema Content" /></h1>
-                            </div>
-                            <button
-                                onClick={() => setIsExplorationMode(true)}
-                                className="flex items-center gap-3 px-8 py-3 rounded-full bg-[#0a0a0a] border border-white/10 text-white hover:bg-white/20 hover:border-white/40 transition-all shadow-2xl group/btn"
-                            >
-                                <Monitor size={16} className="opacity-60 group-hover/btn:scale-110 transition-transform" />
-                                <span className="text-[10px] font-black tracking-[0.2em] uppercase whitespace-nowrap"><AutoTranslatedText text="전체화면으로 보기" /></span>
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Overlay Vignette for Cinema feel */}
-                    <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(0,0,0,0.9)] z-10" />
-                </div>
-
-                {/* Cinema Selection Slider - Slide-style cards */}
-                {!isLoading && cinemaItems.length > 0 && (
-                    <div className="mt-12 overflow-x-auto pb-8 hide-scrollbar">
-                        <motion.div
-                            className="flex gap-6 px-4"
-                            initial={{ x: 20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                    {cinemaItems.map((item) => (
+                        <div 
+                            key={item.id} 
+                            className="relative group rounded-[2rem] overflow-hidden border border-neutral-200 bg-white shadow-sm cursor-pointer transition-all hover:shadow-xl hover:scale-[1.02] hover:-y-1" 
+                            onClick={() => setSelectedCinemaItem(item)}
                         >
-                            {cinemaItems.map((item) => (
-                                <motion.div
-                                    key={item.id}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => {
-                                        setSelectedCinemaItem(item);
-                                        setIsVideoPlaying(false);
-                                    }}
-                                    className={`relative shrink-0 w-64 h-40 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-500 group ${selectedCinemaItem?.id === item.id ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.3)]' : 'border-white/10 grayscale-[0.6] hover:grayscale-0'}`}
-                                >
-                                    <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                                        <div className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-1">
-                                            {typeof item.price === 'string' ? item.price : (item.price as any).ko}
-                                        </div>
-                                        <div className="text-xs font-bold text-white uppercase whitespace-pre-wrap break-keep">
-                                            <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
-                                        </div>
+                            <div className="aspect-video relative overflow-hidden">
+                                <img src={item.imageUrl} alt="" className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700" />
+                                <div className="absolute inset-0 bg-neutral-900/10 group-hover:bg-transparent transition-colors" />
+                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all">
+                                    <Play size={12} className="text-red-600" />
+                                </div>
+                            </div>
+                            <div className="p-8">
+                                <h4 className="font-serif font-black text-xl text-neutral-900 mb-4 leading-tight">
+                                    <AutoTranslatedText text={typeof item.title === 'string' ? item.title : (item.title as any).ko} />
+                                </h4>
+                                <div className="flex justify-between items-center">
+                                    <div className="text-[10px] font-black tracking-widest text-neutral-400 uppercase">
+                                        <AutoTranslatedText text="Archive" />
                                     </div>
-                                    {selectedCinemaItem?.id === item.id && (
-                                        <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-white animate-pulse shadow-[0_0_10px_#fff]" />
-                                    )}
-
                                     {isManagementAllowed && (
-                                        <div className="absolute top-3 left-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
+                                        <div className="flex gap-4">
+                                            <button 
                                                 onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
-                                                className="w-8 h-8 rounded-lg bg-[#111] border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-yellow-500/80 transition-all"
+                                                className="p-2 hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-neutral-900 transition-colors"
                                             >
-                                                <Edit3 size={14} />
+                                                <Edit3 size={14}/>
                                             </button>
-                                            <button
+                                            <button 
                                                 onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                                                className="w-8 h-8 rounded-lg bg-[#111] border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-red-500/80 transition-all"
+                                                className="p-2 hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-red-600 transition-colors"
                                             >
-                                                <Trash2 size={14} />
+                                                <Trash2 size={14}/>
                                             </button>
                                         </div>
                                     )}
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </div>
-                )}
-
-                {/* Management Section */}
-                {isManagementAllowed && (
-                    <div className="mt-12 flex flex-col items-center gap-8">
-                        <button
-                            onClick={() => {
-                                setIsEditMode(false);
-                                setEditingId(null);
-                                setNewTitle('');
-                                setNewThumbnailUrl('');
-                                setNewVideoUrl('');
-                                setPreviewUrl(null);
-                                setVideoPreviewUrl(null);
-                                setShowAddModal(true);
-                            }}
-                            className="group flex items-center gap-4 px-10 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all active:scale-95"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                                <Plus size={18} className="text-white" />
+                                </div>
                             </div>
-                            <span className="text-xs font-black tracking-[0.2em] uppercase text-white/60 group-hover:text-white transition-colors">
-                                <AutoTranslatedText text="영상 추가 (Add Video)" />
-                            </span>
-                        </button>
-                    </div>
-                )}
-
-
-                {/* Secondary Features / Technical Specs */}
-                <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-12">
-                    {[
-                        { icon: Monitor, title: "4K 울트라 HD", desc: "모든 영상은 4K 초고화질로 업스케일링되어 최상의 디테일을 제공합니다." },
-                        { icon: Music, title: "공간 오디오", desc: "입체적인 사운드 설계를 통해 현장에 있는 듯한 몰입감을 선사합니다." },
-                        { icon: Film, title: "시네마틱 아카이브", desc: "역사적 가치가 높은 자료들을 시네마틱 기법으로 재편집하여 제공합니다." }
-                    ].map((feature, idx) => (
-                        <div key={idx} className="space-y-6 group">
-                            <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center opacity-40 group-hover:opacity-100 transition-all duration-500" style={{ color: theme.accentColor }}>
-                                <feature.icon size={28} />
-                            </div>
-                            <h3 className="text-xl font-bold"><AutoTranslatedText text={feature.title} /></h3>
-                            <p className="text-sm opacity-40 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
                         </div>
                     ))}
                 </div>
             </main>
 
-            {/* Immersive Fullscreen Theater Mode */}
-            <AnimatePresence>
-                {isExplorationMode && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[1000] bg-black"
-                    >
-                        <motion.div
-                            className="absolute left-10 z-[1010]"
-                            animate={{
-                                top: isZoomed ? '1rem' : '2.5rem',
-                                opacity: isZoomed ? 0 : 1,
-                                height: isZoomed ? 0 : 'auto',
-                                pointerEvents: isZoomed ? 'none' : 'auto'
-                            }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <div className="text-[10px] font-black tracking-[0.5em] text-white/30 uppercase mb-2"><AutoTranslatedText text="Theater Immersion" /></div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter"><AutoTranslatedText text="Cinematic Space" /></h2>
-                        </motion.div>
-
-                        <motion.div
-                            className="absolute z-[1010] flex gap-4"
-                            animate={{
-                                top: isZoomed ? '1rem' : '2.5rem',
-                                right: isZoomed ? '1rem' : '2.5rem'
-                            }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <button
-                                onClick={() => setIsZoomed(!isZoomed)}
-                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 flex items-center justify-center shadow-xl active:scale-95"
-                                title={isZoomed ? t("Exit Zoom") : t("Zoom to Screen")}
-                            >
-                                {isZoomed ? <Minimize size={24} /> : <Maximize size={24} />}
-                            </button>
-
-                            <button
-                                onClick={() => {
-                                    setIsExplorationMode(false);
-                                    setIsZoomed(false);
-                                }}
-                                className="p-4 bg-white/5 hover:bg-white/20 rounded-full text-white border border-white/10 transition-all duration-500 active:scale-95"
-                            >
-                                <X size={24} />
-                            </button>
-                        </motion.div>
-
-                        <div className="w-full h-full">
-                            <VirtualGallery
-                                items={cinemaItems}
-                                stories={[]}
-                                theme={theme}
-                                showUI={false}
-                                defaultActivated={true}
-                                lang={i18n.language}
-                                cinemaItem={selectedCinemaItem}
-                                playing={isVideoPlaying}
-                                setPlaying={setIsVideoPlaying}
-                                isTheaterMode={true}
-                                isZoomed={isZoomed}
-                            />
-                        </div>
-
-                        {/* Scrolling HUD */}
-                        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-[1010] flex flex-col items-center">
-                            <div className="w-[2px] h-12 bg-gradient-to-t from-white/40 to-transparent mb-4" />
-                            <div className="text-[10px] font-black tracking-[0.6em] text-white/40 uppercase"><AutoTranslatedText text="Navigate Theater" /></div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Add Content Modal */}
             <AnimatePresence>
                 {showAddModal && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[20000] flex items-center justify-center p-6 bg-black/95"
+                        className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-neutral-900/60 backdrop-blur-sm"
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="bg-[#111] border border-white/10 w-full max-w-xl rounded-[2.5rem] overflow-hidden shadow-2xl"
+                            className="bg-white border border-neutral-200 w-full max-w-lg rounded-[3rem] overflow-hidden shadow-2xl"
                         >
                             <div className="p-10">
-                                <div className="flex justify-between items-center mb-10">
-                                    <div>
-                                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-1">
-                                            <AutoTranslatedText text={isEditMode ? "영상 정보 수정" : "신규 영상 등록"} />
-                                        </h3>
-                                        <p className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase">
-                                            {isEditMode ? <AutoTranslatedText text="Edit Video Info" /> : <AutoTranslatedText text="Add New Cinematic Content" />}
-                                            <button 
-                                                onClick={() => setShowAddModal(false)}
-                                                className="p-3 hover:bg-white/10 rounded-full transition-all group border border-white/5"
-                                                title={t("Close")}
-                                            >
-                                                <X size={24} className="opacity-40 group-hover:opacity-100" />
-                                            </button>
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            setShowAddModal(false);
-                                            setIsEditMode(false);
-                                            setEditingId(null);
-                                            setVideoPreviewUrl(null);
-                                        }}
-                                        className="p-3 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition-colors"
-                                    >
+                                <div className="flex justify-between items-center mb-8">
+                                    <h3 className="text-2xl font-serif font-black text-neutral-900 uppercase tracking-tighter">
+                                        <AutoTranslatedText text={isEditMode ? "Edit Video" : "Add New Video"} />
+                                    </h3>
+                                    <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-neutral-100 rounded-full text-neutral-400 transition-colors">
                                         <X size={20} />
                                     </button>
                                 </div>
 
-                                <div className="space-y-8">
-                                    <div>
-                                        <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                            <AutoTranslatedText text="영상 명칭 (Title)" />
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase pl-1">
+                                            <AutoTranslatedText text="Video Title" />
                                         </label>
-                                        <div className="relative">
-                                            <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
-                                            <textarea
-                                                value={newTitle}
-                                                onChange={(e) => setNewTitle(e.target.value)}
-                                                placeholder={t("Enter video title...")}
-                                                rows={2}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm resize-none"
-                                            />
-                                        </div>
+                                        <input
+                                            type="text"
+                                            value={newTitle}
+                                            onChange={(e) => setNewTitle(e.target.value)}
+                                            className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-4 px-6 text-neutral-900 text-sm focus:ring-2 focus:ring-red-600/10 focus:border-red-600/30 outline-none transition-all"
+                                            placeholder={t("Enter title")}
+                                        />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                        <div>
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                                <AutoTranslatedText text="영상 썸네일 (Thumbnail)" />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase pl-1">
+                                                <AutoTranslatedText text="Thumbnail" />
                                             </label>
-                                            <div className="space-y-4">
-                                                <input
-                                                    type="text"
-                                                    value={newThumbnailUrl}
-                                                    onChange={(e) => {
-                                                        setNewThumbnailUrl(e.target.value);
-                                                        if (previewUrl) setPreviewUrl(null);
-                                                    }}
-                                                    placeholder={t("Thumbnail Image URL...")}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
-                                                />
-                                                <input type="file" ref={fileInputRef} onChange={(e) => handleFileChange(e, 'image')} accept="image/*" className="hidden" />
-                                                {!previewUrl && !newThumbnailUrl ? (
-                                                    <button onClick={() => fileInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
-                                                        <ImageIcon size={24} className="text-white/20 group-hover:text-white/40 mb-2" />
-                                                        <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 uppercase"><AutoTranslatedText text="썸네일 업로드" /></span>
-                                                    </button>
+                                            <div 
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className="aspect-video rounded-2xl bg-neutral-50 border border-dashed border-neutral-200 flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all overflow-hidden relative group"
+                                            >
+                                                {previewUrl || newThumbnailUrl ? (
+                                                    <img src={previewUrl || newThumbnailUrl} className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32">
-                                                        <img src={previewUrl || newThumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
-                                                        <button onClick={() => { setPreviewUrl(null); setNewThumbnailUrl(''); if (fileInputRef.current) fileInputRef.current.value = ''; }} className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"><X size={12} /></button>
-                                                    </div>
+                                                    <>
+                                                        <ImageIcon size={24} className="text-neutral-300 mb-2" />
+                                                        <span className="text-[8px] font-black text-neutral-400 uppercase"><AutoTranslatedText text="Upload Image" /></span>
+                                                    </>
                                                 )}
+                                                <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
                                             </div>
                                         </div>
 
-                                        <div>
-                                            <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
-                                                <AutoTranslatedText text="영상 파일 (Video Content)" />
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase pl-1">
+                                                <AutoTranslatedText text="Video File" />
                                             </label>
-                                            <div className="space-y-4">
-                                                <input
-                                                    type="text"
-                                                    value={newVideoUrl}
-                                                    onChange={(e) => setNewVideoUrl(e.target.value)}
-                                                    placeholder={t("Video Content URL (mp4, webm)...")}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm mb-2"
-                                                />
-                                                <div className="flex items-center gap-3">
-                                                    <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)]">
-                                                        <AutoTranslatedText text="Screening Now" />
-                                                    </span>
-                                                    <span className="text-white/30 text-[10px] font-black uppercase tracking-widest border border-white/10 px-3 py-1 rounded-full"><AutoTranslatedText text="Theatrical Release" /></span>
-                                                </div>
-                                                <input type="file" ref={videoInputRef} onChange={(e) => handleFileChange(e, 'video')} accept="video/*" className="hidden" />
-                                                {!newVideoUrl && !videoPreviewUrl ? (
-                                                    <button onClick={() => videoInputRef.current?.click()} className="w-full h-32 flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group">
-                                                        <Play size={24} className="text-white/20 group-hover:text-white/40 mb-2" />
-                                                        <span className="text-[10px] font-bold text-white/40 group-hover:text-white/60 uppercase"><AutoTranslatedText text="영상 파일 업로드" /></span>
-                                                    </button>
-                                                ) : (
-                                                    <div className="relative rounded-2xl overflow-hidden border border-white/20 h-32 flex items-center justify-center bg-black/40">
-                                                        <video
-                                                            src={videoPreviewUrl || newVideoUrl}
-                                                            className="w-full h-full object-cover"
-                                                            onLoadedMetadata={(e) => {
-                                                                (e.target as HTMLVideoElement).currentTime = 0.1;
-                                                            }}
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-                                                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest text-white/60 uppercase bg-black/80 px-3 py-1 rounded-full"><AutoTranslatedText text="Preview Loaded" /></span>
-                                                        <button
-                                                            onClick={() => {
-                                                                setNewVideoUrl('');
-                                                                setVideoPreviewUrl(null);
-                                                                if (videoInputRef.current) videoInputRef.current.value = '';
-                                                            }}
-                                                            className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors shadow-lg"
-                                                        >
-                                                            <X size={12} />
-                                                        </button>
+                                            <div 
+                                                onClick={() => videoInputRef.current?.click()}
+                                                className="aspect-video rounded-2xl bg-neutral-50 border border-dashed border-neutral-200 flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-100 transition-all overflow-hidden relative group"
+                                            >
+                                                {newVideoUrl ? (
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <Play size={24} className="text-red-600" />
+                                                        <span className="text-[8px] font-black text-neutral-900 uppercase truncate px-4 w-full text-center">Video Attached</span>
                                                     </div>
+                                                ) : (
+                                                    <>
+                                                        <Plus size={24} className="text-neutral-300 mb-2" />
+                                                        <span className="text-[8px] font-black text-neutral-400 uppercase"><AutoTranslatedText text="Upload MP4" /></span>
+                                                    </>
                                                 )}
+                                                <input type="file" ref={videoInputRef} onChange={handleVideoUpload} className="hidden" accept="video/*" />
                                             </div>
                                         </div>
                                     </div>
 
                                     <button
                                         onClick={handleAddItem}
-                                        disabled={isUploading || !newTitle || (!newThumbnailUrl && !previewUrl)}
-                                        className="w-full py-5 rounded-2xl text-black font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-3"
-                                        style={{ backgroundColor: theme.accentColor }}
+                                        disabled={isUploading || !newTitle}
+                                        className="w-full py-5 rounded-2xl bg-neutral-900 text-white font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all disabled:opacity-20 flex items-center justify-center gap-3 mt-4"
                                     >
                                         {isUploading ? (
-                                            <>
-                                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                                <AutoTranslatedText text="업로드 중..." />
-                                            </>
+                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                         ) : (
-                                            <AutoTranslatedText text={isEditMode ? "수정하기 (Update Video)" : "등록하기 (Register Video)"} />
+                                            <Check size={16} />
                                         )}
+                                        <AutoTranslatedText text={isEditMode ? "Update Video" : "Confirm Registration"} />
                                     </button>
                                 </div>
                             </div>
@@ -960,15 +444,16 @@ const VirtualCinemaPage: React.FC = () => {
             </AnimatePresence>
 
             {/* Cinema Footer */}
-            <footer className="mt-48 pb-20 px-6 opacity-30">
-                <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-                    <div className="text-3xl font-black tracking-tighter uppercase">몽땅쏙 CINEMA</div>
-                    <div className="flex gap-10 text-[10px] font-black tracking-widest uppercase">
-                        <a href="#"><AutoTranslatedText text="Showtimes" /></a>
-                        <a href="#"><AutoTranslatedText text="Archives" /></a>
-                        <a href="#"><AutoTranslatedText text="Technical" /></a>
-                        <a href="#"><AutoTranslatedText text="Access" /></a>
+            <footer className="mt-48 py-24 px-6 border-t bg-white" style={{ borderColor: '#E5E7EB' }}>
+                <div className="container mx-auto flex flex-col items-center gap-10">
+                    <div className="text-5xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none"><AutoTranslatedText text="몽땅쏙 CINEMA" /></div>
+                    <div className="flex flex-wrap justify-center gap-12 text-[10px] font-black tracking-[0.3em] uppercase text-neutral-400">
+                        <a href="#" className="hover:text-red-600 transition-colors"><AutoTranslatedText text="Showtimes" /></a>
+                        <a href="#" className="hover:text-red-600 transition-colors"><AutoTranslatedText text="Archives" /></a>
+                        <a href="#" className="hover:text-red-600 transition-colors"><AutoTranslatedText text="Technical" /></a>
+                        <a href="#" className="hover:text-red-600 transition-colors"><AutoTranslatedText text="Access" /></a>
                     </div>
+                    <div className="w-12 h-[1px] bg-neutral-200 mt-4" />
                 </div>
             </footer>
         </div>

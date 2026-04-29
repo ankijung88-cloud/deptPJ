@@ -159,7 +159,7 @@ const FAQPage: React.FC = () => {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-relaxed font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-white/10">
+                                        <div className="p-8 pb-10 text-dancheong-ink/60 leading-tight font-light italic border-x border-b border-dancheong-ink/5 rounded-b-2xl -mt-4 bg-white/10 whitespace-pre-wrap">
                                             <AutoTranslatedText text={displayLocalized(faq.answer)} />
                                         </div>
                                     </motion.div>

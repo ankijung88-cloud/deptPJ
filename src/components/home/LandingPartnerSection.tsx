@@ -62,8 +62,6 @@ export const LandingPartnerSection: React.FC = () => {
                 const data = await getAgencies();
                 if (data && data.length > 0) {
                     setPartners(data);
-                } else {
-                    setPartners(FALLBACK_PARTNERS);
                 }
             } catch (error) {
                 console.warn('Could not fetch dynamic partners, using fallback data');
@@ -75,17 +73,17 @@ export const LandingPartnerSection: React.FC = () => {
 
     // Combine dynamic and fallback to ensure rows are rich and unique
     // Filter out fallbacks that might overlap with dynamic ones by name
-    const uniqueFallback = FALLBACK_PARTNERS.filter(f => 
-        !partners.some(p => (p.agency_name || p.name) === f.name)
+    const uniqueFallback = FALLBACK_PARTNERS.filter((f: any) => 
+        !partners.some((p: any) => (p.agency_name || p.name) === f.name)
     );
     
     // Create a diverse pool
     const pool = partners.length > 0 ? [...partners, ...uniqueFallback] : FALLBACK_PARTNERS;
     
     // Distribute across 3 rows using modulo for variety
-    const finalRow1 = pool.filter((_, i) => i % 3 === 0);
-    const finalRow2 = pool.filter((_, i) => i % 3 === 1);
-    const finalRow3 = pool.filter((_, i) => i % 3 === 2);
+    const finalRow1 = pool.filter((_: any, i: number) => i % 3 === 0);
+    const finalRow2 = pool.filter((_: any, i: number) => i % 3 === 1);
+    const finalRow3 = pool.filter((_: any, i: number) => i % 3 === 2);
 
     return (
         <section id="partners" className="relative w-full py-24 bg-transparent overflow-hidden border-t border-dancheong-ink/5">

@@ -51,7 +51,7 @@ const FloorContentPage: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="max-w-md md:text-right"
                         >
-                            <p className="text-dancheong-ink font-black italic text-xl leading-relaxed">
+                            <p className="text-dancheong-ink font-black italic text-xl leading-tight">
                                 <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                             </p>
                         </motion.div>
@@ -100,7 +100,7 @@ const FloorContentPage: React.FC = () => {
                                         <h3 className="text-3xl font-serif font-black text-dancheong-ink mb-6 group-hover:text-dancheong-mugwort transition-colors duration-500 leading-[1.1] text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.title, i18n.language)} />
                                         </h3>
-                                        <p className="text-dancheong-ink font-black leading-relaxed text-lg line-clamp-3 mb-10 text-left">
+                                        <p className="text-dancheong-ink font-black leading-tight text-lg line-clamp-3 mb-10 text-left">
                                             <AutoTranslatedText text={getLocalizedText(article.description, i18n.language)} />
                                         </p>
                                         <div className="mt-auto flex items-center gap-4 text-dancheong-ink/50 group-hover:text-dancheong-ink transition-colors duration-500 font-black text-[11px] uppercase tracking-[0.3em]">

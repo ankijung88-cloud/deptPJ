@@ -204,6 +204,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     const [selectedSubcategory, setSelectedSubcategory] = useState(''); // floor subitem id
     const [selectedProductType, setSelectedProductType] = useState(''); // free subcategory value
     const [selectedTemplate, setSelectedTemplate] = useState(''); // cinema, museum, etc. or 'uncategorized'
+    const [selectedSource, setSelectedSource] = useState('all'); // all, catalog, store
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
 
@@ -224,7 +225,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     // Reset page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, selectedFloor, selectedSubcategory, selectedProductType, selectedTemplate, selectedAgency]);
+    }, [searchTerm, selectedFloor, selectedSubcategory, selectedProductType, selectedTemplate, selectedAgency, selectedSource]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -315,7 +316,12 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
             const isUncategorized = !p.category || (!floors.some(f => f.id === p.category) && !TEMPLATE_CATEGORIES.includes(p.category));
             const matchesTemplate = !selectedTemplate || 
                 (selectedTemplate === 'uncategorized' ? isUncategorized : getNormalizedFloorId(p.category) === selectedTemplate);
-            return matchesTemplate;
+            
+            const matchesSource = selectedSource === 'all' 
+                ? true 
+                : (selectedSource === 'store' ? !!(p as any).parent_id : !(p as any).parent_id);
+                
+            return matchesTemplate && matchesSource;
         });
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -455,6 +461,16 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                         ))}
                     </select>
 
+                    <select 
+                        value={selectedSource}
+                        onChange={(e) => setSelectedSource(e.target.value)}
+                        className="bg-black/5 border border-[#00FFC2]/20 rounded-2xl px-4 py-2 text-dancheong-mugwort focus:outline-none focus:border-[#00FFC2]/50 cursor-pointer min-w-[140px] font-bold"
+                    >
+                        <option value="all">모든 출처</option>
+                        <option value="catalog">메인 카탈로그</option>
+                        <option value="store">스토어 아이템</option>
+                    </select>
+
                     <button 
                         onClick={() => {
                             setSearchTerm('');
@@ -463,6 +479,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                             setSelectedSubcategory('');
                             setSelectedProductType('');
                             setSelectedTemplate('');
+                            setSelectedSource('all');
                             setCurrentPage(1);
                         }}
                         className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-2xl text-dancheong-ink font-bold transition-all border border-white/20 hover:scale-105 active:scale-95"
@@ -501,19 +518,34 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                     className="px-6 py-4 text-dancheong-ink font-medium cursor-pointer hover:text-dancheong-mugwort transition-colors"
                                     onClick={() => navigate(`/detail/${product.id}`)}
                                 >
-                                    <span className="border-bottom border-transparent hover:border-[#00FFC2]">
-                                        {displayLocalized(product.title)}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className="border-bottom border-transparent hover:border-[#00FFC2]">
+                                            {displayLocalized(product.title)}
+                                        </span>
+                                        {(product as any).parent_id && (
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-dancheong-mugwort mt-1 bg-dancheong-mugwort/10 w-fit px-2 py-0.5 rounded-full border border-dancheong-mugwort/20">
+                                                Store Item
+                                            </span>
+                                        )}
+                                    </div>
                                 </td>
                                 {isAdmin && (
                                     <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs">
                                         {agencies.find(a => a.id === (product as any).agency_id)?.agency_name || '-'}
                                     </td>
                                 )}
-                                <td className="px-6 py-4">
+                                <td 
+                                    className="px-6 py-4 cursor-pointer group/floor"
+                                    onClick={() => {
+                                        const normalizedCatId = getNormalizedFloorId(product.category);
+                                        if (!TEMPLATE_CATEGORIES.includes(normalizedCatId)) {
+                                            navigate(`/floor/${normalizedCatId}`);
+                                        }
+                                    }}
+                                >
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: floors.find(f => f.id === getNormalizedFloorId(product.category))?.color || '#333' }}></div>
-                                        <span className="text-dancheong-ink font-bold">
+                                        <span className="text-dancheong-ink font-bold group-hover/floor:underline">
                                             {(() => {
                                             const normalizedCatId = getNormalizedFloorId(product.category);
                                                 const floor = floors.find(f => f.id === normalizedCatId);
@@ -522,7 +554,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
                                                 return displayLocalized(product.category);
                                             })()}
                                         </span>
-                                        <span className="text-dancheong-ink/40 text-xs">
+                                        <span className="text-dancheong-ink/40 text-xs group-hover/floor:underline">
                                             {(() => {
                                                 const normalizedCatId = getNormalizedFloorId(product.category);
                                                 const floor = floors.find(f => f.id === normalizedCatId);
@@ -827,7 +859,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <textarea 
                             rows={4} required
                             value={formData.description.ko} onChange={(e) => setFormData({...formData, description: {...formData.description, ko: e.target.value}})}
-                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                         />
                     </div>
 
@@ -856,7 +888,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                         <textarea 
                             rows={8}
                             value={formData.long_description.ko} onChange={(e) => setFormData({...formData, long_description: {...formData.long_description, ko: e.target.value}})}
-                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none"
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
                             placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
                         />
                     </div>
@@ -1100,7 +1132,7 @@ const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
                                                             updated[idx] = { ...updated[idx], description: { ...updated[idx].description, ko: e.target.value } };
                                                             setFormData({ ...formData, reservation_programs: updated });
                                                         }}
-                                                        className="w-full h-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50 resize-none"
+                                                        className="w-full h-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
                                                     />
                                                 </div>
                                             </div>
@@ -1182,6 +1214,7 @@ const FloorManager = () => {
     const { floors, loading, refreshFloors } = useFloors();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFloor, setEditingFloor] = useState<any>(null);
+    const navigate = useNavigate();
 
     const { translateAsync } = useAutoTranslate(null);
 
@@ -1224,8 +1257,18 @@ const FloorManager = () => {
                     <tbody className="divide-y divide-white/5">
                         {floors.map(floor => (
                             <tr key={floor.id} className="hover:bg-dancheong-ink/5 transition-colors">
-                                <td className="px-6 py-4 text-dancheong-mugwort font-bold">{floor.floor}</td>
-                                <td className="px-6 py-4 text-dancheong-ink font-medium">{displayLocalized(floor.title)}</td>
+                                <td 
+                                    className="px-6 py-4 text-dancheong-mugwort font-bold cursor-pointer hover:underline"
+                                    onClick={() => navigate(`/floor/${floor.id}`)}
+                                >
+                                    {floor.floor}
+                                </td>
+                                <td 
+                                    className="px-6 py-4 text-dancheong-ink font-medium cursor-pointer hover:underline"
+                                    onClick={() => navigate(`/floor/${floor.id}`)}
+                                >
+                                    {displayLocalized(floor.title)}
+                                </td>
                                 <td className="px-6 py-4 text-dancheong-ink/40 text-sm truncate max-w-xs">{displayLocalized(floor.description)}</td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
@@ -1467,7 +1510,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                         </div>
                         <div>
                             <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="설명" /></label>
-                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
+                            <textarea rows={3} value={formData.description.ko || ''} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                         </div>
                         
                         {/* Sub-items Management */}
@@ -1520,7 +1563,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                                                         const oldDesc = typeof sub.description === 'object' ? sub.description : { ko: sub.description || '' };
                                                         updateSubitem(idx, 'description', { ...oldDesc, ko: e.target.value });
                                                     }}
-                                                    className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-sm focus:border-dancheong-mugwort/30 resize-none"
+                                                    className="w-full bg-black/20 border border-dancheong-ink/5 rounded-xl p-3 text-dancheong-ink text-sm focus:border-dancheong-mugwort/30"
                                                     placeholder="서브 카테고리의 설명 텍스트를 입력하세요."
                                                 />
                                             </div>
@@ -2008,7 +2051,7 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
                     </div>
                     <div>
                         <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="답변" /></label>
-                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50 resize-none" required />
+                        <textarea rows={4} value={formData.answer.ko} onChange={e => setFormData({...formData, answer: {...formData.answer, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" required />
                     </div>
                     <div className="flex justify-end gap-4 pt-4 border-t border-dancheong-ink/5">
                         <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>

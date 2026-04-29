@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Sparkles, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -228,7 +228,7 @@ export const DetailPage: React.FC = () => {
         inquiry: `/detail/${item.id}/inquiry`,
         reservation: `/detail/${item.id}/reservation`,
         meeting: `/detail/${item.id}/meeting`,
-        sindang: `/detail/${item.id}/sindang`,
+
         saju: `/detail/${item.id}/saju`,
         groupbuy: `/detail/${item.id}/groupbuy`,
         funding: `/detail/${item.id}/funding`,
@@ -399,7 +399,7 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-8 space-y-16">
                         <section className="relative">
                             <div className="absolute -left-6 top-0 bottom-0 w-1 opacity-30" style={{ backgroundColor: theme.highlightColor }} />
-                            <p className="text-2xl md:text-3xl leading-relaxed font-serif italic" style={{ color: theme.textSecondary }}>
+                            <p className="text-2xl md:text-3xl leading-tight font-serif italic whitespace-pre-wrap" style={{ color: theme.textSecondary }}>
                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                             </p>
                         </section>
@@ -407,7 +407,7 @@ export const DetailPage: React.FC = () => {
                         <div className="h-px w-full" style={{ backgroundColor: `${theme.textPrimary}11` }} />
 
                         <section className="prose prose-invert max-w-none">
-                            <div className="text-lg leading-relaxed space-y-8 font-light" style={{ color: theme.textSecondary }}>
+                            <div className="text-lg leading-tight space-y-8 font-light" style={{ color: theme.textSecondary }}>
                                 {item.long_description ? (
                                     <div className="whitespace-pre-wrap">
                                         <AutoTranslatedText text={getLocalizedText(item.long_description, i18n.language)} />
@@ -497,7 +497,7 @@ export const DetailPage: React.FC = () => {
                                                 { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
                                                 { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
                                                 { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
-                                                { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
+
                                                 { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
                                                 { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
                                                 { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
@@ -548,7 +548,7 @@ export const DetailPage: React.FC = () => {
                                             { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
                                             { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
                                             { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
-                                            { id: 'sindang', label: '신점보기', icon: Sparkles, color: '#FFD700' },
+
                                             { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
                                             { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
                                             { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },

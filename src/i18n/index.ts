@@ -212,8 +212,8 @@ const resources = {
                 "virtual_ticket": "가상 티켓"
             },
             "store": {
-                "store_title": "2D 버추얼 스토어",
-                "store_desc": "브랜드 스토리와 제품을 혁신적인 2D 공간에서 만나보세요.",
+                "store_title": "그로스마켓",
+                "store_desc": "글로벌 문화 교류와 상업 활동이 이루어지는 가상 복합 쇼핑몰입니다.",
                 "select_item_3d": "2D로 볼 제품을 선택하세요",
                 "preview_mode_2d": "2D 미리보기 모드",
                 "holographic_engine_active": "홀로그래픽 엔진 활성",
@@ -424,8 +424,8 @@ const resources = {
                 "virtual_ticket": "Virtual Ticket"
             },
             "store": {
-                "store_title": "2D Virtual Store",
-                "store_desc": "Experience brand stories and products in an innovative 2D space.",
+                "store_title": "GROWTH MARKET",
+                "store_desc": "A virtual complex mall where global cultural exchange and commercial activities take place.",
                 "select_item_3d": "Select an item to view in 2D",
                 "preview_mode_2d": "2D Preview Mode",
                 "holographic_engine_active": "Holographic Engine Active",

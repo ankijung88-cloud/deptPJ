@@ -114,7 +114,7 @@ const FloorGuidePage: React.FC = () => {
                                 transition={{ delay: 0.3 }}
                                 className="md:text-left"
                             >
-                                <p className="text-dancheong-ink font-bold text-lg leading-relaxed mb-12 max-w-xl">
+                                <p className="text-dancheong-ink font-bold text-lg leading-tight mb-12 max-w-xl whitespace-pre-wrap">
                                     <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                                 </p>
 
@@ -243,7 +243,7 @@ const FloorGuidePage: React.FC = () => {
                                                             >
                                                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
                                                             </h3>
-                                                            <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-relaxed">
+                                                            <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-tight">
                                                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
                                                             </p>
                                                         </div>

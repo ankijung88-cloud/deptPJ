@@ -290,7 +290,7 @@ const TeamWorkspacePage: React.FC = () => {
     };
 
     return (
-        <div className="fixed inset-0 bg-[#050505] text-white overflow-hidden font-sans" onMouseMove={handleActivity}>
+        <div className="fixed inset-0 bg-[#F2E7D5] text-black overflow-hidden font-sans" onMouseMove={handleActivity}>
             <ErrorBoundary>
                 <div className="absolute inset-0 z-0 pt-24">
                     <OfficeEnvironment2D 
@@ -321,43 +321,43 @@ const TeamWorkspacePage: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setAssigningSeatId(null)}
-                            className="absolute inset-0 bg-black/95"
+                            className="absolute inset-0 bg-white/95"
                         />
                         <motion.div 
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="relative w-full max-w-md bg-[#111] border border-white/10 rounded-3xl p-8 overflow-hidden"
+                            className="relative w-full max-w-md bg-[#F2E7D5] border border-black/10 rounded-3xl p-8 overflow-hidden shadow-2xl"
                         >
-                            <h3 className="text-xl font-black mb-6 flex items-center gap-3">
+                            <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-black">
                                 <Plus className="text-[#00D2FF]" />
                                 <AutoTranslatedText text="DESIGNATE SEAT" />
                             </h3>
                             <div className="flex flex-col mb-6">
-                                <span className="text-[10px] font-black tracking-[0.4em] opacity-30 text-white uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></span>
-                                <h1 className="text-2xl font-black tracking-tight"><AutoTranslatedText text="Team Workspace" /></h1>
+                                <span className="text-[10px] font-black tracking-[0.4em] opacity-40 text-black uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></span>
+                                <h1 className="text-2xl font-black tracking-tight text-black"><AutoTranslatedText text="Team Workspace" /></h1>
                             </div>
-                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-xl focus-within:border-[#00D2FF]/50 transition-all mb-4">
-                                <Search size={16} className="opacity-40" />
+                            <div className="flex items-center gap-3 bg-black/5 border border-black/10 px-4 py-2 rounded-xl focus-within:border-[#00D2FF]/50 transition-all mb-4">
+                                <Search size={16} className="opacity-60 text-black" />
                                 <input 
                                     type="text" 
                                     placeholder={_t("Search members...")} 
-                                    className="bg-transparent border-none outline-none text-sm w-full font-medium"
+                                    className="bg-transparent border-none outline-none text-sm w-full font-medium text-black placeholder:text-black/30"
                                 />
                             </div>
                             <span className="text-[10px] font-bold opacity-30 tracking-widest uppercase"><AutoTranslatedText text="Member Search" /></span>
                             <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar pointer-events-auto mt-2">
                                 <button 
                                     onClick={() => handleAssignUser(assigningSeatId, null)}
-                                    className="w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 text-left transition-all"
+                                    className="w-full p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-black/10 text-left transition-all"
                                 >
-                                    <div className="text-sm font-bold opacity-40"><AutoTranslatedText text="REMOVE ASSIGNMENT" /></div>
+                                    <div className="text-sm font-bold opacity-60 text-black"><AutoTranslatedText text="REMOVE ASSIGNMENT" /></div>
                                 </button>
                                 {participants.map(p => (
                                     <button 
                                         key={p.id}
                                         onClick={() => handleAssignUser(assigningSeatId, { id: p.id, name: p.name })}
-                                        className="w-full p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-[#00D2FF]/20 hover:border-[#00D2FF]/40 text-left transition-all group pointer-events-auto"
+                                        className="w-full p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-[#00D2FF]/20 hover:border-[#00D2FF]/40 text-left transition-all group pointer-events-auto"
                                     >
                                         <div className="flex items-center justify-between">
                                             <div>
@@ -373,7 +373,7 @@ const TeamWorkspacePage: React.FC = () => {
                             </div>
                             <button 
                                 onClick={() => setAssigningSeatId(null)}
-                                className="w-full mt-6 py-4 rounded-2xl bg-white/5 font-bold hover:bg-white/10 transition-all pointer-events-auto"
+                                className="w-full mt-6 py-4 rounded-2xl bg-black/5 font-bold hover:bg-black/10 transition-all pointer-events-auto text-black"
                             >
                                 <AutoTranslatedText text="CANCEL" />
                             </button>
@@ -387,13 +387,13 @@ const TeamWorkspacePage: React.FC = () => {
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => navigate(-1)}
-                            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all group"
+                            className="w-12 h-12 rounded-full bg-black/5 border border-black/10 flex items-center justify-center hover:bg-black/10 transition-all group"
                         >
-                            <LogOut className="w-5 h-5 text-white/60 group-hover:text-white transition-colors rotate-180" />
+                            <LogOut className="w-5 h-5 text-black/60 group-hover:text-black transition-colors rotate-180" />
                         </button>
                         <div>
                             <h1 className="text-xl font-black tracking-tighter text-[#00D2FF]"><AutoTranslatedText text="VIRTUAL OFFICE" /></h1>
-                            <div className="flex items-center gap-2 text-[10px] text-white/40 uppercase tracking-widest font-bold">
+                            <div className="flex items-center gap-2 text-[10px] text-black/60 uppercase tracking-widest font-bold">
                                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 {participants.length} <AutoTranslatedText text="Members Active" />
                             </div>
@@ -402,7 +402,7 @@ const TeamWorkspacePage: React.FC = () => {
 
                     <div className="flex items-center gap-3">
                         {DEPARTMENTS.map(dept => (
-                            <div key={dept.id} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white/60">
+                            <div key={dept.id} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black/60">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dept.color }} />
                                 <AutoTranslatedText text={dept.name} />
                             </div>
@@ -411,11 +411,11 @@ const TeamWorkspacePage: React.FC = () => {
                 </header>
                 {/* Main Action Controls (Right Sidebar) */}
                 <aside className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20">
-                    <div className="px-5 py-8 rounded-[2.5rem] bg-[#0a0a0a] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center gap-6">
-                        <div className="pb-4 mb-2 border-b border-white/10 w-full flex justify-center">
+                    <div className="px-5 py-8 rounded-[2.5rem] bg-white border border-black/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col items-center gap-6">
+                        <div className="pb-4 mb-2 border-b border-black/10 w-full flex justify-center">
                             <LanguageSelector variant="sidebar" />
                         </div>
-                        <div className="flex flex-col items-center gap-4 border-b border-white/10 pb-6 mb-2">
+                        <div className="flex flex-col items-center gap-4 border-b border-black/10 pb-6 mb-2">
                             {[
                                 { id: 'working', icon: Monitor, color: '#00D2FF', label: <AutoTranslatedText text="Working" /> },
                                 { id: 'break', icon: Coffee, color: '#FF9500', label: <AutoTranslatedText text="Break" /> },
@@ -425,16 +425,16 @@ const TeamWorkspacePage: React.FC = () => {
                                 <button
                                     key={status.id}
                                     onClick={() => setUserStatus(status.id)}
-                                    className={`relative group p-4 rounded-2xl transition-all ${userStatus === status.id ? 'bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]' : 'hover:bg-white/5'}`}
+                                    className={`relative group p-4 rounded-2xl transition-all ${userStatus === status.id ? 'bg-black/5 shadow-[0_0_20px_rgba(0,0,0,0.05)]' : 'hover:bg-black/5'}`}
                                     title={typeof status.label === 'string' ? status.label : ''}
                                 >
-                                    <status.icon className={`w-6 h-6 ${userStatus === status.id ? '' : 'opacity-40'}`} style={{ color: status.color }} />
+                                    <status.icon className={`w-6 h-6 ${userStatus === status.id ? '' : 'opacity-60'}`} style={{ color: status.color }} />
                                     {userStatus === status.id && (
-                                        <motion.div layoutId="status-indicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-white" />
+                                        <motion.div layoutId="status-indicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-black" />
                                     )}
                                     
                                     {/* Tooltip on hover */}
-                                    <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                    <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
                                         {status.label}
                                     </div>
                                 </button>
@@ -446,27 +446,27 @@ const TeamWorkspacePage: React.FC = () => {
                                 className="group relative p-4 rounded-2xl bg-[#00D2FF] text-black hover:bg-[#00D2FF]/80 transition-all shadow-[0_10px_20px_rgba(0,210,255,0.2)]"
                             >
                                 <Video className="w-6 h-6" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
                                     <AutoTranslatedText text="Meeting Room" />
                                 </div>
                             </button>
 
                             <button 
                                 onClick={() => setIsChatOpen(!isChatOpen)}
-                                className={`group relative p-4 rounded-2xl transition-all ${isChatOpen ? 'bg-[#00D2FF] text-black shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-white/5 text-white/60 hover:text-white'}`}
+                                className={`group relative p-4 rounded-2xl transition-all ${isChatOpen ? 'bg-[#00D2FF] text-black shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-black/5 text-black/60 hover:text-black'}`}
                             >
                                 <MessageCircle className="w-6 h-6" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
                                     <AutoTranslatedText text="Office Chat" />
                                 </div>
                             </button>
                             
                             <button 
                                 onClick={() => {/* Settings logic */}}
-                                className="group relative p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                                className="group relative p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-black/10 transition-all"
                             >
-                                <Settings className="w-6 h-6 text-white/60" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-black/90 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                                <Settings className="w-6 h-6 text-black/60" />
+                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
                                     <AutoTranslatedText text="Settings" />
                                 </div>
                             </button>
@@ -481,11 +481,11 @@ const TeamWorkspacePage: React.FC = () => {
                             initial={{ opacity: 0, x: 100 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 100 }}
-                            className="absolute right-8 top-24 bottom-32 w-80 bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col overflow-hidden"
+                            className="absolute right-8 top-24 bottom-32 w-80 bg-white border border-black/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] pointer-events-auto flex flex-col overflow-hidden"
                         >
-                            <div className="p-4 border-b border-white/10 flex justify-between items-center">
-                                <h3 className="font-bold text-xs uppercase tracking-widest text-white/40"><AutoTranslatedText text="Office Chat" /></h3>
-                                <button onClick={() => setIsChatOpen(false)} className="text-white/20 hover:text-white transition-colors">
+                            <div className="p-4 border-b border-black/10 flex justify-between items-center">
+                                <h3 className="font-bold text-xs uppercase tracking-widest text-black/40"><AutoTranslatedText text="Office Chat" /></h3>
+                                <button onClick={() => setIsChatOpen(false)} className="text-black/20 hover:text-black transition-colors">
                                     <MoreVertical size={16} />
                                 </button>
                             </div>
@@ -493,15 +493,15 @@ const TeamWorkspacePage: React.FC = () => {
                             <div className="flex-grow overflow-y-auto p-4 space-y-4 scroll-smooth">
                                 {chatMessages.map((msg) => (
                                     <div key={msg.id} className={`flex flex-col ${msg.sender === user?.name ? 'items-end' : 'items-start'}`}>
-                                        <span className="text-[10px] text-white/30 mb-1">{msg.sender}</span>
-                                        <div className={`px-3 py-2 rounded-2xl text-sm ${msg.sender === user?.name ? 'bg-[#00D2FF] text-black font-medium' : 'bg-white/5 text-white'}`}>
+                                        <span className="text-[10px] text-black/40 mb-1">{msg.sender}</span>
+                                        <div className={`px-3 py-2 rounded-2xl text-sm ${msg.sender === user?.name ? 'bg-[#00D2FF] text-black font-medium' : 'bg-black/5 text-black'}`}>
                                             {msg.content}
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="p-4 bg-white/5">
+                            <div className="p-4 bg-black/5">
                                 <div className="relative">
                                     <input 
                                         type="text"
@@ -509,7 +509,7 @@ const TeamWorkspacePage: React.FC = () => {
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                                         placeholder={_t("Send a message...")}
-                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 pr-12 text-sm outline-none focus:border-[#00D2FF]/50 transition-all"
+                                        className="w-full bg-white border border-black/10 rounded-2xl px-4 py-3 pr-12 text-sm outline-none focus:border-[#00D2FF]/50 transition-all text-black"
                                     />
                                     <button 
                                         onClick={handleSendMessage}

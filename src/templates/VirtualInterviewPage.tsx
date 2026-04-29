@@ -309,7 +309,7 @@ const VirtualInterviewPage: React.FC = () => {
     const activeMaterial = sharedMaterials.find(m => m.id === activeMaterialId) || null;
 
     return (
-        <div className="relative w-full h-screen bg-[#050505] overflow-hidden">
+        <div className="relative w-full h-screen bg-[#F2E7D5] overflow-hidden">
             {/* 3D Canvas */}
             <div className="absolute inset-0 z-0">
                 <ErrorBoundary>
@@ -343,20 +343,20 @@ const VirtualInterviewPage: React.FC = () => {
                     <div className="space-y-1">
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <h1 className="text-xl font-black tracking-tighter text-white uppercase group">
-                                <span className="text-white/40 group-hover:text-[#00D2FF] transition-colors"><AutoTranslatedText text="Virtual" /></span> <AutoTranslatedText text="Interview" />
+                            <h1 className="text-xl font-black tracking-tighter text-black uppercase group">
+                                <span className="text-black/40 group-hover:text-red-600 transition-colors"><AutoTranslatedText text="Virtual" /></span> <AutoTranslatedText text="Interview" />
                             </h1>
                         </div>
-                        <p className="text-[10px] text-white/20 font-bold tracking-[0.3em] uppercase pl-5"><AutoTranslatedText text="Namsan Premium Suite" /></p>
+                        <p className="text-[10px] text-black/30 font-bold tracking-[0.3em] uppercase pl-5"><AutoTranslatedText text="Namsan Premium Suite" /></p>
                     </div>
 
-                    <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+                    <div className="flex items-center gap-3 pl-6 border-l border-black/10">
                         {(isAdmin || isAgency) && (
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleGenerateInvite}
-                                className="flex items-center gap-3 px-6 py-4 bg-[#00D2FF] hover:bg-[#00D2FF]/80 text-black font-black rounded-2xl transition-all shadow-[0_5px_15px_rgba(0,210,255,0.3)]"
+                                className="flex items-center gap-3 px-6 py-4 bg-black hover:bg-red-600 text-white font-black rounded-2xl transition-all shadow-lg"
                             >
                                 <UserPlus size={20} />
                                 <span className="text-sm uppercase tracking-widest hidden md:block"><AutoTranslatedText text="초대링크" /></span>
@@ -366,7 +366,7 @@ const VirtualInterviewPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => setShowSettings(!showSettings)}
-                            className="p-4 bg-[#111] border border-white/10 rounded-2xl text-white/60 hover:text-white transition-colors"
+                            className="p-4 bg-white border border-black/10 rounded-2xl text-black/60 hover:text-black transition-colors shadow-md"
                         >
                             <Settings size={20} />
                         </motion.button>
@@ -374,7 +374,7 @@ const VirtualInterviewPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => navigate(-1)}
-                            className="px-6 py-4 bg-[#FF4757]/10 hover:bg-[#FF4757]/20 border border-[#FF4757]/20 rounded-2xl text-[#FF4757] font-black text-xs tracking-widest flex items-center gap-3 transition-all"
+                            className="px-6 py-4 bg-red-600 hover:bg-red-700 rounded-2xl text-white font-black text-xs tracking-widest flex items-center gap-3 transition-all shadow-md"
                         >
                             <LogOut size={16} /> <AutoTranslatedText text="EXIT ROOM" />
                         </motion.button>
@@ -383,7 +383,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                 {/* Bottom Controls */}
                 <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-6 pointer-events-auto">
-                    <div className="bg-black/90 border border-white/10 p-4 rounded-[2.5rem] flex items-center gap-3 shadow-2xl">
+                    <div className="bg-white border border-black/10 p-4 rounded-[2.5rem] flex items-center gap-3 shadow-2xl">
                         <ControlBtn 
                             active={!isMuted} 
                             onClick={() => setIsMuted(!isMuted)} 
@@ -396,21 +396,21 @@ const VirtualInterviewPage: React.FC = () => {
                             label={isVideoOff ? t('common.camera_on') : t('common.camera_off')}
                             icon={isVideoOff ? <VideoOff size={22} /> : <Video size={22} />} 
                         />
-                        <div className="w-px h-8 bg-white/10 mx-2" />
+                        <div className="w-px h-8 bg-black/10 mx-2" />
                         
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={toggleCamera}
                             className={`flex flex-col items-center gap-1 group transition-all px-6 py-2 rounded-2xl ${
-                                !isVideoOff ? 'bg-[#00D2FF]/20 text-[#00D2FF]' : 'text-white/40 hover:text-white'
+                                !isVideoOff ? 'bg-red-600 text-white shadow-md' : 'text-black/40 hover:text-black'
                             }`}
                         >
                             <Monitor size={24} className={!isVideoOff ? 'animate-pulse' : ''} />
                             <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="스크린 연동" /></span>
                         </motion.button>
 
-                        <div className="w-px h-8 bg-white/10 mx-2" />
+                        <div className="w-px h-8 bg-black/10 mx-2" />
                         
                         {/* Resume Upload (Candidate Only) */}
                         {currentRole === 'candidate' && (
@@ -427,13 +427,13 @@ const VirtualInterviewPage: React.FC = () => {
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => fileInputRef.current?.click()}
                                     className={`flex flex-col items-center gap-1 group transition-all px-6 py-2 rounded-2xl ${
-                                        sharedMaterials.length > 0 ? 'bg-emerald-500/20 text-emerald-500' : 'text-white/40 hover:text-white'
+                                        sharedMaterials.length > 0 ? 'bg-emerald-500/20 text-emerald-500' : 'text-black/40 hover:text-black'
                                     }`}
                                 >
                                     <Upload size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="이력서 공유" /></span>
                                 </motion.button>
-                                <div className="w-px h-8 bg-white/10 mx-2" />
+                                <div className="w-px h-8 bg-black/10 mx-2" />
                             </>
                         )}
 
@@ -452,13 +452,13 @@ const VirtualInterviewPage: React.FC = () => {
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => fileInputRef.current?.click()}
                                     className={`flex flex-col items-center gap-1 group transition-all px-6 py-2 rounded-2xl ${
-                                        sharedMaterials.length > 0 ? 'bg-[#00D2FF]/20 text-[#00D2FF]' : 'text-white/40 hover:text-white'
+                                        sharedMaterials.length > 0 ? 'bg-red-600 text-white shadow-md' : 'text-black/40 hover:text-black'
                                     }`}
                                 >
                                     <FileText size={24} />
                                     <span className="text-[9px] font-black uppercase tracking-tighter"><AutoTranslatedText text="참고자료 공유" /></span>
                                 </motion.button>
-                                <div className="w-px h-8 bg-white/10 mx-2" />
+                                <div className="w-px h-8 bg-black/10 mx-2" />
                             </>
                         )}
 
@@ -470,7 +470,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 if (showParticipants) setShowParticipants(false);
                             }}
                             className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
-                                showMaterials ? 'bg-emerald-500 text-black' : 'bg-white/5 text-white/40 hover:bg-white/10'
+                                showMaterials ? 'bg-emerald-500 text-black' : 'bg-black/5 text-black/40 hover:bg-black/10'
                             }`}
                         >
                             <FileText size={22} />
@@ -484,7 +484,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 if (showMaterials) setShowMaterials(false);
                             }}
                             className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
-                                showParticipants ? 'bg-[#00D2FF] text-black' : 'bg-white/5 text-white/40 hover:bg-white/10'
+                                showParticipants ? 'bg-red-600 text-white' : 'bg-black/5 text-black/40 hover:bg-black/10'
                             }`}
                         >
                             <Users size={22} />
@@ -495,7 +495,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleNextCandidate}
-                                className="px-6 h-14 bg-emerald-500 rounded-full flex items-center gap-2 group border border-emerald-400/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                className="px-6 h-14 bg-emerald-500 rounded-full flex items-center gap-2 group border border-emerald-400/50 shadow-lg"
                             >
                                 <ChevronRight size={18} className="text-white group-hover:translate-x-1 transition-transform" />
                                 <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none"><AutoTranslatedText text="다음 지원자 호출" /></span>
@@ -510,7 +510,7 @@ const VirtualInterviewPage: React.FC = () => {
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-[#00D2FF] text-black px-6 py-4 rounded-2xl font-black text-xs tracking-tighter shadow-[0_0_30px_rgba(0,210,255,0.3)]"
+                            className="bg-black text-white px-6 py-4 rounded-2xl font-black text-xs tracking-tighter shadow-xl"
                         >
                                                         <AutoTranslatedText text="원하시는 좌석을 선택하여 착석해주세요" />
                         </motion.div>
@@ -525,16 +525,16 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
-                        className="absolute top-0 right-0 w-80 h-full bg-[#111] border-l border-white/10 p-10 z-50 flex flex-col gap-8"
+                        className="absolute top-0 right-0 w-80 h-full bg-white border-l border-black/10 p-10 z-50 flex flex-col gap-8 shadow-2xl"
                     >
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-[#00D2FF]">Settings</h2>
-                            <button onClick={() => setShowSettings(false)} className="text-white/20 hover:text-white"><X size={24} /></button>
+                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-red-600 text-black">Settings</h2>
+                            <button onClick={() => setShowSettings(false)} className="text-black/20 hover:text-black"><X size={24} /></button>
                         </div>
                         
-                        <div className="space-y-6">
+                        <div className="space-y-6 text-black">
                             <div className="space-y-3">
-                                <label className="text-[10px] text-white/20 font-black uppercase tracking-[0.2em]">Participant Role</label>
+                                <label className="text-[10px] text-black/40 font-black uppercase tracking-[0.2em]">Participant Role</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     <RoleBtn 
                                         active={currentRole === 'interviewer'} 
@@ -560,13 +560,13 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        className="absolute top-0 left-0 w-80 h-full bg-[#111] border-r border-white/10 p-10 z-50 flex flex-col gap-6"
+                        className="absolute top-0 left-0 w-80 h-full bg-white border-r border-black/10 p-10 z-50 flex flex-col gap-6 shadow-2xl"
                     >
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
+                        <div className="flex justify-between items-center text-black">
+                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-red-600">
                                 <AutoTranslatedText text="Participants" />
                             </h2>
-                            <button onClick={() => setShowParticipants(false)} className="text-white/20 hover:text-white"><X size={24} /></button>
+                            <button onClick={() => setShowParticipants(false)} className="text-black/20 hover:text-black"><X size={24} /></button>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto space-y-4 pr-2">
@@ -580,7 +580,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                             {participants.length === 0 && (
                                 <div className="py-20 text-center">
-                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">
+                                    <p className="text-[10px] text-black/40 font-black uppercase tracking-widest">
                                         <AutoTranslatedText text="대기 중인 참가자가 없습니다" />
                                     </p>
                                 </div>
@@ -597,13 +597,13 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        className="absolute top-0 left-0 w-80 h-full bg-[#111] border-r border-white/10 p-10 z-50 flex flex-col gap-6"
+                        className="absolute top-0 left-0 w-80 h-full bg-white border-r border-black/10 p-10 z-50 flex flex-col gap-6 shadow-2xl"
                     >
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-emerald-500">
-                                <AutoTranslatedText text="Shared Files" />
+                        <div className="flex justify-between items-center text-black">
+                            <h2 className="text-xl font-black tracking-tighter uppercase p-2 border-b-2 border-red-600">
+                                <AutoTranslatedText text="Materials" />
                             </h2>
-                            <button onClick={() => setShowMaterials(false)} className="text-white/20 hover:text-white"><X size={24} /></button>
+                            <button onClick={() => setShowMaterials(false)} className="text-black/20 hover:text-black"><X size={24} /></button>
                         </div>
                         
                         <div className="flex-1 overflow-y-auto space-y-3 pr-2">
@@ -638,7 +638,7 @@ const VirtualInterviewPage: React.FC = () => {
 
                             {sharedMaterials.length === 0 && (
                                 <div className="py-20 text-center">
-                                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">
+                                    <p className="text-[10px] text-black/40 font-black uppercase tracking-widest">
                                         <AutoTranslatedText text="공유된 자료가 없습니다" />
                                     </p>
                                 </div>
@@ -657,20 +657,20 @@ const VirtualInterviewPage: React.FC = () => {
                         exit={{ opacity: 0, y: 50 }}
                         className="absolute bottom-40 left-1/2 -translate-x-1/2 z-[50] flex flex-col items-center"
                     >
-                        <div className="px-10 py-5 bg-black border border-white/10 rounded-[2rem] flex items-center gap-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
-                            <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-400 group relative">
+                        <div className="px-10 py-5 bg-white border border-black/10 rounded-[2rem] flex items-center gap-6 shadow-2xl">
+                            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 group relative">
                                 <Users size={24} className="animate-pulse" />
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-black flex items-center justify-center">
-                                    <span className="text-[8px] font-black text-black">
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center">
+                                    <span className="text-[8px] font-black text-white">
                                         {participants.filter(p => p.role === 'candidate' && p.status === 'waiting' && p.joinTime < localParticipant.joinTime).length + 1}
                                     </span>
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <h4 className="text-lg font-black tracking-tight flex items-center gap-2 text-white">
+                                <h4 className="text-lg font-black tracking-tight flex items-center gap-2 text-black">
                                     <AutoTranslatedText text="면접 진행 중" /> <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 </h4>
-                                <p className="text-xs text-white/40 font-bold uppercase tracking-widest whitespace-nowrap">
+                                <p className="text-xs text-black/40 font-bold uppercase tracking-widest whitespace-nowrap">
                                     <AutoTranslatedText text="준비가 완료되면 면접관이 귀하를 호출할 것입니다. 잠시만 기다려 주십시오." />
                                 </p>
                             </div>
@@ -687,40 +687,40 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-[100] bg-black flex flex-col p-12"
+                        className="absolute inset-0 z-[100] bg-[#F2E7D5] flex flex-col p-12"
                     >
-                        <div className="flex justify-between items-center mb-10">
+                        <div className="flex justify-between items-center mb-10 text-black">
                             <div className="space-y-1">
-                                <h2 className="text-3xl font-black tracking-tighter uppercase text-[#00D2FF]">
+                                <h2 className="text-3xl font-black tracking-tighter uppercase text-red-600">
                                     {activeMaterial.type === 'resume' ? <AutoTranslatedText text="면접 자료 확인" /> : <AutoTranslatedText text="참고 자료 확인" />}
                                 </h2>
                                 <div className="flex items-center gap-3">
-                                    <p className="text-[10px] text-white/40 font-bold tracking-[0.3em] uppercase">Document Viewer</p>
-                                    <div className="w-1 h-1 rounded-full bg-white/20" />
-                                    <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest opacity-80">{activeMaterial.ownerName}</p>
+                                    <p className="text-[10px] text-black/40 font-bold tracking-[0.3em] uppercase">Document Viewer</p>
+                                    <div className="w-1 h-1 rounded-full bg-black/10" />
+                                    <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest opacity-80">{activeMaterial.ownerName}</p>
                                 </div>
                             </div>
                             <motion.button
                                 whileHover={{ scale: 1.1, rotate: 90 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={() => setShowResumeModal(false)}
-                                className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all border border-white/10"
+                                className="w-16 h-16 bg-black/5 rounded-full flex items-center justify-center text-black/40 hover:text-black hover:bg-black/10 transition-all border border-black/10 shadow-sm"
                             >
                                 <X size={32} />
                             </motion.button>
                         </div>
 
-                        <div className="flex-1 min-h-0 bg-white/5 rounded-[3rem] border border-white/10 p-4 shadow-2xl relative group overflow-hidden">
+                        <div className="flex-1 min-h-0 bg-black/5 rounded-[3rem] border border-black/10 p-4 shadow-2xl relative group overflow-hidden">
                             <img 
                                 src={activeMaterial.url} 
                                 alt={activeMaterial.name} 
-                                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]" 
+                                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)]" 
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
                         </div>
 
                         <div className="mt-8 flex justify-center">
-                            <div className="px-8 py-3 bg-white/5 rounded-full border border-white/10 text-[10px] text-white/40 font-black uppercase tracking-widest">
+                            <div className="px-8 py-3 bg-black/5 rounded-full border border-black/10 text-[10px] text-black/40 font-black uppercase tracking-widest">
                                                                 {activeMaterial.name} - <AutoTranslatedText text="마우스를 굴려 확대/축소할 수 있습니다 (준비 중)" />
                             </div>
                         </div>
@@ -735,22 +735,22 @@ const VirtualInterviewPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-[150] flex items-center justify-center bg-[#050505]/95 p-6"
+                        className="absolute inset-0 z-[150] flex items-center justify-center bg-black/40 backdrop-blur-md p-6"
                     >
                         <motion.div 
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="w-full max-w-md p-12 bg-[#111] border border-white/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-10"
+                            className="w-full max-w-md p-12 bg-white border border-black/10 rounded-[40px] shadow-2xl flex flex-col items-center text-center gap-10 text-black"
                         >
-                            <div className="w-24 h-24 bg-emerald-500/10 rounded-3xl flex items-center justify-center text-emerald-400 border border-emerald-500/20 rotate-12">
+                            <div className="w-24 h-24 bg-red-600/10 rounded-3xl flex items-center justify-center text-red-600 border border-red-600/20 rotate-12">
                                 <Lock size={48} className="-rotate-12" />
                             </div>
                             
                             <div className="space-y-3">
-                                <h2 className="text-4xl font-black tracking-tight uppercase text-white">
+                                <h2 className="text-4xl font-black tracking-tight uppercase">
                                     <AutoTranslatedText text="보안 입장" />
                                 </h2>
-                                <p className="text-white/40 text-sm font-medium leading-relaxed">
+                                <p className="text-black/40 text-sm font-medium leading-relaxed">
                                                                         <AutoTranslatedText text="이 인터뷰 룸은 승인된 지원자만 접근할 수 있습니다." /><br />
                                     <AutoTranslatedText text="초대장에 기재된 고유 토큰을 입력해 주세요." />
                                 </p>
@@ -764,22 +764,22 @@ const VirtualInterviewPage: React.FC = () => {
                                         value={entryToken}
                                         onChange={(e) => setEntryToken(e.target.value)}
                                         placeholder={t('interview.token_placeholder') || "ENTER TOKEN"}
-                                        className="w-full h-20 bg-white/5 border border-white/10 rounded-2xl px-8 font-mono tracking-[0.5em] text-center text-2xl text-white focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-white/10"
+                                        className="w-full h-20 bg-black/5 border border-black/10 rounded-2xl px-8 font-mono tracking-[0.5em] text-center text-2xl text-black focus:outline-none focus:border-red-600 focus:bg-white transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-black/10"
                                     />
                                     {tokenError && (
-                                        <p className="absolute -bottom-6 left-0 right-0 text-[#FF4757] text-[10px] font-black uppercase tracking-widest">{tokenError}</p>
+                                        <p className="absolute -bottom-6 left-0 right-0 text-red-600 text-[10px] font-black uppercase tracking-widest">{tokenError}</p>
                                     )}
                                 </div>
 
                                 <button 
                                     type="submit"
-                                    className="w-full py-5 bg-white text-black rounded-2xl font-black uppercase tracking-[0.2em] transition-all hover:bg-emerald-500 hover:text-white active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]"
+                                    className="w-full py-5 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] transition-all hover:bg-red-600 active:scale-95 shadow-xl"
                                 >
                                     <AutoTranslatedText text="Enter Interview Room" />
                                 </button>
                             </form>
                             
-                            <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] cursor-pointer hover:text-white/40 transition-colors" onClick={() => navigate('/')}>
+                            <p className="text-[10px] text-black/20 font-bold uppercase tracking-[0.3em] cursor-pointer hover:text-black/40 transition-colors" onClick={() => navigate('/')}>
                                 <AutoTranslatedText text="Or return to Home" />
                             </p>
                         </motion.div>
@@ -790,38 +790,38 @@ const VirtualInterviewPage: React.FC = () => {
             {/* Invite Token Management Modal */}
             <AnimatePresence>
                 {showInviteModal && (
-                    <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/90">
+                    <div className="absolute inset-0 z-[160] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-12 relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]"
+                            className="w-full max-w-md bg-white border border-black/10 rounded-[2.5rem] p-12 relative shadow-2xl text-black"
                         >
                             <button 
                                 onClick={() => setShowInviteModal(false)}
-                                className="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors group flex items-center justify-center text-white/40 hover:text-white"
+                                className="absolute top-8 right-8 p-3 bg-black/5 hover:bg-black/10 rounded-full transition-colors group flex items-center justify-center text-black/40 hover:text-black"
                             >
                                 <X size={20} className="group-active:scale-90 transition-transform" />
                             </button>
                             
                             <div className="flex flex-col items-center text-center gap-10">
-                                <div className="w-24 h-24 bg-[#00D2FF]/10 rounded-3xl flex items-center justify-center rotate-12">
-                                    <UserPlus size={48} className="text-[#00D2FF] -rotate-12" />
+                                <div className="w-24 h-24 bg-red-600/10 rounded-3xl flex items-center justify-center rotate-12">
+                                    <UserPlus size={48} className="text-red-600 -rotate-12" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black tracking-tight text-white">
+                                    <h3 className="text-3xl font-black tracking-tight">
                                         <AutoTranslatedText text="Invite Candidate" />
                                     </h3>
-                                    <p className="text-sm text-white/40 font-medium">
+                                    <p className="text-sm text-black/40 font-medium">
                                         <AutoTranslatedText text="A secure invitation link has been generated." />
                                     </p>
                                 </div>
                                 
-                                <div className="w-full bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col gap-4 group hover:border-[#00D2FF]/30 transition-colors">
+                                <div className="w-full bg-black/5 border border-black/10 p-6 rounded-2xl flex flex-col gap-4 group hover:border-red-600/30 transition-colors">
                                     <div className="overflow-hidden">
-                                        <span className="text-[10px] uppercase font-black tracking-widest text-white/20 mb-2 block text-left">Secure Invite URL</span>
+                                        <span className="text-[10px] uppercase font-black tracking-widest text-black/20 mb-2 block text-left">Secure Invite URL</span>
                                         <div className="flex items-center justify-between gap-4">
-                                            <span className="text-xs font-mono text-[#00D2FF] truncate block flex-1 text-left">
+                                            <span className="text-xs font-mono text-red-600 truncate block flex-1 text-left">
                                                 {inviteLink}
                                             </span>
                                             <button 
@@ -838,7 +838,7 @@ const VirtualInterviewPage: React.FC = () => {
                                                             });
                                                     }
                                                 }}
-                                                className="px-6 py-3 bg-[#00D2FF] text-black rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)] whitespace-nowrap"
+                                                className="px-6 py-3 bg-black text-white rounded-xl text-[10px] font-black transition-all hover:scale-105 active:scale-95 shadow-lg hover:bg-red-600 whitespace-nowrap"
                                             >
                                                 <AutoTranslatedText text="COPY LINK" />
                                             </button>
@@ -848,7 +848,7 @@ const VirtualInterviewPage: React.FC = () => {
                                 
                                 <button 
                                     onClick={() => setShowInviteModal(false)}
-                                    className="w-full py-5 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all border border-white/5"
+                                    className="w-full py-5 bg-black text-white hover:bg-red-600 font-black rounded-2xl transition-all shadow-md"
                                 >
                                     <AutoTranslatedText text="Close" />
                                 </button>
@@ -870,27 +870,27 @@ const ParticipantItem: React.FC<{ participant: Participant; isSelf?: boolean }> 
     const config = statusConfig[participant.status] || statusConfig['waiting'];
 
     return (
-        <div className={`flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 transition-all ${participant.status === 'completed' ? 'opacity-40' : ''}`}>
+        <div className={`flex items-center justify-between p-4 bg-black/5 rounded-2xl border border-black/10 transition-all ${participant.status === 'completed' ? 'opacity-40' : ''}`}>
             <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black" style={{ backgroundColor: participant.color + '20', color: participant.color }}>
                     {participant.name[0]}
                 </div>
                 <div>
-                    <p className="text-xs font-black text-white flex items-center gap-2">
+                    <p className="text-xs font-black text-black flex items-center gap-2">
                         {participant.name}
-                        {isSelf && <span className="text-[9px] text-[#00D2FF] font-medium">(<AutoTranslatedText text="ME" />)</span>}
+                        {isSelf && <span className="text-[9px] text-red-600 font-medium">(<AutoTranslatedText text="ME" />)</span>}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-[9px] text-white/30 font-bold uppercase tracking-wider">{participant.role}</p>
-                        <div className={`px-1.5 py-0.5 rounded-full ${config.bg} border border-white/5`}>
+                        <p className="text-[9px] text-black/30 font-bold uppercase tracking-wider">{participant.role}</p>
+                        <div className={`px-1.5 py-0.5 rounded-full ${config.bg} border border-black/5`}>
                             <span className={`text-[7px] font-black uppercase tracking-widest ${config.color}`}>{config.label}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                {participant.isMuted ? <MicOff size={14} className="text-red-500/60" /> : <Mic size={14} className="text-emerald-500/60" />}
-                {participant.isVideoOff ? <VideoOff size={14} className="text-white/20" /> : <Video size={14} className="text-emerald-500/60" />}
+                {participant.isMuted ? <MicOff size={14} className="text-red-600/60" /> : <Mic size={14} className="text-emerald-600/60" />}
+                {participant.isVideoOff ? <VideoOff size={14} className="text-black/20" /> : <Video size={14} className="text-emerald-600/60" />}
             </div>
         </div>
     );
@@ -904,13 +904,13 @@ const ControlBtn: React.FC<{ active: boolean; onClick: () => void; icon: React.R
             onClick={onClick}
             className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
                 active 
-                ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]' 
-                : 'bg-red-500/20 text-red-500 border border-red-500/30'
+                ? 'bg-black/5 text-black hover:bg-black/10' 
+                : 'bg-red-600 text-white shadow-lg'
             }`}
         >
             {icon}
         </motion.button>
-        {label && <span className="text-[9px] font-black uppercase tracking-tighter text-white/40">{label}</span>}
+        {label && <span className="text-[9px] font-black uppercase tracking-tighter text-black/40">{label}</span>}
     </div>
 );
 
@@ -919,8 +919,8 @@ const RoleBtn: React.FC<{ active: boolean; onClick: () => void; label: React.Rea
         onClick={onClick}
         className={`px-4 py-3 rounded-xl text-[10px] font-black transition-all ${
             active 
-            ? 'bg-[#00D2FF] text-black shadow-lg' 
-            : 'bg-white/5 text-white/40 hover:bg-white/10'
+            ? 'bg-red-600 text-white shadow-lg' 
+            : 'bg-black/5 text-black/40 hover:bg-black/10'
         }`}
     >
         {label}

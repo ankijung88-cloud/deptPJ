@@ -173,7 +173,7 @@ export const LandingFloorSection: React.FC = () => {
                 </div>
 
                 <div className="mt-16 lg:mt-24 text-center">
-                    <p className="max-w-2xl mx-auto text-base md:text-lg text-dancheong-ink/60 font-bold leading-relaxed px-4 whitespace-pre-line">
+                    <p className="max-w-2xl mx-auto text-base md:text-lg text-dancheong-ink/60 font-bold leading-tight px-4 whitespace-pre-line">
                         <AutoTranslatedText text={"몽땅쏙의 각 층은 당신의 영감과 비즈니스를 위한 최적의 목적지로 설계되었습니다.\n위의 층별 카드를 클릭하여 지금 바로 가상 공간으로의 몰입형 탐험을 시작해 보세요."} />
                     </p>
                 </div>

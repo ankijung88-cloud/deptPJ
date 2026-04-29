@@ -18,55 +18,31 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const refreshFloors = async () => {
         setLoading(true);
         try {
-            const data = await getFloorCategories();
-            if (!data || data.length === 0) {
-                setFloors(FALLBACK_FLOORS);
-                return;
-            }
-
+            const data = await getFloorCategories() || [];
+            
             // Merge dynamic data with fallback data
+            // We map over FALLBACK_FLOORS to ensure the core structure (1F-6F) always exists
             const mergedFloors = FALLBACK_FLOORS.map(fallback => {
                 const dynamic = data.find(d => d.id?.toString() === fallback.id?.toString()) || 
                                 data.find(d => d.floor?.toString().trim().toUpperCase() === fallback.floor?.toString().trim().toUpperCase());
                 
                 if (dynamic) {
-                    // Start with dynamic data but ensure critical fallback structure for rebranding
                     return { 
-                        ...dynamic, 
-                        id: fallback.id, 
-                        floor: fallback.floor,
-                        title: dynamic.title || fallback.title, 
-                        subitems: (() => {
-                            const fallbackSubitems = fallback.subitems || [];
-                            const dynamicSubitems = (dynamic.subitems || []) as any[];
-                            
-                            // If we have dynamic subitems, use them as the primary source
-                            // but enrich with fallback data for missing fields
-                            if (dynamicSubitems && dynamicSubitems.length > 0) {
-                                return dynamicSubitems.map(dynSub => {
-                                    const fbSub = fallbackSubitems.find(f => f.id?.toString().toLowerCase() === dynSub.id?.toString().toLowerCase());
-                                    return {
-                                        ...(fbSub || {}),
-                                        ...dynSub,
-                                        // Ensure labels and descriptions from dynamic data take precedence
-                                        label: dynSub.label || fbSub?.label,
-                                        description: dynSub.description || fbSub?.description,
-                                        bgImage: dynSub.bgImage || dynSub.bg_image || fbSub?.bgImage
-                                    };
-                                });
-                            }
-                            
-                            // If no dynamic subitems, return fallbacks
-                            return fallbackSubitems;
-                        })()
+                        ...fallback, 
+                        ...dynamic,
+                        // Ensure we use the dynamic ID and floor name if they exist, 
+                        // but fallback to the static ones if the dynamic ones are null/undefined
+                        id: dynamic.id || fallback.id,
+                        floor: dynamic.floor || fallback.floor,
+                        subitems: (dynamic.subitems && dynamic.subitems.length > 0) ? dynamic.subitems : fallback.subitems
                     };
                 }
                 return fallback;
             });
 
             // Add extra floors from DB that are not in fallback
-            const extraFloors = (data || []).filter(d => 
-                !FALLBACK_FLOORS.some(f => f.floor === d.floor)
+            const extraFloors = data.filter(d => 
+                !FALLBACK_FLOORS.some(f => f.id?.toString() === d.id?.toString() || f.floor === d.floor)
             );
 
             const allFloors = [...mergedFloors, ...extraFloors].sort((a, b) => {

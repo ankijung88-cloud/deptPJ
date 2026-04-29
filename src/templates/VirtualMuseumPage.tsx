@@ -5,7 +5,6 @@ import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type,
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { useImmersiveMode, useSetBreadcrumbPath } from '../context/NavigationActionContext';
@@ -43,27 +42,23 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                 <div 
                     className="absolute inset-0 rounded-2xl border flex flex-col items-center justify-center p-6 text-center shadow-xl overflow-hidden"
                     style={{ 
-                        backgroundColor: `${theme.color1}ee`, 
-                        borderColor: `${theme.color3}44`,
-                        // backdropFilter: 'blur(10px)',
+                        backgroundColor: '#FFFFFF', 
+                        borderColor: '#E5E7EB', // gray-200
                         backfaceVisibility: 'hidden',
                         zIndex: isFlipped ? 0 : 1
                     }}
                 >
-                    <div className="absolute inset-0 opacity-10 pointer-events-none" 
-                         style={{ backgroundImage: `radial-gradient(circle at center, ${theme.accentColor} 0%, transparent 70%)` }} />
-                    
-                    <div className="mb-4 opacity-30 group-hover:opacity-100 transition-opacity duration-500" style={{ color: theme.accentColor }}>
+                    <div className="mb-4 opacity-40 group-hover:opacity-100 transition-opacity duration-500 text-red-600">
                         <Compass size={32} />
                     </div>
                     
-                    <h3 className="text-lg font-serif font-black leading-tight mb-2 whitespace-pre-wrap break-keep" style={{ color: theme.highlightColor }}>
+                    <h3 className="text-lg font-serif font-black leading-tight mb-2 whitespace-pre-wrap break-keep text-neutral-900">
                         <AutoTranslatedText text={displayName} />
                     </h3>
                     
-                    <div className="h-[1px] w-8 bg-white/10 my-3" />
+                    <div className="h-[1px] w-8 bg-neutral-200 my-3" />
                     
-                    <span className="text-[10px] font-mono tracking-widest opacity-40 uppercase">
+                    <span className="text-[10px] font-black tracking-widest opacity-40 uppercase text-neutral-500">
                         <AutoTranslatedText text="Click to Reveal" />
                     </span>
                 </div>
@@ -87,20 +82,20 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                     
                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-mono text-white/60 tracking-tighter">
+                            <span className="text-[10px] font-black text-white tracking-widest uppercase">
                                 <AutoTranslatedText text={getLocalizedText(item.date, lang)} />
                             </span>
                             {isManagementAllowed && (
                                 <div className="flex gap-2 mt-2">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onEdit(item); }}
-                                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all"
+                                        className="p-1.5 rounded-lg bg-neutral-200 hover:bg-neutral-300 text-neutral-900 transition-all border border-neutral-300"
                                     >
                                         <Edit3 size={12} />
                                     </button>
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}
-                                        className="p-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-500 transition-all"
+                                        className="p-1.5 rounded-lg bg-neutral-200 hover:bg-red-600 text-neutral-900 hover:text-white transition-all border border-neutral-300"
                                     >
                                         <Trash2 size={12} />
                                     </button>
@@ -113,12 +108,12 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
                                 e.stopPropagation();
                                 onImageClick(item.imageUrl || '');
                             }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition-all group/btn"
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all shadow-xl group/btn"
                         >
-                            <span className="text-[10px] font-black tracking-widest uppercase text-white">
+                            <span className="text-[10px] font-black tracking-widest uppercase">
                                 <AutoTranslatedText text="감상하기" />
                             </span>
-                            <Maximize2 size={12} className="text-white/60 group-hover/btn:text-white group-hover/btn:scale-110 transition-all" />
+                            <Maximize2 size={12} className="group-hover/btn:scale-110 transition-all" />
                         </button>
                     </div>
                 </div>
@@ -153,8 +148,17 @@ const VirtualMuseumPage: React.FC = () => {
     const [tempTitle, setTempTitle] = useState('');
     const [tempDesc, setTempDesc] = useState('');
 
-    // Theme: Scholar Green
-    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);; 
+    // Standardized Ivory Theme Tokens
+    const theme = {
+        bgStyle: { backgroundColor: '#F2E7D5' },
+        color1: '#FFFFFF',
+        color2: '#F2E7D5',
+        color3: '#000000',
+        accentColor: '#DC2626', // red-600
+        highlightColor: '#171717',
+        textPrimary: '#171717',
+        glowColor: '#DC2626'
+    };
 
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -477,14 +481,14 @@ const VirtualMuseumPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen font-sans overflow-x-hidden bg-white">
+        <div className="min-h-screen font-sans overflow-x-hidden" style={theme.bgStyle}>
             <style dangerouslySetInnerHTML={{ __html: `
                 .perspective-1000 { perspective: 1000px; }
                 .preserve-3d { transform-style: preserve-3d; }
             `}} />
 
             {/* Header Section */}
-            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50]" style={{ borderColor: `${theme.color3}44` }}>
+            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8">
                         <button 
@@ -499,8 +503,7 @@ const VirtualMuseumPage: React.FC = () => {
                                     navigate('/inspiration');
                                 }
                             }}
-                            className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
-                            style={{ color: theme.highlightColor }}
+                            className="flex items-center gap-2 text-neutral-900 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                         >
                             <ArrowLeft size={14} />
                             <AutoTranslatedText text="Back" />
@@ -516,8 +519,7 @@ const VirtualMuseumPage: React.FC = () => {
                                             setIsEditingMetadata(true);
                                         }
                                     }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-[#00FFC2]/20 hover:bg-[#00FFC2]/10 transition-all text-[10px] font-black tracking-widest uppercase"
-                                    style={{ color: '#00FFC2', borderColor: '#00FFC2' }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-neutral-900 shadow-sm"
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />
@@ -525,15 +527,14 @@ const VirtualMuseumPage: React.FC = () => {
                                 {isEditingMetadata && (
                                     <button 
                                         onClick={() => setIsEditingMetadata(false)}
-                                        className="p-2 rounded-full border border-white/10 hover:bg-white/5 text-white/40"
+                                        className="p-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-400"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
                                 <button 
                                     onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all text-[10px] font-black tracking-widest uppercase"
-                                    style={{ color: theme.accentColor, borderColor: `${theme.accentColor}44` }}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-lg"
                                 >
                                     <Plus size={14} />
                                     <AutoTranslatedText text="Add Content" />
@@ -544,26 +545,24 @@ const VirtualMuseumPage: React.FC = () => {
                     
                     <div className="max-w-4xl">
                         <div className="flex items-center gap-4 mb-4">
-                        <Link 
-                            to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                            className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase hover:brightness-110 transition-all shadow-lg relative z-[60]" 
-                            style={{ backgroundColor: `${theme.color2}44`, color: theme.highlightColor }}
-                        >
-                            <AutoTranslatedText text="아카이브" /> {floorLabel}
-                        </Link>
-                            <div className="h-[1px] w-12 bg-white/10" />
+                            <Link 
+                                to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
+                                className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 transition-all relative z-[60] text-neutral-900" 
+                            >
+                                <AutoTranslatedText text="아카이브" /> {floorLabel}
+                            </Link>
+                                <div className="h-[1px] w-12 bg-neutral-200" />
                         </div>
                         
                         {isEditingMetadata ? (
                             <textarea 
                                 value={tempTitle}
                                 onChange={(e) => setTempTitle(e.target.value)}
-                                className="w-full bg-white/5 border border-[#00FFC2]/30 rounded-2xl p-4 text-4xl md:text-5xl font-serif font-black mb-6 text-white focus:outline-none focus:border-[#00FFC2] transition-all resize-none"
+                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-4 text-4xl md:text-5xl font-serif font-black mb-6 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-inner"
                                 rows={2}
                             />
                         ) : (
-                            <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight whitespace-pre-wrap break-keep" 
-                                style={{ color: theme.highlightColor, textShadow: `0 0 30px ${theme.glowColor}22` }}>
+                            <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight text-neutral-900">
                                 <AutoTranslatedText text={tempTitle} />
                             </h1>
                         )}
@@ -572,11 +571,11 @@ const VirtualMuseumPage: React.FC = () => {
                             <textarea 
                                 value={tempDesc}
                                 onChange={(e) => setTempDesc(e.target.value)}
-                                className="w-full bg-white/5 border border-white/20 rounded-2xl p-4 text-lg font-serif italic text-white/80 focus:outline-none focus:border-[#00FFC2]/50 transition-all resize-none"
+                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-4 text-lg font-serif italic text-neutral-700 focus:outline-none focus:border-red-600/50 transition-all resize-none shadow-inner"
                                 rows={3}
                             />
                         ) : (
-                            <p className="text-lg md:text-xl font-serif italic opacity-60 max-w-2xl leading-relaxed">
+                            <p className="text-lg md:text-xl font-serif italic text-neutral-600 max-w-2xl leading-tight">
                                 <AutoTranslatedText text={tempDesc} />
                             </p>
                         )}
@@ -588,7 +587,7 @@ const VirtualMuseumPage: React.FC = () => {
             <main className="container mx-auto px-6 md:px-12 py-20">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-40">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/20" />
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black/20" />
                     </div>
                 ) : museumItems.length === 0 ? (
                     <div className="text-center py-40 opacity-40">
@@ -617,10 +616,10 @@ const VirtualMuseumPage: React.FC = () => {
                         { icon: Compass, title: t("고해상도 뷰어"), desc: t("이미지를 클릭하면 실제 박물관 부럽지 않은 선명한 화질을 경험할 수 있습니다.") },
                         { icon: Plus, title: t("콘텐츠 확장"), desc: t("언제든지 새로운 유물을 추가하여 나만의 가상 전시장을 꾸며보세요.") }
                     ].map((feature, idx) => (
-                        <div key={idx} className="p-8 rounded-3xl border border-white/5 bg-[#111] group hover:bg-white/10 transition-all duration-500">
-                             <feature.icon className="mb-6 opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentColor }} size={32} />
-                             <h3 className="text-xl font-serif font-bold mb-3"><AutoTranslatedText text={feature.title} /></h3>
-                             <p className="text-sm opacity-50 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
+                        <div key={idx} className="p-8 rounded-3xl border border-neutral-200 bg-white group hover:bg-neutral-50 transition-all duration-500 shadow-sm">
+                             <feature.icon className="mb-6 text-red-600 opacity-60 group-hover:opacity-100 transition-opacity" size={32} />
+                             <h3 className="text-xl font-serif font-bold mb-3 text-neutral-900"><AutoTranslatedText text={feature.title} /></h3>
+                             <p className="text-sm text-neutral-500 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
                         </div>
                     ))}
                 </div>
@@ -637,44 +636,43 @@ const VirtualMuseumPage: React.FC = () => {
                         <motion.div 
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="w-full max-w-lg rounded-3xl p-10 shadow-2xl border"
-                            style={{ backgroundColor: JOSEON_THEMES[2].color1, borderColor: `${JOSEON_THEMES[2].accentColor}44` }}
+                            className="w-full max-w-lg rounded-3xl p-10 shadow-2xl bg-white border border-neutral-200"
                         >
                             <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-2xl font-serif font-black" style={{ color: theme.highlightColor }}>
+                                <h2 className="text-2xl font-serif font-black text-neutral-900">
                                     <AutoTranslatedText text={isEditMode ? "유물 정보 수정" : "새 유물 추가"} />
                                 </h2>
-                                <button onClick={() => { setShowAddModal(false); setIsEditMode(false); setEditingId(null); }} className="opacity-40 hover:opacity-100 transition-opacity">
+                                <button onClick={() => { setShowAddModal(false); setIsEditMode(false); setEditingId(null); }} className="text-neutral-400 hover:text-neutral-900 transition-colors">
                                     <X size={24} />
                                 </button>
                             </div>
 
                             <div className="space-y-6">
                                 <div>
-                                    <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
+                                    <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase mb-2 block">
                                         <AutoTranslatedText text="유물 명칭 (Title)" />
                                     </label>
                                     <div className="relative">
-                                        <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                                        <Type size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-300" />
                                         <textarea 
                                             value={newTitle}
                                             onChange={(e) => setNewTitle(e.target.value)}
                                             placeholder={i18n.t("예: 금동향로")}
                                             rows={2}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all resize-none text-sm"
+                                            className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-4 pl-12 pr-4 text-neutral-900 placeholder:text-neutral-300 focus:outline-none focus:border-red-600 transition-all resize-none text-sm shadow-inner"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="text-[10px] font-black tracking-widest text-white/40 uppercase mb-2 block">
+                                    <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase mb-2 block">
                                         <AutoTranslatedText text="이미지 설정 (Image Setup)" />
                                     </label>
                                     
                                     <div className="space-y-4">
                                         {/* URL Input */}
                                         <div className="relative">
-                                            <ImageIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
+                                            <ImageIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-300" />
                                             <input 
                                                 type="text"
                                                 value={newImageUrl}
@@ -685,14 +683,14 @@ const VirtualMuseumPage: React.FC = () => {
                                                     }
                                                 }}
                                                 placeholder={i18n.t("/via_station_logo_portal.png")}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-all text-sm"
+                                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-4 pl-12 pr-4 text-neutral-900 placeholder:text-neutral-300 focus:outline-none focus:border-red-600 transition-all text-sm shadow-inner"
                                             />
                                         </div>
 
                                         <div className="flex items-center gap-4">
-                                            <div className="h-[1px] flex-grow bg-white/5" />
-                                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest"><AutoTranslatedText text="or" /></span>
-                                            <div className="h-[1px] flex-grow bg-white/5" />
+                                            <div className="h-[1px] flex-grow bg-neutral-100" />
+                                            <span className="text-[8px] font-black text-neutral-300 uppercase tracking-widest"><AutoTranslatedText text="or" /></span>
+                                            <div className="h-[1px] flex-grow bg-neutral-100" />
                                         </div>
 
                                         {/* File Upload Trigger */}
@@ -707,22 +705,22 @@ const VirtualMuseumPage: React.FC = () => {
                                         {!previewUrl ? (
                                             <button 
                                                 onClick={() => fileInputRef.current?.click()}
-                                                className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group"
+                                                className="w-full flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-neutral-200 hover:border-red-600/30 hover:bg-neutral-50 transition-all group"
                                             >
-                                                <UploadCloud size={32} className="text-white/20 group-hover:text-white/40 mb-3 transition-colors" />
-                                                <span className="text-xs font-bold text-white/40 group-hover:text-white/60">
+                                                <UploadCloud size={32} className="text-neutral-300 group-hover:text-red-600/50 mb-3 transition-colors" />
+                                                <span className="text-xs font-bold text-neutral-400 group-hover:text-neutral-600">
                                                     <AutoTranslatedText text="이미지 파일 직접 업로드 (Click to Upload)" />
                                                 </span>
                                             </button>
                                         ) : (
-                                            <div className="relative rounded-2xl overflow-hidden border border-white/20 group">
+                                            <div className="relative rounded-2xl overflow-hidden border border-neutral-200 group">
                                                 <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
                                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                     <button 
                                                         onClick={() => {
                                                             setPreviewUrl(null);
                                                         }}
-                                                        className="px-4 py-2 rounded-lg bg-red-500/80 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-500 transition-colors"
+                                                        className="px-4 py-2 rounded-lg bg-red-600 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-700 transition-colors"
                                                     >
                                                         <AutoTranslatedText text="Remove File" />
                                                     </button>
@@ -735,12 +733,11 @@ const VirtualMuseumPage: React.FC = () => {
                                 <button 
                                     onClick={handleAddItem}
                                     disabled={isUploading}
-                                    className="w-full py-5 rounded-2xl font-black tracking-[0.2em] uppercase transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                                    style={{ backgroundColor: theme.accentColor, color: theme.color1 }}
+                                    className="w-full py-5 rounded-2xl font-black tracking-[0.2em] uppercase transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white"
                                 >
                                     {isUploading ? (
                                         <>
-                                            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                             <AutoTranslatedText text="업로드 중..." />
                                         </>
                                     ) : (
@@ -784,11 +781,11 @@ const VirtualMuseumPage: React.FC = () => {
             </AnimatePresence>
 
             {/* Footer */}
-            <footer className="py-20 px-6 border-t mt-32" style={{ backgroundColor: `${theme.color1}44`, borderColor: `${theme.color3}44` }}>
+            <footer className="py-20 px-6 border-t mt-32 bg-white/50" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
                     <div className="space-y-4">
-                        <div className="text-2xl font-serif font-black opacity-40">몽땅쏙 MUSEUM</div>
-                        <p className="text-xs font-bold tracking-widest opacity-30 uppercase max-w-md">
+                        <div className="text-2xl font-serif font-black text-neutral-300">몽땅쏙 MUSEUM</div>
+                        <p className="text-xs font-bold tracking-widest text-neutral-400 uppercase max-w-md">
                             <AutoTranslatedText text="상호작용하는 가상 전시장, 디지털 헤리티지의 새로운 지평을 엽니다." />
                         </p>
                     </div>
