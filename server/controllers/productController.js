@@ -1,7 +1,7 @@
 import pool from '../config/db.js';
 
 export const getAllProducts = async (req, res) => {
-  const { subcategory, agencyId } = req.query;
+  const { subcategory, agencyId, parentId } = req.query;
   const user = req.user; // From authMiddleware
 
   console.log(`[getAllProducts] Subcategory: ${subcategory}, AgencyId: ${agencyId}, UserID: ${user?.id}, Role: ${user?.role}`);
@@ -30,6 +30,11 @@ export const getAllProducts = async (req, res) => {
       conditions.push('subcategory = ?');
       params.push(subcategory);
     }
+
+    if (parentId && parentId !== 'undefined' && parentId !== 'null') {
+      conditions.push('parent_id = ?');
+      params.push(parentId);
+    }
     
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -56,8 +61,18 @@ export const getProductsByCategory = async (req, res) => {
   try {
     // Use LOWER() for case-insensitive matching if DB collation is strict, 
     // although MySQL LIKE is usually case-insensitive.
-    let query = 'SELECT * FROM featured_items WHERE (LOWER(category) LIKE LOWER(?) OR LOWER(subcategory) LIKE LOWER(?))';
-    let params = [`%${category}%`, `%${category}%`];
+    let query = 'SELECT * FROM featured_items WHERE 1=1';
+    let params = [];
+
+    // Special case for 'store' or 'all': don't filter by category string if parentId is present
+    // This is because products in a store are often saved with specific floor/category names (e.g. "1F", "2F")
+    // but the store page fetches them using a general category tag.
+    if ((category === 'store' || category === 'all') && parentId && parentId !== 'undefined' && parentId !== 'null') {
+      console.log(`[getProductsByCategory] 'store/all' requested with ParentID. Skipping category string filter.`);
+    } else {
+      query += ' AND (LOWER(category) LIKE LOWER(?) OR LOWER(subcategory) LIKE LOWER(?))';
+      params.push(`%${category}%`, `%${category}%`);
+    }
 
     // Filter by parentId if provided
     if (parentId && parentId !== 'undefined' && parentId !== 'null') {

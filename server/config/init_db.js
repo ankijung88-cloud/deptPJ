@@ -136,7 +136,7 @@ async function initDB() {
     await addColumnSafely('detail_media_url', "ALTER TABLE featured_items ADD COLUMN detail_media_url TEXT");
     await addColumnSafely('detail_media_type', "ALTER TABLE featured_items ADD COLUMN detail_media_type VARCHAR(20) DEFAULT 'image'");
     await addColumnSafely('page_type', "ALTER TABLE featured_items ADD COLUMN page_type VARCHAR(50) NULL");
-    await addColumnSafely('parent_id', "ALTER TABLE featured_items ADD COLUMN parent_id INT NULL");
+    await addColumnSafely('parent_id', "ALTER TABLE featured_items ADD COLUMN parent_id VARCHAR(255) NULL");
     await addColumnSafely('theme_data', "ALTER TABLE featured_items ADD COLUMN theme_data JSON NULL");
     await addColumnSafely('reservation_programs', "ALTER TABLE featured_items ADD COLUMN reservation_programs JSON NULL");
     await addColumnSafely('reservation_slots', "ALTER TABLE featured_items ADD COLUMN reservation_slots JSON NULL");
@@ -151,6 +151,18 @@ async function initDB() {
       }
     } catch (err) {
       console.warn('[DB] Non-critical migration failed for description:', err.message);
+    }
+
+    // NEW: Ensure parent_id is VARCHAR(255) to support string IDs from templates
+    try {
+      const [parentCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'parent_id'");
+      if (parentCols.length > 0 && parentCols[0].Type.toLowerCase().includes('int')) {
+        console.log('[DB] parent_id column is INT. Upgrading to VARCHAR(255)...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN parent_id VARCHAR(255) NULL");
+        console.log('[DB] Migration successful: parent_id column updated to VARCHAR(255).');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for parent_id type:', err.message);
     }
 
     // Check if agency_id exists in notices

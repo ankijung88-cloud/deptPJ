@@ -97,7 +97,7 @@ const ShoppingMallPage: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
+    const { isAdmin: isAdminLoggedIn, role, user, isAuthenticated } = useAdmin();
 
 
     // Inline Editing for Page Metadata
@@ -248,6 +248,17 @@ const ShoppingMallPage: React.FC = () => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState('');
     const [newPrice, setNewPrice] = useState('');
+
+    // Diagnostics for Production
+    useEffect(() => {
+        console.log(`[VirtualStore Debug] Auth Status:`, {
+            isAuthenticated,
+            role,
+            userId: user?.id,
+            adminToken: sessionStorage.getItem('admin_token') ? 'Present' : 'Missing'
+        });
+        console.log(`[VirtualStore Debug] Params:`, { parentId, isManagementAllowed });
+    }, [isAuthenticated, role, user, parentId, isManagementAllowed]);
     const [newShortDescription, setNewShortDescription] = useState('Premium traditional craft product completed with the touch of an artisan.');
     const [newLongDescription, setNewLongDescription] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
@@ -296,6 +307,10 @@ const ShoppingMallPage: React.FC = () => {
 
             const data = await response.json();
             console.log(`[VirtualStore] Received ${data?.length} items:`, data);
+
+            if (data?.length === 0) {
+                console.warn(`[VirtualStore Debug] No items found for ParentID: ${parentId}. Check if products are linked correctly.`);
+            }
 
             if (!Array.isArray(data)) {
                 console.error('[VirtualStore] Data is not an array:', data);
