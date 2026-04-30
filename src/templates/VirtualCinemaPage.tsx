@@ -13,7 +13,13 @@ import { getProductById, updateProduct } from '../api/products';
 import { useFloors } from '../context/FloorContext';
 import { useAdmin } from '../hooks/useAdmin';
 
-const VirtualCinemaPage: React.FC = () => {
+interface VirtualCinemaPageProps {
+    item?: FeaturedItem;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualCinemaPage: React.FC<VirtualCinemaPageProps> = ({ item: propItem, productId: _propProductId, onClose }) => {
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const { id: routeId } = useParams();
@@ -52,7 +58,7 @@ const VirtualCinemaPage: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
-    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(propItem || null);
 
     const [isEditingMetadata, setIsEditingMetadata] = useState(false);
     const [tempTitle, setTempTitle] = useState('');
@@ -75,42 +81,53 @@ const VirtualCinemaPage: React.FC = () => {
 
     useEffect(() => {
         const fetchParent = async () => {
+            if (propItem) {
+                setParentProduct(propItem);
+                initializeMetadata(propItem);
+                return;
+            }
+
             if (parentId) {
                 try {
                     const data = await getProductById(parentId);
                     if (data) {
                         setParentProduct(data);
-                        let templates = [];
-                        try {
-                            const selectedTemplatesRaw = typeof data.selected_templates === 'string'
-                                ? JSON.parse(data.selected_templates)
-                                : (data.selected_templates as any);
-
-                            templates = Array.isArray(selectedTemplatesRaw)
-                                ? selectedTemplatesRaw
-                                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                                        id,
-                                        status: val.status || 'visible',
-                                        title: val.title,
-                                        description: val.description
-                                    }))
-                                    : []);
-                        } catch (e) {
-                            console.error("Failed to parse templates:", e);
-                        }
-
-                        const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
-                        setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "2D 가상 시네마");
-                        setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요.");
+                        initializeMetadata(data);
                     }
                 } catch (error) {
                     console.error("Failed to fetch parent product:", error);
                 }
             }
         };
+
+        const initializeMetadata = (data: FeaturedItem) => {
+            let templates = [];
+            try {
+                const selectedTemplatesRaw = typeof data.selected_templates === 'string'
+                    ? JSON.parse(data.selected_templates)
+                    : (data.selected_templates as any);
+
+                templates = Array.isArray(selectedTemplatesRaw)
+                    ? selectedTemplatesRaw
+                    : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                        ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                            id,
+                            status: val.status || 'visible',
+                            title: val.title,
+                            description: val.description
+                        }))
+                        : []);
+            } catch (e) {
+                console.error("Failed to parse templates:", e);
+            }
+
+            const cinemaMeta = templates.find((t: any) => t.id === 'cinema');
+            setTempTitle(cinemaMeta?.title?.ko || (typeof cinemaMeta?.title === 'string' ? cinemaMeta.title : '') || "2D 가상 시네마");
+            setTempDesc(cinemaMeta?.description?.ko || (typeof cinemaMeta?.description === 'string' ? cinemaMeta.description : '') || "시공을 초월한 몰입형 다큐멘터리와 영화를 감상하세요.");
+        };
+
         fetchParent();
-    }, [parentId, i18n.language]);
+    }, [parentId, i18n.language, propItem]);
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -244,7 +261,13 @@ const VirtualCinemaPage: React.FC = () => {
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8">
                         <button 
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                if (onClose) {
+                                    onClose();
+                                } else {
+                                    navigate(-1);
+                                }
+                            }}
                             className="flex items-center gap-2 text-neutral-900 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                         >
                             <ArrowLeft size={14} />

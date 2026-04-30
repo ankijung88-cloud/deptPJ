@@ -3,28 +3,42 @@ import React from 'react';
 interface BrandLogoProps {
     className?: string;
     size?: number | string;
+    variant?: 'full' | 'seal';
 }
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({ 
     className = "", 
-    size = 48
+    size = 48,
+    variant = 'full'
 }) => {
     const heightValue = typeof size === 'number' ? size : 48;
 
     return (
-        <div className={`flex items-center gap-4 ${className}`}>
+        <div className={`flex items-center gap-4 ${className}`} style={{ mixBlendMode: 'multiply' }}>
             <img 
-                src="/stamplogo_clean.png" 
-                alt="Mongtang Seal"
-                style={{ height: heightValue, width: 'auto', objectFit: 'contain' }}
+                src="/mongdanglogo.png" 
+                alt="Mongtangssok Logo"
+                style={{ 
+                    height: heightValue, 
+                    width: 'auto', 
+                    objectFit: 'contain',
+                    filter: 'contrast(1.1) brightness(1.05)'
+                }}
                 className="select-none"
             />
-            <img 
-                src="/titlelogo_clean.png" 
-                alt="Mongtang Title"
-                style={{ height: heightValue * 0.7, width: 'auto', objectFit: 'contain' }}
-                className="select-none"
-            />
+            {variant === 'full' && (
+                <img 
+                    src="/titlelogo_clean.png" 
+                    alt="Mongtang Title"
+                    style={{ 
+                        height: heightValue * 0.7, 
+                        width: 'auto', 
+                        objectFit: 'contain',
+                        filter: 'contrast(1.1) brightness(1.05)'
+                    }}
+                    className="select-none"
+                />
+            )}
         </div>
     );
 };

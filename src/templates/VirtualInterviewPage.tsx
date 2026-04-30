@@ -32,10 +32,17 @@ interface Participant {
 
 const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'];
 
-const VirtualInterviewPage: React.FC = () => {
+interface VirtualInterviewPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualInterviewPage: React.FC<VirtualInterviewPageProps> = ({ item, productId: propProductId, onClose }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { id: roomId } = useParams<{ id: string }>();
+    const { id: paramRoomId } = useParams<{ id: string }>();
+    const roomId = paramRoomId || propProductId || item?.id;
     const { translateAsync } = useAutoTranslate('');
     
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -373,7 +380,7 @@ const VirtualInterviewPage: React.FC = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => navigate(-1)}
+                            onClick={() => onClose ? onClose() : navigate(-1)}
                             className="px-6 py-4 bg-red-600 hover:bg-red-700 rounded-2xl text-white font-black text-xs tracking-widest flex items-center gap-3 transition-all shadow-md"
                         >
                             <LogOut size={16} /> <AutoTranslatedText text="EXIT ROOM" />

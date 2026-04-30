@@ -11,8 +11,15 @@ import { updateProduct } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
-export const VirtualReservationPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+interface VirtualReservationPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
+    const { id: paramId } = useParams<{ id: string }>();
+    const id = paramId || propProductId || propItem?.id;
     const { i18n } = useTranslation();
     const navigate = useNavigate();
     const { isAdmin, isAgency, user: currentUser } = useAdmin();
@@ -115,7 +122,9 @@ export const VirtualReservationPage: React.FC = () => {
     ] : []);
 
     const handleBack = () => {
-        if (window.history.state && window.history.state.idx > 0) {
+        if (onClose) {
+            onClose();
+        } else if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
         } else {
             navigate(`/detail/${id}`);

@@ -93,15 +93,21 @@ const CountdownTimer: React.FC<{ deadline: string }> = ({ deadline }) => {
 };
 
 // --- Main Page Component ---
-const VirtualGroupBuyPage: React.FC = () => {
-    useImmersiveMode(true);
+interface VirtualGroupBuyPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualGroupBuyPage: React.FC<VirtualGroupBuyPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
+    useImmersiveMode(false);
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const { id: routeId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
 
-    const parentId = routeId || location.state?.parentId;
+    const parentId = routeId || propProductId || propItem?.id || location.state?.parentId;
     const { isAdmin, role, user } = useAdmin();
     const { floors } = useFloors();
 
@@ -340,7 +346,13 @@ const VirtualGroupBuyPage: React.FC = () => {
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         <button
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                if (onClose) {
+                                    onClose();
+                                } else {
+                                    navigate(-1);
+                                }
+                            }}
                             className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest text-red-600"
                         >
                             <ArrowLeft size={14} />

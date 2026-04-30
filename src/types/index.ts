@@ -59,6 +59,7 @@ export interface FeaturedItem {
     detail_media_type?: 'image' | 'video';
     reservation_programs?: any[] | string;
     reservation_slots?: string[] | string;
+    page_type?: string;
 }
 
 export interface FloorContent {

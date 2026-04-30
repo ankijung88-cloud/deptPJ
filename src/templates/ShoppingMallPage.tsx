@@ -3,7 +3,7 @@ console.log("ShoppingMallPage.tsx loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search, Maximize } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -11,7 +11,7 @@ import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
 import { createOrder } from '../api/orders';
-import { updateFloorCategory, createFloorCategory, deleteFloorCategory } from '../api/categories';
+
 import { useFloors } from '../context/FloorContext';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../hooks/useAdmin';
@@ -37,10 +37,13 @@ const ProductDetailViewer: React.FC<{ item: FeaturedItem | null, customDetailHea
     return (
         <div className="w-full h-full overflow-y-auto custom-scrollbar relative z-10">
             <div className="p-8 md:p-12 space-y-12">
-                <div className="w-full rounded-3xl overflow-hidden shadow-2xl relative bg-neutral-100 border border-neutral-200">
+                <div className="w-full rounded-3xl overflow-hidden shadow-2xl relative bg-transparent border border-neutral-200" style={{ mixBlendMode: 'multiply' }}>
                     <img
                         src={item.thumbnailUrl || item.imageUrl}
                         alt={getLoc(item.title, 'ko')}
+                        style={{ 
+                            filter: 'contrast(1.05) brightness(1.02)'
+                        }}
                         className="w-full h-auto object-contain"
                     />
                 </div>
@@ -81,7 +84,13 @@ const ProductDetailViewer: React.FC<{ item: FeaturedItem | null, customDetailHea
 
 // --- Main Page Component ---
 
-const ShoppingMallPage: React.FC = () => {
+interface ShoppingMallPageProps {
+    item?: FeaturedItem;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, productId: _propProductId, onClose }) => {
     useImmersiveMode(false);
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
@@ -97,6 +106,7 @@ const ShoppingMallPage: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
     const { isAdmin: isAdminLoggedIn, role, user, isAuthenticated } = useAdmin();
 
 
@@ -105,14 +115,18 @@ const ShoppingMallPage: React.FC = () => {
     const [tempTitle, setTempTitle] = useState('');
     const [tempDesc, setTempDesc] = useState('');
 
-    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(propItem || null);
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
 
     const [tempFloorLabels, setTempFloorLabels] = useState<Record<string, any>>({});
 
-    const { floors, refreshFloors } = useFloors();
+    const { floors } = useFloors();
     const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
     const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedFloor, activeSubCategory]);
 
     // Checkout Modal States
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -199,49 +213,60 @@ const ShoppingMallPage: React.FC = () => {
 
     useEffect(() => {
         const fetchParent = async () => {
+            if (propItem) {
+                setParentProduct(propItem);
+                if (!selectedFloor) setSelectedFloor(propItem.category);
+                initializeMetadata(propItem);
+                return;
+            }
+
             if (parentId) {
                 try {
                     const data = await getProductById(parentId);
                     if (data) {
                         setParentProduct(data);
                         if (!selectedFloor) setSelectedFloor(data.category);
-
-                        // Safe parsing of selected_templates
-                        let templates = [];
-                        try {
-                            const selectedTemplatesRaw = typeof data.selected_templates === 'string'
-                                ? JSON.parse(data.selected_templates)
-                                : (data.selected_templates as any);
-
-                            templates = Array.isArray(selectedTemplatesRaw)
-                                ? selectedTemplatesRaw
-                                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                                        id,
-                                        status: val.status || 'visible',
-                                        title: val.title,
-                                        description: val.description
-                                    }))
-                                    : []);
-                        } catch (e) { console.error("Failed to parse templates:", e); }
-
-                        const storeMeta = templates.find((t: any) => t.id === 'store');
-                        setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || t("store.store_title"));
-                        setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || t("store.store_desc"));
-                        setCustomFloorDirectoryLabel(storeMeta?.customFloorDirectoryLabel || '');
-                        setCustomCategoryLabel(storeMeta?.customCategoryLabel || '');
-                        setCustomDetailHeading(storeMeta?.customDetailHeading || '');
-                        setCustomBoutiqueLabel(storeMeta?.customBoutiqueLabel || '');
-                        setCustomSubtitleLabel(storeMeta?.customSubtitleLabel || '');
-                        setCustomAllItemsLabel(storeMeta?.customAllItemsLabel || '');
-                        setCustomRegisterProductLabel(storeMeta?.customRegisterProductLabel || '');
-                        setTempFloorLabels(storeMeta?.customFloorLabels || {});
+                        initializeMetadata(data);
                     }
                 } catch (error) { console.error("Failed to fetch parent product:", error); }
             }
         };
+
+        const initializeMetadata = (data: FeaturedItem) => {
+            // Safe parsing of selected_templates
+            let templates = [];
+            try {
+                const selectedTemplatesRaw = typeof data.selected_templates === 'string'
+                    ? JSON.parse(data.selected_templates)
+                    : (data.selected_templates as any);
+
+                templates = Array.isArray(selectedTemplatesRaw)
+                    ? selectedTemplatesRaw
+                    : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                        ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                            id,
+                            status: val.status || 'visible',
+                            title: val.title,
+                            description: val.description
+                        }))
+                        : []);
+            } catch (e) { console.error("Failed to parse templates:", e); }
+
+            const storeMeta = templates.find((t: any) => t.id === 'store');
+            setTempTitle(storeMeta?.title?.ko || (typeof storeMeta?.title === 'string' ? storeMeta.title : '') || t("store.store_title"));
+            setTempDesc(storeMeta?.description?.ko || (typeof storeMeta?.description === 'string' ? storeMeta.description : '') || t("store.store_desc"));
+            setCustomFloorDirectoryLabel(storeMeta?.customFloorDirectoryLabel || '');
+            setCustomCategoryLabel(storeMeta?.customCategoryLabel || '');
+            setCustomDetailHeading(storeMeta?.customDetailHeading || '');
+            setCustomBoutiqueLabel(storeMeta?.customBoutiqueLabel || '');
+            setCustomSubtitleLabel(storeMeta?.customSubtitleLabel || '');
+            setCustomAllItemsLabel(storeMeta?.customAllItemsLabel || '');
+            setCustomRegisterProductLabel(storeMeta?.customRegisterProductLabel || '');
+            setTempFloorLabels(storeMeta?.customFloorLabels || {});
+        };
+
         fetchParent();
-    }, [parentId, i18n.language]);
+    }, [parentId, i18n.language, propItem]);
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -639,41 +664,7 @@ const ShoppingMallPage: React.FC = () => {
         }
     };
 
-    const handleAddFloor = async () => {
-        const floorName = prompt(t('Enter new floor name (e.g. 7F):'), '7F');
-        const floorTitle = prompt(t('Enter floor title:'), 'New Floor');
-        if (!floorName || !floorTitle) return;
 
-        try {
-            await createFloorCategory({
-                floor: floorName,
-                title: { ko: floorTitle, en: floorTitle },
-                description: { ko: '', en: '' },
-                bg_image: '',
-                subitems: []
-            });
-            await refreshFloors();
-        } catch (error) {
-            console.error('Failed to add floor:', error);
-            alert('Failed to add floor');
-        } finally {
-        }
-    };
-
-    const handleDeleteFloor = async (e: React.MouseEvent, floorId: string) => {
-        e.stopPropagation();
-        if (!window.confirm(t('Are you sure you want to delete this floor?'))) return;
-
-        try {
-            await deleteFloorCategory(floorId);
-            await refreshFloors();
-            if (selectedFloor === floorId) setSelectedFloor(null);
-        } catch (error) {
-            console.error('Failed to delete floor:', error);
-            alert('Failed to delete floor');
-        } finally {
-        }
-    };
 
     const handleUpdateFloorTitle = (floor: any, newTitle: string) => {
         setTempFloorLabels(prev => ({
@@ -695,69 +686,7 @@ const ShoppingMallPage: React.FC = () => {
         }));
     };
 
-    const handleAddSubCategory = async () => {
-        if (!selectedFloor) return;
-        const currentFloor = floors.find(f => f.floor.toLowerCase() === selectedFloor);
-        if (!currentFloor) return;
 
-        const subName = prompt(t('Enter new category name:'), 'New Category');
-        if (!subName) return;
-
-        const newId = `sub-${Date.now()}`;
-        const updatedSubitems = [...(currentFloor.subitems || []), { id: newId, label: { ko: subName, en: subName } }];
-
-        try {
-            await updateFloorCategory(currentFloor.id, {
-                ...currentFloor,
-                subitems: updatedSubitems
-            });
-            await refreshFloors();
-        } catch (error) {
-            console.error('Failed to add sub-category:', error);
-            alert('Failed to add sub-category');
-        } finally {
-        }
-    };
-
-    const handleDeleteSubCategory = async (e: React.MouseEvent, subId: string) => {
-        e.stopPropagation();
-        if (!selectedFloor) return;
-        const currentFloor = floors.find(f => f.floor.toLowerCase() === selectedFloor);
-        if (!currentFloor) return;
-
-        if (!window.confirm(t('Are you sure you want to delete this category?'))) return;
-
-        const updatedSubitems = (currentFloor.subitems || []).filter(sub => sub.id !== subId);
-
-        try {
-            await updateFloorCategory(currentFloor.id, {
-                ...currentFloor,
-                subitems: updatedSubitems
-            });
-            await refreshFloors();
-            if (activeSubCategory === subId) setActiveSubCategory(null);
-        } catch (error) {
-            console.error('Failed to delete sub-category:', error);
-            alert('Failed to delete sub-category');
-        }
-    };
-
-    const handleUpdateSubLabel = async (floor: any, subId: string, newLabel: string) => {
-        if (!floor) return;
-        const updatedSubitems = (floor.subitems || []).map((sub: any) => 
-            sub.id === subId ? { ...sub, label: { ko: newLabel, en: newLabel } } : sub
-        );
-
-        try {
-            await updateFloorCategory(floor.id, {
-                ...floor,
-                subitems: updatedSubitems
-            });
-            await refreshFloors();
-        } catch (error) {
-            console.error('Failed to update sub-category label:', error);
-        }
-    };
 
     const handlePurchase = () => {
         if (!selectedItem) return;
@@ -851,7 +780,7 @@ const ShoppingMallPage: React.FC = () => {
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8 relative z-[60]">
                         <button
-                            onClick={() => navigate(-1)}
+                            onClick={() => onClose ? onClose() : navigate(-1)}
                             className="flex items-center gap-2 text-neutral-900 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-widest relative z-[60]"
                         >
                             <ArrowLeft size={14} />
@@ -1014,137 +943,25 @@ const ShoppingMallPage: React.FC = () => {
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                {isManagementAllowed && (
-                                                    <button 
-                                                        onClick={(e) => handleDeleteFloor(e, f.id)}
-                                                        className="p-1 hover:text-red-600 transition-colors opacity-0 group-hover/floor:opacity-100"
-                                                        title="Delete Floor"
-                                                    >
-                                                        <Trash2 size={12} />
-                                                    </button>
-                                                )}
+
                                                 <ChevronRight size={14} className={selectedFloor === f.floor.toLowerCase() ? 'text-red-600' : 'text-neutral-200'} />
                                             </div>
                                         </button>
                                     </div>
                                 ))}
-                                {isManagementAllowed && (
-                                    <button 
-                                        type="button"
-                                        onClick={(e) => { e.stopPropagation(); handleAddFloor(); }}
-                                        className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-neutral-200 text-neutral-400 hover:border-red-600 hover:text-red-600 transition-all text-[10px] font-black uppercase tracking-widest bg-white/50"
-                                    >
-                                        <Plus size={14} />
-                                        <AutoTranslatedText text="Add Floor" />
-                                    </button>
-                                )}
+
                             </div>
                         </div>
 
-                        {selectedFloor && (
-                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                                <div className="group relative">
-                                    {isEditingMetadata ? (
-                                        <div className="flex flex-col gap-1 mb-4">
-                                            <label className="text-[8px] font-black uppercase text-red-600 ml-1">Sidebar Group Label 2</label>
-                                            <input 
-                                                value={customCategoryLabel}
-                                                onChange={(e) => setCustomCategoryLabel(e.target.value)}
-                                                placeholder="Categories"
-                                                className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-900 bg-neutral-50 border-b border-neutral-200 focus:outline-none ml-1 w-full"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 ml-1">
-                                            <AutoTranslatedText text={customCategoryLabel || "Categories"} />
-                                        </h3>
-                                    )}
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {isEditingMetadata ? (
-                                        <input 
-                                            value={customAllItemsLabel}
-                                            onChange={(e) => setCustomAllItemsLabel(e.target.value)}
-                                            placeholder="All Items"
-                                            className="px-4 py-2 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-widest focus:outline-none w-24"
-                                        />
-                                    ) : (
-                                        <button
-                                            onClick={() => setActiveSubCategory(null)}
-                                            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                                                !activeSubCategory 
-                                                ? 'bg-red-600 text-white' 
-                                                : 'bg-neutral-100 text-neutral-400 hover:bg-neutral-200'
-                                            }`}
-                                        >
-                                            <AutoTranslatedText text={customAllItemsLabel || "All Items"} />
-                                        </button>
-                                    )}
-                                    {isManagementAllowed && (
-                                        <button
-                                            type="button"
-                                            onClick={(e) => { e.stopPropagation(); handleAddSubCategory(); }}
-                                            className="px-4 py-2 rounded-full border border-dashed border-neutral-200 text-neutral-400 hover:bg-white hover:text-red-600 hover:border-red-600 transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2 bg-white/50"
-                                        >
-                                            <Plus size={12} />
-                                            <AutoTranslatedText text="Add Category" />
-                                        </button>
-                                    )}
-                                    {floors.find(f => f.floor.toLowerCase() === selectedFloor)?.subitems?.map(sub => (
-                                        <div key={sub.id} className="relative flex items-center gap-2">
-                                            {isEditingMetadata ? (
-                                                <input 
-                                                    value={getLoc(sub.label, 'ko')}
-                                                    onChange={(e) => handleUpdateSubLabel(floors.find(f => f.floor.toLowerCase() === selectedFloor), sub.id, e.target.value)}
-                                                    className="bg-neutral-50 border border-neutral-200 rounded-full px-4 py-2 text-[10px] font-black uppercase focus:outline-none w-24"
-                                                />
-                                            ) : (
-                                                <button
-                                                    onClick={() => setActiveSubCategory(sub.id)}
-                                                    className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                                                        activeSubCategory === sub.id 
-                                                        ? 'bg-red-600 text-white' 
-                                                        : 'bg-neutral-100 text-neutral-400 hover:bg-neutral-200'
-                                                    }`}
-                                                >
-                                                    <AutoTranslatedText text={getLoc(sub.label, i18n.language)} />
-                                                </button>
-                                            )}
-                                            {isManagementAllowed && (
-                                                <button 
-                                                    onClick={(e) => { e.stopPropagation(); handleDeleteSubCategory(e, sub.id); }}
-                                                    className="w-6 h-6 rounded-full flex items-center justify-center text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-all"
-                                                    title="Delete Category"
-                                                >
-                                                    <X size={12} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {isManagementAllowed && (
-                                        <button
-                                            onClick={() => {
-                                                setNewCategory(selectedFloor || '');
-                                                setNewSubCategory(activeSubCategory || '');
-                                                setShowAddModal(true);
-                                            }}
-                                            className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl bg-neutral-900 text-white hover:bg-black transition-all text-[10px] font-black uppercase tracking-widest mt-4 shadow-lg active:scale-95"
-                                        >
-                                            <Plus size={14} />
-                                            <AutoTranslatedText text="Register Item to this Floor" />
-                                        </button>
-                                    )}
-                                </div>
-                            </motion.div>
-                        )}
+
                     </aside>
 
                     {/* Product Grid */}
                     <div className="flex-grow">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                             {isLoading ? (
-                                [1, 2, 3, 4].map(i => (
-                                    <div key={i} className="aspect-[3/4] rounded-[3rem] bg-white border border-neutral-100 animate-pulse" />
+                                [1, 2, 3, 4, 5].map(i => (
+                                    <div key={i} className="aspect-[3/4] rounded-[2rem] bg-white border border-neutral-100 animate-pulse" />
                                 ))
                             ) : filteredItems.length === 0 ? (
                                 <div className="col-span-full h-[60vh] flex flex-col items-center justify-center text-neutral-300 gap-6">
@@ -1155,63 +972,53 @@ const ShoppingMallPage: React.FC = () => {
                                         <AutoTranslatedText text="No products found in this floor" />
                                     </p>
                                 </div>
-                            ) : filteredItems.map((item) => (
+                            ) : filteredItems.slice((currentPage - 1) * 20, currentPage * 20).map((item) => (
                                 <motion.div
                                     key={item.id}
                                     layout
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    whileHover={{ y: -12 }}
+                                    whileHover={{ y: -8 }}
                                     onClick={() => { setSelectedItem(item); setShowDetailModal(true); }}
-                                    className="group relative bg-white rounded-[3rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-700"
+                                    className="group relative bg-transparent rounded-[2rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500"
                                 >
-                                    <div className="aspect-[4/5] bg-neutral-50 relative overflow-hidden">
+                                    <div className="aspect-[1/1] bg-[#F2E7D5] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
                                         <img 
                                             src={item.imageUrl} 
                                             alt={getLoc(item.title, 'ko')} 
-                                            className="w-full h-full object-contain p-8 group-hover:scale-110 transition-transform duration-700" 
+                                            style={{ 
+                                                filter: 'contrast(1.05) brightness(1.02)'
+                                            }}
+                                            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" 
                                         />
-                                        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all">
-                                            <button className="w-12 h-12 rounded-full bg-white text-neutral-900 flex items-center justify-center shadow-lg hover:bg-red-600 hover:text-white transition-colors">
-                                                <Maximize size={20} />
-                                            </button>
-                                        </div>
                                     </div>
-                                    <div className="p-8 space-y-4">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h4 className="text-lg font-bold text-neutral-900 uppercase tracking-tight leading-tight mb-1">
-                                                    <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
-                                                </h4>
-                                                <span className="text-[10px] font-black tracking-widest text-neutral-400 uppercase">
+                                    <div className="p-4 space-y-2">
+                                        <div className="space-y-1">
+                                            <h4 className="text-sm font-bold text-neutral-900 uppercase tracking-tight line-clamp-1">
+                                                <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
+                                            </h4>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[8px] font-black tracking-widest text-neutral-400 uppercase">
                                                     {item.subcategory || 'Signature'}
                                                 </span>
-                                            </div>
-                                            <div className="text-xl font-black text-red-600 tracking-tighter">
-                                                {getLoc(item.price, i18n.language)}
+                                                <div className="text-sm font-black text-red-600 tracking-tighter">
+                                                    {getLoc(item.price, i18n.language)}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all pt-2">
+                                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all pt-1">
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); addToCart({ ...item, quantity: 1 }); }}
-                                                className="flex-grow py-3 rounded-xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all"
+                                                className="flex-grow py-2 rounded-lg bg-neutral-900 text-white text-[8px] font-black uppercase tracking-widest hover:bg-black transition-all"
                                             >
-                                                <AutoTranslatedText text="Add to Bag" />
+                                                <AutoTranslatedText text="Add" />
                                             </button>
                                             {isManagementAllowed && (
                                                 <button 
                                                     onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
-                                                    className="w-12 h-12 rounded-xl bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-neutral-200 hover:text-neutral-900 transition-all"
+                                                    className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-neutral-200 hover:text-neutral-900 transition-all"
                                                 >
-                                                    <Edit3 size={16} />
-                                                </button>
-                                            )}
-                                            {isManagementAllowed && (
-                                                <button 
-                                                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                                                    className="w-12 h-12 rounded-xl bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all"
-                                                >
-                                                    <Trash2 size={16} />
+                                                    <Edit3 size={12} />
                                                 </button>
                                             )}
                                         </div>
@@ -1219,6 +1026,27 @@ const ShoppingMallPage: React.FC = () => {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Pagination Controls */}
+                        {filteredItems.length > 20 && (
+                            <div className="flex justify-center items-center gap-6 mt-12">
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="p-3 rounded-full bg-white border border-neutral-200 text-neutral-400 hover:text-red-600 hover:border-red-600 transition-all disabled:opacity-30 shadow-md"
+                                >
+                                    <ArrowLeft size={16} />
+                                </button>
+                                <span className="text-[10px] font-black tracking-widest text-neutral-900">{currentPage} / {Math.ceil(filteredItems.length / 20)}</span>
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredItems.length / 20), prev + 1))}
+                                    disabled={currentPage >= Math.ceil(filteredItems.length / 20)}
+                                    className="p-3 rounded-full bg-white border border-neutral-200 text-neutral-400 hover:text-red-600 hover:border-red-600 transition-all disabled:opacity-30 shadow-md"
+                                >
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        )}
 
                         {isManagementAllowed && (
                             <div className="flex justify-center mt-20">

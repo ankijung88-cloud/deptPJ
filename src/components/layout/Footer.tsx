@@ -8,15 +8,14 @@ export const Footer: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <footer className="bg-[#E5E3DF] text-dancheong-ink/70 py-24 relative overflow-hidden border-t border-dancheong-ink/5">
+        <footer className="bg-[#F2E7D5] text-dancheong-ink/70 py-24 relative overflow-hidden border-t border-dancheong-ink/5">
             <div className="lossless-layout relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
 
                     {/* Brand Meta */}
                     <div className="md:col-span-6 space-y-10">
                         <div className="flex items-center gap-6 mb-4">
-                            <BrandLogo size={60} className="opacity-80" />
-                            {/* Text logo removed as per user request to use ONLY the seal as logo */}
+                            <BrandLogo size={60} />
                         </div>
                         <p className="text-sm leading-relaxed max-w-sm font-medium italic text-dancheong-ink/60">
                             <AutoTranslatedText text={t('footer.description')} />

@@ -85,72 +85,69 @@ const FloorGuidePage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-dancheong-ink pb-20 pt-32">
-            <div className="lossless-layout">
-                <header>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-12 pb-24">
-                        {/* Text Content - Now everything on the left */}
-                        <div className="max-w-2xl">
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[11px] tracking-[0.5em] uppercase mb-6"
-                            >
-                                <Archive size={14} />
-                                <span><AutoTranslatedText text="FLOOR DIRECTORY" /></span>
-                            </motion.div>
+        <div className="min-h-screen bg-transparent text-dancheong-ink pb-20">
+            {/* Hero Section with Background Image */}
+            <header className="relative w-full h-[70vh] min-h-[500px] flex items-center overflow-hidden mb-24 pt-20">
+                {/* Background Image Layer */}
+                <div className="absolute inset-0 z-0">
+                    <img 
+                        src={floorData.bgImage || '/placeholder_floor.jpg'} 
+                        alt={getLocalizedText(floorData.floor, i18n.language)}
+                        className="w-full h-full object-cover transition-transform duration-[2000ms] scale-105"
+                    />
+                    {/* Sophisticated Gradient Overlay for Text Legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#F2E7D5] via-[#F2E7D5]/95 via-40% to-transparent" />
+                </div>
 
-                            <motion.h1
-                                initial={{ opacity: 0, x: -30 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="text-6xl md:text-9xl font-serif font-black text-dancheong-ink tracking-tighter leading-[0.85] mb-10"
-                            >
-                                <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
-                            </motion.h1>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="md:text-left"
-                            >
-                                <p className="text-dancheong-ink font-bold text-lg leading-tight mb-12 max-w-xl whitespace-pre-wrap">
-                                    <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
-                                </p>
-
-                            </motion.div>
-                        </div>
-
-                        {/* Right Side Image Box */}
-                        <motion.div 
-                            initial={{ opacity: 0, scale: 0.9, x: 50 }}
-                            animate={{ opacity: 1, scale: 1, x: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="relative flex-grow max-w-2xl h-[400px] md:h-[500px]"
+                <div className="lossless-layout relative z-10 w-full">
+                    <div className="max-w-3xl">
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[11px] tracking-[0.5em] uppercase mb-8"
                         >
-                            <div className="absolute inset-0 bg-white rounded-[40px] border border-dancheong-ink/10 p-4 shadow-2xl shadow-dancheong-ink/10">
-                                <div className="w-full h-full rounded-[30px] overflow-hidden relative group">
-                                    <img 
-                                        src={floorData.bgImage || '/placeholder_floor.jpg'} 
-                                        alt={getLocalizedText(floorData.floor, i18n.language)}
-                                        className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                                    />
-                                    {/* Glass Overlay with Floor Title */}
-                                    <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#0a0a0a] rounded-2xl border border-white/10 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 mb-1"><AutoTranslatedText text="CURRENT VIEW" /></p>
-                                        <h4 className="text-xl font-serif font-bold text-white">
-                                            <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
-                                        </h4>
-                                    </div>
-                                </div>
+                            <Archive size={14} />
+                            <span><AutoTranslatedText text="FLOOR DIRECTORY" /></span>
+                        </motion.div>
+
+                        <motion.h1
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="text-7xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-12"
+                        >
+                            <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
+                        </motion.h1>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="md:text-left"
+                        >
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="w-12 h-[2px] bg-dancheong-mugwort"></div>
+                                <h2 className="text-2xl font-serif font-bold text-dancheong-ink/90">
+                                    <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
+                                </h2>
                             </div>
                             
-                            {/* Decorative Elements */}
-                            <div className="absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 border-dancheong-mugwort/30 rounded-tr-3xl" />
-                            <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 border-dancheong-ink/10 rounded-bl-3xl" />
+                            <p className="text-dancheong-ink/80 font-bold text-xl md:text-2xl leading-snug max-w-2xl whitespace-pre-wrap">
+                                <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
+                            </p>
                         </motion.div>
                     </div>
-                </header>
+                </div>
+                
+                {/* Decorative Elements */}
+                <div className="absolute bottom-0 right-0 p-12 z-20">
+                     <div className="flex items-center gap-4">
+                        <div className="w-24 h-[1px] bg-dancheong-ink/20"></div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-dancheong-ink/40">EST. 2024</span>
+                     </div>
+                </div>
+            </header>
+
+            <div className="lossless-layout">
 
                 {/* Visitor Counter Section */}
                 <VisitorCounter />
@@ -350,7 +347,6 @@ const FloorGuidePage: React.FC = () => {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 };

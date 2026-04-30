@@ -122,7 +122,13 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
     );
 };
 
-const VirtualMuseumPage: React.FC = () => {
+interface VirtualMuseumPageProps {
+    item?: FeaturedItem;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, productId: _propProductId, onClose }) => {
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
@@ -162,7 +168,7 @@ const VirtualMuseumPage: React.FC = () => {
 
     const [museumItems, setMuseumItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(null);
+    const [parentProduct, setParentProduct] = useState<FeaturedItem | null>(propItem || null);
     const isManagementAllowed = isAdminLoggedIn || (role === 'agency' && String(parentProduct?.agency_id) === String(user?.id));
     const [isUploading, setIsUploading] = useState(false);
     const { floors } = useFloors();
@@ -183,37 +189,47 @@ const VirtualMuseumPage: React.FC = () => {
 
     useEffect(() => {
         const fetchParent = async () => {
+            if (propItem) {
+                setParentProduct(propItem);
+                initializeMetadata(propItem);
+                return;
+            }
+
             if (parentId) {
                 const data = await getProductById(parentId);
                 if (data) {
                     setParentProduct(data);
-                    
-                    // Initialize temp values from parent metadata if available
-                    const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
-                        ? JSON.parse(data.selected_templates) 
-                        : (data.selected_templates as any);
-                    
-                    // Standardize as array
-                    const templates = Array.isArray(selectedTemplatesRaw) 
-                        ? selectedTemplatesRaw 
-                        : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
-                            ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
-                                id,
-                                status: val.status || 'visible',
-                                title: val.title,
-                                description: val.description
-                            }))
-                            : []);
-
-                    const museumMeta = templates.find((t: any) => t.id === 'museum');
-                    // Always load Korean for the editable fields to ensure consistency
-                    setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || t("가상 박물관"));
-                    setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || t("전 세계의 진귀한 유물과 예술품을 고해상도 2D로 감상하세요. 역사의 숨결을 생생하게 느낄 수 있는 디지털 전시관입니다."));
+                    initializeMetadata(data);
                 }
             }
         };
+
+        const initializeMetadata = (data: FeaturedItem) => {
+            // Initialize temp values from parent metadata if available
+            const selectedTemplatesRaw = typeof data.selected_templates === 'string' 
+                ? JSON.parse(data.selected_templates) 
+                : (data.selected_templates as any);
+            
+            // Standardize as array
+            const templates = Array.isArray(selectedTemplatesRaw) 
+                ? selectedTemplatesRaw 
+                : (typeof selectedTemplatesRaw === 'object' && selectedTemplatesRaw !== null
+                    ? Object.entries(selectedTemplatesRaw).map(([id, val]: [string, any]) => ({
+                        id,
+                        status: val.status || 'visible',
+                        title: val.title,
+                        description: val.description
+                    }))
+                    : []);
+
+            const museumMeta = templates.find((t: any) => t.id === 'museum');
+            // Always load Korean for the editable fields to ensure consistency
+            setTempTitle(museumMeta?.title?.ko || (typeof museumMeta?.title === 'string' ? museumMeta.title : '') || t("가상 박물관"));
+            setTempDesc(museumMeta?.description?.ko || (typeof museumMeta?.description === 'string' ? museumMeta.description : '') || t("전 세계의 진귀한 유물과 예술품을 고해상도 2D로 감상하세요. 역사의 숨결을 생생하게 느낄 수 있는 디지털 전시관입니다."));
+        };
+
         fetchParent();
-    }, [parentId, i18n.language]);
+    }, [parentId, i18n.language, propItem]);
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -493,7 +509,9 @@ const VirtualMuseumPage: React.FC = () => {
                     <div className="flex justify-between items-start mb-8">
                         <button 
                             onClick={() => {
-                                if (window.history.state && window.history.state.idx > 0) {
+                                if (onClose) {
+                                    onClose();
+                                } else if (window.history.state && window.history.state.idx > 0) {
                                     navigate(-1);
                                 } else if (parentId) {
                                     navigate(`/detail/${parentId}`);

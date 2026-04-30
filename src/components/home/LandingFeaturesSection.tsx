@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { BrandLogo } from '../common/BrandLogo';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { Store, Briefcase, Users } from 'lucide-react';
 
@@ -30,15 +31,7 @@ export const LandingFeaturesSection: React.FC = () => {
             <div className="max-w-6xl mx-auto w-full">
                 {/* Visual Asset: Secondary Logo */}
                 <div className="flex justify-center mb-10 lg:mb-16">
-                    <motion.img
-                        src="/stamplogo_clean.png"
-                        alt="Stamp Logo"
-                        className="w-32 lg:w-48 object-contain"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                    />
+                    <BrandLogo variant="seal" size={160} />
                 </div>
 
                 <motion.div

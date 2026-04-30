@@ -1,17 +1,32 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Share2, X, ExternalLink, Loader2, Video, Rotate3d, ShoppingBag, Ticket, Check, MessageCircle, CalendarClock, Users, Briefcase, LayoutGrid, Moon, ShoppingCart, Target } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Loader2, LayoutGrid } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { getProductById } from '../api/products';
-import { FeaturedItem, SelectedTemplate } from '../types';
+import { FeaturedItem } from '../types';
 import { useFloors } from '../context/FloorContext';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getJoseonThemeById, getJoseonTheme } from '../utils/themeUtils';
 import { useAdmin } from '../hooks/useAdmin';
+import { TemplateSwitchModal } from '../components/common/TemplateSwitchModal';
+
+// Lazy load templates
+const VirtualCinemaPage = React.lazy(() => import('../templates/VirtualCinemaPage'));
+const VirtualMuseumPage = React.lazy(() => import('../templates/VirtualMuseumPage'));
+const ShoppingMallPage = React.lazy(() => import('../templates/ShoppingMallPage'));
+const VirtualMeetingPage = React.lazy(() => import('../templates/VirtualMeetingPage'));
+const VirtualSajuPage = React.lazy(() => import('../templates/VirtualSajuPage'));
+const VirtualInterviewPage = React.lazy(() => import('../templates/VirtualInterviewPage'));
+const VirtualOfficePage = React.lazy(() => import('../templates/TeamWorkspacePage'));
+const VirtualTicketPage = React.lazy(() => import('../templates/VirtualTicketPage'));
+const VirtualInquiryPage = React.lazy(() => import('../templates/VirtualInquiryPage'));
+const VirtualReservationPage = React.lazy(() => import('../templates/VirtualReservationPage'));
+const GroupBuyPage = React.lazy(() => import('../templates/VirtualGroupBuyPage'));
+const FundingPage = React.lazy(() => import('../templates/VirtualFundingPage'));
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -35,10 +50,7 @@ export const DetailPage: React.FC = () => {
     }, [id, floorNum]);
 
     const [loading, setLoading] = useState(true);
-    const [showShareModal, setShowShareModal] = useState(false);
-    const [copySuccess, setCopySuccess] = useState(false);
-    const [applyingTemplate, setApplyingTemplate] = useState<string | null>(null);
-    const [selectedTemplates, setSelectedTemplates] = useState<SelectedTemplate[]>([]);
+    const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const { floors } = useFloors();
     const [isMuted, setIsMuted] = useState(() => {
@@ -90,33 +102,6 @@ export const DetailPage: React.FC = () => {
     }, [id]);
 
     useEffect(() => {
-        if (item?.selected_templates) {
-            try {
-                const templates = typeof item.selected_templates === 'string' 
-                    ? JSON.parse(item.selected_templates) 
-                    : item.selected_templates;
-                
-                // Ensure unique template IDs
-                const uniqueTemplates = (templates || []).reduce((acc: SelectedTemplate[], current: SelectedTemplate) => {
-                    const x = acc.find(item => item.id === current.id);
-                    if (!x) {
-                        return acc.concat([current]);
-                    } else {
-                        return acc;
-                    }
-                }, []);
-                
-                setSelectedTemplates(uniqueTemplates);
-            } catch (e) {
-                console.error('Failed to parse selected_templates:', e);
-                setSelectedTemplates([]);
-            }
-        } else {
-            setSelectedTemplates([]);
-        }
-    }, [item]);
-
-    useEffect(() => {
         const handleGlobalMute = (e: any) => {
             setIsMuted(e.detail);
         };
@@ -127,8 +112,6 @@ export const DetailPage: React.FC = () => {
 
 
     const handleBack = () => {
-        // Simple heuristic to check if we can go back in history
-        // If we are at the first entry of the session, just fallback
         if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
             return;
@@ -154,21 +137,6 @@ export const DetailPage: React.FC = () => {
         }
     };
 
-    const handleShare = () => {
-        setShowShareModal(true);
-    };
-
-    const handleCopyLink = async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-            setCopySuccess(true);
-            setTimeout(() => setCopySuccess(false), 2000);
-        } catch (err) {
-            console.error('Copy failed:', err);
-        }
-    };
-
-
 
     const prepareDataForBackend = (baseItem: FeaturedItem, overrides: Partial<any> = {}) => {
         return {
@@ -193,74 +161,19 @@ export const DetailPage: React.FC = () => {
         };
     };
 
-    const handleApplyTemplate = async (templateType: string) => {
+    const handleSelectTemplate = async (templateId: string) => {
         if (!item) return;
         
         try {
-            setApplyingTemplate(templateType);
-            // ONLY add to DB if it's not already in the selected list
-            const isAlreadySelected = selectedTemplates.some(t => t.id === templateType);
-            let success = true;
-            
-            if (!isAlreadySelected) {
-                const newTemplates = [...selectedTemplates, { id: templateType, status: 'visible' }];
-                const backendData = prepareDataForBackend(item, { 
-                    selected_templates: newTemplates 
-                });
+            const backendData = prepareDataForBackend(item as any, { 
+                selected_templates: item.selected_templates 
+            });
+            (backendData as any).page_type = templateId;
 
-                const response = await fetch(`/api/products/${item.id}`, {
-                    method: 'PUT',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                    },
-                    body: JSON.stringify(backendData)
-                });
-                success = response.ok;
-            }
+            setItem({ ...item, page_type: templateId } as FeaturedItem);
+            setIsTemplateModalOpen(false);
 
-            if (success) {
-                const routes: { [key: string]: string } = {
-        cinema: `/detail/${item.id}/cinema`,
-        museum: `/detail/${item.id}/museum`,
-        store: `/detail/${item.id}/store`,
-        ticket: `/detail/${item.id}/ticket`,
-        inquiry: `/detail/${item.id}/inquiry`,
-        reservation: `/detail/${item.id}/reservation`,
-        meeting: `/detail/${item.id}/meeting`,
-
-        saju: `/detail/${item.id}/saju`,
-        groupbuy: `/detail/${item.id}/groupbuy`,
-        funding: `/detail/${item.id}/funding`,
-        interview: `/detail/${item.id}/interview`,
-        square: `/detail/${item.id}/square`,
-        office: `/detail/${item.id}/office`
-    };
-                navigate(routes[templateType], { 
-                    state: { 
-                        initialId: item.id, 
-                        parentId: item.id,
-                        parentTitle: getLocalizedText(item.title, i18n.language)
-                    } 
-                });
-            } else {
-                const msg = await translateAsync('템플릿 적용에 실패했습니다.');
-                alert(msg);
-            }
-        } catch (error) {
-            console.error('Failed to apply template:', error);
-            const msg = await translateAsync('오류가 발생했습니다.');
-            alert(msg);
-        } finally {
-            setApplyingTemplate(null);
-        }
-    };
-
-    const saveTemplatesToDb = async (templates: SelectedTemplate[]) => {
-        if (!item) return;
-        try {
-            const backendData = prepareDataForBackend(item, { selected_templates: templates });
-            await fetch(`/api/products/${item.id}`, {
+            const response = await fetch(`/api/products/${item.id}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -268,35 +181,14 @@ export const DetailPage: React.FC = () => {
                 },
                 body: JSON.stringify(backendData)
             });
+
+            if (!response.ok) {
+                const msg = await translateAsync('서버 저장에 실패했습니다. 변경사항은 현재 세션에서만 유지됩니다.');
+                alert(msg);
+            }
         } catch (error) {
-            console.error('Failed to save templates:', error);
+            console.error('Failed to switch template:', error);
         }
-    };
-
-    const toggleTemplateSelection = (templateType: string) => {
-        const isSelected = selectedTemplates.some(t => t.id === templateType);
-        const newTemplates: SelectedTemplate[] = isSelected 
-            ? selectedTemplates.filter(t => t.id !== templateType)
-            : [...selectedTemplates, { id: templateType, status: 'visible' }];
-        
-        setSelectedTemplates(newTemplates);
-        saveTemplatesToDb(newTemplates);
-    };
-
-    const toggleTemplateStatus = (templateId: string) => {
-        const newTemplates: SelectedTemplate[] = selectedTemplates.map(t => 
-            t.id === templateId 
-                ? { ...t, status: t.status === 'visible' ? 'hidden' : 'visible' }
-                : t
-        );
-        setSelectedTemplates(newTemplates);
-        saveTemplatesToDb(newTemplates);
-    };
-
-    const deleteTemplateByAdmin = (templateId: string) => {
-        const newTemplates = selectedTemplates.filter(t => t.id !== templateId);
-        setSelectedTemplates(newTemplates);
-        saveTemplatesToDb(newTemplates);
     };
 
     if (loading) {
@@ -318,9 +210,53 @@ export const DetailPage: React.FC = () => {
         );
     }
 
+    // Dynamic Template Rendering
+    const renderTemplate = () => {
+        const pageType = item?.page_type || 'standard';
+        
+        if (pageType === 'standard') return null;
+
+        const templateProps = {
+            productId: item.id,
+            item: item,
+            theme: theme,
+            onClose: handleBack
+        };
+
+        return (
+            <React.Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center bg-black/5">
+                    <Loader2 className="animate-spin text-neutral-400" size={40} />
+                </div>
+            }>
+                {pageType === 'cinema' && <VirtualCinemaPage {...templateProps as any} />}
+                {pageType === 'museum' && <VirtualMuseumPage {...templateProps as any} />}
+                {pageType === 'store' && <ShoppingMallPage {...templateProps as any} />}
+                {pageType === 'meeting' && <VirtualMeetingPage {...templateProps as any} />}
+                {pageType === 'saju' && <VirtualSajuPage {...templateProps as any} />}
+                {pageType === 'interview' && <VirtualInterviewPage {...templateProps as any} />}
+                {pageType === 'office' && <VirtualOfficePage {...templateProps as any} />}
+                {pageType === 'ticket' && <VirtualTicketPage {...templateProps as any} />}
+                {pageType === 'inquiry' && <VirtualInquiryPage {...templateProps as any} />}
+                {pageType === 'reservation' && <VirtualReservationPage {...templateProps as any} />}
+                {pageType === 'groupbuy' && <GroupBuyPage {...templateProps as any} />}
+                {pageType === 'funding' && <FundingPage {...templateProps as any} />}
+            </React.Suspense>
+        );
+    };
+
+    const activeTemplate = renderTemplate();
+
+    if (activeTemplate) {
+        return (
+            <div className="relative min-h-screen">
+                {activeTemplate}
+            </div>
+        );
+    }
+
     return (
         <article className="min-h-screen bg-transparent" style={{ color: theme.textPrimary }}>
-            {/* Magazine Hero */}
             <div className="relative h-[45vh] w-full group overflow-hidden">
                 <motion.div 
                     initial={{ scale: 1.1 }}
@@ -383,19 +319,10 @@ export const DetailPage: React.FC = () => {
                         </motion.div>
                     </div>
                 </div>
-                
-                {/* Decorative scale lines */}
-                <div className="absolute left-0 right-0 bottom-0 h-1 space-x-1 flex px-6 pb-2 opacity-20">
-                    {Array.from({ length: 100 }).map((_, i) => (
-                        <div key={i} className={`h-full bg-white ${i % 10 === 0 ? 'w-0.5 alpha-80' : 'w-px alpha-40'}`} />
-                    ))}
-                </div>
             </div>
 
-            {/* Content Body */}
             <div className="container mx-auto px-6 py-24">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-                    {/* Description Column */}
                     <div className="lg:col-span-8 space-y-16">
                         <section className="relative">
                             <div className="absolute -left-6 top-0 bottom-0 w-1 opacity-30" style={{ backgroundColor: theme.highlightColor }} />
@@ -403,9 +330,7 @@ export const DetailPage: React.FC = () => {
                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language)} />
                             </p>
                         </section>
-
                         <div className="h-px w-full" style={{ backgroundColor: `${theme.textPrimary}11` }} />
-
                         <section className="prose prose-invert max-w-none">
                             <div className="text-lg leading-tight space-y-8 font-light" style={{ color: theme.textSecondary }}>
                                 {item.long_description ? (
@@ -415,17 +340,12 @@ export const DetailPage: React.FC = () => {
                                 ) : (
                                     <>
                                         <p>
-                                            <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier." />
-                                        </p>
-                                        <p>
-                                            <AutoTranslatedText text="Each element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation." />
+                                            <AutoTranslatedText text="Explore the depths of traditional Korean aesthetics reimagined for the modern era." />
                                         </p>
                                     </>
                                 )}
                             </div>
                         </section>
-
-                        {/* Additional Detail Media (Image or Video) */}
                         {item.detail_media_url && (
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}
@@ -439,180 +359,22 @@ export const DetailPage: React.FC = () => {
                                         controls 
                                         autoPlay 
                                         muted={isMuted} 
-                                        data-has-sound="true"
                                         loop 
                                         playsInline
                                         className="w-full h-auto block"
                                     />
                                 ) : (
-
                                     <img 
                                         src={item.detail_media_url} 
                                         alt="" 
                                         className="w-full h-auto block"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=2000'; // Premium fallback
-                                            (e.target as HTMLImageElement).onerror = null;
-                                        }}
                                     />
                                 )}
                             </motion.div>
                         )}
                     </div>
-
-                    {/* Meta Sidebar */}
                     <div className="lg:col-span-4 lg:pl-10">
                         <div className="sticky top-32 space-y-12">
-                            {/* Price / Action Card */}
-                            <div className="p-8 rounded-3xl border shadow-sm bg-white/10" style={{ borderColor: theme.color3 }}>
-                                <div className="space-y-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}>{t('common.price')}</span>
-                                    <div className="text-3xl font-serif font-bold" style={{ color: theme.highlightColor }}>
-                                        <AutoTranslatedText text={getLocalizedText(item.price, i18n.language)} />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 mt-8">
-                                    {item.videoUrl && (
-                                        <button 
-                                            onClick={() => window.open(item.videoUrl || item.image_url || '/#', '_blank')}
-                                            className="w-full py-4 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-all shadow-md"
-                                            style={{ backgroundColor: theme.highlightColor }}
-                                        >
-                                            <ExternalLink size={20} />
-                                            <AutoTranslatedText text="SITE LINK" />
-                                        </button>
-                                    )}
-                                    {selectedTemplates
-                                        .filter((tpl, index, self) => 
-                                            tpl.status === 'visible' && 
-                                            self.findIndex(t => t.id === tpl.id) === index
-                                        )
-                                        .map((tpl) => {
-                                            const tplInfo = [
-                                                { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
-                                                { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
-                                                { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
-                                                { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' },
-                                                { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
-                                                { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
-                                                { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
-
-                                                { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
-                                                { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
-                                                { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
-                                                { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                                { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
-                                            ].find(t => t.id === tpl.id);
-                                            
-                                            if (!tplInfo) return null;
-
-                                            return (
-                                                <button 
-                                                    key={tpl.id}
-                                                    onClick={() => handleApplyTemplate(tpl.id)}
-                                                    disabled={applyingTemplate !== null}
-                                                    className="w-full py-4 bg-white border rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition-all disabled:opacity-50 group shadow-sm hover:shadow-md"
-                                                    style={{ borderColor: theme.color3, color: theme.textPrimary }}
-                                                >
-                                                    {applyingTemplate === tpl.id ? <Loader2 size={20} className="animate-spin" /> : <tplInfo.icon size={20} style={{ color: tplInfo.color }} />}
-                                                    <AutoTranslatedText text={tplInfo.label} />
-                                                </button>
-                                            );
-                                        })}
-                                    <button 
-                                        onClick={handleShare}
-                                        className="w-full py-4 bg-transparent border rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
-                                        style={{ borderColor: theme.color3, color: theme.textSecondary }}
-                                    >
-                                        <Share2 size={20} />
-                                        <AutoTranslatedText text="Share Content" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Template Usage Card */}
-                            {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
-                                <div className="p-8 rounded-3xl border shadow-sm space-y-6 bg-white/10" style={{ borderColor: theme.color3 }}>
-                                    <div className="space-y-1">
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.highlightColor }}><AutoTranslatedText text="템플릿 선택 사용" /></span>
-                                        <p className="text-xs" style={{ color: theme.textMuted }}><AutoTranslatedText text="원하는 테마의 템플릿을 선택하여 제품을 체험해보세요." /></p>
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {[
-                                            { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B' },
-                                            { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600' },
-                                            { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2' },
-                                            { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92' },
-                                            { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe' },
-                                            { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe' },
-                                            { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6' },
-
-                                            { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0' },
-                                            { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B' },
-                                            { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981' },
-                                            { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F' },
-                                            { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE' }
-                                        ].map((tpl) => {
-                                            const selectedTpl = selectedTemplates.find(t => t.id === tpl.id);
-                                            const isSelected = !!selectedTpl;
-                                            const isHidden = selectedTpl?.status === 'hidden';
-
-                                            return (
-                                                <div key={tpl.id} className="space-y-2">
-                                                    <button
-                                                        onClick={() => toggleTemplateSelection(tpl.id)}
-                                                        className={`w-full flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border transition-all relative group ${
-                                                            isSelected 
-                                                                ? 'bg-[#FFF9C4] border-dancheong-ink/20 shadow-lg' 
-                                                                : 'bg-white border-dancheong-ink/15 hover:border-dancheong-ink/30'
-                                                        }`}
-                                                        style={isSelected ? { borderColor: theme.highlightColor } : {}}
-                                                    >
-                                                        <div className="absolute top-3 right-3">
-                                                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                                                                isSelected ? 'bg-dancheong-ink border-dancheong-ink' : 'border-dancheong-ink/10'
-                                                            }`}>
-                                                                {isSelected && <Check size={10} className="text-white" strokeWidth={4} />}
-                                                            </div>
-                                                        </div>
-                                                        <tpl.icon size={24} style={{ color: tpl.color }} className={`${isSelected ? 'scale-110' : 'group-hover:scale-110'} transition-transform`} />
-                                                        <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors ${
-                                                            isSelected ? 'text-dancheong-ink' : 'opacity-40'
-                                                        }`}>
-                                                            <AutoTranslatedText text={tpl.label} />
-                                                        </span>
-                                                        {isHidden && (
-                                                            <span className="absolute top-2 left-2 bg-red-500 text-[8px] px-1 rounded uppercase font-bold"><AutoTranslatedText text="Hidden" /></span>
-                                                        )}
-                                                    </button>
-                                                    
-                                                    {isSelected && (
-                                                        <div className="flex gap-1">
-                                                            <button 
-                                                                onClick={(e) => { e.stopPropagation(); toggleTemplateStatus(tpl.id); }}
-                                                                className="flex-1 py-1 bg-white hover:bg-gray-50 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-dancheong-ink/5"
-                                                                style={{ color: theme.textSecondary }}
-                                                            >
-                                                                {isHidden ? <AutoTranslatedText text="Unhide" /> : <AutoTranslatedText text="Hide" />}
-                                                            </button>
-                                                            <button 
-                                                                onClick={(e) => { e.stopPropagation(); deleteTemplateByAdmin(tpl.id); }}
-                                                                className="px-2 py-1 bg-dancheong-red/10 hover:bg-dancheong-red/20 text-dancheong-red rounded-lg text-[9px] font-bold uppercase border border-dancheong-red/10"
-                                                            >
-                                                                <AutoTranslatedText text="Del" />
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Additional Info */}
                             <div className="space-y-6 px-4">
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Curated Category" /></span>
@@ -628,45 +390,28 @@ export const DetailPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Share Modal */}
-            <AnimatePresence>
-                {showShareModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/95"
-                            onClick={() => setShowShareModal(false)}
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative border w-full max-w-sm rounded-[2rem] p-8 space-y-8 shadow-2xl bg-white/80"
-                            style={{ borderColor: theme.color3, color: theme.textPrimary }}
-                        >
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-bold"><AutoTranslatedText text="Share" /></h3>
-                                <button onClick={() => setShowShareModal(false)} className="opacity-40 hover:opacity-100 transition-opacity"><X size={24}/></button>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <div className="p-4 bg-dancheong-ink/5 rounded-2xl border border-dancheong-ink/5 overflow-hidden text-xs font-mono truncate" style={{ color: theme.textSecondary }}>
-                                    {window.location.href}
-                                </div>
-                                <button 
-                                    onClick={handleCopyLink}
-                                    className="w-full py-4 text-white rounded-2xl font-bold transition-all shadow-md"
-                                    style={{ backgroundColor: copySuccess ? theme.highlightColor : theme.textPrimary }}
-                                >
-                                    {copySuccess ? <AutoTranslatedText text="Copied!" /> : <AutoTranslatedText text="Copy Link" />}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+            
+            {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
+                <>
+                    <button
+                        onClick={() => setIsTemplateModalOpen(true)}
+                        className="fixed top-6 right-6 z-[10000] py-3 px-6 rounded-full bg-white shadow-2xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <LayoutGrid size={20} className="text-black relative z-10" />
+                        <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="템플릿 선택" /></span>
+                        <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    </button>
+
+                    <TemplateSwitchModal
+                        isOpen={isTemplateModalOpen}
+                        onClose={() => setIsTemplateModalOpen(false)}
+                        onSelect={handleSelectTemplate}
+                        currentTemplateId={item.page_type}
+                        theme={theme}
+                    />
+                </>
+            )}
         </article>
     );
 };

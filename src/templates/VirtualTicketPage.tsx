@@ -250,7 +250,13 @@ const ReservationModal: React.FC<{
         </AnimatePresence>
     );
 };
-const VirtualTicketPage: React.FC = () => {
+interface VirtualTicketPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
     useImmersiveMode(true);
     const { t, i18n } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
@@ -258,7 +264,7 @@ const VirtualTicketPage: React.FC = () => {
     const location = useLocation();
     const { id: paramId } = useParams();
     
-    const parentId = paramId || location.state?.parentId;
+    const parentId = paramId || propProductId || propItem?.id || location.state?.parentId;
     const [selectedTicket, setSelectedTicket] = useState<FeaturedItem | null>(null);
     const [showReservationModal, setShowReservationModal] = useState(false);
     const [isReserving, setIsReserving] = useState(false);
@@ -564,7 +570,9 @@ return (
                     <div className="flex justify-between items-center mb-10 relative z-[60]">
                         <button 
                             onClick={() => {
-                                if (window.history.state && window.history.state.idx > 0) {
+                                if (onClose) {
+                                    onClose();
+                                } else if (window.history.state && window.history.state.idx > 0) {
                                     navigate(-1);
                                 } else if (parentId) {
                                     navigate(`/detail/${parentId}`);

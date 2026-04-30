@@ -92,7 +92,13 @@ const DEPARTMENTS = [
     }
 ];
 
-const TeamWorkspacePage: React.FC = () => {
+interface TeamWorkspacePageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: propProductId, onClose }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { t: _t } = useTranslation();
@@ -142,7 +148,7 @@ const TeamWorkspacePage: React.FC = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [userStatus, setUserStatus] = useState('working'); // working, break, smoking, toilet
 
-    const parentId = location.state?.parentId || '';
+    const parentId = propProductId || item?.id || location.state?.parentId || '';
     const roomId = `office-${parentId}`;
 
     // Stable reset function
@@ -386,7 +392,7 @@ const TeamWorkspacePage: React.FC = () => {
                 <header className="p-6 flex justify-between items-center pointer-events-auto">
                     <div className="flex items-center gap-4">
                         <button 
-                            onClick={() => navigate(-1)}
+                            onClick={() => onClose ? onClose() : navigate(-1)}
                             className="w-12 h-12 rounded-full bg-black/5 border border-black/10 flex items-center justify-center hover:bg-black/10 transition-all group"
                         >
                             <LogOut className="w-5 h-5 text-black/60 group-hover:text-black transition-colors rotate-180" />

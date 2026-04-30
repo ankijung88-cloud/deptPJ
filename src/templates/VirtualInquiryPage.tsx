@@ -9,8 +9,15 @@ import { JOSEON_THEMES } from '../utils/themeUtils';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getLocalizedText } from '../utils/i18nUtils';
 
-export const VirtualInquiryPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+interface VirtualInquiryPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+export const VirtualInquiryPage: React.FC<VirtualInquiryPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
+    const { id: paramId } = useParams<{ id: string }>();
+    const id = paramId || propProductId || propItem?.id;
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     
@@ -54,7 +61,9 @@ export const VirtualInquiryPage: React.FC = () => {
     ] : []);
 
     const handleBack = () => {
-        if (window.history.state && window.history.state.idx > 0) {
+        if (onClose) {
+            onClose();
+        } else if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
         } else {
             navigate(`/detail/${id}`);

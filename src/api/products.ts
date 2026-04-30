@@ -100,7 +100,8 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         detail_media_url: normalizeUrl(item.detail_media_url),
         detail_media_type: item.detail_media_type,
         reservation_programs: parseJsonIfNeeded(item.reservation_programs) || [],
-        reservation_slots: parseJsonIfNeeded(item.reservation_slots) || []
+        reservation_slots: parseJsonIfNeeded(item.reservation_slots) || [],
+        page_type: item.page_type || 'standard'
     };
 };
 

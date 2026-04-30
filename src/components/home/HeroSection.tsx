@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { BrandLogo } from '../common/BrandLogo';
 import { useTranslation } from 'react-i18next';
 
 export const HeroSection: React.FC = () => {
@@ -40,11 +41,7 @@ export const HeroSection: React.FC = () => {
                         <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold opacity-90">
                             <AutoTranslatedText text="모든 가치와 사람이 어우러지는 통합 연결 플랫폼" />
                         </span>
-                        <img
-                            src="/titlelogo_clean.png"
-                            alt="몽땅쏙"
-                            className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
-                        />
+                        <BrandLogo size={120} className="mb-4" />
                     </motion.h1>
 
                     <motion.div

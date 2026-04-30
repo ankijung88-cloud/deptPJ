@@ -29,6 +29,7 @@ import { MeetingRoomEnvironment2D } from '../components/gallery/MeetingRoomEnvir
 import { LanguageSelector } from '../components/common/LanguageSelector';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import { FeaturedItem } from '../types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
@@ -55,11 +56,18 @@ interface ChatMessage {
 
 const COLORS = ['#00D2FF', '#FF4757', '#2ECC71', '#F39C12', '#9B59B6', '#FFD32A'];
 
-const VirtualMeetingPage: React.FC = () => {
+interface VirtualMeetingPageProps {
+    item?: FeaturedItem;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId: propProductId, onClose }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
-    const { id: roomId } = useParams<{ id: string }>();
+    const { id: paramRoomId } = useParams<{ id: string }>();
+    const roomId = paramRoomId || propProductId || item?.id;
     const roomKey = `meeting_token_${roomId || 'default'}`;
     
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -339,7 +347,13 @@ const VirtualMeetingPage: React.FC = () => {
                         {/* Logout & Language */}
                         <div className="grid grid-cols-2 gap-2 w-full">
                             <button 
-                                onClick={() => navigate(-1)} 
+                                onClick={() => {
+                                    if (onClose) {
+                                        onClose();
+                                    } else {
+                                        navigate(-1);
+                                    }
+                                }} 
                                 className="group relative flex items-center justify-center p-3 bg-black/5 rounded-xl hover:bg-red-600/10 transition-all"
                             >
                                 <LogOut size={18} className="rotate-180 group-hover:text-red-600" />

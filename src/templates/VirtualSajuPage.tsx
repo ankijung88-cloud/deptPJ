@@ -8,7 +8,13 @@ import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { useImmersiveMode, useNavigationState } from '../context/NavigationActionContext';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
-const VirtualSajuPage: React.FC = () => {
+interface VirtualSajuPageProps {
+    item?: any;
+    productId?: string;
+    onClose?: () => void;
+}
+
+const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productId: _productId, onClose }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { resetUiTimer } = useNavigationState();
@@ -105,16 +111,13 @@ const VirtualSajuPage: React.FC = () => {
                 onMouseMove={() => resetUiTimer()}
                 onMouseEnter={() => resetUiTimer()}
             >
-                {/* Visual Background Pattern (200.JPG Style) */}
+                {/* Visual Background Pattern */}
                 <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
                     {/* Main Background Image */}
                     <div 
                         className="absolute inset-0 transition-opacity duration-1000"
                         style={{ 
-                            backgroundImage: "url('/200.JPG')",
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
+                            backgroundColor: '#F2E7D5'
                         }} 
                     />
 
@@ -140,7 +143,17 @@ const VirtualSajuPage: React.FC = () => {
                 {/* Header (Top UI) */}
                 <header className="absolute top-0 inset-x-0 z-20 p-8 flex justify-between items-start pointer-events-auto">
                     <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(-1)}>
-                        <div className="p-3 bg-white border border-dancheong-ink/10 rounded-full group-hover:bg-dancheong-mugwort/20 transition-all shadow-sm">
+                        <div 
+                            className="p-3 bg-white border border-dancheong-ink/10 rounded-full group-hover:bg-dancheong-mugwort/20 transition-all shadow-sm" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (onClose) {
+                                    onClose();
+                                } else {
+                                    navigate(-1);
+                                }
+                            }}
+                        >
                             <LogOut size={20} className="rotate-180 group-hover:text-dancheong-mugwort" />
                         </div>
                         <div>
