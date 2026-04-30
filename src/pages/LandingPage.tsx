@@ -32,18 +32,9 @@ const LandingPage: React.FC = () => {
         <div
             className="bg-transparent min-h-screen selection:bg-dancheong-mugwort/30"
         >
-            {/* Ambient Background Glows & Sansuhwa Sketch */}
+            {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                {/* Sansuhwa Sketch Background */}
-                <div 
-                    className="absolute inset-0 opacity-[0.12] mix-blend-multiply transition-opacity duration-1000"
-                    style={{ 
-                        backgroundImage: "url('/images/sansuhwa-sketch.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center bottom',
-                        backgroundRepeat: 'no-repeat'
-                    }} 
-                />
+
                 
                 {/* Heritage Tones / Glows */}
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-dancheong-mugwort/5 blur-[120px] rounded-full opacity-40" />
