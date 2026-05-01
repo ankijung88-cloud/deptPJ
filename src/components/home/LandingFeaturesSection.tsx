@@ -40,10 +40,10 @@ export const LandingFeaturesSection: React.FC = () => {
                     viewport={{ once: true }}
                     className="text-center mb-16"
                 >
-                    <h3 className="text-dancheong-mugwort text-sm tracking-[0.3em] uppercase mb-4">
+                    <h3 className="text-dancheong-mugwort text-[10px] sm:text-sm tracking-[0.3em] sm:tracking-[0.5em] uppercase mb-4">
                         <AutoTranslatedText text="Explore Business Solutions" />
                     </h3>
-                    <h2 className="text-3xl md:text-4xl text-dancheong-ink font-bold">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl text-dancheong-ink font-bold tracking-tighter">
                         <AutoTranslatedText text="비즈니스를 위한 다목적 공간 플랫폼" />
                     </h2>
                 </motion.div>

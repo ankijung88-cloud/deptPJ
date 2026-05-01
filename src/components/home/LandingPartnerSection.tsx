@@ -11,17 +11,17 @@ const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items
     const displayItems = [...items, ...items, ...items, ...items];
     
     return (
-        <div className="flex relative overflow-hidden h-28 items-center">
+        <div className="flex relative overflow-hidden h-24 sm:h-28 items-center">
             <motion.div 
-                className="flex gap-8 whitespace-nowrap absolute left-0"
+                className="flex gap-4 sm:gap-8 whitespace-nowrap absolute left-0"
                 animate={{ 
-                    x: direction === 'left' ? [0, -items.length * 312] : [-items.length * 312, 0] 
+                    x: direction === 'left' ? [0, -items.length * (window.innerWidth < 640 ? 240 : 312)] : [-items.length * (window.innerWidth < 640 ? 240 : 312), 0] 
                 }}
                 transition={{ 
                     x: {
                         repeat: Infinity,
                         repeatType: "loop",
-                        duration: speed * (items.length / 4), // Adjust duration based on item count
+                        duration: (window.innerWidth < 640 ? speed * 1.5 : speed) * (items.length / 4), // Slower on mobile
                         ease: "linear",
                     },
                 }}
@@ -29,20 +29,20 @@ const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items
                 {displayItems.map((partner, pIdx) => (
                     <div 
                         key={pIdx} 
-                        className="flex items-center gap-5 px-8 py-4 bg-white border-2 border-dancheong-ink/10 rounded-3xl shadow-xl hover:border-dancheong-mugwort transition-all cursor-default group min-w-[280px]"
+                        className="flex items-center gap-3 sm:gap-5 px-4 sm:px-8 py-3 sm:py-4 bg-white border-2 border-dancheong-ink/10 rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl hover:border-dancheong-mugwort transition-all cursor-default group min-w-[220px] sm:min-w-[280px]"
                     >
-                                <div className="w-12 h-12 rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort/10 transition-colors overflow-hidden">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort/10 transition-colors overflow-hidden">
                                     {partner.logo_url ? (
                                         <img src={partner.logo_url} alt={partner.agency_name || partner.name} className="w-full h-full object-contain p-1" />
                                     ) : (
-                                        <Building2 className="w-6 h-6 text-dancheong-mugwort" />
+                                        <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-dancheong-mugwort" />
                                     )}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-base font-black text-dancheong-ink tracking-tight">
+                                    <span className="text-sm sm:text-base font-black text-dancheong-ink tracking-tight">
                                         {partner.agency_name || partner.name}
                                     </span>
-                                    <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase tracking-wider">
+                                    <span className="text-[9px] sm:text-[10px] text-dancheong-ink/40 font-bold uppercase tracking-wider">
                                         {partner.industry || (partner.agency_name ? 'Certified Partner' : 'Industry Partner')}
                                     </span>
                                 </div>

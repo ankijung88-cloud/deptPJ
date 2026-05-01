@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import { Menu, X, Search, Volume2, VolumeX, Shield, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { LanguageSelector } from '../common/LanguageSelector';
+
+const ADDITIONAL_NAV = [
+    { path: '/notice', label: 'footer.notice' },
+    { path: '/faq', label: 'footer.faq' },
+    { path: '/inquiry', label: 'footer.inquiry' }
+];
+
 import { Breadcrumbs } from '../common/Breadcrumbs';
+
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 import { useNavigationState } from '../../context/NavigationActionContext';
 import { useAdmin } from '../../hooks/useAdmin';
@@ -205,7 +215,7 @@ const Header: React.FC = () => {
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s'
             }}
         >
-            <div className={`max-w-[1800px] mx-auto px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-16' : 'h-24'}`}>
+            <div className={`max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-14 sm:h-16' : 'h-20 sm:h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
                     <BrandLogo size={isScrolled ? 48 : 64} className="transition-all duration-500 group-hover:scale-105" />
                 </Link>
@@ -369,7 +379,7 @@ const Header: React.FC = () => {
                     </div>
 
                 {/* Mobile Menu Button */}
-                <div className="flex items-center space-x-4 lg:hidden relative">
+                <div className="flex items-center space-x-3 sm:space-x-4 lg:hidden relative">
                         <button
                             onClick={() => {
                                 const next = !isGlobalMuted;
@@ -377,19 +387,17 @@ const Header: React.FC = () => {
                                 localStorage.setItem('isGlobalMuted', String(next));
                                 window.dispatchEvent(new CustomEvent('globalMuteChange', { detail: next }));
                             }}
-                            className={`transition-colors relative z-10 text-dancheong-white/70`}
-                            onMouseEnter={e => { e.currentTarget.style.color = theme.highlightColor; }}
-                            onMouseLeave={e => { e.currentTarget.style.color = ''; }}
+                            className={`transition-colors relative z-10 text-dancheong-ink/70 active:scale-90`}
                             title={isGlobalMuted ? t('nav.sound_on') : t('nav.sound_off')}
                         >
                             {isGlobalMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                         </button>
 
                         <div
-                            className={`flex items-center absolute right-[3.5rem] transition-all duration-400 ease-in-out overflow-hidden rounded-full ${isSearchOpen ? 'pl-3 pr-2 py-1.5 opacity-100 visible shadow-lg w-[200px]' : 'bg-transparent border border-transparent w-0 opacity-0 invisible pl-0 py-1'}`}
-                            style={isSearchOpen ? { backgroundColor: `${theme.bgColor}`, border: `1px solid ${theme.accentColor}55` } : {}}
+                            className={`flex items-center absolute right-[3rem] sm:right-[3.5rem] transition-all duration-400 ease-in-out overflow-hidden rounded-full ${isSearchOpen ? 'pl-3 pr-2 py-1.5 opacity-100 visible shadow-lg w-[160px] sm:w-[200px]' : 'bg-transparent border border-transparent w-0 opacity-0 invisible pl-0 py-1'}`}
+                            style={isSearchOpen ? { backgroundColor: `${theme.bgColor}`, border: `1.5px solid ${theme.accentColor}` } : {}}
                         >
-                            <Search size={18} className="shrink-0 mr-2" style={theme.highlightStyle} />
+                            <Search size={18} className="shrink-0 mr-2 text-dancheong-ink" />
                             <input
                                 ref={mobileSearchInputRef}
                                 type="text"
@@ -397,20 +405,17 @@ const Header: React.FC = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onKeyDown={handleSearch}
                                 placeholder={t('search.placeholder')}
-                                className="w-full bg-transparent text-dancheong-white text-sm outline-none placeholder:text-dancheong-white/40 font-sans tracking-wide"
+                                className="w-full bg-transparent text-dancheong-ink text-xs sm:text-sm outline-none placeholder:text-dancheong-ink/30 font-sans tracking-wide"
                             />
                         </div>
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
-                            className={`transition-colors relative z-10 text-dancheong-white/70`}
-                            style={isSearchOpen ? theme.highlightStyle : {}}
+                            className={`transition-colors relative z-10 text-dancheong-ink/70 active:scale-90`}
                         >
                             {isSearchOpen ? <X size={20} /> : <Search size={20} />}
                         </button>
                         <button
-                                className="text-dancheong-white/90 transition-colors relative z-10"
-                                onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
-                                onMouseLeave={e => e.currentTarget.style.color = ''}
+                                className="text-dancheong-ink/90 transition-colors relative z-10 active:scale-90"
                                 onClick={toggleMenu}
                             >
                                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -419,17 +424,22 @@ const Header: React.FC = () => {
             </div>
 
             {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div
-                    className={`lg:hidden h-[calc(100vh-64px)] overflow-y-auto animate-in slide-in-from-right duration-300 font-sans shadow-inner`}
-                    style={{ backgroundColor: `${theme.bgColor}`, borderTop: `2px solid ${theme.accentColor}` }}
-                >
-                    <div className="flex flex-col p-6 space-y-6">
-                        {navItems.map((item) => (
-                            <div key={item.id} className="space-y-2">
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div
+                        initial={{ x: '100%', opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: '100%', opacity: 0 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        className="lg:hidden fixed inset-0 top-[64px] z-[9998] overflow-y-auto font-sans shadow-2xl"
+                        style={{ backgroundColor: theme.bgColor, borderTop: `1px solid ${theme.accentColor}22` }}
+                    >
+                        <div className="flex flex-col p-6 space-y-6">
+                            {navItems.map((item) => (
+                                <div key={item.id} className="space-y-2">
                                     <Link
                                         to={`/floor/${item.id}`}
-                                        className="text-dancheong-white/90 text-lg font-serif font-medium tracking-wide py-1 transition-colors"
+                                        className="text-dancheong-ink/90 text-lg font-serif font-medium tracking-wide py-1 transition-colors"
                                         onMouseEnter={e => e.currentTarget.style.color = theme.highlightColor}
                                         onMouseLeave={e => e.currentTarget.style.color = ''}
                                         onClick={() => setIsMenuOpen(false)}
@@ -437,69 +447,81 @@ const Header: React.FC = () => {
                                         <AutoTranslatedText text={item.label} />
                                     </Link>
                                 </div>
-                        ))}
+                            ))}
 
-                        <hr className="border-dancheong-gold/10 my-4" />
+                            <hr className="border-dancheong-gold/10 my-4" />
 
-                        {/* Mobile Admin & Agency Controls */}
-                        {(isAdminLoggedIn || isAgencyLoggedIn) && (
-                            <div className="flex flex-col gap-2 pb-2">
-                                {isAdminLoggedIn ? (
-                                    <Link
-                                        to="/admin"
-                                        className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
-                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        <Shield size={16} />
-                                        <AutoTranslatedText text="Admin Management Page" />
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        to="/admin"
-                                        className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
-                                        style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        <Shield size={16} />
-                                        <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency'} />
-                                    </Link>
-                                )}
-                                <button
-                                    onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                                    className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm text-red-400"
-                                    style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
-                                >
-                                    <LogOut size={16} />
-                                    <AutoTranslatedText text="Logout" />
-                                </button>
-                            </div>
-                        )}
-
-                        <hr className="border-dancheong-gold/10 my-4" />
-
-                        {/* Mobile Language Selector */}
-                        <div className="py-2">
-                            <p className="text-xs text-dancheong-white/60 mb-3 uppercase font-bold tracking-widest font-serif" style={{ color: `${theme.accentColor}99` }}>{t('nav.language')}</p>
-                            <div className="grid grid-cols-3 gap-2">
-                                {i18n.language && supportedLanguages.map((lang) => (
+                            {/* Mobile Admin & Agency Controls */}
+                            {(isAdminLoggedIn || isAgencyLoggedIn) && (
+                                <div className="flex flex-col gap-2 pb-2">
+                                    {isAdminLoggedIn ? (
+                                        <Link
+                                            to="/admin"
+                                            className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
+                                            style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <Shield size={16} />
+                                            <AutoTranslatedText text="Admin Management Page" />
+                                        </Link>
+                                    ) : (
+                                        <Link
+                                            to="/admin"
+                                            className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm"
+                                            style={{ color: '#00FFC2', border: '1px solid #00FFC233', background: '#00FFC210' }}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <Shield size={16} />
+                                            <AutoTranslatedText text={user?.agency_name || user?.name || 'Agency'} />
+                                        </Link>
+                                    )}
                                     <button
-                                        key={lang.code}
-                                        onClick={() => {
-                                            i18n.changeLanguage(lang.code);
-                                            setIsMenuOpen(false);
-                                        }}
-                                        className={`text-center px-2 py-2.5 rounded-lg text-[11px] transition-all tracking-wide text-dancheong-white/60 hover:bg-white/10`}
-                                        style={i18n.language === lang.code ? { ...theme.bgHighlightStyle, color: 'white', fontWeight: 'bold' } : {}}
+                                        onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                                        className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm text-red-400"
+                                        style={{ border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(248,113,113,0.05)' }}
                                     >
-                                        {lang.label}
+                                        <LogOut size={16} />
+                                        <AutoTranslatedText text="Logout" />
                                     </button>
+                                </div>
+                            )}
+
+                            <div className="flex flex-col space-y-3 sm:space-y-4 px-2">
+                                {ADDITIONAL_NAV.map((item) => (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="text-2xl sm:text-3xl font-serif font-black tracking-tighter hover:opacity-70 transition-opacity text-dancheong-ink uppercase"
+                                    >
+                                        <AutoTranslatedText text={t(item.label)} />
+                                    </Link>
                                 ))}
                             </div>
+
+                            <div className="pt-6 sm:pt-8 border-t border-dancheong-ink/10 space-y-4 sm:space-y-6">
+                                <div className="flex items-center space-x-3 sm:space-x-4">
+                                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-dancheong-ink/40">Language</span>
+                                    <div className="flex flex-wrap gap-x-6 gap-y-2">
+                                        {supportedLanguages.map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => {
+                                                    i18n.changeLanguage(lang.code);
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className={`text-xs sm:text-sm font-bold transition-colors ${i18n.language === lang.code ? 'text-dancheong-ink' : 'text-dancheong-ink/40'}`}
+                                            >
+                                                {lang.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 };

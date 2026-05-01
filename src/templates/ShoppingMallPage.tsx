@@ -776,7 +776,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
             {/* Store Header */}
-            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
+            <header className="relative w-full py-8 md:py-20 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8 relative z-[60]">
                         <button
@@ -844,7 +844,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 rows={2}
                             />
                         ) : (
-                            <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-tight text-neutral-900">
+                            <h1 className="text-3xl md:text-7xl font-serif font-black mb-4 md:mb-6 leading-tight text-neutral-900">
                                 <AutoTranslatedText text={tempTitle} />
                             </h1>
                         )}
@@ -858,7 +858,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             />
                         ) : (
                             tempDesc && (
-                                <p className="text-lg md:text-xl font-serif italic text-neutral-600 max-w-2xl leading-tight">
+                                <p className="text-base md:text-xl font-serif italic text-neutral-600 max-w-2xl leading-tight">
                                     <AutoTranslatedText text={tempDesc} />
                                 </p>
                             )
@@ -885,7 +885,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 <div className="flex flex-col lg:flex-row gap-16">
                     
                     {/* Sidebar Navigation */}
-                    <aside className="lg:w-72 space-y-12">
+                    <aside className="lg:w-72 space-y-8 lg:space-y-12">
                         <div>
                             <div className="group relative">
                                 {isEditingMetadata ? (
@@ -899,21 +899,21 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         />
                                     </div>
                                 ) : (
-                                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-8 ml-1">
+                                    <h3 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-4 lg:mb-8 ml-1">
                                         <AutoTranslatedText text={customFloorDirectoryLabel || "Floor Directory"} />
                                     </h3>
                                 )}
                             </div>
-                            <div className="space-y-4">
+                            <div className="flex lg:flex-col gap-2 lg:gap-4 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 no-scrollbar">
                                 {floors.map((f) => (
                                     <div key={f.id} className="relative group/floor">
                                         <button
                                             onClick={() => { setSelectedFloor(f.floor.toLowerCase()); setActiveSubCategory(null); }}
                                             className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
                                                 selectedFloor === f.floor.toLowerCase() 
-                                                ? 'bg-neutral-900 text-white shadow-xl translate-x-2' 
+                                                ? 'bg-neutral-900 text-white shadow-xl lg:translate-x-2' 
                                                 : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900'
-                                            }`}
+                                            } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full`}
                                         >
                                             <div className="flex items-center gap-4 flex-grow">
                                                 {isEditingMetadata ? (
@@ -958,7 +958,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
                     {/* Product Grid */}
                     <div className="flex-grow">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {isLoading ? (
                                 [1, 2, 3, 4, 5].map(i => (
                                     <div key={i} className="aspect-[3/4] rounded-[2rem] bg-white border border-neutral-100 animate-pulse" />
@@ -980,7 +980,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     animate={{ opacity: 1, y: 0 }}
                                     whileHover={{ y: -8 }}
                                     onClick={() => { setSelectedItem(item); setShowDetailModal(true); }}
-                                    className="group relative bg-transparent rounded-[2rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500"
+                                    className="group relative bg-transparent rounded-[1.5rem] md:rounded-[2rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500"
                                 >
                                     <div className="aspect-[1/1] bg-[#F2E7D5] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
                                         <img 
@@ -992,16 +992,16 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                             className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" 
                                         />
                                     </div>
-                                    <div className="p-4 space-y-2">
+                                    <div className="p-3 md:p-4 space-y-1 md:space-y-2">
                                         <div className="space-y-1">
-                                            <h4 className="text-sm font-bold text-neutral-900 uppercase tracking-tight line-clamp-1">
+                                            <h4 className="text-xs md:text-sm font-bold text-neutral-900 uppercase tracking-tight line-clamp-1">
                                                 <AutoTranslatedText text={getLoc(item.title, i18n.language)} />
                                             </h4>
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[8px] font-black tracking-widest text-neutral-400 uppercase">
+                                                <span className="text-[7px] md:text-[8px] font-black tracking-widest text-neutral-400 uppercase">
                                                     {item.subcategory || 'Signature'}
                                                 </span>
-                                                <div className="text-sm font-black text-red-600 tracking-tighter">
+                                                <div className="text-[11px] md:text-sm font-black text-red-600 tracking-tighter">
                                                     {getLoc(item.price, i18n.language)}
                                                 </div>
                                             </div>
@@ -1009,7 +1009,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all pt-1">
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); addToCart({ ...item, quantity: 1 }); }}
-                                                className="flex-grow py-2 rounded-lg bg-neutral-900 text-white text-[8px] font-black uppercase tracking-widest hover:bg-black transition-all"
+                                                className="flex-grow py-1.5 md:py-2 rounded-lg bg-neutral-900 text-white text-[7px] md:text-[8px] font-black uppercase tracking-widest hover:bg-black transition-all"
                                             >
                                                 <AutoTranslatedText text="Add" />
                                             </button>
@@ -1092,7 +1092,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="bg-white border border-neutral-200 w-full max-w-6xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh]"
+                            className="bg-white border border-neutral-200 w-[95vw] md:w-full max-w-6xl rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[95vh] md:h-[90vh]"
                         >
                             <div className="md:w-3/5 bg-neutral-50 relative h-1/2 md:h-full">
                                 <ProductDetailViewer 
@@ -1103,22 +1103,22 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 />
                                 <button 
                                     onClick={() => setShowDetailModal(false)}
-                                    className="absolute top-8 left-8 p-3 bg-white/80 backdrop-blur-md rounded-full text-neutral-900 hover:bg-white transition-all shadow-lg z-10"
+                                    className="absolute top-4 left-4 md:top-8 md:left-8 p-3 bg-white/80 backdrop-blur-md rounded-full text-neutral-900 hover:bg-white transition-all shadow-lg z-10"
                                 >
                                     <X size={24} />
                                 </button>
                             </div>
                             
-                            <div className="md:w-2/5 p-12 flex flex-col justify-between overflow-y-auto">
+                            <div className="md:w-2/5 p-6 md:p-12 flex flex-col justify-between overflow-y-auto">
                                 <div className="space-y-8">
                                     <div>
                                         <div className="text-[10px] font-black tracking-[0.3em] uppercase text-neutral-400 mb-2">
                                             {selectedItem.category} / {selectedItem.subcategory}
                                         </div>
-                                        <h2 className="text-4xl font-serif font-black text-neutral-900 uppercase tracking-tighter leading-tight mb-4">
+                                        <h2 className="text-2xl md:text-4xl font-serif font-black text-neutral-900 uppercase tracking-tighter leading-tight mb-4">
                                             <AutoTranslatedText text={getLoc(selectedItem.title, i18n.language)} />
                                         </h2>
-                                        <div className="text-3xl font-black text-red-600 tracking-tighter">
+                                        <div className="text-xl md:text-3xl font-black text-red-600 tracking-tighter">
                                             {getLoc(selectedItem.price, i18n.language)}
                                         </div>
                                     </div>

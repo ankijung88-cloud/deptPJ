@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { HeroSection } from '../components/home/HeroSection';
 import { LandingFeaturesSection } from '../components/home/LandingFeaturesSection';
 import { LandingRecruitmentSection } from '../components/home/LandingRecruitmentSection';
 import { LandingPartnerSection } from '../components/home/LandingPartnerSection';
@@ -41,9 +40,8 @@ const LandingPage: React.FC = () => {
                 <div className="absolute top-[10%] left-[-5%] w-[30%] h-[30%] bg-dancheong-navy/5 blur-[100px] rounded-full opacity-30" />
             </div>
 
-            <main className="relative z-10 w-full pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+            <main className="relative z-10 w-full pt-20 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
                 <LandingHeader />
-                <HeroSection />
                 <LandingFloorSection />
                 <LandingFeaturesSection />
                 <LandingPartnerSection />

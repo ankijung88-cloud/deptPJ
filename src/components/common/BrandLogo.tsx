@@ -11,7 +11,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     size = 48,
     variant = 'full'
 }) => {
-    const heightValue = typeof size === 'number' ? size : 48;
+    const heightValue = size;
 
     return (
         <div className={`flex items-center gap-4 ${className}`} style={{ mixBlendMode: 'multiply' }}>
@@ -19,7 +19,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
                 src="/mongdanglogo.png" 
                 alt="Mongtangssok Logo"
                 style={{ 
-                    height: heightValue, 
+                    height: typeof heightValue === 'number' ? `${heightValue}px` : heightValue, 
                     width: 'auto', 
                     objectFit: 'contain',
                     filter: 'contrast(1.1) brightness(1.05)'
@@ -31,7 +31,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
                     src="/titlelogo_clean.png" 
                     alt="Mongtang Title"
                     style={{ 
-                        height: heightValue * 0.7, 
+                        height: typeof heightValue === 'number' ? `${heightValue * 0.7}px` : `calc(${heightValue} * 0.7)`, 
                         width: 'auto', 
                         objectFit: 'contain',
                         filter: 'contrast(1.1) brightness(1.05)'

@@ -16,11 +16,11 @@ export const LandingRecruitmentSection: React.FC = () => {
                     viewport={{ once: true, amount: 0.2 }}
                     className="mb-12 border-b-4 border-dancheong-ink pb-8"
                 >
-                    <span className="text-dancheong-mugwort text-sm md:text-base font-black tracking-[0.5em] uppercase mb-4 block"><AutoTranslatedText text="Operations & Recruitment" /></span>
-                    <h2 className="text-3xl md:text-5xl font-black text-dancheong-ink leading-tight break-keep">
+                    <span className="text-dancheong-mugwort text-[10px] sm:text-base font-black tracking-[0.3em] sm:tracking-[0.5em] uppercase mb-4 block"><AutoTranslatedText text="Operations & Recruitment" /></span>
+                    <h2 className="text-3xl sm:text-5xl font-black text-dancheong-ink leading-tight break-keep tracking-tighter">
                         <AutoTranslatedText text="가상오피스 지원 및 입주기업 모집공고" />
                     </h2>
-                    <p className="text-dancheong-ink opacity-80 mt-4 max-w-3xl text-sm md:text-lg break-keep leading-relaxed font-black">
+                    <p className="text-dancheong-ink opacity-80 mt-4 max-w-3xl text-[13px] sm:text-lg break-keep leading-relaxed font-black">
                         <AutoTranslatedText text="시공간의 제약 없이 새로운 비즈니스를 전개하거나 창의적인 모임, 팝업 공간을 기획하고 싶으신 모든 분들을 모십니다. 몽땅쏙의 프리미엄 2D 공간과 함께 무한한 가능성의 여정을 시작해 보세요." />
                     </p>
                 </motion.div>

@@ -83,14 +83,14 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-transparent pt-32 pb-20 text-dancheong-ink">
-            <div className="lossless-layout">
+        <div className="min-h-screen bg-[#F2E7D5] font-sans selection:bg-dancheong-ink selection:text-white pt-12 sm:pt-20">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-24 pb-16 sm:pb-24">
                 {/* Header Section */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-10 sm:mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-dancheong-navy/10 border border-dancheong-navy/30 rounded-full text-dancheong-navy text-xs font-bold tracking-widest uppercase mb-6"
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-dancheong-navy/10 border border-dancheong-navy/30 rounded-full text-dancheong-navy text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-4 sm:mb-6"
                     >
                         <HelpCircle size={14} />
                         <AutoTranslatedText text="도움말" />
@@ -99,7 +99,7 @@ const FAQPage: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-serif font-bold mb-6 tracking-tight"
+                        className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-6 tracking-tight text-dancheong-ink"
                     >
                         <AutoTranslatedText text={t('footer.faq')} />
                     </motion.h1>

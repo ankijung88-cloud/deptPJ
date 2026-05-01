@@ -87,7 +87,7 @@ const FloorGuidePage: React.FC = () => {
     return (
         <div className="min-h-screen bg-transparent text-dancheong-ink pb-20">
             {/* Hero Section with Background Image */}
-            <header className="relative w-full h-[70vh] min-h-[500px] flex items-center overflow-hidden mb-24 pt-20">
+            <header className="relative w-full h-[50vh] md:h-[70vh] min-h-[400px] md:min-h-[500px] flex items-center overflow-hidden mb-12 md:mb-24 pt-16 md:pt-20">
                 {/* Background Image Layer */}
                 <div className="absolute inset-0 z-0">
                     <img 
@@ -113,7 +113,7 @@ const FloorGuidePage: React.FC = () => {
                         <motion.h1
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-7xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-12"
+                            className="text-5xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-12"
                         >
                             <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
                         </motion.h1>
@@ -131,7 +131,7 @@ const FloorGuidePage: React.FC = () => {
                                 </h2>
                             </div>
                             
-                            <p className="text-dancheong-ink/80 font-bold text-xl md:text-2xl leading-snug max-w-2xl whitespace-pre-wrap">
+                             <p className="text-dancheong-ink/80 font-bold text-lg md:text-2xl leading-snug max-w-2xl whitespace-pre-wrap">
                                 <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                             </p>
                         </motion.div>

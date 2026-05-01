@@ -97,7 +97,7 @@ export const VirtualInquiryPage: React.FC<VirtualInquiryPageProps> = ({ item: pr
                 <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full blur-[100px]" style={{ backgroundColor: theme.accentColor }} />
             </div>
 
-            <header className="container mx-auto px-6 pt-24 pb-12 relative z-10">
+            <header className="container mx-auto px-6 pt-16 md:pt-24 pb-8 md:pb-12 relative z-10">
                 <button 
                     onClick={handleBack}
                     className="flex items-center gap-2 mb-8 opacity-80 hover:opacity-100 transition-opacity uppercase text-[10px] font-black tracking-[0.4em] text-red-600"
@@ -107,22 +107,22 @@ export const VirtualInquiryPage: React.FC<VirtualInquiryPageProps> = ({ item: pr
                 </button>
 
                 <div className="max-w-4xl">
-                    <h1 className="text-5xl md:text-7xl font-serif font-black mb-6 leading-none tracking-tighter text-black">
+                    <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 leading-none tracking-tighter text-black">
                          <AutoTranslatedText text="문의하기" />
                     </h1>
-                    <p className="text-xl md:text-2xl font-serif italic opacity-80 max-w-2xl leading-relaxed text-black/60">
+                    <p className="text-lg md:text-2xl font-serif italic opacity-80 max-w-2xl leading-relaxed text-black/60">
                         <AutoTranslatedText text="제품이나 서비스에 대해 궁금한 점이 있으신가요? 저희 전문가들이 상세히 안내해 드리겠습니다." />
                     </p>
                 </div>
             </header>
 
             <main className="container mx-auto px-6 py-12 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20">
                     {/* Form Section */}
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/80 border border-black/10 rounded-[3rem] p-10 md:p-16 shadow-2xl space-y-10 backdrop-blur-md"
+                        className="bg-white/80 border border-black/10 rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 shadow-2xl space-y-8 md:space-y-10 backdrop-blur-md"
                     >
                         <AnimatePresence mode="wait">
                             {sent ? (
@@ -254,7 +254,7 @@ export const VirtualInquiryPage: React.FC<VirtualInquiryPageProps> = ({ item: pr
 
                         {/* Product Card Highlight */}
                         {item && (
-                            <section className="p-8 rounded-[2rem] bg-white border border-black/10 flex items-center gap-6 shadow-xl">
+                            <section className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-white border border-black/10 flex items-center gap-4 md:gap-6 shadow-xl">
                                 <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0">
                                     <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
                                 </div>
