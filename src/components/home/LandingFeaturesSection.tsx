@@ -173,7 +173,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                         <div className="absolute inset-0 bg-dancheong-ink/10 group-hover:bg-transparent transition-colors duration-500" />
 
                                         <div className="relative z-10 flex flex-col items-center gap-8">
-                                            {feature.icon && (
+                                            {(feature.icon || feature.feature_id) && (
                                                 <motion.div
                                                     initial={{ scale: 0.5, opacity: 0 }}
                                                     whileInView={{ scale: 1, opacity: 1 }}
@@ -181,7 +181,11 @@ export const LandingFeaturesSection: React.FC = () => {
                                                     transition={{ delay: 0.4, type: "spring" }}
                                                     className="w-24 h-24 lg:w-32 lg:h-32 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center shadow-inner relative z-20 border border-white/20"
                                                 >
-                                                    {feature.icon}
+                                                    {feature.icon || (
+                                                        feature.feature_id === 'office' ? <Briefcase className="w-12 h-12 lg:w-16 lg:h-16 text-white" /> :
+                                                        feature.feature_id === 'commerce' ? <Store className="w-12 h-12 lg:w-16 lg:h-16 text-white" /> :
+                                                        <Users className="w-12 h-12 lg:w-16 lg:h-16 text-white" />
+                                                    )}
                                                 </motion.div>
                                             )}
 
