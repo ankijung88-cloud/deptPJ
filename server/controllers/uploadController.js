@@ -15,22 +15,22 @@ const diskStorage = multer.diskStorage({
   }
 });
 
+// Multer in-memory storage for DB-based uploads (Restored to March 19th original logic)
+const storage = multer.memoryStorage();
+
 const upload = multer({ 
-  storage: diskStorage,
-  limits: { fileSize: 5 * 1024 * 1024 * 1024 }, // 5GB limit (SSD-based streaming)
+  storage: storage,
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for memory safety
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|webp|mp4|webm|ogg|mov/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) return cb(null, true);
-    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov) up to 5GB'));
+    cb(new Error('Images and Videos only (jpg, png, webp, mp4, webm, mov)'));
   }
 });
 
 export const uploadSingle = (req, res, next) => {
-  const contentLength = req.headers['content-length'];
-  console.log(`[Upload] New request initialized. Size: ${contentLength ? (contentLength / (1024 * 1024)).toFixed(2) + ' MB' : 'unknown'}`);
-  
   upload.single('file')(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       console.error('[Multer Error]:', err);
@@ -44,73 +44,55 @@ export const uploadSingle = (req, res, next) => {
 };
 
 /**
- * Handle File Upload (Save metadata to DB, file is already on SSD)
+ * Handle File Upload (Save to DB Buffer - March 19th Original)
  */
 export const handleUpload = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-    const uniqueFilename = req.file.filename;
+    const originalName = req.file.originalname;
+    const extension = path.extname(originalName);
+    const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${extension}`;
     const mimetype = req.file.mimetype;
-    const filePath = path.join(process.cwd(), 'uploads', uniqueFilename);
-    
-    // Read the file from SSD to store in DB
-    const fileBuffer = fs.readFileSync(filePath);
-    console.log(`[Upload] File read from disk for DB storage: ${uniqueFilename} (${fileBuffer.length} bytes)`);
+    const buffer = req.file.buffer;
 
-    // Save BOTH metadata AND binary data to DB
+    // Save to media_storage table (Direct Binary Storage)
     await pool.query(
       'INSERT INTO media_storage (filename, mimetype, data) VALUES (?, ?, ?)',
-      [uniqueFilename, mimetype, fileBuffer]
+      [uniqueFilename, mimetype, buffer]
     );
 
-    // Optionally delete from SSD after DB storage to save space, 
-    // but keeping it for now to avoid breaking existing SSD-based links.
-    
     const fileUrl = `/uploads/${uniqueFilename}`;
-    console.log('[Upload] Saved to DATABASE & Metadata to DB:', fileUrl);
+    console.log('[Upload] Saved to DB Buffer successfully:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
     console.error('[handleUpload] Error:', error);
-    res.status(500).json({ message: 'Internal server error during SSD file processing' });
+    res.status(500).json({ message: 'Internal server error during database file processing' });
   }
 };
 
 /**
- * Serve File (Legacy DB support + Path check)
- * NOTE: This is maintained for backward compatibility. 
- * Future requests will be handled by express.static in server.js.
+ * Serve File from DB by filename (March 19th Original)
  */
 export const serveFileFromDB = async (req, res) => {
   const { filename } = req.params;
-  console.log(`[serveFileFromDB] Request for: ${filename}`);
   try {
-    // Check DB first (User primary storage)
     const [rows] = await pool.query(
       'SELECT mimetype, data FROM media_storage WHERE filename = ?',
       [filename]
     );
 
-    if (rows.length > 0 && rows[0].data) {
-      const { mimetype, data } = rows[0];
-      res.set('Content-Type', mimetype);
-      res.set('Cache-Control', 'public, max-age=31536000');
-      return res.send(data);
-    }
-
-    // Fallback to disk (for migrated or temporary items)
-    const filePath = path.join(process.cwd(), 'uploads', filename);
-    if (fs.existsSync(filePath)) {
-      return res.sendFile(filePath);
-    }
-
     if (rows.length === 0 || !rows[0].data) {
-      return res.status(404).send('File not found');
+      return res.status(404).send('File not found in Database');
     }
 
     const { mimetype, data } = rows[0];
+    
+    // Set headers
     res.set('Content-Type', mimetype);
-    res.set('Cache-Control', 'public, max-age=31536000');
+    res.set('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+    
+    // Send binary data directly
     res.send(data);
   } catch (error) {
     console.error('[serveFileFromDB] Error:', error);
