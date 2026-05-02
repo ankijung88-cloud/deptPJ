@@ -52,16 +52,23 @@ export const handleUpload = async (req, res) => {
 
     const uniqueFilename = req.file.filename;
     const mimetype = req.file.mimetype;
-    console.log(`[Upload] File saved successfully to disk: ${uniqueFilename} (${req.file.size} bytes)`);
+    const filePath = path.join(process.cwd(), 'uploads', uniqueFilename);
+    
+    // Read the file from SSD to store in DB
+    const fileBuffer = fs.readFileSync(filePath);
+    console.log(`[Upload] File read from disk for DB storage: ${uniqueFilename} (${fileBuffer.length} bytes)`);
 
-    // Save metadata to media_storage table (data column is NULL for new SSD files)
+    // Save BOTH metadata AND binary data to DB
     await pool.query(
       'INSERT INTO media_storage (filename, mimetype, data) VALUES (?, ?, ?)',
-      [uniqueFilename, mimetype, null] // No buffer stored in DB
+      [uniqueFilename, mimetype, fileBuffer]
     );
 
+    // Optionally delete from SSD after DB storage to save space, 
+    // but keeping it for now to avoid breaking existing SSD-based links.
+    
     const fileUrl = `/uploads/${uniqueFilename}`;
-    console.log('[Upload] Saved to SSD & Metadata to DB:', fileUrl);
+    console.log('[Upload] Saved to DATABASE & Metadata to DB:', fileUrl);
     res.json({ url: fileUrl });
   } catch (error) {
     console.error('[handleUpload] Error:', error);
@@ -78,17 +85,24 @@ export const serveFileFromDB = async (req, res) => {
   const { filename } = req.params;
   console.log(`[serveFileFromDB] Request for: ${filename}`);
   try {
-    // Check disk first
-    const filePath = path.join(process.cwd(), 'uploads', filename);
-    if (fs.existsSync(filePath)) {
-      return res.sendFile(filePath);
-    }
-
-    // Fallback to DB (for non-migrated items)
+    // Check DB first (User primary storage)
     const [rows] = await pool.query(
       'SELECT mimetype, data FROM media_storage WHERE filename = ?',
       [filename]
     );
+
+    if (rows.length > 0 && rows[0].data) {
+      const { mimetype, data } = rows[0];
+      res.set('Content-Type', mimetype);
+      res.set('Cache-Control', 'public, max-age=31536000');
+      return res.send(data);
+    }
+
+    // Fallback to disk (for migrated or temporary items)
+    const filePath = path.join(process.cwd(), 'uploads', filename);
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
 
     if (rows.length === 0 || !rows[0].data) {
       return res.status(404).send('File not found');

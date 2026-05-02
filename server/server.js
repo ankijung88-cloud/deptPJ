@@ -304,13 +304,13 @@ app.use(express.json());
 // Serve static files (Public Assets)
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
-// Serve uploads (Multiple fallback paths for resilience)
+// Serve uploads (DB prioritized per user request)
 const uploadsPath = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads');
 const localUploads = path.join(__dirname, 'uploads');
 
+app.use('/uploads', uploadRoutes); 
 app.use('/uploads', express.static(uploadsPath));
-app.use('/uploads', express.static(localUploads)); // Fallback to local if env path fails
-app.use('/uploads', uploadRoutes); // Final fallback to DB via controller
+app.use('/uploads', express.static(localUploads));
 
 // Routes
 app.use('/api/products', productRoutes);
