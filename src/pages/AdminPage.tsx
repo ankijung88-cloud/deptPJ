@@ -2622,7 +2622,9 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
                 kor_title: normalizeLocalizedString(feature.kor_title),
                 description: normalizeLocalizedString(feature.description),
                 detail_info: normalizeLocalizedString(feature.detail_info),
-                benefits: Array.isArray(feature.benefits) ? feature.benefits : (typeof feature.benefits === 'string' ? JSON.parse(feature.benefits) : [])
+                benefits: Array.isArray(feature.benefits) ? feature.benefits : (typeof feature.benefits === 'string' ? JSON.parse(feature.benefits) : []),
+                media_url: feature.media_url || '',
+                media_type: feature.media_type || 'image'
             });
         }
     }, [feature]);
@@ -2658,6 +2660,7 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
         try {
             const method = feature ? 'PUT' : 'POST';
             const url = feature ? `/api/landing-features/${feature.id}` : '/api/landing-features';
+            
             const response = await fetch(url, {
                 method,
                 headers: { 
@@ -2674,27 +2677,37 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
     return (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6">{feature ? 'Edit Feature' : 'Add Feature'}</h3>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-3 gap-4">
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Feature ID (e.g. office)</label>
-                            <input type="text" value={formData.feature_id} onChange={e => setFormData({...formData, feature_id: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="office" />
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-[2.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+            >
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-2xl font-serif font-black text-dancheong-ink uppercase tracking-tight">
+                        {feature ? 'Edit Feature' : 'Register New Feature'}
+                    </h3>
+                    <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full text-dancheong-ink/40 transition-colors"><X size={24} /></button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-widest ml-1">Feature ID</label>
+                            <input type="text" value={formData.feature_id} onChange={e => setFormData({...formData, feature_id: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm focus:ring-2 focus:ring-dancheong-mugwort/20 outline-none transition-all" placeholder="office" />
                         </div>
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Number (e.g. 01)</label>
-                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="01" />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-widest ml-1">Number</label>
+                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm focus:ring-2 focus:ring-dancheong-mugwort/20 outline-none transition-all" placeholder="01" />
                         </div>
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Display Order</label>
-                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-widest ml-1">Order</label>
+                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm focus:ring-2 focus:ring-dancheong-mugwort/20 outline-none transition-all" />
                         </div>
                     </div>
 
-                    <div>
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Main Media (Image or Video)</label>
-                        <div className="relative aspect-video bg-black/5 rounded-2xl overflow-hidden border border-dancheong-ink/10 flex items-center justify-center">
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-widest ml-1">Main Media Content</label>
+                        <div className="relative aspect-video bg-black/5 rounded-[2rem] overflow-hidden border border-dancheong-ink/5 flex items-center justify-center group shadow-inner">
                             {formData.media_url ? (
                                 <>
                                     {formData.media_type === 'video' ? (
@@ -2702,81 +2715,106 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
                                     ) : (
                                         <img src={formData.media_url} alt="" className="w-full h-full object-cover" />
                                     )}
-                                    <label className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                                        <Upload className="text-white" />
+                                    <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                        <div className="bg-white/20 backdrop-blur-md rounded-full p-4 border border-white/30">
+                                            <Upload className="text-white" size={32} />
+                                        </div>
                                         <input type="file" className="hidden" onChange={handleFileUpload} />
                                     </label>
                                 </>
                             ) : (
-                                <label className="flex flex-col items-center gap-2 cursor-pointer text-dancheong-ink/30 hover:text-dancheong-mugwort transition-colors">
-                                    {uploading ? <div className="w-6 h-6 border-2 border-dancheong-mugwort border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
-                                    <span className="text-xs font-bold uppercase tracking-widest">Upload Media</span>
+                                <label className="flex flex-col items-center gap-4 cursor-pointer text-dancheong-ink/20 hover:text-dancheong-mugwort transition-all duration-500">
+                                    {uploading ? (
+                                        <div className="w-12 h-12 border-4 border-dancheong-mugwort border-t-transparent rounded-full animate-spin" />
+                                    ) : (
+                                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border border-dancheong-ink/5">
+                                            <Upload size={32} className="text-dancheong-ink/30" />
+                                        </div>
+                                    )}
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Upload Media</span>
                                     <input type="file" className="hidden" onChange={handleFileUpload} />
                                 </label>
                             )}
                         </div>
+                        <input 
+                            type="text" 
+                            placeholder="Or paste media URL here..." 
+                            value={formData.media_url} 
+                            onChange={e => setFormData({...formData, media_url: e.target.value})} 
+                            className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-xs focus:ring-2 focus:ring-dancheong-mugwort/20 outline-none transition-all"
+                        />
                     </div>
 
-
-                    <div className="space-y-4">
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Subtitle & Titles</label>
-                        <div className="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Subtitle (KO)" value={formData.subtitle.ko} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
-                            <input type="text" placeholder="Subtitle (EN)" value={formData.subtitle.en} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-[1px] bg-dancheong-ink/10" />
+                            <span className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-[0.3em]">Branding & Titles</span>
                         </div>
-                        <input type="text" placeholder="Eng Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
                         <div className="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Kor Title (KO)" value={formData.kor_title.ko} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
-                            <input type="text" placeholder="Kor Title (EN)" value={formData.kor_title.en} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                            <input type="text" placeholder="Subtitle (KO)" value={formData.subtitle.ko} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm" />
+                            <input type="text" placeholder="Subtitle (EN)" value={formData.subtitle.en} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm" />
+                        </div>
+                        <input type="text" placeholder="Main English Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm font-bold" />
+                        <div className="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="Korean Title (KO)" value={formData.kor_title.ko} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm" />
+                            <input type="text" placeholder="Korean Title (EN)" value={formData.kor_title.en} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm" />
                         </div>
                     </div>
 
-                    <div className="space-y-4">
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Descriptions</label>
-                        <textarea placeholder="Description (KO)" value={formData.description.ko} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
-                        <textarea placeholder="Detail Info (KO)" value={formData.detail_info.ko} onChange={e => setFormData({...formData, detail_info: {...formData.detail_info, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-[1px] bg-dancheong-ink/10" />
+                            <span className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-[0.3em]">Detailed Description</span>
+                        </div>
+                        <textarea placeholder="Main Description (KO)" value={formData.description.ko} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm h-32 resize-none" />
+                        <textarea placeholder="Feature Detail Info (KO)" value={formData.detail_info.ko} onChange={e => setFormData({...formData, detail_info: {...formData.detail_info, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm h-32 resize-none" />
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Benefits</label>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-[1px] bg-dancheong-ink/10" />
+                                <span className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-[0.3em]">Key Benefits</span>
+                            </div>
                             <button 
                                 type="button" 
                                 onClick={() => setFormData({...formData, benefits: [...formData.benefits, '']})}
-                                className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-2 py-1 rounded"
-                            >+ Add Benefit</button>
+                                className="text-[10px] font-black text-white bg-dancheong-mugwort px-4 py-2 rounded-full hover:scale-105 transition-all shadow-md shadow-dancheong-mugwort/20"
+                            >+ ADD BENEFIT</button>
                         </div>
-                        {formData.benefits.map((benefit: string, idx: number) => (
-                            <div key={idx} className="flex gap-2">
-                                <input 
-                                    type="text" 
-                                    value={benefit} 
-                                    onChange={e => {
-                                        const newBenefits = [...formData.benefits];
-                                        newBenefits[idx] = e.target.value;
-                                        setFormData({...formData, benefits: newBenefits});
-                                    }}
-                                    className="flex-1 bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm"
-                                    placeholder={`Benefit ${idx + 1}`}
-                                />
-                                <button 
-                                    type="button"
-                                    onClick={() => setFormData({...formData, benefits: formData.benefits.filter((_: any, i: number) => i !== idx)})}
-                                    className="p-2 text-red-400"
-                                ><Trash2 size={16} /></button>
-                            </div>
-                        ))}
+                        <div className="grid grid-cols-1 gap-3">
+                            {formData.benefits.map((benefit: string, idx: number) => (
+                                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} key={idx} className="flex gap-3">
+                                    <input 
+                                        type="text" 
+                                        value={benefit} 
+                                        onChange={e => {
+                                            const newBenefits = [...formData.benefits];
+                                            newBenefits[idx] = e.target.value;
+                                            setFormData({...formData, benefits: newBenefits});
+                                        }}
+                                        className="flex-1 bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink text-sm focus:ring-2 focus:ring-dancheong-mugwort/10 outline-none"
+                                        placeholder={`Benefit point ${idx + 1}...`}
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({...formData, benefits: formData.benefits.filter((_: any, i: number) => i !== idx)})}
+                                        className="p-4 text-red-400 hover:bg-red-50 rounded-2xl transition-colors"
+                                    ><Trash2 size={20} /></button>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Gradient (e.g. from-dancheong-mugwort/20 to-transparent)</label>
-                        <input type="text" value={formData.gradient} onChange={e => setFormData({...formData, gradient: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-xs" />
+                        <label className="text-[10px] font-black text-dancheong-ink/40 uppercase tracking-widest ml-1">Custom Gradient Overlay</label>
+                        <input type="text" value={formData.gradient} onChange={e => setFormData({...formData, gradient: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/5 rounded-2xl p-4 text-dancheong-ink font-mono text-xs" />
                     </div>
 
-                    <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink">Cancel</button>
-                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
-                            {feature ? 'Update' : 'Create'}
+                    <div className="flex justify-end gap-4 pt-8 border-t border-dancheong-ink/5">
+                        <button type="button" onClick={onClose} className="px-8 py-4 text-dancheong-ink/40 font-bold hover:text-dancheong-ink uppercase tracking-widest text-[10px]">Cancel</button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-12 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-dancheong-ink/20">
+                            {feature ? 'Update Feature' : 'Create Feature'}
                         </button>
                     </div>
                 </form>

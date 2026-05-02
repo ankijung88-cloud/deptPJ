@@ -123,10 +123,11 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const { floors } = useFloors();
     const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
     const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+    const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedFloor, activeSubCategory]);
+    }, [selectedFloor, activeSubCategory, activeTemplate]);
 
     // Checkout Modal States
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -176,7 +177,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const filteredItems = storeItems.filter(item => {
         const matchesFloor = !selectedFloor || item.category === selectedFloor;
         const matchesSub = !activeSubCategory || item.subcategory === activeSubCategory;
-        return matchesFloor && matchesSub;
+        const matchesTemplate = !activeTemplate || (item.page_type || 'standard') === activeTemplate;
+        return matchesFloor && matchesSub && matchesTemplate;
     });
 
     const handleAddToCart = () => {
@@ -362,6 +364,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 id: dbItem.id,
                 title: safeParse(dbItem.title),
                 category: dbItem.category,
+                subcategory: dbItem.subcategory,
+                page_type: dbItem.page_type,
                 description: safeParse(dbItem.description),
                 long_description: safeParse(dbItem.long_description),
                 imageUrl: dbItem.image_url,
@@ -958,6 +962,91 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
                     {/* Product Grid */}
                     <div className="flex-grow">
+                        {/* Sub-Category Boxes (Restored) */}
+                        {selectedFloor && (
+                            <div className="mb-12">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 mb-8">
+                                    {/* "All" Category Box */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        onClick={() => setActiveSubCategory(null)}
+                                        className={`group cursor-pointer aspect-square rounded-[1.5rem] md:rounded-[2rem] border p-4 flex flex-col items-center justify-center text-center transition-all duration-300 ${!activeSubCategory ? 'bg-neutral-900 border-neutral-900 shadow-lg -translate-y-1' : 'bg-white border-neutral-100 hover:border-neutral-300'}`}
+                                    >
+                                        <div className={`text-[10px] md:text-xs font-black uppercase tracking-widest ${!activeSubCategory ? 'text-white' : 'text-neutral-900'}`}>
+                                            <AutoTranslatedText text="All Products" />
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Sub-category Boxes */}
+                                    {floors.find(f => f.floor.toLowerCase() === selectedFloor)?.subitems?.map((sub, idx) => (
+                                        <motion.div
+                                            key={sub.id}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: idx * 0.05 }}
+                                            onClick={() => setActiveSubCategory(sub.id)}
+                                            className={`group relative cursor-pointer aspect-square rounded-[1.5rem] md:rounded-[2rem] border overflow-hidden transition-all duration-500 ${activeSubCategory === sub.id ? 'border-red-600 shadow-xl -translate-y-2' : 'border-neutral-100 hover:border-neutral-300 shadow-sm hover:shadow-md'}`}
+                                        >
+                                            {/* Background Image with Multiply Effect */}
+                                            <div className="absolute inset-0 z-0 bg-[#F2E7D5]" style={{ mixBlendMode: 'multiply' }}>
+                                                {sub.bgImage && (
+                                                    <img 
+                                                        src={sub.bgImage} 
+                                                        alt={getLoc(sub.label, i18n.language)}
+                                                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${activeSubCategory === sub.id ? 'opacity-100' : 'opacity-40 group-hover:opacity-70'}`}
+                                                    />
+                                                )}
+                                                <div className={`absolute inset-0 bg-gradient-to-t transition-opacity duration-500 ${activeSubCategory === sub.id ? 'from-red-600/80 via-red-600/20 to-transparent opacity-90' : 'from-white/80 via-white/20 to-transparent opacity-60'}`} />
+                                            </div>
+
+                                            {/* Label */}
+                                            <div className="relative z-10 h-full p-3 md:p-4 flex flex-col justify-end items-center text-center">
+                                                <span className={`text-[9px] md:text-[11px] font-black uppercase tracking-widest transition-colors duration-300 ${activeSubCategory === sub.id ? 'text-white' : 'text-neutral-900'}`}>
+                                                    <AutoTranslatedText text={getLoc(sub.label, i18n.language)} />
+                                                </span>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                {/* Sub-template Boxes (Restored) */}
+                                {storeItems.length > 0 && (
+                                    <div className="mb-12">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-8 h-[1px] bg-red-600/20" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600/40">Available Services</span>
+                                            <div className="flex-grow h-[1px] bg-neutral-100" />
+                                        </div>
+                                        <div className="flex flex-wrap gap-3 md:gap-6">
+                                            <button
+                                                onClick={() => setActiveTemplate(null)}
+                                                className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${!activeTemplate ? 'bg-neutral-900 text-white border-neutral-900 shadow-lg' : 'bg-white text-neutral-400 border-neutral-100 hover:border-neutral-200'}`}
+                                            >
+                                                <AutoTranslatedText text="All Types" />
+                                            </button>
+                                            {Array.from(new Set(storeItems.filter(p => !selectedFloor || p.category === selectedFloor).map(p => p.page_type || 'standard')))
+                                                .filter(type => type !== 'standard')
+                                                .map((type, idx) => (
+                                                    <motion.button
+                                                        key={type}
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: idx * 0.1 }}
+                                                        onClick={() => setActiveTemplate(type)}
+                                                        className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 border ${activeTemplate === type ? 'bg-red-600 text-white border-red-600 shadow-xl scale-105' : 'bg-white text-neutral-900 border-neutral-100 hover:border-neutral-200'}`}
+                                                    >
+                                                        <AutoTranslatedText text={type.replace('_', ' ')} />
+                                                    </motion.button>
+                                                ))}
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <div className="w-full h-[1px] bg-neutral-100 mb-8" />
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {isLoading ? (
                                 [1, 2, 3, 4, 5].map(i => (
