@@ -14,7 +14,14 @@ export const useEditorial = (floorId?: string) => {
                 // Filter products by floor if floorId is provided
                 // This assumes floorId might be in category or subcategory
                 const filtered = floorId 
-                    ? allProducts.filter(p => p.category === floorId || p.subcategory === floorId)
+                    ? allProducts.filter(p => {
+                        const pid = p.category?.toString().toLowerCase() || '';
+                        const fid = floorId.toLowerCase();
+                        const fNum = fid.replace('floor-', '').replace('f', '');
+                        const pNum = pid.replace('floor-', '').replace('f', '');
+                        
+                        return pid === fid || pNum === fNum || pid.includes(fid) || fid.includes(pid);
+                    })
                     : allProducts;
                 
                 setItems(filtered);

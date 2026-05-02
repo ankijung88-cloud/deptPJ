@@ -304,14 +304,13 @@ app.use(express.json());
 // Serve static files (Public Assets)
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 
-// Serve uploads (SSD first, then DB fallback)
+// Serve uploads (Multiple fallback paths for resilience)
 const uploadsPath = process.env.UPLOADS_PATH || path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(uploadsPath));
-app.use('/uploads', uploadRoutes);
+const localUploads = path.join(__dirname, 'uploads');
 
-// Fallback for direct video paths (backward compatibility)
-app.use('/videos', express.static(path.join(__dirname, '../public/assets/videos')));
-app.use('/video', express.static(path.join(__dirname, '../public/assets/videos')));
+app.use('/uploads', express.static(uploadsPath));
+app.use('/uploads', express.static(localUploads)); // Fallback to local if env path fails
+app.use('/uploads', uploadRoutes); // Final fallback to DB via controller
 
 // Routes
 app.use('/api/products', productRoutes);

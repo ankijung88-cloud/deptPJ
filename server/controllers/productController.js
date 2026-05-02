@@ -17,7 +17,7 @@ export const getAllProducts = async (req, res) => {
     // - GUEST: See all items
     if (user && user.role === 'AGENCY') {
       console.log(`[getAllProducts] Applying Agency filter (User is AGENCY): ${user.id}`);
-      conditions.push('agency_id = ?');
+      conditions.push('(agency_id = ? OR agency_id IS NULL)');
       params.push(user.id);
     } else if (agencyId) {
       // Explicit agencyId from query (likely for public agency page)

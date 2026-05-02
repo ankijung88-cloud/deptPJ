@@ -68,22 +68,30 @@ export const FloorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             // Always start with fallbacks
             const finalFloors = FALLBACK_FLOORS.map(fb => {
-                const dynamic = dynamicMap.get(fb.floor.toUpperCase());
+                // Try to find by floor name (e.g., '6F') or by numeric part
+                const dynamic = data.find(d => 
+                    d.floor?.toString().toUpperCase() === fb.floor.toUpperCase() ||
+                    d.id?.toString() === fb.id.replace('floor-', '')
+                );
+                
                 if (dynamic) {
-                    return { ...fb, ...dynamic, id: dynamic.id || fb.id };
+                    // Keep the fallback ID (floor-6) for routing stability, but merge dynamic data
+                    return { ...fb, ...dynamic, id: fb.id };
                 }
                 return fb;
             });
 
-            // Add any floors from API that aren't in fallbacks
+            // Add any floors from API that aren't in fallbacks (using their original IDs)
             const extraFloors = data.filter(d => 
-                !FALLBACK_FLOORS.some(fb => fb.floor.toUpperCase() === d.floor?.toString().toUpperCase())
+                !FALLBACK_FLOORS.some(fb => 
+                    fb.floor.toUpperCase() === d.floor?.toString().toUpperCase() ||
+                    fb.id.replace('floor-', '') === d.id?.toString()
+                )
             );
 
             const allFloors = [...finalFloors, ...extraFloors].sort((a, b) => {
-                const levelA = parseInt(a.floor) || 0;
-                const levelB = parseInt(b.floor) || 0;
-                return levelB - levelA;
+                const getNum = (f: string) => parseInt(f.replace(/[^0-9]/g, '')) || 0;
+                return getNum(b.floor) - getNum(a.floor);
             });
 
             setFloors(allFloors);
