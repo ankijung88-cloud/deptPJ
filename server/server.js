@@ -16,6 +16,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import sajuRoutes from './routes/saju.js';
 import heroRoutes from './routes/heroRoutes.js';
+import landingFeatureRoutes from './routes/landingFeatureRoutes.js';
 
 dotenv.config();
 
@@ -322,6 +323,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/saju', sajuRoutes);
 app.use('/api/hero', heroRoutes);
+app.use('/api/landing-features', landingFeatureRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

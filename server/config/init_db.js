@@ -210,6 +210,28 @@ async function initDB() {
     `);
     console.log('[DB] hero_images table is ready.');
 
+    // NEW: Create landing_features table if it doesn't exist
+    console.log('[DB] Ensuring landing_features table exists...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS landing_features (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        feature_id VARCHAR(50) NULL,
+        number VARCHAR(10) NULL,
+        subtitle JSON NULL,
+        title VARCHAR(255) NULL,
+        kor_title JSON NULL,
+        description JSON NULL,
+        detail_info JSON NULL,
+        benefits JSON NULL,
+        media_url TEXT NULL,
+        media_type ENUM('image', 'video') DEFAULT 'image',
+        gradient VARCHAR(100) NULL,
+        display_order INT DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `);
+    console.log('[DB] landing_features table is ready.');
+
   } catch (error) {
     if (error.code === 'ER_DUP_COLUMN') {
       console.log('[DB] Columns already exist.');

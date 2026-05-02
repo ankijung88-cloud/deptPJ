@@ -2494,6 +2494,245 @@ const HeroImageModal = ({ image, onClose, onSuccess }: any) => {
     );
 };
 
+
+const LandingFeatureManager = () => {
+    const [features, setFeatures] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingFeature, setEditingFeature] = useState<any>(null);
+
+    useEffect(() => { fetchFeatures(); }, []);
+
+    const fetchFeatures = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/landing-features');
+            const data = await response.json();
+            setFeatures(data);
+        } catch (err) {
+            console.error('Failed to fetch features:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('이 기능을 삭제하시겠습니까?')) {
+            try {
+                await fetch(`/api/landing-features/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}` }
+                });
+                fetchFeatures();
+            } catch (err) { alert('Delete failed'); }
+        }
+    };
+
+    return (
+        <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Landing Features Management" /></h2>
+                <button 
+                    onClick={() => { setEditingFeature(null); setIsModalOpen(true); }}
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                >
+                    <Plus size={18} /> <AutoTranslatedText text="Add Feature" />
+                </button>
+            </div>
+
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                        <tr>
+                            <th className="px-6 py-4">Media</th>
+                            <th className="px-6 py-4">Number</th>
+                            <th className="px-6 py-4">Title</th>
+                            <th className="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                        {features.map(feature => (
+                            <tr key={feature.id} className="hover:bg-dancheong-ink/5 transition-colors">
+                                <td className="px-6 py-4">
+                                    {feature.media_type === 'video' ? (
+                                        <video src={feature.media_url} className="w-16 h-10 object-cover rounded bg-black" />
+                                    ) : (
+                                        <img src={feature.media_url} alt="" className="w-16 h-10 object-cover rounded bg-black/20" />
+                                    )}
+                                </td>
+                                <td className="px-6 py-4 text-dancheong-mugwort font-bold">{feature.number}</td>
+                                <td className="px-6 py-4 text-dancheong-ink font-medium">{displayLocalized(feature.title)}</td>
+                                <td className="px-6 py-4 text-right">
+                                    <div className="flex justify-end gap-2">
+                                        <button 
+                                            onClick={() => { setEditingFeature(feature); setIsModalOpen(true); }}
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort transition-colors"
+                                        >
+                                            <Edit2 size={18} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(feature.id)}
+                                            className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400 transition-colors"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {loading && <div className="py-20 text-center text-dancheong-ink/20">Loading features...</div>}
+                {!loading && features.length === 0 && <div className="py-20 text-center text-dancheong-ink/20">No features found</div>}
+            </div>
+
+            {isModalOpen && (
+                <LandingFeatureFormModal 
+                    feature={editingFeature} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={() => { setIsModalOpen(false); fetchFeatures(); }} 
+                />
+            )}
+        </div>
+    );
+};
+
+const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
+    const [formData, setFormData] = useState<any>({
+        feature_id: '',
+        number: '',
+        subtitle: { ko: '', en: '' },
+        title: '',
+        kor_title: { ko: '', en: '' },
+        description: { ko: '', en: '' },
+        detail_info: { ko: '', en: '' },
+        benefits: [],
+        media_url: '',
+        media_type: 'image',
+        gradient: 'from-dancheong-mugwort/20 to-transparent',
+        display_order: 0
+    });
+    const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        if (feature) {
+            setFormData({
+                ...feature,
+                subtitle: normalizeLocalizedString(feature.subtitle),
+                kor_title: normalizeLocalizedString(feature.kor_title),
+                description: normalizeLocalizedString(feature.description),
+                detail_info: normalizeLocalizedString(feature.detail_info),
+                benefits: Array.isArray(feature.benefits) ? feature.benefits : (typeof feature.benefits === 'string' ? JSON.parse(feature.benefits) : [])
+            });
+        }
+    }, [feature]);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}` },
+                body: uploadData
+            });
+            const data = await response.json();
+            if (data.url) {
+                setFormData({ 
+                    ...formData, 
+                    media_url: data.url,
+                    media_type: file.type.startsWith('video/') ? 'video' : 'image'
+                });
+            }
+        } catch (err) { alert('Upload failed'); }
+        finally { setUploading(false); }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const method = feature ? 'PUT' : 'POST';
+            const url = feature ? `/api/landing-features/${feature.id}` : '/api/landing-features';
+            const response = await fetch(url, {
+                method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) onSuccess();
+            else alert('Operation failed');
+        } catch (err) { alert('Operation failed'); }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6">{feature ? 'Edit Feature' : 'Add Feature'}</h3>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Number (e.g. 01)</label>
+                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Display Order</label>
+                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Main Media (Image or Video)</label>
+                        <div className="relative aspect-video bg-black/5 rounded-2xl overflow-hidden border border-dancheong-ink/10 flex items-center justify-center">
+                            {formData.media_url ? (
+                                <>
+                                    {formData.media_type === 'video' ? (
+                                        <video src={formData.media_url} className="w-full h-full object-cover" controls />
+                                    ) : (
+                                        <img src={formData.media_url} alt="" className="w-full h-full object-cover" />
+                                    )}
+                                    <label className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                        <Upload className="text-white" />
+                                        <input type="file" className="hidden" onChange={handleFileUpload} />
+                                    </label>
+                                </>
+                            ) : (
+                                <label className="flex flex-col items-center gap-2 cursor-pointer text-dancheong-ink/30 hover:text-dancheong-mugwort transition-colors">
+                                    {uploading ? <div className="w-6 h-6 border-2 border-dancheong-mugwort border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
+                                    <span className="text-xs font-bold uppercase tracking-widest">Upload Media</span>
+                                    <input type="file" className="hidden" onChange={handleFileUpload} />
+                                </label>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Titles & Content</label>
+                        <input type="text" placeholder="Eng Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        <input type="text" placeholder="Kor Title" value={formData.kor_title.ko} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        <textarea placeholder="Description" value={formData.description.ko} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                        <textarea placeholder="Detail Info" value={formData.detail_info.ko} onChange={e => setFormData({...formData, detail_info: {...formData.detail_info, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                    </div>
+
+                    <div className="flex justify-end gap-4 pt-4">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink">Cancel</button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
+                            {feature ? 'Update' : 'Create'}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
+    );
+};
+
 const AgencyManager = () => {
     const [agencies, setAgencies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -2760,7 +2999,8 @@ export const AdminPage: React.FC = () => {
             { id: 'floors', label: 'Floors', icon: Layers },
             { id: 'notices', label: 'Notices', icon: Megaphone },
             { id: 'faqs', label: 'FAQs', icon: HelpCircle },
-            { id: 'hero', label: 'Hero Slider', icon: MonitorPlay }
+            { id: 'hero', label: 'Hero Slider', icon: MonitorPlay },
+            { id: 'landing-features', label: 'Landing Features', icon: LayoutGrid }
         ] : []),
     ];
 
@@ -2882,6 +3122,7 @@ export const AdminPage: React.FC = () => {
                         {activeTab === 'notices' && <NoticeManager agencies={agencies} />}
                         {activeTab === 'faqs' && <FAQManager agencies={agencies} />}
                         {activeTab === 'hero' && <HeroManager />}
+                        {activeTab === 'landing-features' && <LandingFeatureManager />}
                     </motion.div>
                 </div>
             </main>
