@@ -86,10 +86,10 @@ export const LandingFeaturesSection: React.FC = () => {
                         <h3 className="text-dancheong-mugwort text-[12px] font-black tracking-[0.6em] uppercase">
                             <AutoTranslatedText text="Why Mongtangssok?" />
                         </h3>
-                        <h2 className="text-4xl sm:text-5xl lg:text-7xl text-dancheong-ink font-bold tracking-tighter leading-[1.05] max-w-4xl mx-auto">
+                        <h2 className="text-3xl sm:text-4xl lg:text-6xl text-dancheong-ink font-bold tracking-tighter leading-[1.1] max-w-4xl mx-auto">
                             <AutoTranslatedText text="당신의 비즈니스가 이곳에서 시작되어야 하는 이유" />
                         </h2>
-                        <p className="text-dancheong-ink/60 text-lg lg:text-xl max-w-2xl mx-auto font-medium">
+                        <p className="text-dancheong-ink/60 text-base lg:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
                             <AutoTranslatedText text="단순한 도구를 넘어 비즈니스의 새로운 지평을 여는 올인원 공간 솔루션을 경험하세요." />
                         </p>
                     </motion.div>
@@ -150,12 +150,12 @@ export const LandingFeaturesSection: React.FC = () => {
                                         <span className="w-2 h-2 rounded-full bg-dancheong-mugwort animate-pulse" />
                                         <span className="text-xs font-black uppercase tracking-widest">{feature.title}</span>
                                     </div>
-                                    <h4 className="text-4xl lg:text-5xl font-black text-dancheong-ink tracking-tight leading-tight">
+                                    <h4 className="text-2xl lg:text-3xl font-black text-dancheong-ink tracking-tight leading-tight">
                                         <AutoTranslatedText text={feature.korTitle} />
                                     </h4>
                                 </div>
                                 
-                                <p className="text-dancheong-ink/70 text-xl lg:text-2xl leading-relaxed break-keep font-medium">
+                                <p className="text-dancheong-ink/70 text-base lg:text-lg leading-relaxed break-keep font-medium">
                                     <AutoTranslatedText text={feature.desc} />
                                 </p>
 
@@ -167,8 +167,8 @@ export const LandingFeaturesSection: React.FC = () => {
                                     transition={{ delay: 0.3 }}
                                     className="bg-dancheong-ink/[0.03] p-6 lg:p-8 rounded-[32px] border border-dancheong-ink/5 relative overflow-hidden"
                                 >
-                                    <Quote className="absolute top-4 right-4 w-12 h-12 text-dancheong-ink/5" />
-                                    <p className="relative z-10 text-dancheong-ink/80 text-lg leading-relaxed break-keep italic font-medium">
+                                    <Quote className="absolute top-4 right-4 w-10 h-10 text-dancheong-ink/5" />
+                                    <p className="relative z-10 text-dancheong-ink/80 text-base leading-loose break-keep italic font-medium">
                                         <AutoTranslatedText text={feature.detailInfo} />
                                     </p>
                                 </motion.div>
@@ -184,8 +184,8 @@ export const LandingFeaturesSection: React.FC = () => {
                                             transition={{ delay: 0.5 + (bIdx * 0.1) }}
                                             className="flex items-center gap-3 justify-center lg:justify-start"
                                         >
-                                            <CheckCircle2 className="w-6 h-6 text-dancheong-mugwort" />
-                                            <span className="text-dancheong-ink/80 font-semibold text-lg">
+                                            <CheckCircle2 className="w-5 h-5 text-dancheong-mugwort" />
+                                            <span className="text-dancheong-ink/80 font-semibold text-base">
                                                 <AutoTranslatedText text={benefit} />
                                             </span>
                                         </motion.div>
