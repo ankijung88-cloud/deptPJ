@@ -2677,10 +2677,14 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-2xl bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6">{feature ? 'Edit Feature' : 'Add Feature'}</h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
+                        <div>
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Feature ID (e.g. office)</label>
+                            <input type="text" value={formData.feature_id} onChange={e => setFormData({...formData, feature_id: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="office" />
+                        </div>
                         <div>
                             <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Number (e.g. 01)</label>
-                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="01" />
                         </div>
                         <div>
                             <label className="text-xs font-bold text-dancheong-ink/60 uppercase block mb-2">Display Order</label>
@@ -2713,16 +2717,6 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Feature Number (e.g. 01)</label>
-                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="01" />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Display Order</label>
-                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
-                        </div>
-                    </div>
 
                     <div className="space-y-4">
                         <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Subtitle & Titles</label>
