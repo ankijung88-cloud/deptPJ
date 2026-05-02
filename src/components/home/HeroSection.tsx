@@ -52,7 +52,7 @@ export const HeroSection: React.FC = () => {
 
     const variants = {
         enter: (direction: number) => ({
-            x: direction > 0 ? 1000 : -1000,
+            x: direction > 0 ? '100%' : '-100%',
             opacity: 0
         }),
         center: {
@@ -62,7 +62,7 @@ export const HeroSection: React.FC = () => {
         },
         exit: (direction: number) => ({
             zIndex: 0,
-            x: direction < 0 ? 1000 : -1000,
+            x: direction < 0 ? '100%' : '-100%',
             opacity: 0
         })
     };
@@ -94,8 +94,8 @@ export const HeroSection: React.FC = () => {
                     animate="center"
                     exit="exit"
                     transition={{
-                        x: { type: "spring", stiffness: 300, damping: 30 },
-                        opacity: { duration: 0.6 }
+                        x: { type: "tween", duration: 1.5, ease: [0.25, 1, 0.5, 1] },
+                        opacity: { duration: 1.2, ease: "easeInOut" }
                     }}
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
