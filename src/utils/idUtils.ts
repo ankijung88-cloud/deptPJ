@@ -1,6 +1,6 @@
 /**
  * ID Normalization Utility
- * Maps legacy IDs (e.g., floor-1, global, tech) to current rebranded IDs (e.g., floor-tech-care, car-care).
+ * Maps legacy IDs (e.g., floor-1, global, tech) to current rebranded IDs.
  * This ensures consistency between database records and the current UI configuration.
  */
 
@@ -10,9 +10,16 @@
 export const getNormalizedFloorId = (id: string): string => {
     if (!id) return '';
     const s = id.toLowerCase();
-    if (s === 'floor-1' || s === 'floor-tech-care') return 'floor-tech-care';
-    if (s === 'floor-4' || s === 'floor-local-heritage') return 'floor-4';
-    if (s === 'floor-6' || s === 'floor-gather-mall') return 'floor-6';
+    
+    // Normalize variants of floor IDs to the floor-N pattern used in context/db
+    if (s === 'floor-tech-care' || s === 'tech') return 'floor-1';
+    if (s === 'floor-local-heritage') return 'floor-4';
+    if (s === 'floor-gather-mall' || s === 'maktet' || s === 'market') return 'floor-6';
+    
+    // If it already matches floor-N, return it
+    const match = s.match(/floor-\d/);
+    if (match) return match[0];
+    
     return id;
 };
 
@@ -23,16 +30,14 @@ export const getNormalizedSubcategoryId = (sub: string): string => {
     if (!sub) return '';
     const s = sub.toLowerCase();
     
-    // Floor 1: TECH & CARE (previously floor-1)
-    if (['car', 'trend', 'exchange', 'car-care', 'car-care-exchange-week', 'global', '글로벌', 'tech'].includes(s)) {
+    // Normalize subcategories based on keywords
+    if (['car', 'trend', 'exchange', 'car-care', 'global', 'tech'].some(k => s.includes(k))) {
         return 'car-care';
     }
-    if (['window', '디지털쇼윈도', '디지털 쇼윈도'].includes(s)) {
+    if (['window', 'digital'].some(k => s.includes(k))) {
         return 'window';
     }
-    
-    // Floor 6: GATHER MALL (previously 4F)
-    if (['talk', 'b2b-mall', '인터뷰', 'interview', 'mall', 'travel'].includes(s)) {
+    if (['mall', 'b2b', 'talk', 'interview'].some(k => s.includes(k))) {
         return 'b2b-mall';
     }
     

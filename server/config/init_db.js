@@ -267,6 +267,51 @@ async function initDB() {
       }
     }
 
+    // NEW: Seed landing features if empty
+    const [featureRows] = await pool.query('SELECT COUNT(*) as count FROM landing_features');
+    if (featureRows[0].count === 0) {
+      console.log('[DB] Seeding default landing features...');
+      const defaultFeatures = [
+        [
+          'office', '01', 
+          JSON.stringify({ko: 'The Future of Workplace', en: 'The Future of Workplace'}),
+          'Spatial Productivity',
+          JSON.stringify({ko: '압도적 생산성의 공간', en: 'Spatial Productivity'}),
+          JSON.stringify({ko: '단순한 화상 회의를 넘어선 초몰입형 워크스페이스. 물리적 사무실의 가치를 디지털로 완벽하게 치환합니다.', en: 'Beyond simple video conferencing...'}),
+          JSON.stringify({ko: '집이나 카페 어디서든 사무실과 동일한 현장감을 제공합니다.', en: 'Provides the same sense of presence as an office...'}),
+          JSON.stringify(['집중을 위한 프라이빗 부스 시스템', '실시간 협업 도구 내장', '2D 가상 오피스']),
+          'from-dancheong-mugwort/20 to-transparent', 0
+        ],
+        [
+          'commerce', '02', 
+          JSON.stringify({ko: 'Immersive Shopping Experience', en: 'Immersive Shopping Experience'}),
+          'Immersive Sales',
+          JSON.stringify({ko: '브랜드 가치를 높이는 경험형 커머스', en: 'Immersive Sales'}),
+          JSON.stringify({ko: '평면적인 쇼핑을 입체적인 브랜드 경험으로. 고객이 머물고 싶어 하는 인터랙티브 팝업 스토어를 구축하세요.', en: 'Turn flat shopping into 3D experiences...'}),
+          JSON.stringify({ko: '브랜드의 철학과 감성을 담은 2D 공간에서 고객과 만나보세요.', en: 'Meet customers in a 2D space...'}),
+          JSON.stringify(['실시간 소통이 가능한 라이브 쇼룸', '고객 행동 데이터 기반 최적화', '커스텀 테마 지원']),
+          'from-dancheong-navy/20 to-transparent', 1
+        ],
+        [
+          'conference', '03', 
+          JSON.stringify({ko: 'Limitless Collaboration', en: 'Limitless Collaboration'}),
+          'Infinite Scalability',
+          JSON.stringify({ko: '언어와 국경을 넘는 무한한 확장성', en: 'Infinite Scalability'}),
+          JSON.stringify({ko: '다국어 실시간 번역으로 전 세계와 연결됩니다. 대규모 컨퍼런스부터 기업 온보딩까지 경계 없이 개최하세요.', en: 'Connect globally with real-time translation...'}),
+          JSON.stringify({ko: '언어는 더 이상 비즈니스의 장벽이 아닙니다.', en: 'Language is no longer a barrier...'}),
+          JSON.stringify(['AI 기반 다국어 실시간 자막 및 번역', '초대형 행사용 프로젝션 시스템', '전 세계 끊김 없는 연결성']),
+          'from-dancheong-ink/20 to-transparent', 2
+        ]
+      ];
+      for (const f of defaultFeatures) {
+        await pool.query(`
+          INSERT INTO landing_features 
+          (feature_id, number, subtitle, title, kor_title, description, detail_info, benefits, gradient, display_order) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, f);
+      }
+    }
+
     // Seed hero images if empty
     const [heroRows] = await pool.query('SELECT COUNT(*) as count FROM hero_images');
     if (heroRows[0].count === 0) {

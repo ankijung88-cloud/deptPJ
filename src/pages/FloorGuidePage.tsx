@@ -236,9 +236,14 @@ const FloorGuidePage: React.FC = () => {
                                                         <div className="flex-1">
                                                             <h3 
                                                                 onClick={() => navigate(`/detail/${item.id}`)}
-                                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors"
+                                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors flex items-center gap-3"
                                                             >
                                                                 <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                                {item.page_type && item.page_type !== 'standard' && (
+                                                                    <span className="px-2 py-0.5 bg-dancheong-ink/5 text-[9px] font-black uppercase tracking-widest rounded-md text-dancheong-ink/40 group-hover:bg-dancheong-mugwort/20 group-hover:text-dancheong-mugwort transition-colors">
+                                                                        {item.page_type}
+                                                                    </span>
+                                                                )}
                                                             </h3>
                                                             <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-tight">
                                                                 <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
@@ -267,6 +272,50 @@ const FloorGuidePage: React.FC = () => {
                     ))}
                 </div>
 
+
+                {/* Active Service Templates (Sub-template boxes) */}
+                {liveProducts.length > 0 && (
+                    <div className="mb-12 md:mb-20">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="flex items-center gap-4 mb-8"
+                        >
+                            <div className="w-12 h-[1px] bg-dancheong-mugwort opacity-30"></div>
+                            <h2 className="text-xs md:text-sm font-black text-dancheong-ink tracking-[0.3em] uppercase">
+                                <AutoTranslatedText text="AVAILABLE SERVICES" />
+                            </h2>
+                        </motion.div>
+
+                        <div className="flex flex-wrap gap-3 md:gap-6">
+                            {Array.from(new Set(liveProducts.map(p => p.page_type || 'standard')))
+                                .filter(type => type !== 'standard')
+                                .map((type, idx) => (
+                                    <motion.div
+                                        key={type}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className="px-6 py-4 bg-white border border-dancheong-ink/10 rounded-2xl shadow-sm flex items-center gap-4 hover:border-dancheong-mugwort/40 hover:shadow-md transition-all cursor-default group"
+                                    >
+                                        <div className="w-10 h-10 rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort group-hover:text-white transition-colors">
+                                            <Archive size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="text-[10px] font-black text-dancheong-ink/30 uppercase tracking-widest leading-none mb-1">
+                                                Template
+                                            </div>
+                                            <div className="text-sm font-serif font-black text-dancheong-ink">
+                                                <AutoTranslatedText text={type.charAt(0).toUpperCase() + type.slice(1)} />
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                        </div>
+                    </div>
+                )}
 
 
                 {/* Live Products Section - 4 Column Grid */}

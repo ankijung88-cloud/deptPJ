@@ -2713,12 +2713,70 @@ const LandingFeatureFormModal = ({ feature, onClose, onSuccess }: any) => {
                         </div>
                     </div>
 
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Feature Number (e.g. 01)</label>
+                            <input type="text" value={formData.number} onChange={e => setFormData({...formData, number: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" placeholder="01" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Display Order</label>
+                            <input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        </div>
+                    </div>
+
                     <div className="space-y-4">
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Titles & Content</label>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Subtitle & Titles</label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="Subtitle (KO)" value={formData.subtitle.ko} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                            <input type="text" placeholder="Subtitle (EN)" value={formData.subtitle.en} onChange={e => setFormData({...formData, subtitle: {...formData.subtitle, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        </div>
                         <input type="text" placeholder="Eng Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
-                        <input type="text" placeholder="Kor Title" value={formData.kor_title.ko} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
-                        <textarea placeholder="Description" value={formData.description.ko} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
-                        <textarea placeholder="Detail Info" value={formData.detail_info.ko} onChange={e => setFormData({...formData, detail_info: {...formData.detail_info, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                        <div className="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="Kor Title (KO)" value={formData.kor_title.ko} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                            <input type="text" placeholder="Kor Title (EN)" value={formData.kor_title.en} onChange={e => setFormData({...formData, kor_title: {...formData.kor_title, en: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink" />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Descriptions</label>
+                        <textarea placeholder="Description (KO)" value={formData.description.ko} onChange={e => setFormData({...formData, description: {...formData.description, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                        <textarea placeholder="Detail Info (KO)" value={formData.detail_info.ko} onChange={e => setFormData({...formData, detail_info: {...formData.detail_info, ko: e.target.value}})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink h-24" />
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Benefits</label>
+                            <button 
+                                type="button" 
+                                onClick={() => setFormData({...formData, benefits: [...formData.benefits, '']})}
+                                className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-2 py-1 rounded"
+                            >+ Add Benefit</button>
+                        </div>
+                        {formData.benefits.map((benefit: string, idx: number) => (
+                            <div key={idx} className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    value={benefit} 
+                                    onChange={e => {
+                                        const newBenefits = [...formData.benefits];
+                                        newBenefits[idx] = e.target.value;
+                                        setFormData({...formData, benefits: newBenefits});
+                                    }}
+                                    className="flex-1 bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm"
+                                    placeholder={`Benefit ${idx + 1}`}
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => setFormData({...formData, benefits: formData.benefits.filter((_: any, i: number) => i !== idx)})}
+                                    className="p-2 text-red-400"
+                                ><Trash2 size={16} /></button>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Gradient (e.g. from-dancheong-mugwort/20 to-transparent)</label>
+                        <input type="text" value={formData.gradient} onChange={e => setFormData({...formData, gradient: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-xs" />
                     </div>
 
                     <div className="flex justify-end gap-4 pt-4">
