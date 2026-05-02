@@ -13,14 +13,20 @@ export const LandingFloorSection: React.FC = () => {
     const navigate = useNavigate();
     const [hoveredFloor, setHoveredFloor] = useState<string | null>(null);
 
-    // Sort floors from 7F down to 1F for the elevation view
-    const sortedFloors = [...floors].sort((a, b) => {
-        const levelA = parseInt(a.floor) || 0;
-        const levelB = parseInt(b.floor) || 0;
-        return levelB - levelA;
-    });
+    // Sort floors from 7F down to 1F for the elevation view, then reverse for display
+    // We use a separate constant to avoid in-place mutation issues
+    const displayFloors = React.useMemo(() => {
+        if (!floors || floors.length === 0) return [];
+        
+        const sorted = [...floors].sort((a, b) => {
+            const levelA = parseInt(a.floor) || 0;
+            const levelB = parseInt(b.floor) || 0;
+            return levelA - levelB; // Sort ascending 1F -> 6F
+        });
+        return sorted;
+    }, [floors]);
 
-    if (loading) return null;
+    if (loading && (!floors || floors.length === 0)) return null;
 
     return (
         <section id="floors" className="relative w-full sm:min-h-screen bg-transparent border-t border-dancheong-ink/5 overflow-hidden flex flex-col justify-center pt-8 pb-16 sm:py-24">
@@ -69,7 +75,7 @@ export const LandingFloorSection: React.FC = () => {
 
                 {/* 1 Row 4 Column Grid on Mobile, 6 on LG: Panoramic Overview */}
                 <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-4 lg:gap-6 w-full">
-                    {sortedFloors.reverse().map((floor, index) => {
+                    {displayFloors.map((floor, index) => {
                         const isActive = hoveredFloor === floor.id;
 
                         return (

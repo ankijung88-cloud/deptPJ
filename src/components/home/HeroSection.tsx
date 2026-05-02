@@ -9,10 +9,24 @@ interface HeroImage {
 }
 
 export const HeroSection: React.FC = () => {
-    const [images, setImages] = useState<HeroImage[]>([]);
+    const [images, setImages] = useState<HeroImage[]>([
+        { id: 1, image_url: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2560&auto=format&fit=crop', display_order: 0 },
+        { id: 2, image_url: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop', display_order: 1 }
+    ]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+
+    const normalizeUrl = (url: string | null | undefined): string => {
+        if (!url) return '';
+        // If it's already a full URL (including http/https), return as is
+        if (url.startsWith('http')) return url;
+        // If it starts with /uploads, it will be proxied by Vercel
+        if (url.startsWith('/uploads')) return url;
+        // Fallback for paths that might missing the leading slash
+        if (url.startsWith('uploads')) return '/' + url;
+        return url;
+    };
 
     useEffect(() => {
         const fetchImages = async () => {
@@ -20,10 +34,25 @@ export const HeroSection: React.FC = () => {
                 const response = await fetch('/api/hero');
                 if (response.ok) {
                     const data = await response.json();
-                    setImages(data);
+                    if (data && data.length > 0) {
+                        setImages(data.map((img: any) => ({
+                            ...img,
+                            image_url: normalizeUrl(img.image_url)
+                        })));
+                    } else {
+                        // Fallback images if API returns empty but OK
+                        setImages([
+                            { id: 1, image_url: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2560&auto=format&fit=crop', display_order: 0 },
+                            { id: 2, image_url: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop', display_order: 1 }
+                        ]);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching hero images:', error);
+                // Hardcoded fallback on error
+                setImages([
+                    { id: 1, image_url: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2560&auto=format&fit=crop', display_order: 0 }
+                ]);
             } finally {
                 setIsLoading(false);
             }

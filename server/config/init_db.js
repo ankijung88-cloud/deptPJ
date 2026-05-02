@@ -232,6 +232,54 @@ async function initDB() {
     `);
     console.log('[DB] landing_features table is ready.');
 
+    // NEW: Create floor_categories table if it doesn't exist
+    console.log('[DB] Ensuring floor_categories table exists...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS floor_categories (
+        id VARCHAR(50) PRIMARY KEY,
+        floor VARCHAR(10) NOT NULL,
+        title JSON NOT NULL,
+        description JSON NOT NULL,
+        bg_image TEXT NULL,
+        content JSON NULL,
+        subitems JSON NULL,
+        color VARCHAR(20) NULL,
+        video_url TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `);
+    console.log('[DB] floor_categories table is ready.');
+
+    // Seed default floor categories if empty
+    const [floorRows] = await pool.query('SELECT COUNT(*) as count FROM floor_categories');
+    if (floorRows[0].count === 0) {
+      console.log('[DB] Seeding default floor categories...');
+      const defaultFloors = [
+        ['floor-6', '6F', JSON.stringify({ko: '그로스 마켓', en: 'Growth Market'}), JSON.stringify({ko: '공동구매와 프리오더', en: 'Group Buy & Pre-order'}), '#E74C3C'],
+        ['floor-5', '5F', JSON.stringify({ko: '노마드 워크플레이', en: 'Nomad Workplay'}), JSON.stringify({ko: '일하고 즐기는 공간', en: 'Work & Play Space'}), '#00D2FF'],
+        ['floor-4', '4F', JSON.stringify({ko: '로컬 헤리티지', en: 'Local Heritage'}), JSON.stringify({ko: '지역 문화 유산', en: 'Local Culture & Heritage'}), '#00A8FF'],
+        ['floor-3', '3F', JSON.stringify({ko: '아트 디스커버리', en: 'Art Discovery'}), JSON.stringify({ko: '아름다운 가치 발견', en: 'Discover Beautiful Values'}), '#2ECC71'],
+        ['floor-2', '2F', JSON.stringify({ko: '뷰티 앤 패션', en: 'Beauty & Fashion'}), JSON.stringify({ko: '건강함과 정체성', en: 'Health & Identity'}), '#F39C12'],
+        ['floor-1', '1F', JSON.stringify({ko: '테크 앤 케어', en: 'Tech & Care'}), JSON.stringify({ko: '스마트 기술과 웰니스', en: 'Smart Tech & Wellness'}), '#FFD32A']
+      ];
+      for (const f of defaultFloors) {
+        await pool.query('INSERT INTO floor_categories (id, floor, title, description, color) VALUES (?, ?, ?, ?, ?)', f);
+      }
+    }
+
+    // Seed hero images if empty
+    const [heroRows] = await pool.query('SELECT COUNT(*) as count FROM hero_images');
+    if (heroRows[0].count === 0) {
+      console.log('[DB] Seeding default hero images...');
+      const defaultHeros = [
+        ['https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2560&auto=format&fit=crop', 0],
+        ['https://images.unsplash.com/photo-1517260739337-6799d239ce83?q=80&w=2560&auto=format&fit=crop', 1]
+      ];
+      for (const h of defaultHeros) {
+        await pool.query('INSERT INTO hero_images (image_url, display_order) VALUES (?, ?)', h);
+      }
+    }
+
   } catch (error) {
     if (error.code === 'ER_DUP_COLUMN') {
       console.log('[DB] Columns already exist.');
