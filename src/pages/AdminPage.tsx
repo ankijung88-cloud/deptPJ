@@ -25,7 +25,8 @@ import {
     Menu,
     ShoppingCart,
     LayoutGrid,
-    ExternalLink
+    ExternalLink,
+    MonitorPlay
 } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { getFeaturedProducts, deleteProduct, createProduct, updateProduct } from '../api/products';
@@ -2281,6 +2282,218 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
     );
 };
 
+const HeroManager = () => {
+    const [images, setImages] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingImage, setEditingImage] = useState<any>(null);
+
+    useEffect(() => { fetchHeroImages(); }, []);
+
+    const fetchHeroImages = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/hero');
+            if (response.ok) {
+                const data = await response.json();
+                setImages(data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch hero images:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('Delete this hero slide?')) {
+            try {
+                await fetch(`/api/hero/${id}`, { method: 'DELETE' });
+                fetchHeroImages();
+            } catch (err) {
+                alert('Delete failed');
+            }
+        }
+    };
+
+    return (
+        <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink">Hero Slider Management</h2>
+                <button 
+                    onClick={() => { setEditingImage(null); setIsModalOpen(true); }}
+                    className="bg-dancheong-ink text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:scale-105 transition-all"
+                >
+                    <Plus size={18} /> Add Slide
+                </button>
+            </div>
+
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                        <tr>
+                            <th className="px-6 py-4">Preview</th>
+                            <th className="px-6 py-4">Order</th>
+                            <th className="px-6 py-4">Status</th>
+                            <th className="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                        {images.map(img => (
+                            <tr key={img.id} className="hover:bg-dancheong-ink/5 transition-colors">
+                                <td className="px-6 py-4">
+                                    <img src={img.image_url} alt="" className="w-32 h-16 rounded-lg object-cover bg-black/20" />
+                                </td>
+                                <td className="px-6 py-4 font-mono text-dancheong-ink">{img.display_order}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold ${img.is_active ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                                        {img.is_active ? 'ACTIVE' : 'INACTIVE'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 text-right">
+                                    <div className="flex justify-end gap-2">
+                                        <button onClick={() => { setEditingImage(img); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Edit2 size={18} /></button>
+                                        <button onClick={() => handleDelete(img.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                {loading && <div className="py-20 text-center text-dancheong-ink/20">Loading slides...</div>}
+                {!loading && images.length === 0 && <div className="py-20 text-center text-dancheong-ink/20">No hero slides found.</div>}
+            </div>
+
+            {isModalOpen && (
+                <HeroImageModal 
+                    image={editingImage} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={() => { setIsModalOpen(false); fetchHeroImages(); }} 
+                />
+            )}
+        </div>
+    );
+};
+
+const HeroImageModal = ({ image, onClose, onSuccess }: any) => {
+    const [formData, setFormData] = useState({
+        image_url: image?.image_url || '',
+        display_order: image?.display_order || 0,
+        is_active: image?.is_active !== undefined ? (image.is_active === 1 || image.is_active === true) : true
+    });
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                },
+                body: uploadData
+            });
+            const data = await response.json();
+            if (data.url) setFormData({ ...formData, image_url: data.url });
+        } catch (err) {
+            alert('Upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const method = image ? 'PUT' : 'POST';
+            const url = image ? `/api/hero/${image.id}` : '/api/hero';
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) onSuccess();
+            else alert('Operation failed');
+        } catch (err) {
+            alert('Operation failed');
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">{image ? 'Edit Slide' : 'Add Slide'}</h3>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-4">
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Slide Image</label>
+                        <div className="relative aspect-[21/9] bg-black/5 rounded-2xl overflow-hidden border border-dancheong-ink/10 flex items-center justify-center">
+                            {formData.image_url ? (
+                                <>
+                                    <img src={formData.image_url} alt="" className="w-full h-full object-cover" />
+                                    <label className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                        <Upload className="text-white" />
+                                        <input type="file" className="hidden" onChange={handleFileUpload} />
+                                    </label>
+                                </>
+                            ) : (
+                                <label className="flex flex-col items-center gap-2 cursor-pointer text-dancheong-ink/30 hover:text-dancheong-mugwort transition-colors">
+                                    {uploading ? <div className="w-6 h-6 border-2 border-dancheong-mugwort border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
+                                    <span className="text-xs font-bold uppercase tracking-widest">Upload Slide</span>
+                                    <input type="file" className="hidden" onChange={handleFileUpload} />
+                                </label>
+                            )}
+                        </div>
+                        <input 
+                            type="text" 
+                            value={formData.image_url} 
+                            onChange={e => setFormData({...formData, image_url: e.target.value})}
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs"
+                            placeholder="Or enter image URL..."
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Display Order</label>
+                            <input 
+                                type="number" 
+                                value={formData.display_order} 
+                                onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})}
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Status</label>
+                            <select 
+                                value={formData.is_active ? 'active' : 'inactive'} 
+                                onChange={e => setFormData({...formData, is_active: e.target.value === 'active'})}
+                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink"
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-4 pt-4">
+                        <button type="button" onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink">Cancel</button>
+                        <button type="submit" className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all">
+                            {image ? 'Update Slide' : 'Add Slide'}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
+    );
+};
+
 const AgencyManager = () => {
     const [agencies, setAgencies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -2546,7 +2759,8 @@ export const AdminPage: React.FC = () => {
             { id: 'agencies', label: 'Agencies', icon: Layers },
             { id: 'floors', label: 'Floors', icon: Layers },
             { id: 'notices', label: 'Notices', icon: Megaphone },
-            { id: 'faqs', label: 'FAQs', icon: HelpCircle }
+            { id: 'faqs', label: 'FAQs', icon: HelpCircle },
+            { id: 'hero', label: 'Hero Slider', icon: MonitorPlay }
         ] : []),
     ];
 
@@ -2667,6 +2881,7 @@ export const AdminPage: React.FC = () => {
 
                         {activeTab === 'notices' && <NoticeManager agencies={agencies} />}
                         {activeTab === 'faqs' && <FAQManager agencies={agencies} />}
+                        {activeTab === 'hero' && <HeroManager />}
                     </motion.div>
                 </div>
             </main>

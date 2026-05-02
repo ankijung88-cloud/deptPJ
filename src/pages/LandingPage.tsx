@@ -5,6 +5,7 @@ import { LandingPartnerSection } from '../components/home/LandingPartnerSection'
 import { LandingFloorSection } from '../components/home/LandingFloorSection';
 import { LandingFooterCTA } from '../components/home/LandingFooterCTA';
 import { LandingHeader } from '../components/layout/LandingHeader';
+import { HeroSection } from '../components/home/HeroSection';
 
 const LandingPage: React.FC = () => {
 
@@ -42,6 +43,7 @@ const LandingPage: React.FC = () => {
 
             <main className="relative z-10 w-full pt-20 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
                 <LandingHeader />
+                <HeroSection />
                 <LandingFloorSection />
                 <LandingFeaturesSection />
                 <LandingPartnerSection />

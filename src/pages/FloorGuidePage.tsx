@@ -26,19 +26,19 @@ const VisitorCounter: React.FC = () => {
         <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 py-4 px-6 bg-white shadow-lg rounded-2xl border border-dancheong-ink/10 mb-12 w-fit"
+            className="flex items-center gap-3 md:gap-4 py-2 md:py-4 px-4 md:px-6 bg-white shadow-lg rounded-xl md:rounded-2xl border border-dancheong-ink/10 mb-8 md:mb-12 w-full md:w-fit"
         >
-            <div className="relative flex items-center justify-center">
-                <span className="absolute inline-flex h-2 w-2 rounded-full bg-red-500 opacity-75 animate-ping"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            <div className="relative flex items-center justify-center flex-shrink-0">
+                <span className="absolute inline-flex h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-red-500 opacity-75 animate-ping"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 md:h-2 md:w-2 bg-red-500"></span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-bold tracking-tight">
-                <span className="text-dancheong-ink/60 uppercase tracking-[0.1em]"><AutoTranslatedText text="Live Presence" /></span>
-                <span className="w-[1px] h-3 bg-dancheong-ink/20 mx-1"></span>
-                <span className="text-dancheong-ink">
+            <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs font-bold tracking-tight overflow-hidden">
+                <span className="text-dancheong-ink/60 uppercase tracking-[0.1em] whitespace-nowrap"><AutoTranslatedText text="Live Presence" /></span>
+                <span className="w-[1px] h-3 bg-dancheong-ink/20 mx-0.5 md:mx-1"></span>
+                <span className="text-dancheong-ink whitespace-nowrap truncate">
                     <AutoTranslatedText text="Currently" />
-                    <span className="mx-1.5 text-dancheong-mugwort font-black text-sm">{count}</span>
-                    <AutoTranslatedText text="visitors exploring this floor" />
+                    <span className="mx-1 text-dancheong-mugwort font-black text-xs md:text-sm">{count}</span>
+                    <AutoTranslatedText text="visitors exploring" />
                 </span>
             </div>
         </motion.div>
@@ -87,7 +87,7 @@ const FloorGuidePage: React.FC = () => {
     return (
         <div className="min-h-screen bg-transparent text-dancheong-ink pb-20">
             {/* Hero Section with Background Image */}
-            <header className="relative w-full h-[50vh] md:h-[70vh] min-h-[400px] md:min-h-[500px] flex items-center overflow-hidden mb-12 md:mb-24 pt-16 md:pt-20">
+            <header className="relative w-full h-[25vh] md:h-[70vh] min-h-[220px] md:min-h-[500px] flex items-center overflow-hidden mb-8 md:mb-24 pt-22 md:pt-20">
                 {/* Background Image Layer */}
                 <div className="absolute inset-0 z-0">
                     <img 
@@ -104,7 +104,7 @@ const FloorGuidePage: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[11px] tracking-[0.5em] uppercase mb-8"
+                            className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[10px] tracking-[0.5em] uppercase mb-1 md:mb-8"
                         >
                             <Archive size={14} />
                             <span><AutoTranslatedText text="FLOOR DIRECTORY" /></span>
@@ -113,7 +113,7 @@ const FloorGuidePage: React.FC = () => {
                         <motion.h1
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-5xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-12"
+                            className="text-3xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-2 md:mb-12"
                         >
                             <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
                         </motion.h1>
@@ -124,14 +124,14 @@ const FloorGuidePage: React.FC = () => {
                             transition={{ delay: 0.3 }}
                             className="md:text-left"
                         >
-                            <div className="flex items-center gap-4 mb-8">
+                            <div className="flex items-center gap-4 mb-1 md:mb-8">
                                 <div className="w-12 h-[2px] bg-dancheong-mugwort"></div>
-                                <h2 className="text-2xl font-serif font-bold text-dancheong-ink/90">
+                                <h2 className="text-xl font-serif font-bold text-dancheong-ink/90">
                                     <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
                                 </h2>
                             </div>
                             
-                             <p className="text-dancheong-ink/80 font-bold text-lg md:text-2xl leading-snug max-w-2xl whitespace-pre-wrap">
+                             <p className="text-dancheong-ink/80 font-bold text-sm md:text-2xl leading-tight max-w-2xl whitespace-pre-wrap">
                                 <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
                             </p>
                         </motion.div>
@@ -139,7 +139,7 @@ const FloorGuidePage: React.FC = () => {
                 </div>
                 
                 {/* Decorative Elements */}
-                <div className="absolute bottom-0 right-0 p-12 z-20">
+                <div className="absolute bottom-0 right-0 p-12 z-20 hidden md:block">
                      <div className="flex items-center gap-4">
                         <div className="w-24 h-[1px] bg-dancheong-ink/20"></div>
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-dancheong-ink/40">EST. 2024</span>
@@ -153,7 +153,7 @@ const FloorGuidePage: React.FC = () => {
                 <VisitorCounter />
 
                 {/* Zones Grid - Compact 6-Column Layout */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-32">
+                <div className="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-6 mb-12 md:mb-32">
                     {(floorData.subitems || []).map((sub: any, idx: number) => (
                         <React.Fragment key={sub.id}>
                             <motion.div
@@ -162,9 +162,9 @@ const FloorGuidePage: React.FC = () => {
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.05, duration: 0.5 }}
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
-                                className="group/card cursor-pointer"
+                                className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[32px] p-1.5 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
                                     {/* Background Image */}
                                     <div className="absolute inset-0 z-0">
                                         <img 
@@ -177,22 +177,22 @@ const FloorGuidePage: React.FC = () => {
 
                                     {/* Content Overlay */}
                                     <div className="relative z-10">
-                                        <div className="text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
+                                        <div className="hidden md:block text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
                                              {idx + 1}F
                                          </div>
-                                         <h3 className="text-sm md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 leading-tight tracking-tight">
+                                         <h3 className="text-[9px] leading-tight md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 tracking-tighter text-center">
                                              <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                          </h3>
                                         
-                                        <div className="mt-4 flex items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
+                                         <div className="hidden md:flex mt-4 items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
                                             <AutoTranslatedText text="Explore" />
                                             <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
                                         </div>
                                     </div>
 
                                     {/* Decorative Icon - Smaller for 6-col */}
-                                    <div className="absolute top-6 right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                        <Building size={40} className="text-dancheong-ink group-hover/card:text-white" />
+                                    <div className="absolute top-2 right-2 md:top-6 md:right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
+                                        <Building className="w-4 h-4 md:w-10 md:h-10 text-dancheong-ink group-hover/card:text-white" />
                                     </div>
                                 </div>
                             </motion.div>
@@ -276,12 +276,12 @@ const FloorGuidePage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="flex items-center justify-between mb-12"
+                            className="flex items-center justify-between mb-6 md:mb-12"
                         >
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-[1px] bg-dancheong-mugwort opacity-30"></div>
-                                <h2 className="text-3xl font-serif font-black text-dancheong-ink tracking-tight uppercase">
-                                    <AutoTranslatedText text="Live Now" />
+                                <h2 className="text-xl md:text-3xl font-serif font-black text-dancheong-ink tracking-tight uppercase">
+                                    <AutoTranslatedText text="NOW ON" />
                                 </h2>
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-dancheong-ink/70 bg-dancheong-ink/5 px-3 py-1 rounded-full">
@@ -289,7 +289,7 @@ const FloorGuidePage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                             {liveProducts.map((product, idx) => (
                                 <motion.div
                                     key={product.id}
@@ -300,7 +300,7 @@ const FloorGuidePage: React.FC = () => {
                                     onClick={() => navigate(`/detail/${product.id}`)}
                                     className="group cursor-pointer"
                                 >
-                                    <div className="relative aspect-square rounded-[32px] overflow-hidden shadow-xl shadow-dancheong-ink/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-dancheong-ink/10 group-hover:-translate-y-2">
+                                    <div className="relative aspect-square rounded-2xl md:rounded-[32px] overflow-hidden shadow-xl shadow-dancheong-ink/5 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-dancheong-ink/10 group-hover:-translate-y-2">
                                         {/* Image */}
                                         <img 
                                             src={product.imageUrl || '/placeholder_product.jpg'} 
@@ -312,12 +312,12 @@ const FloorGuidePage: React.FC = () => {
                                         <div className="absolute inset-0 bg-gradient-to-t from-dancheong-ink via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
                                         
                                         {/* Content */}
-                                        <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                        <div className="absolute inset-0 p-4 md:p-8 flex flex-col justify-end">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70"><AutoTranslatedText text="Live Archive" /></span>
                                             </div>
-                                            <h4 className="text-xl font-serif font-bold text-white leading-tight mb-2">
+                                            <h4 className="text-sm md:text-xl font-serif font-bold text-white leading-tight mb-2">
                                                 <AutoTranslatedText text={getLocalizedText(product.title, i18n.language)} />
                                             </h4>
                                             <div className="h-[1px] w-0 group-hover:w-full bg-white/30 transition-all duration-500 mb-4"></div>

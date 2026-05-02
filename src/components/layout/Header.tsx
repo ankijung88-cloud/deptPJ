@@ -431,7 +431,7 @@ const Header: React.FC = () => {
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: '100%', opacity: 0 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="lg:hidden fixed inset-0 top-[64px] z-[9998] overflow-y-auto font-sans shadow-2xl"
+                        className="lg:hidden absolute top-full inset-x-0 z-[9998] h-screen overflow-y-auto font-sans shadow-2xl"
                         style={{ backgroundColor: theme.bgColor, borderTop: `1px solid ${theme.accentColor}22` }}
                     >
                         <div className="flex flex-col p-6 space-y-6">

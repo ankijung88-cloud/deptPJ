@@ -196,6 +196,19 @@ async function initDB() {
       ) ENGINE=InnoDB;
     `);
     console.log('[DB] orders table is ready.');
+    
+    // NEW: Create hero_images table if it doesn't exist
+    console.log('[DB] Ensuring hero_images table exists...');
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS hero_images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        image_url TEXT NOT NULL,
+        display_order INT DEFAULT 0,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `);
+    console.log('[DB] hero_images table is ready.');
 
   } catch (error) {
     if (error.code === 'ER_DUP_COLUMN') {
