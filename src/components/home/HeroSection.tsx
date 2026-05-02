@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HeroImage {
     id: number;
@@ -11,6 +12,7 @@ export const HeroSection: React.FC = () => {
     const [images, setImages] = useState<HeroImage[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [direction, setDirection] = useState(0); // -1 for left, 1 for right
 
     useEffect(() => {
         const fetchImages = async () => {
@@ -29,25 +31,51 @@ export const HeroSection: React.FC = () => {
         fetchImages();
     }, []);
 
+    const paginate = (newDirection: number) => {
+        setDirection(newDirection);
+        setCurrentIndex((prevIndex) => {
+            let nextIndex = prevIndex + newDirection;
+            if (nextIndex < 0) nextIndex = images.length - 1;
+            if (nextIndex >= images.length) nextIndex = 0;
+            return nextIndex;
+        });
+    };
+
     // Auto slide logic
     useEffect(() => {
         if (images.length <= 1) return;
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % images.length);
+            paginate(1);
         }, 5000);
         return () => clearInterval(timer);
-    }, [images]);
+    }, [images, currentIndex]); // Reset timer on manual navigation
+
+    const variants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 1000 : -1000,
+            opacity: 0
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1
+        },
+        exit: (direction: number) => ({
+            zIndex: 0,
+            x: direction < 0 ? 1000 : -1000,
+            opacity: 0
+        })
+    };
 
     if (isLoading) {
         return (
-            <section id="hero" className="relative h-[25vh] sm:h-screen w-full bg-dancheong-ivory animate-pulse" />
+            <section id="hero" className="relative h-[30vh] sm:h-screen w-full bg-dancheong-ivory animate-pulse" />
         );
     }
 
-    // Fallback if no images are registered
     if (images.length === 0) {
         return (
-            <section id="hero" className="relative h-[25vh] sm:h-screen w-full flex items-center justify-center bg-dancheong-ivory">
+            <section id="hero" className="relative h-[30vh] sm:h-screen w-full flex items-center justify-center bg-dancheong-ivory">
                 <div className="text-dancheong-ink/30 font-serif text-xl italic">
                     Ready for your promotional stories...
                 </div>
@@ -56,25 +84,58 @@ export const HeroSection: React.FC = () => {
     }
 
     return (
-        <section id="hero" className="relative h-[25vh] sm:h-screen w-full overflow-hidden bg-dancheong-ivory">
-            <AnimatePresence mode="wait">
+        <section id="hero" className="relative h-[30vh] sm:h-screen w-full overflow-hidden bg-dancheong-ivory group/hero">
+            <AnimatePresence initial={false} custom={direction}>
                 <motion.div
-                    key={images[currentIndex].id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.2, ease: "easeInOut" }}
-                    className="absolute inset-0 w-full h-full"
+                    key={currentIndex}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                        x: { type: "spring", stiffness: 300, damping: 30 },
+                        opacity: { duration: 0.6 }
+                    }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(_, { offset, velocity }) => {
+                        const swipe = Math.abs(offset.x) * velocity.x;
+                        if (swipe < -10000) {
+                            paginate(1);
+                        } else if (swipe > 10000) {
+                            paginate(-1);
+                        }
+                    }}
+                    className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
                 >
                     <img
                         src={images[currentIndex].image_url}
                         alt={`Promotion ${currentIndex + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover pointer-events-none"
                     />
-                    {/* Subtle Overlay for better aesthetics */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
                 </motion.div>
             </AnimatePresence>
+
+            {/* Navigation Arrows - Desktop Only */}
+            {images.length > 1 && (
+                <>
+                    <button
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/10 hover:bg-black/30 text-white transition-all hidden sm:flex items-center justify-center opacity-0 group-hover/hero:opacity-100"
+                        onClick={() => paginate(-1)}
+                    >
+                        <ChevronLeft size={32} />
+                    </button>
+                    <button
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/10 hover:bg-black/30 text-white transition-all hidden sm:flex items-center justify-center opacity-0 group-hover/hero:opacity-100"
+                        onClick={() => paginate(1)}
+                    >
+                        <ChevronRight size={32} />
+                    </button>
+                </>
+            )}
 
             {/* Dots Pagination */}
             {images.length > 1 && (
@@ -82,7 +143,10 @@ export const HeroSection: React.FC = () => {
                     {images.map((_, idx) => (
                         <button
                             key={idx}
-                            onClick={() => setCurrentIndex(idx)}
+                            onClick={() => {
+                                setDirection(idx > currentIndex ? 1 : -1);
+                                setCurrentIndex(idx);
+                            }}
                             className="group relative py-2"
                             aria-label={`Go to slide ${idx + 1}`}
                         >
