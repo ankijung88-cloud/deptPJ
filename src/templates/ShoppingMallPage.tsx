@@ -1324,63 +1324,6 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         )}
                     </div>
                     </div>
-                    
-                    {/* Bottom Category Management Grid */}
-                    <div className="mt-32 pt-20 border-t border-neutral-100">
-                        <div className="flex items-center justify-between mb-12 px-1">
-                            <div className="flex items-center gap-4">
-                                <div className="h-[2px] w-12 bg-red-600" />
-                                <h3 className="text-2xl font-serif font-black text-neutral-900 uppercase tracking-tighter">
-                                    <AutoTranslatedText text="Explore Collections" />
-                                </h3>
-                            </div>
-                            {isManagementAllowed && isEditingMetadata && (
-                                <button 
-                                    onClick={() => { setEditingCategory(null); setNewCategoryLabel(''); setNewCategoryBg(''); setShowCategoryModal(true); }}
-                                    className="px-6 py-3 rounded-2xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
-                                >
-                                    <Plus size={16} /> <AutoTranslatedText text="Add Category" />
-                                </button>
-                            )}
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                            {customCategories.map(cat => (
-                                <motion.div 
-                                    key={cat.id}
-                                    whileHover={{ y: -5 }}
-                                    className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-neutral-100 border border-neutral-100 shadow-sm transition-all hover:shadow-xl hover:border-red-600/30"
-                                >
-                                    {cat.bgImage && <img src={cat.bgImage} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
-                                    <div className="absolute inset-0 p-8 flex flex-col justify-end items-center text-center">
-                                        <span className="text-sm font-black text-white uppercase tracking-widest mb-4"><AutoTranslatedText text={getLoc(cat.label, i18n.language)} /></span>
-                                        <button 
-                                            onClick={() => setSelectedCategoryId(cat.id)}
-                                            className="px-6 py-2 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-black text-white uppercase tracking-widest hover:bg-white hover:text-neutral-900 transition-all opacity-0 group-hover:opacity-100"
-                                        >
-                                            <AutoTranslatedText text="View items" />
-                                        </button>
-                                    </div>
-                                    {isManagementAllowed && isEditingMetadata && (
-                                        <div className="absolute top-6 right-6 flex gap-2">
-                                            <button 
-                                                onClick={(e) => { e.stopPropagation(); setEditingCategory(cat); setNewCategoryLabel(getLoc(cat.label, 'ko')); setNewCategoryBg(cat.bgImage || ''); setShowCategoryModal(true); }}
-                                                className="p-3 bg-white/90 backdrop-blur-md rounded-2xl text-neutral-400 hover:text-neutral-900 transition-all shadow-lg"
-                                            >
-                                                <Edit3 size={14} />
-                                            </button>
-                                            <button 
-                                                onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
-                                                className="p-3 bg-white/90 backdrop-blur-md rounded-2xl text-neutral-400 hover:text-red-600 transition-all shadow-lg"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    )}
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
                 </main>
 
             {/* Product Detail Modal */}
