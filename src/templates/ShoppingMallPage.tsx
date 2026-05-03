@@ -273,6 +273,10 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             setCustomRegisterProductLabel(storeMeta?.customRegisterProductLabel || '');
             setCustomHeroBg(storeMeta?.customHeroBg || '');
             setCustomHeroLogo(storeMeta?.customHeroLogo || '');
+            setCustomBottomTitle(storeMeta?.customBottomTitle || '');
+            setCustomBottomSlogan(storeMeta?.customBottomSlogan || '');
+            setTempBottomTitle(storeMeta?.customBottomTitle || '');
+            setTempBottomSlogan(storeMeta?.customBottomSlogan || '');
             setTempFloorLabels(storeMeta?.customFloorLabels || {});
             setCustomCategories(storeMeta?.customCategories || []);
         };
@@ -320,6 +324,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const [customRegisterProductLabel, setCustomRegisterProductLabel] = useState<string>('');
     const [customHeroBg, setCustomHeroBg] = useState<string>('');
     const [customHeroLogo, setCustomHeroLogo] = useState<string>('');
+    
+    // Bottom Section States
+    const [customBottomTitle, setCustomBottomTitle] = useState<string>('');
+    const [customBottomSlogan, setCustomBottomSlogan] = useState<string>('');
+    const [tempBottomTitle, setTempBottomTitle] = useState<string>('');
+    const [tempBottomSlogan, setTempBottomSlogan] = useState<string>('');
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const detailFileInputRef = useRef<HTMLInputElement>(null);
@@ -664,6 +674,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customRegisterProductLabel,
                     customHeroBg,
                     customHeroLogo,
+                    customBottomTitle: tempBottomTitle,
+                    customBottomSlogan: tempBottomSlogan,
                     customFloorLabels: tempFloorLabels,
                     customCategories
 
@@ -682,6 +694,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customRegisterProductLabel,
                     customHeroBg,
                     customHeroLogo,
+                    customBottomTitle: tempBottomTitle,
+                    customBottomSlogan: tempBottomSlogan,
                     customFloorLabels: tempFloorLabels,
                     customCategories
 
@@ -846,34 +860,34 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="flex gap-3 relative z-[100]">
+                            <div className="fixed top-8 right-8 flex gap-3 z-[9999]">
                                 {isEditingMetadata ? (
-                                    <div className="flex gap-2 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-red-600/20">
+                                    <div className="flex gap-2 bg-white/95 backdrop-blur-2xl p-3 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-red-600/30 scale-110 origin-right">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); handleSaveMetadata(); }}
-                                            className="px-6 py-2.5 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg flex items-center gap-2"
+                                            className="px-6 py-3 rounded-2xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg flex items-center gap-2 active:scale-95"
                                         >
                                             <Check size={14} />
                                             <AutoTranslatedText text="Save Changes" />
                                         </button>
                                         <button 
                                             onClick={() => setIsEditingMetadata(false)}
-                                            className="px-6 py-2.5 rounded-xl bg-neutral-100 text-neutral-600 text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all flex items-center gap-2"
+                                            className="px-6 py-3 rounded-2xl bg-neutral-100 text-neutral-600 text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all flex items-center gap-2"
                                         >
                                             <X size={14} />
                                             <AutoTranslatedText text="Cancel" />
                                         </button>
-                                        <div className="w-[1px] h-8 bg-neutral-200 mx-1" />
+                                        <div className="w-[1px] h-10 bg-neutral-200 mx-2" />
                                         <button 
                                             onClick={() => heroBgInputRef.current?.click()}
-                                            className="px-6 py-2.5 rounded-xl bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:border-neutral-900 transition-all flex items-center gap-2"
+                                            className="px-6 py-3 rounded-2xl bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:border-neutral-900 transition-all flex items-center gap-2"
                                         >
                                             <UploadCloud size={14} />
                                             <AutoTranslatedText text="Update Bg" />
                                         </button>
                                         <button 
                                             onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                            className="px-6 py-2.5 rounded-xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
+                                            className="px-6 py-3 rounded-2xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
                                         >
                                             <Plus size={14} />
                                             <AutoTranslatedText text="Add Product" />
@@ -882,14 +896,15 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 ) : (
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
-                                        className="px-8 py-3 rounded-2xl bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-900 hover:border-red-600 hover:text-red-600 transition-all shadow-xl flex items-center gap-3 active:scale-95"
+                                        className="px-8 py-4 rounded-3xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 active:scale-95 border-2 border-white/20"
                                     >
-                                        <Edit3 size={16} />
+                                        <Edit3 size={18} className="text-red-500" />
                                         <AutoTranslatedText text="Edit Page Content" />
                                     </button>
                                 )}
                             </div>
                         )}
+
 
                     </div>
 
@@ -927,31 +942,32 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 <textarea
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white/80 backdrop-blur-xl border-2 border-red-600/30 rounded-3xl p-8 text-4xl md:text-7xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-2xl"
+                                    className="w-full bg-white/95 backdrop-blur-3xl border-4 border-red-600/40 rounded-3xl p-8 text-4xl md:text-8xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-[0_30px_100px_rgba(220,38,38,0.15)]"
                                     rows={2}
                                 />
-                                <div className="absolute -top-4 -right-4 bg-red-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-lg">
-                                    Edit Title
+                                <div className="absolute -top-6 -left-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl z-20">
+                                    Edit Title Text
                                 </div>
                                 <button 
                                     onClick={() => heroLogoInputRef.current?.click()}
-                                    className="w-fit px-6 py-3 rounded-2xl bg-white/90 border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:bg-white hover:border-red-600 transition-all flex items-center gap-3 shadow-lg"
+                                    className="w-fit px-8 py-4 rounded-2xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black hover:border-red-600 border border-transparent transition-all flex items-center gap-3 shadow-2xl"
                                 >
-                                    <UploadCloud size={16} />
-                                    <AutoTranslatedText text="Replace with Logo Image" />
+                                    <UploadCloud size={20} className="text-red-500" />
+                                    <AutoTranslatedText text="Replace Title with Logo Image" />
                                 </button>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-4">
                                 {customHeroLogo ? (
-                                    <img src={customHeroLogo} className="h-20 md:h-32 w-auto object-contain mb-6 drop-shadow-2xl" alt="Brand Logo" />
+                                    <img src={customHeroLogo} className="h-24 md:h-40 w-auto object-contain mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)]" alt="Brand Logo" />
                                 ) : (
-                                    <h1 className="text-4xl md:text-8xl font-serif font-black mb-4 md:mb-8 leading-tight text-neutral-900 tracking-tighter">
+                                    <h1 className="text-5xl md:text-9xl font-serif font-black mb-6 md:mb-10 leading-[0.9] text-neutral-900 tracking-tighter drop-shadow-sm">
                                         <AutoTranslatedText text={tempTitle} />
                                     </h1>
                                 )}
                             </div>
                         )}
+
 
 
 
@@ -1065,35 +1081,38 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     <div key={c.id} className="relative group/floor">
                                         <button
                                             onClick={() => setSelectedCategoryId(c.id)}
-                                            className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
+                                            className={`w-full flex items-center justify-between p-5 rounded-[1.5rem] transition-all duration-500 ${
                                                 selectedCategoryId === c.id 
-                                                ? 'bg-neutral-900 text-white shadow-xl lg:translate-x-2' 
-                                                : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900'
+                                                ? 'bg-neutral-900 text-white shadow-2xl lg:translate-x-2' 
+                                                : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600/30 hover:bg-red-600/5 hover:text-neutral-900'
                                             } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full`}
                                         >
-                                            <div className="flex items-center gap-4 flex-grow">
-                                                <span className="text-xs font-black uppercase tracking-widest">
+                                            <div className="flex items-center gap-5 flex-grow">
+                                                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${selectedCategoryId === c.id ? 'bg-red-600 scale-150 shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'bg-neutral-200 group-hover/floor:bg-red-600/30'}`} />
+                                                <span className="text-xs font-black uppercase tracking-[0.1em]">
                                                     <AutoTranslatedText text={getLoc(c.label, i18n.language)} />
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3">
                                                 {isEditingMetadata ? (
-                                                    <div className="flex gap-1">
+                                                    <div className="flex gap-2">
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); setEditingCategory(c); setNewCategoryLabel(getLoc(c.label, 'ko')); setNewCategoryBg(c.bgImage || ''); setShowCategoryModal(true); }}
-                                                            className="p-1 hover:text-red-600 transition-colors"
+                                                            className="p-2 bg-white/10 hover:bg-red-600 hover:text-white rounded-lg transition-all shadow-sm border border-neutral-100"
                                                         >
-                                                            <Edit3 size={12} />
+                                                            <Edit3 size={14} />
                                                         </button>
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); handleDeleteCategory(c.id); }}
-                                                            className="p-1 hover:text-red-600 transition-colors"
+                                                            className="p-2 bg-white/10 hover:bg-red-600 hover:text-white rounded-lg transition-all shadow-sm border border-neutral-100"
                                                         >
-                                                            <Trash2 size={12} />
+                                                            <Trash2 size={14} />
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <ChevronRight size={14} className={selectedCategoryId === c.id ? 'text-red-600' : 'text-neutral-200'} />
+                                                    <div className={`opacity-0 group-hover/floor:opacity-100 transition-opacity duration-500 ${selectedCategoryId === c.id ? 'opacity-100' : ''}`}>
+                                                        <ChevronRight size={16} className={selectedCategoryId === c.id ? 'text-red-600' : 'text-neutral-300'} />
+                                                    </div>
                                                 )}
                                             </div>
                                         </button>
@@ -1103,12 +1122,13 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 {isEditingMetadata && (
                                     <button
                                         onClick={() => { setEditingCategory(null); setNewCategoryLabel(''); setNewCategoryBg(''); setShowCategoryModal(true); }}
-                                        className="w-full flex items-center justify-center p-4 rounded-2xl border-2 border-dashed border-neutral-200 text-neutral-400 hover:border-red-600 hover:text-red-600 transition-all gap-2"
+                                        className="w-full flex items-center justify-center gap-3 p-5 rounded-[1.5rem] border-2 border-dashed border-red-600/20 text-red-600 hover:bg-red-600/5 transition-all group/add"
                                     >
-                                        <Plus size={14} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Add Category</span>
+                                        <Plus size={18} className="group-hover/add:rotate-90 transition-transform duration-500" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest"><AutoTranslatedText text="Add Category" /></span>
                                     </button>
                                 )}
+
 
                             </div>
                         </div>
@@ -1303,8 +1323,65 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             </div>
                         )}
                     </div>
-                </div>
-            </main>
+                    </div>
+                    
+                    {/* Bottom Category Management Grid */}
+                    <div className="mt-32 pt-20 border-t border-neutral-100">
+                        <div className="flex items-center justify-between mb-12 px-1">
+                            <div className="flex items-center gap-4">
+                                <div className="h-[2px] w-12 bg-red-600" />
+                                <h3 className="text-2xl font-serif font-black text-neutral-900 uppercase tracking-tighter">
+                                    <AutoTranslatedText text="Explore Collections" />
+                                </h3>
+                            </div>
+                            {isManagementAllowed && isEditingMetadata && (
+                                <button 
+                                    onClick={() => { setEditingCategory(null); setNewCategoryLabel(''); setNewCategoryBg(''); setShowCategoryModal(true); }}
+                                    className="px-6 py-3 rounded-2xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
+                                >
+                                    <Plus size={16} /> <AutoTranslatedText text="Add Category" />
+                                </button>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                            {customCategories.map(cat => (
+                                <motion.div 
+                                    key={cat.id}
+                                    whileHover={{ y: -5 }}
+                                    className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-neutral-100 border border-neutral-100 shadow-sm transition-all hover:shadow-xl hover:border-red-600/30"
+                                >
+                                    {cat.bgImage && <img src={cat.bgImage} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="" />}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
+                                    <div className="absolute inset-0 p-8 flex flex-col justify-end items-center text-center">
+                                        <span className="text-sm font-black text-white uppercase tracking-widest mb-4"><AutoTranslatedText text={getLoc(cat.label, i18n.language)} /></span>
+                                        <button 
+                                            onClick={() => setSelectedCategoryId(cat.id)}
+                                            className="px-6 py-2 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-black text-white uppercase tracking-widest hover:bg-white hover:text-neutral-900 transition-all opacity-0 group-hover:opacity-100"
+                                        >
+                                            <AutoTranslatedText text="View items" />
+                                        </button>
+                                    </div>
+                                    {isManagementAllowed && isEditingMetadata && (
+                                        <div className="absolute top-6 right-6 flex gap-2">
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); setEditingCategory(cat); setNewCategoryLabel(getLoc(cat.label, 'ko')); setNewCategoryBg(cat.bgImage || ''); setShowCategoryModal(true); }}
+                                                className="p-3 bg-white/90 backdrop-blur-md rounded-2xl text-neutral-400 hover:text-neutral-900 transition-all shadow-lg"
+                                            >
+                                                <Edit3 size={14} />
+                                            </button>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
+                                                className="p-3 bg-white/90 backdrop-blur-md rounded-2xl text-neutral-400 hover:text-red-600 transition-all shadow-lg"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </main>
 
             {/* Product Detail Modal */}
             <AnimatePresence>
@@ -1610,6 +1687,101 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     </motion.div>
                 )}
             </AnimatePresence>
+ 
+            {/* Category Add/Edit Modal */}
+            <AnimatePresence>
+                {showCategoryModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[50000] flex items-center justify-center p-6 bg-neutral-900/60 backdrop-blur-md"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 30 }}
+                            className="bg-white border border-neutral-200 w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-10 space-y-8">
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-2xl font-black text-neutral-900 uppercase tracking-tighter">
+                                        <AutoTranslatedText text={editingCategory ? 'Edit Category' : 'New Category'} />
+                                    </h3>
+                                    <button onClick={() => setShowCategoryModal(false)} className="p-3 rounded-full hover:bg-neutral-100 transition-all">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase ml-1">Category Name</label>
+                                        <input 
+                                            value={newCategoryLabel}
+                                            onChange={(e) => setNewCategoryLabel(e.target.value)}
+                                            placeholder="Enter category name..."
+                                            className="w-full px-6 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all font-black text-neutral-900"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase ml-1">Background Image (Optional)</label>
+                                        <div className="flex gap-4">
+                                            <input 
+                                                type="file" 
+                                                id="category-bg-upload" 
+                                                className="hidden" 
+                                                accept="image/*"
+                                                onChange={async (e) => {
+                                                    if (e.target.files?.[0]) {
+                                                        setIsUploading(true);
+                                                        const url = await uploadFile(e.target.files[0]);
+                                                        if (url) setNewCategoryBg(url);
+                                                        setIsUploading(false);
+                                                    }
+                                                }}
+                                            />
+                                            <button 
+                                                onClick={() => document.getElementById('category-bg-upload')?.click()}
+                                                className="flex-1 px-6 py-4 rounded-2xl border-2 border-dashed border-neutral-200 text-neutral-400 hover:border-red-600 hover:text-red-600 transition-all text-xs font-black uppercase flex items-center justify-center gap-2"
+                                            >
+                                                <UploadCloud size={16} />
+                                                <AutoTranslatedText text={newCategoryBg ? 'Change Image' : 'Upload Image'} />
+                                            </button>
+                                            {newCategoryBg && (
+                                                <div className="w-20 h-14 rounded-xl overflow-hidden border border-neutral-200 relative group">
+                                                    <img src={newCategoryBg} className="w-full h-full object-cover" alt="Preview" />
+                                                    <button onClick={() => setNewCategoryBg('')} className="absolute inset-0 bg-red-600/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <X size={12} className="text-white" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4 flex gap-3">
+                                    <button 
+                                        onClick={handleSaveCategory}
+                                        disabled={!newCategoryLabel || isUploading}
+                                        className="flex-[2] py-5 rounded-2xl bg-neutral-900 text-white font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl disabled:opacity-20 flex items-center justify-center gap-2"
+                                    >
+                                        {isUploading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Check size={16} />}
+                                        <AutoTranslatedText text="Save Category" />
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowCategoryModal(false)}
+                                        className="flex-1 py-5 rounded-2xl bg-neutral-100 text-neutral-600 font-black text-[10px] uppercase tracking-widest hover:bg-neutral-200 transition-all"
+                                    >
+                                        <AutoTranslatedText text="Cancel" />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
 
 
 
@@ -1917,15 +2089,47 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 )}
             </AnimatePresence>
 
-            <footer className="mt-40 border-t py-24 px-6 bg-white" style={{ borderColor: '#E5E7EB' }}>
-                <div className="container mx-auto flex flex-col items-center gap-8">
-                    <div className="text-5xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none"><AutoTranslatedText text="몽땅쏙" /></div>
-                    <p className="text-[10px] font-black tracking-[0.6em] text-neutral-400 uppercase text-center max-w-lg leading-loose">
-                        <AutoTranslatedText text="Traditional Heritage × Modern Virtual Experience" />
-                    </p>
-                    <div className="w-12 h-[1px] bg-neutral-200" />
+            <section className="mt-40 border-t py-40 px-6 bg-white relative overflow-hidden" style={{ borderColor: '#E5E7EB' }}>
+                {/* Visual Elements */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-[0.03] pointer-events-none">
+                    <div className="absolute top-20 left-10 w-96 h-96 border-4 border-red-600 rounded-full rotate-45" />
+                    <div className="absolute bottom-20 right-10 w-64 h-64 border-2 border-red-600 rounded-full -rotate-12" />
                 </div>
-            </footer>
+
+                <div className="container mx-auto flex flex-col items-center gap-12 relative z-10">
+                    <div className="flex flex-col items-center text-center gap-6 max-w-4xl">
+                        {isEditingMetadata ? (
+                            <div className="w-full flex flex-col items-center gap-4">
+                                <span className="text-[10px] font-black uppercase text-red-600 tracking-[0.4em]">Bottom Brand Title</span>
+                                <textarea
+                                    value={tempBottomTitle}
+                                    onChange={(e) => setTempBottomTitle(e.target.value)}
+                                    className="w-full text-5xl md:text-8xl font-serif font-black text-neutral-100 uppercase text-center bg-neutral-50 border-4 border-red-600/20 rounded-3xl p-8 focus:outline-none focus:border-red-600 transition-all resize-none"
+                                    rows={1}
+                                />
+                                <span className="text-[10px] font-black uppercase text-red-600 tracking-[0.4em] mt-8">Bottom Brand Slogan</span>
+                                <textarea
+                                    value={tempBottomSlogan}
+                                    onChange={(e) => setTempBottomSlogan(e.target.value)}
+                                    className="w-full text-xs md:text-sm font-black text-neutral-400 uppercase tracking-[0.6em] text-center bg-neutral-50 border border-neutral-200 rounded-2xl p-6 focus:outline-none focus:border-red-600/30 transition-all resize-none"
+                                    rows={2}
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                <div className="text-5xl md:text-9xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none leading-none opacity-80">
+                                    <AutoTranslatedText text={customBottomTitle || "몽땅쏙"} />
+                                </div>
+                                <p className="text-[10px] md:text-xs font-black tracking-[0.8em] text-neutral-400 uppercase max-w-2xl leading-loose opacity-60">
+                                    <AutoTranslatedText text={customBottomSlogan || "Traditional Heritage × Modern Virtual Experience"} />
+                                </p>
+                            </>
+                        )}
+                    </div>
+                    
+                    <div className="w-16 h-[1px] bg-neutral-200 mt-12" />
+                </div>
+            </section>
 
             {/* Shopping Cart Drawer */}
             <AnimatePresence>
