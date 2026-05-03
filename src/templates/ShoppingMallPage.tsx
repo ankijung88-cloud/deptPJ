@@ -102,9 +102,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const parentId = routeId || location.state?.parentId;
 
     const [selectedItem, setSelectedItem] = useState<FeaturedItem | null>(null);
-    const [purchaseComplete, setPurchaseComplete] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const [detailItem, setDetailItem] = useState<FeaturedItem | null>(null);
+
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const { isAdmin: isAdminLoggedIn, role, user, isAuthenticated } = useAdmin();
@@ -121,13 +120,20 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const [tempFloorLabels, setTempFloorLabels] = useState<Record<string, any>>({});
 
     const { floors } = useFloors();
-    const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
-    const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+    const [customCategories, setCustomCategories] = useState<any[]>([]);
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<any | null>(null);
+    const [newCategoryLabel, setNewCategoryLabel] = useState('');
+    const [newCategoryBg, setNewCategoryBg] = useState('');
+
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
+
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedFloor, activeSubCategory, activeTemplate]);
+    }, [selectedCategoryId, activeTemplate]);
+
 
     // Checkout Modal States
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -173,12 +179,11 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const [storeItems, setStoreItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Filtering items by Floor/Category
+    // Filtering items by Custom Category
     const filteredItems = storeItems.filter(item => {
-        const matchesFloor = !selectedFloor || item.category === selectedFloor;
-        const matchesSub = !activeSubCategory || item.subcategory === activeSubCategory;
+        const matchesCategory = !selectedCategoryId || item.subcategory === selectedCategoryId;
         const matchesTemplate = !activeTemplate || (item.page_type || 'standard') === activeTemplate;
-        return matchesFloor && matchesSub && matchesTemplate;
+        return matchesCategory && matchesTemplate;
     });
 
     const handleAddToCart = () => {
@@ -217,7 +222,6 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
         const fetchParent = async () => {
             if (propItem) {
                 setParentProduct(propItem);
-                if (!selectedFloor) setSelectedFloor(propItem.category);
                 initializeMetadata(propItem);
                 return;
             }
@@ -227,7 +231,6 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     const data = await getProductById(parentId);
                     if (data) {
                         setParentProduct(data);
-                        if (!selectedFloor) setSelectedFloor(data.category);
                         initializeMetadata(data);
                     }
                 } catch (error) { console.error("Failed to fetch parent product:", error); }
@@ -265,6 +268,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             setCustomAllItemsLabel(storeMeta?.customAllItemsLabel || '');
             setCustomRegisterProductLabel(storeMeta?.customRegisterProductLabel || '');
             setTempFloorLabels(storeMeta?.customFloorLabels || {});
+            setCustomCategories(storeMeta?.customCategories || []);
         };
 
         fetchParent();
@@ -292,8 +296,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const [newDetailImageUrl, setNewDetailImageUrl] = useState('');
     const [newLeftSideImageUrl, setNewLeftSideImageUrl] = useState('');
     const [newBackImageUrl, setNewBackImageUrl] = useState('');
-    const [newCategory, setNewCategory] = useState(selectedFloor || '');
-    const [newSubCategory, setNewSubCategory] = useState(activeSubCategory || '');
+    const [newCategory, setNewCategory] = useState('store');
+    const [newSubCategory, setNewSubCategory] = useState(selectedCategoryId || '');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [detailPreviewUrl, setDetailPreviewUrl] = useState<string | null>(null);
     const [leftSidePreviewUrl, setLeftSidePreviewUrl] = useState<string | null>(null);
@@ -383,15 +387,13 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             console.log(`[VirtualStore] Loaded ${normalizedData.length} items`);
             setStoreItems(normalizedData);
 
-            // Update selectedItem/detailItem references if they exist
+            // Update selectedItem reference if it exists
+
             if (selectedItem) {
                 const refreshed = normalizedData.find((i: any) => i.id === selectedItem.id);
                 if (refreshed) setSelectedItem(refreshed);
             }
-            if (detailItem) {
-                const refreshed = normalizedData.find((i: any) => i.id === detailItem.id);
-                if (refreshed) setDetailItem(refreshed);
-            }
+
 
             // Default select first item
             if (normalizedData.length > 0 && !selectedItem) {
@@ -466,7 +468,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 alert(successMsg);
                 fetchItems();
                 if (selectedItem?.id === id) setSelectedItem(null);
-                if (detailItem?.id === id) setShowDetailModal(false);
+                if (selectedItem?.id === id) setShowDetailModal(false);
+
             } else {
                 throw new Error('Delete failed');
             }
@@ -634,7 +637,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customSubtitleLabel,
                     customAllItemsLabel,
                     customRegisterProductLabel,
-                    customFloorLabels: tempFloorLabels
+                    customFloorLabels: tempFloorLabels,
+                    customCategories
                 } : t)
                 : [...templates, {
                     id: 'store',
@@ -648,7 +652,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customSubtitleLabel,
                     customAllItemsLabel,
                     customRegisterProductLabel,
-                    customFloorLabels: tempFloorLabels
+                    customFloorLabels: tempFloorLabels,
+                    customCategories
                 }];
 
             const updatedProduct = {
@@ -668,27 +673,36 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
         }
     };
 
+    const handleSaveCategory = () => {
+        if (!newCategoryLabel) return;
+        
+        const newCat = {
+            id: editingCategory?.id || `cat-${Date.now()}`,
+            label: { ko: newCategoryLabel, en: newCategoryLabel },
+            bgImage: newCategoryBg
+        };
 
+        if (editingCategory) {
+            setCustomCategories(prev => prev.map(c => c.id === editingCategory.id ? newCat : c));
+        } else {
+            setCustomCategories(prev => [...prev, newCat]);
+        }
 
-    const handleUpdateFloorTitle = (floor: any, newTitle: string) => {
-        setTempFloorLabels(prev => ({
-            ...prev,
-            [floor.id]: {
-                ...(prev[floor.id] || { floor: floor.floor }),
-                title: { ko: newTitle, en: newTitle }
-            }
-        }));
+        setShowCategoryModal(false);
+        setEditingCategory(null);
+        setNewCategoryLabel('');
+        setNewCategoryBg('');
     };
 
-    const handleUpdateFloorLabel = (floor: any, newFloor: string) => {
-        setTempFloorLabels(prev => ({
-            ...prev,
-            [floor.id]: {
-                ...(prev[floor.id] || { title: floor.title }),
-                floor: newFloor
-            }
-        }));
+    const handleDeleteCategory = (id: string) => {
+        if (!window.confirm(t('common.delete_confirm'))) return;
+        setCustomCategories(prev => prev.filter(c => c.id !== id));
+        if (selectedCategoryId === id) setSelectedCategoryId(null);
     };
+
+
+
+
 
 
 
@@ -736,8 +750,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             }
             setIsProcessingPayment(false);
             setShowCheckoutModal(false);
-            setPurchaseComplete(true);
-            setTimeout(() => setPurchaseComplete(false), 3000);
+
 
             const successMsg = await translateAsync('Order has been completed.');
             alert(successMsg);
@@ -903,56 +916,80 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         />
                                     </div>
                                 ) : (
-                                    <h3 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-4 lg:mb-8 ml-1">
-                                        <AutoTranslatedText text={customFloorDirectoryLabel || "Floor Directory"} />
-                                    </h3>
+                                    <>
+                                        <div className="text-[10px] font-black tracking-[0.3em] uppercase text-red-600 mb-2 px-1">
+                                            <AutoTranslatedText text={customCategoryLabel || "Categories"} />
+                                        </div>
+                                        <h2 className="text-2xl font-serif font-black text-neutral-900 uppercase tracking-tighter mb-8 px-1">
+                                            <AutoTranslatedText text={customFloorDirectoryLabel || "Collection"} />
+                                        </h2>
+                                    </>
                                 )}
+
                             </div>
                             <div className="flex lg:flex-col gap-2 lg:gap-4 overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 no-scrollbar">
-                                {floors.map((f) => (
-                                    <div key={f.id} className="relative group/floor">
+                                <button
+                                    onClick={() => setSelectedCategoryId(null)}
+                                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
+                                        selectedCategoryId === null 
+                                        ? 'bg-neutral-900 text-white shadow-xl lg:translate-x-2' 
+                                        : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900'
+                                    } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full mb-2`}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <span className={`text-[10px] font-black tracking-widest ${selectedCategoryId === null ? 'text-red-600' : 'text-neutral-300'}`}>ALL</span>
+                                        <span className="text-xs font-black uppercase tracking-widest"><AutoTranslatedText text="전체보기" /></span>
+                                    </div>
+                                </button>
+
+                                {customCategories.map((c) => (
+                                    <div key={c.id} className="relative group/floor">
                                         <button
-                                            onClick={() => { setSelectedFloor(f.floor.toLowerCase()); setActiveSubCategory(null); }}
+                                            onClick={() => setSelectedCategoryId(c.id)}
                                             className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
-                                                selectedFloor === f.floor.toLowerCase() 
+                                                selectedCategoryId === c.id 
                                                 ? 'bg-neutral-900 text-white shadow-xl lg:translate-x-2' 
                                                 : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900'
                                             } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full`}
                                         >
                                             <div className="flex items-center gap-4 flex-grow">
-                                                {isEditingMetadata ? (
-                                                    <div className="flex items-center gap-4 w-full">
-                                                        <input 
-                                                            value={tempFloorLabels[f.id]?.floor ?? f.floor}
-                                                            onChange={(e) => handleUpdateFloorLabel(f, e.target.value)}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className={`text-[10px] font-black tracking-widest bg-white/10 border-b border-red-600/30 focus:outline-none w-12 text-center ${selectedFloor === f.floor.toLowerCase() ? 'text-red-600' : 'text-neutral-400'}`}
-                                                        />
-                                                        <input 
-                                                            value={getLoc(tempFloorLabels[f.id]?.title ?? f.title, 'ko')}
-                                                            onChange={(e) => handleUpdateFloorTitle(f, e.target.value)}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className={`bg-white/10 border-b border-red-600/30 focus:outline-none text-xs font-black uppercase tracking-widest w-full ${selectedFloor === f.floor.toLowerCase() ? 'text-white' : 'text-neutral-900'}`}
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <>
-                                                        <span className={`text-[10px] font-black tracking-widest ${selectedFloor === f.floor.toLowerCase() ? 'text-red-600' : 'text-neutral-300'}`}>
-                                                            {tempFloorLabels[f.id]?.floor ?? f.floor}
-                                                        </span>
-                                                        <span className="text-xs font-black uppercase tracking-widest">
-                                                            <AutoTranslatedText text={getLoc(tempFloorLabels[f.id]?.title ?? f.title, i18n.language)} />
-                                                        </span>
-                                                    </>
-                                                )}
+                                                <span className="text-xs font-black uppercase tracking-widest">
+                                                    <AutoTranslatedText text={getLoc(c.label, i18n.language)} />
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2">
-
-                                                <ChevronRight size={14} className={selectedFloor === f.floor.toLowerCase() ? 'text-red-600' : 'text-neutral-200'} />
+                                                {isEditingMetadata ? (
+                                                    <div className="flex gap-1">
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); setEditingCategory(c); setNewCategoryLabel(getLoc(c.label, 'ko')); setNewCategoryBg(c.bgImage || ''); setShowCategoryModal(true); }}
+                                                            className="p-1 hover:text-red-600 transition-colors"
+                                                        >
+                                                            <Edit3 size={12} />
+                                                        </button>
+                                                        <button 
+                                                            onClick={(e) => { e.stopPropagation(); handleDeleteCategory(c.id); }}
+                                                            className="p-1 hover:text-red-600 transition-colors"
+                                                        >
+                                                            <Trash2 size={12} />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <ChevronRight size={14} className={selectedCategoryId === c.id ? 'text-red-600' : 'text-neutral-200'} />
+                                                )}
                                             </div>
                                         </button>
                                     </div>
                                 ))}
+
+                                {isEditingMetadata && (
+                                    <button
+                                        onClick={() => { setEditingCategory(null); setNewCategoryLabel(''); setNewCategoryBg(''); setShowCategoryModal(true); }}
+                                        className="w-full flex items-center justify-center p-4 rounded-2xl border-2 border-dashed border-neutral-200 text-neutral-400 hover:border-red-600 hover:text-red-600 transition-all gap-2"
+                                    >
+                                        <Plus size={14} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Add Category</span>
+                                    </button>
+                                )}
 
                             </div>
                         </div>
@@ -962,53 +999,19 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
                     {/* Product Grid */}
                     <div className="flex-grow">
-                        {/* Sub-Category Boxes (Restored) */}
-                        {selectedFloor && (
+                        {/* Sub-Category Boxes (Optimized for 6-columns) */}
+                        {selectedCategoryId && customCategories.find(c => c.id === selectedCategoryId) && (
                             <div className="mb-12">
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 mb-8">
-                                    {/* "All" Category Box */}
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        onClick={() => setActiveSubCategory(null)}
-                                        className={`group cursor-pointer aspect-square rounded-[1.5rem] md:rounded-[2rem] border p-4 flex flex-col items-center justify-center text-center transition-all duration-300 ${!activeSubCategory ? 'bg-neutral-900 border-neutral-900 shadow-lg -translate-y-1' : 'bg-white border-neutral-100 hover:border-neutral-300'}`}
-                                    >
-                                        <div className={`text-[10px] md:text-xs font-black uppercase tracking-widest ${!activeSubCategory ? 'text-white' : 'text-neutral-900'}`}>
-                                            <AutoTranslatedText text="All Products" />
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Sub-category Boxes */}
-                                    {floors.find(f => f.floor.toLowerCase() === selectedFloor)?.subitems?.map((sub, idx) => (
-                                        <motion.div
-                                            key={sub.id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: idx * 0.05 }}
-                                            onClick={() => setActiveSubCategory(sub.id)}
-                                            className={`group relative cursor-pointer aspect-square rounded-[1.5rem] md:rounded-[2rem] border overflow-hidden transition-all duration-500 ${activeSubCategory === sub.id ? 'border-red-600 shadow-xl -translate-y-2' : 'border-neutral-100 hover:border-neutral-300 shadow-sm hover:shadow-md'}`}
-                                        >
-                                            {/* Background Image with Multiply Effect */}
-                                            <div className="absolute inset-0 z-0 bg-[#F2E7D5]" style={{ mixBlendMode: 'multiply' }}>
-                                                {sub.bgImage && (
-                                                    <img 
-                                                        src={sub.bgImage} 
-                                                        alt={getLoc(sub.label, i18n.language)}
-                                                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${activeSubCategory === sub.id ? 'opacity-100' : 'opacity-40 group-hover:opacity-70'}`}
-                                                    />
-                                                )}
-                                                <div className={`absolute inset-0 bg-gradient-to-t transition-opacity duration-500 ${activeSubCategory === sub.id ? 'from-red-600/80 via-red-600/20 to-transparent opacity-90' : 'from-white/80 via-white/20 to-transparent opacity-60'}`} />
-                                            </div>
-
-                                            {/* Label */}
-                                            <div className="relative z-10 h-full p-3 md:p-4 flex flex-col justify-end items-center text-center">
-                                                <span className={`text-[9px] md:text-[11px] font-black uppercase tracking-widest transition-colors duration-300 ${activeSubCategory === sub.id ? 'text-white' : 'text-neutral-900'}`}>
-                                                    <AutoTranslatedText text={getLoc(sub.label, i18n.language)} />
-                                                </span>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="h-[2px] w-12 bg-red-600" />
+                                    <h3 className="text-2xl font-serif font-black text-neutral-900 uppercase tracking-tighter">
+                                        <AutoTranslatedText text={getLoc(customCategories.find(c => c.id === selectedCategoryId)?.label, i18n.language)} />
+                                    </h3>
                                 </div>
+                                <div className="w-full h-[1px] bg-neutral-100" />
+                            </div>
+                        )}
+
 
                                 {/* Sub-template Boxes (Restored) */}
                                 {storeItems.length > 0 && (
@@ -1025,7 +1028,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                             >
                                                 <AutoTranslatedText text="All Types" />
                                             </button>
-                                            {Array.from(new Set(storeItems.filter(p => !selectedFloor || p.category === selectedFloor).map(p => p.page_type || 'standard')))
+                                            {Array.from(new Set(storeItems.filter(p => !selectedCategoryId || p.subcategory === selectedCategoryId).map(p => p.page_type || 'standard')))
                                                 .filter(type => type !== 'standard')
                                                 .map((type, idx) => (
                                                     <motion.button
@@ -1044,10 +1047,9 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 )}
                                 
                                 <div className="w-full h-[1px] bg-neutral-100 mb-8" />
-                            </div>
-                        )}
 
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+
+                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
                             {isLoading ? (
                                 [1, 2, 3, 4, 5].map(i => (
                                     <div key={i} className="aspect-[3/4] rounded-[2rem] bg-white border border-neutral-100 animate-pulse" />
@@ -1058,8 +1060,16 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         <ShoppingBag size={48} strokeWidth={1} className="text-neutral-200" />
                                     </div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-400">
-                                        <AutoTranslatedText text="No products found in this floor" />
+                                        <AutoTranslatedText text="제품을 등록해주세요" />
                                     </p>
+                                    {isManagementAllowed && (
+                                        <button 
+                                            onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                                            className="mt-8 px-10 py-4 rounded-full bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-xl shadow-neutral-900/10"
+                                        >
+                                            <AutoTranslatedText text="제품 등록하기" />
+                                        </button>
+                                    )}
                                 </div>
                             ) : filteredItems.slice((currentPage - 1) * 20, currentPage * 20).map((item) => (
                                 <motion.div
@@ -1170,6 +1180,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
             {/* Product Detail Modal */}
             <AnimatePresence>
+
                 {showDetailModal && selectedItem && (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -1325,21 +1336,6 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-8">
-                                        <div className="space-y-3">
-                                            <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase ml-1">
-                                                <AutoTranslatedText text="Floor" />
-                                            </label>
-                                            <select
-                                                value={newCategory}
-                                                onChange={(e) => setNewCategory(e.target.value)}
-                                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-5 px-6 text-neutral-900 text-sm focus:ring-2 focus:ring-red-600/10 focus:border-red-600/30 outline-none transition-all appearance-none cursor-pointer"
-                                            >
-                                                {floors.map(f => (
-                                                    <option key={f.id} value={f.floor.toLowerCase()}>{f.floor.toUpperCase()} - {getLoc(f.title, i18n.language)}</option>
-                                                ))}
-                                            </select>
-                                        </div>
                                         <div className="space-y-3">
                                             <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase ml-1">
                                                 <AutoTranslatedText text="Category" />
@@ -1350,12 +1346,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                                 className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-5 px-6 text-neutral-900 text-sm focus:ring-2 focus:ring-red-600/10 focus:border-red-600/30 outline-none transition-all appearance-none cursor-pointer"
                                             >
                                                 <option value="">{t('common.all')}</option>
-                                                {floors.find(f => f.floor.toLowerCase() === newCategory)?.subitems?.map(sub => (
-                                                    <option key={sub.id} value={sub.id}>{getLoc(sub.label, i18n.language)}</option>
+                                                {customCategories.map(c => (
+                                                    <option key={c.id} value={c.id}>{getLoc(c.label, i18n.language)}</option>
                                                 ))}
                                             </select>
                                         </div>
-                                    </div>
+
 
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase ml-1">
@@ -1487,98 +1483,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 )}
             </AnimatePresence>
 
-            {/* Product Detail Modal */}
-            <AnimatePresence>
-                {showDetailModal && detailItem && (
-                        <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-neutral-900/60 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ y: 50, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: 50, opacity: 0 }}
-                            className="bg-white border border-neutral-200 w-full max-w-5xl h-[85vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative"
-                        >
-                            <button
-                                onClick={() => setShowDetailModal(false)}
-                                className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 transition-all"
-                            >
-                                <X size={24} />
-                            </button>
 
-                            <div className="w-full md:w-1/2 h-full bg-neutral-50 flex items-center justify-center p-12 border-r border-neutral-100">
-                                <img
-                                    src={detailItem.thumbnailUrl || detailItem.imageUrl}
-                                    alt={t("Detail view")}
-                                    className="max-w-full max-h-full object-contain relative z-10"
-                                />
-                            </div>
-
-                            <div className="w-full md:w-1/2 h-full p-12 flex flex-col justify-center gap-8 bg-white overflow-y-auto">
-                                <div className="space-y-4">
-                                    <h2 className="text-[11px] font-black tracking-[0.4em] uppercase text-neutral-400 mb-2">
-                                        <AutoTranslatedText text="Product Archives" />
-                                    </h2>
-                                    <h2 className="text-4xl md:text-5xl font-black text-neutral-900 uppercase tracking-tighter leading-tight">
-                                        <AutoTranslatedText text={getLoc(detailItem.title, i18n.language)} />
-                                    </h2>
-                                </div>
-
-                                <div className="h-[2px] w-12 bg-red-600/20" />
-
-                                <div className="space-y-6">
-                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-neutral-400"><AutoTranslatedText text="상세 스토리 & 설명" /></h5>
-                                    <p className="text-lg text-neutral-600 leading-relaxed font-medium">
-                                        <AutoTranslatedText text={getLoc(detailItem.long_description, i18n.language) || 'Detailed description for this product has not been registered.'} />
-                                    </p>
-                                </div>
-
-                                <div className="pt-8 grid grid-cols-2 gap-4">
-                                    <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-neutral-400 block mb-2"><AutoTranslatedText text="Category" /></span>
-                                        <span className="text-xs font-bold text-neutral-900 uppercase">{detailItem.category}</span>
-                                    </div>
-                                    <div className="p-6 rounded-2xl bg-neutral-50 border border-neutral-100">
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-neutral-400 block mb-2"><AutoTranslatedText text="Pricing" /></span>
-                                        <span className="text-xs font-bold text-red-600 uppercase">{getLoc(detailItem.price, i18n.language)}</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <button
-                                        onClick={handlePurchase}
-                                        disabled={isProcessingPayment || purchaseComplete}
-                                        className="w-full py-8 rounded-[2rem] bg-neutral-900 text-white font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50 shadow-2xl"
-                                    >
-                                        <AnimatePresence mode="wait">
-                                            {isProcessingPayment ? (
-                                                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
-                                                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                                    <AutoTranslatedText text="Processing..." />
-                                                </motion.div>
-                                            ) : purchaseComplete ? (
-                                                <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
-                                                    <Check size={18} />
-                                                    <AutoTranslatedText text="Payment Success" />
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-3">
-                                                    <CreditCard size={18} />
-                                                    <AutoTranslatedText text="Purchase Now" />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                        <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:left-[100%] transition-all duration-1000" />
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Checkout Modal */}
             <AnimatePresence>
@@ -1821,6 +1726,68 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             </AnimatePresence>
 
 
+
+            {/* Category Management Modal */}
+            <AnimatePresence>
+                {showCategoryModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[50000] flex items-center justify-center p-6 bg-neutral-900/60 backdrop-blur-sm"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="bg-white border border-neutral-200 w-full max-w-md rounded-[3rem] overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-12">
+                                <div className="flex justify-between items-center mb-10">
+                                    <h3 className="text-3xl font-serif font-black text-neutral-900 uppercase tracking-tighter">
+                                        <AutoTranslatedText text={editingCategory ? 'Edit Category' : 'Add Category'} />
+                                    </h3>
+                                    <button onClick={() => setShowCategoryModal(false)} className="p-3 hover:bg-neutral-100 rounded-full text-neutral-400 transition-colors"><X size={24} /></button>
+                                </div>
+                                
+                                <div className="space-y-8">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase pl-1">
+                                            <AutoTranslatedText text="Category Name" />
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newCategoryLabel}
+                                            onChange={(e) => setNewCategoryLabel(e.target.value)}
+                                            className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-5 px-6 text-neutral-900 text-sm focus:ring-2 focus:ring-red-600/10 focus:border-red-600/30 outline-none transition-all"
+                                            placeholder="Enter category name..."
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black tracking-widest text-neutral-400 uppercase pl-1">
+                                            <AutoTranslatedText text="Background Image URL (Optional)" />
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newCategoryBg}
+                                            onChange={(e) => setNewCategoryBg(e.target.value)}
+                                            className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl py-5 px-6 text-neutral-900 text-sm focus:ring-2 focus:ring-red-600/10 focus:border-red-600/30 outline-none transition-all"
+                                            placeholder="https://images.unsplash.com/..."
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleSaveCategory}
+                                        disabled={!newCategoryLabel}
+                                        className="w-full py-6 rounded-2xl bg-red-600 text-white font-black text-sm uppercase tracking-[0.2em] disabled:opacity-20 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-red-600/10"
+                                    >
+                                        <AutoTranslatedText text={editingCategory ? 'Update' : 'Create'} />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <footer className="mt-40 border-t py-24 px-6 bg-white" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto flex flex-col items-center gap-8">
