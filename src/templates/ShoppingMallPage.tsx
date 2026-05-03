@@ -844,7 +844,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 {customHeroBg && (
                     <div className="absolute inset-0 z-0">
                         <img src={customHeroBg} className="w-full h-full object-cover" alt="Hero Background" />
-                        <div className="absolute inset-0 bg-black/5" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#F2E7D5]/80 via-[#F2E7D5]/40 to-transparent backdrop-blur-[2px]" />
                     </div>
                 )}
 
