@@ -97,35 +97,40 @@ export const LandingFeaturesSection: React.FC = () => {
     if (loading) return null;
 
     return (
-        <section className="relative py-24 lg:py-40 overflow-hidden bg-dancheong-ivory/30">
-            {/* Background Motifs */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-[0.03] pointer-events-none select-none">
-                <div className="absolute top-20 left-10 w-96 h-96 border-[40px] border-dancheong-ink rounded-full" />
-                <div className="absolute bottom-40 right-10 w-64 h-64 border-[20px] border-dancheong-mugwort rotate-45" />
+        <section className="relative py-24 lg:py-64 overflow-hidden bg-transparent">
+            {/* Ambient Lighting for Features */}
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+                <div className="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-dancheong-mugwort/5 blur-[150px] rounded-full opacity-30" />
+                <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-[#FFD1D1]/10 blur-[150px] rounded-full opacity-30" />
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="text-center mb-24 lg:mb-40">
+                <div className="text-center mb-32 lg:mb-56">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="space-y-6"
+                        className="space-y-8"
                     >
-                        <h2 className="text-2xl sm:text-3xl lg:text-5xl text-dancheong-ink font-bold tracking-tighter leading-[1.3] max-w-4xl mx-auto">
-                            <AutoTranslatedText text="당신의 비즈니스가 이곳에서" />
+                        <div className="inline-flex items-center gap-4 mb-4">
+                            <div className="w-8 h-[1px] bg-dancheong-mugwort"></div>
+                            <span className="text-[10px] font-black tracking-[0.5em] text-dancheong-mugwort uppercase">Philosophy</span>
+                            <div className="w-8 h-[1px] bg-dancheong-mugwort"></div>
+                        </div>
+                        <h2 className="text-3xl sm:text-5xl lg:text-7xl text-dancheong-ink font-serif font-black tracking-tighter leading-[1.1] max-w-5xl mx-auto">
+                            <AutoTranslatedText text="아름다움 그 이상의 가치를" />
                             <br />
-                            <AutoTranslatedText text="시작되어야 하는 이유" />
+                            <span className="text-dancheong-mugwort/80 italic">Experience the Essence</span>
                         </h2>
-                        <p className="text-dancheong-ink/60 text-sm sm:text-base max-w-2xl mx-auto font-medium leading-relaxed">
-                            <AutoTranslatedText text="단순한 도구를 넘어 비즈니스의 새로운 지평을 여는" />
+                        <p className="text-dancheong-ink/50 text-sm sm:text-lg max-w-2xl mx-auto font-medium leading-relaxed italic">
+                            <AutoTranslatedText text="본연의 아름다움이 피어나는 순간을 위해" />
                             <br />
-                            <AutoTranslatedText text="올인원 공간 솔루션을 경험하세요." />
+                            <AutoTranslatedText text="우리는 공간에 철학을 담습니다." />
                         </p>
                     </motion.div>
                 </div>
 
-                <div className="space-y-40 lg:space-y-64">
+                <div className="space-y-48 lg:space-y-80">
                     {features.map((feature, idx) => {
                         const subtitle = displayLocalized(feature.subtitle);
                         const korTitle = displayLocalized(feature.kor_title || feature.korTitle);
@@ -138,17 +143,17 @@ export const LandingFeaturesSection: React.FC = () => {
                         return (
                             <motion.div
                                 key={feature.id || idx}
-                                initial={{ opacity: 0, y: 60 }}
+                                initial={{ opacity: 0, y: 80 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                                className={`flex flex-col ${idx % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-16 lg:gap-32`}
+                                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                className={`flex flex-col ${idx % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-20 lg:gap-40`}
                             >
-                                {/* Visual Side (16:9 Sharp Box) */}
+                                {/* Visual Side: Soft & Organic */}
                                 <div className="flex-1 w-full relative">
                                     <motion.div
-                                        whileHover={{ y: -10 }}
-                                        className="aspect-video bg-white heritage-border rounded-none p-0 flex items-center justify-center group overflow-hidden shadow-2xl relative"
+                                        whileHover={{ scale: 1.02 }}
+                                        className="aspect-[4/5] bg-white rounded-[4rem] sm:rounded-[6rem] p-0 flex items-center justify-center group overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.06)] relative"
                                     >
                                         <div className="absolute inset-0 z-0">
                                             {feature.media_url ? (
@@ -156,96 +161,81 @@ export const LandingFeaturesSection: React.FC = () => {
                                                     <video
                                                         src={feature.media_url}
                                                         autoPlay muted loop playsInline
-                                                        className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
+                                                        className="w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
                                                     />
                                                 ) : (
                                                     <img
                                                         src={feature.media_url}
                                                         alt=""
-                                                        className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
+                                                        className="w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
                                                     />
                                                 )
                                             ) : (
-                                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-40`} />
+                                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-20`} />
                                             )}
                                         </div>
 
-                                        <div className="absolute inset-0 bg-dancheong-ink/10 group-hover:bg-transparent transition-colors duration-500" />
-
-                                        <div className="relative z-10 flex flex-col items-center gap-8">
-                                            {(feature.icon || feature.feature_id) && (
-                                                <motion.div
-                                                    initial={{ scale: 0.5, opacity: 0 }}
-                                                    whileInView={{ scale: 1, opacity: 1 }}
-                                                    viewport={{ once: true }}
-                                                    transition={{ delay: 0.4, type: "spring" }}
-                                                    className="w-24 h-24 lg:w-32 lg:h-32 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center shadow-inner relative z-20 border border-white/20"
-                                                >
-                                                    {feature.icon || (
-                                                        feature.feature_id === 'office' ? <Briefcase className="w-12 h-12 lg:w-16 lg:h-16 text-white" /> :
-                                                        feature.feature_id === 'commerce' ? <Store className="w-12 h-12 lg:w-16 lg:h-16 text-white" /> :
-                                                        <Users className="w-12 h-12 lg:w-16 lg:h-16 text-white" />
-                                                    )}
-                                                </motion.div>
-                                            )}
-
-                                            <div className="text-center relative z-20">
-                                                <span className="text-white/20 text-9xl font-black absolute -top-10 -right-10 select-none group-hover:text-white/40 transition-colors duration-500 pointer-events-none">
-                                                    {feature.number}
-                                                </span>
-                                                <h5 className="text-lg font-black text-white/60 tracking-widest uppercase mb-2 drop-shadow-md">
-                                                    {subtitle}
-                                                </h5>
+                                        {/* Soft Glow Overlays */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-dancheong-ink/20 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity duration-1000" />
+                                        
+                                        {/* Floating Badge */}
+                                        <div className="absolute top-12 left-12 z-20">
+                                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-lg">
+                                                <span className="text-white font-serif italic text-xl">{feature.number}</span>
                                             </div>
                                         </div>
-
-                                        <div className="absolute bottom-8 left-8 w-16 h-16 border border-white/20 rounded-full flex items-center justify-center opacity-40">
-                                            <div className="w-8 h-8 border border-white/20 rotate-45" />
-                                        </div>
                                     </motion.div>
+                                    
+                                    {/* Subtle Shadow/Glow behind card */}
+                                    <div className="absolute -inset-10 bg-dancheong-mugwort/5 blur-[80px] rounded-full z-[-1] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                                 </div>
 
-                                {/* Feature Content */}
-                                <div className="flex-1 space-y-10 text-left">
-                                    <div className="space-y-4">
-                                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-dancheong-mugwort/5 text-dancheong-mugwort border border-dancheong-mugwort/10">
-                                            <span className="w-2 h-2 rounded-full bg-dancheong-mugwort animate-pulse" />
-                                            <span className="text-xs font-black uppercase tracking-widest">{feature.title}</span>
-                                        </div>
-                                        <h4 className="text-xl lg:text-2xl font-black text-dancheong-ink tracking-tight leading-tight">
+                                {/* Feature Content: Editorial & Clean */}
+                                <div className="flex-1 space-y-12 text-left">
+                                    <div className="space-y-6">
+                                        <motion.div 
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            className="text-[10px] font-black uppercase tracking-[0.4em] text-dancheong-mugwort/60"
+                                        >
+                                            {subtitle}
+                                        </motion.div>
+                                        <h4 className="text-3xl lg:text-5xl font-serif font-black text-dancheong-ink tracking-tighter leading-tight">
                                             <AutoTranslatedText text={korTitle} />
                                         </h4>
                                     </div>
 
-                                    <p className="text-dancheong-ink/70 text-sm lg:text-base leading-relaxed break-keep font-medium">
+                                    <div className="h-[1px] w-24 bg-dancheong-ink/10"></div>
+
+                                    <p className="text-dancheong-ink/60 text-base lg:text-xl leading-relaxed break-keep font-medium italic">
                                         <AutoTranslatedText text={description} />
                                     </p>
 
                                     <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
-                                        transition={{ delay: 0.3 }}
-                                        className="bg-dancheong-ink/[0.03] p-6 lg:p-8 rounded-[32px] border border-dancheong-ink/5 relative overflow-hidden text-left"
+                                        className="bg-white/40 backdrop-blur-md p-8 lg:p-12 rounded-[3rem] border border-white shadow-sm relative overflow-hidden"
                                     >
-                                        <Quote className="absolute top-4 right-4 w-10 h-10 text-dancheong-ink/5" />
-                                        <p className="relative z-10 text-dancheong-ink/80 text-sm lg:text-base leading-loose break-keep italic font-medium">
+                                        <Quote className="absolute top-8 right-8 w-12 h-12 text-dancheong-ink/5" />
+                                        <p className="relative z-10 text-dancheong-ink/80 text-sm lg:text-lg leading-loose break-keep font-medium">
                                             <AutoTranslatedText text={detailInfo} />
                                         </p>
                                     </motion.div>
 
-                                    <div className="flex flex-col space-y-4 pt-4 items-start">
+                                    <div className="grid grid-cols-1 gap-6 pt-4">
                                         {benefits.map((benefit: string, bIdx: number) => (
                                             <motion.div
                                                 key={bIdx}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true }}
-                                                transition={{ delay: 0.5 + (bIdx * 0.1) }}
-                                                className="flex items-center gap-3"
+                                                transition={{ delay: 0.2 + (bIdx * 0.1) }}
+                                                className="flex items-center gap-4 group/benefit"
                                             >
-                                                <CheckCircle2 className="w-5 h-5 text-dancheong-mugwort" />
-                                                <span className="text-dancheong-ink/80 font-semibold text-sm lg:text-base">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-dancheong-mugwort group-hover/benefit:scale-[2] transition-transform duration-500" />
+                                                <span className="text-dancheong-ink/80 font-bold text-sm lg:text-base tracking-tight">
                                                     <AutoTranslatedText text={benefit} />
                                                 </span>
                                             </motion.div>
@@ -263,21 +253,21 @@ export const LandingFeaturesSection: React.FC = () => {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mt-64 text-center max-w-3xl mx-auto border-t border-dancheong-ink/10 pt-24"
+                className="mt-64 text-center max-w-3xl mx-auto border-t border-dancheong-ink/5 pt-32"
             >
-                <h4 className="text-2xl lg:text-3xl font-black text-dancheong-ink/80 mb-8 leading-snug">
-                    <AutoTranslatedText text="지금 바로 비즈니스의 새로운 기준을" />
+                <h4 className="text-2xl lg:text-4xl font-serif font-black text-dancheong-ink/80 mb-12 leading-snug">
+                    <AutoTranslatedText text="지금 바로 당신만의 특별한 공간을" />
                     <br />
-                    <AutoTranslatedText text="경험해 보세요." />
+                    <span className="text-dancheong-mugwort/80 italic">Experience the Difference</span>
                 </h4>
-                <div className="flex flex-wrap justify-center gap-6">
-                    <div className="px-8 py-4 bg-white heritage-border rounded-2xl flex items-center gap-3">
+                <div className="flex flex-wrap justify-center gap-8">
+                    <div className="px-10 py-5 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Users className="text-dancheong-mugwort" />
-                        <span className="font-bold">1,000+ 기업 도입</span>
+                        <span className="font-bold text-dancheong-ink/70">1,000+ 기업 도입</span>
                     </div>
-                    <div className="px-8 py-4 bg-white heritage-border rounded-2xl flex items-center gap-3">
+                    <div className="px-10 py-5 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Store className="text-dancheong-navy" />
-                        <span className="font-bold">2,500+ 가상 상점</span>
+                        <span className="font-bold text-dancheong-ink/70">2,500+ 가상 상점</span>
                     </div>
                 </div>
             </motion.div>
