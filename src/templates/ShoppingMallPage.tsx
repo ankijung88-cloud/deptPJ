@@ -942,7 +942,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 <textarea
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white/95 backdrop-blur-3xl border-4 border-red-600/40 rounded-3xl p-8 text-4xl md:text-8xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-[0_30px_100px_rgba(220,38,38,0.15)]"
+                                    className="w-full bg-white/95 backdrop-blur-3xl border-4 border-red-600/40 rounded-3xl p-8 text-3xl md:text-6xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-[0_30px_100px_rgba(220,38,38,0.15)]"
                                     rows={2}
                                 />
                                 <div className="absolute -top-6 -left-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl z-20">
@@ -961,7 +961,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 {customHeroLogo ? (
                                     <img src={customHeroLogo} className="h-24 md:h-40 w-auto object-contain mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)]" alt="Brand Logo" />
                                 ) : (
-                                    <h1 className="text-5xl md:text-9xl font-serif font-black mb-6 md:mb-10 leading-[0.9] text-neutral-900 tracking-tighter drop-shadow-sm">
+                                    <h1 className="text-4xl md:text-7xl font-serif font-black mb-6 md:mb-10 leading-[0.9] text-neutral-900 tracking-tighter drop-shadow-sm">
                                         <AutoTranslatedText text={tempTitle} />
                                     </h1>
                                 )}
@@ -975,12 +975,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             <textarea
                                 value={tempDesc}
                                 onChange={(e) => setTempDesc(e.target.value)}
-                                className="w-full bg-white/50 backdrop-blur-md border border-neutral-200 rounded-2xl p-6 text-lg text-neutral-600 max-w-2xl leading-relaxed mb-4 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
+                                className="w-full bg-white/50 backdrop-blur-md border border-neutral-200 rounded-2xl p-6 text-base text-neutral-600 max-w-2xl leading-relaxed mb-4 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
                                 rows={3}
                             />
                         ) : (
                             tempDesc && (
-                                <p className="text-base md:text-xl font-serif italic text-neutral-600 max-w-2xl leading-tight">
+                                <p className="text-sm md:text-lg font-serif italic text-neutral-600 max-w-2xl leading-tight">
                                     <AutoTranslatedText text={tempDesc} />
                                 </p>
                             )
@@ -2104,7 +2104,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                 <textarea
                                     value={tempBottomTitle}
                                     onChange={(e) => setTempBottomTitle(e.target.value)}
-                                    className="w-full text-5xl md:text-8xl font-serif font-black text-neutral-100 uppercase text-center bg-neutral-50 border-4 border-red-600/20 rounded-3xl p-8 focus:outline-none focus:border-red-600 transition-all resize-none"
+                                    className="w-full text-4xl md:text-6xl font-serif font-black text-neutral-100 uppercase text-center bg-neutral-50 border-4 border-red-600/20 rounded-3xl p-8 focus:outline-none focus:border-red-600 transition-all resize-none"
                                     rows={1}
                                 />
                                 <span className="text-[10px] font-black uppercase text-red-600 tracking-[0.4em] mt-8">Bottom Brand Slogan</span>
@@ -2117,7 +2117,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             </div>
                         ) : (
                             <>
-                                <div className="text-5xl md:text-9xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none leading-none opacity-80">
+                                <div className="text-4xl md:text-7xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none leading-none opacity-80">
                                     <AutoTranslatedText text={customBottomTitle || "몽땅쏙"} />
                                 </div>
                                 <p className="text-[10px] md:text-xs font-black tracking-[0.8em] text-neutral-400 uppercase max-w-2xl leading-loose opacity-60">
