@@ -273,50 +273,6 @@ const FloorGuidePage: React.FC = () => {
                 </div>
 
 
-                {/* Active Service Templates (Sub-template boxes) */}
-                {liveProducts.length > 0 && (
-                    <div className="mb-12 md:mb-20">
-                        <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="flex items-center gap-4 mb-8"
-                        >
-                            <div className="w-12 h-[1px] bg-dancheong-mugwort opacity-30"></div>
-                            <h2 className="text-xs md:text-sm font-black text-dancheong-ink tracking-[0.3em] uppercase">
-                                <AutoTranslatedText text="AVAILABLE SERVICES" />
-                            </h2>
-                        </motion.div>
-
-                        <div className="flex flex-wrap gap-3 md:gap-6">
-                            {Array.from(new Set(liveProducts.map(p => p.page_type || 'standard')))
-                                .filter(type => type !== 'standard')
-                                .map((type, idx) => (
-                                    <motion.div
-                                        key={type}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        className="px-6 py-4 bg-white border border-dancheong-ink/10 rounded-2xl shadow-sm flex items-center gap-4 hover:border-dancheong-mugwort/40 hover:shadow-md transition-all cursor-default group"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-dancheong-ink/5 flex items-center justify-center group-hover:bg-dancheong-mugwort group-hover:text-white transition-colors">
-                                            <Archive size={20} />
-                                        </div>
-                                        <div>
-                                            <div className="text-[10px] font-black text-dancheong-ink/30 uppercase tracking-widest leading-none mb-1">
-                                                Template
-                                            </div>
-                                            <div className="text-sm font-serif font-black text-dancheong-ink">
-                                                <AutoTranslatedText text={type.charAt(0).toUpperCase() + type.slice(1)} />
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                        </div>
-                    </div>
-                )}
-
 
                 {/* Live Products Section - 4 Column Grid */}
                 {liveProducts.length > 0 && (
