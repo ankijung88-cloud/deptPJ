@@ -3,7 +3,8 @@ console.log("ShoppingMallPage.tsx loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Trash2, Edit3, Search } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search } from 'lucide-react';
+
 
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
@@ -845,58 +846,51 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="flex gap-2 relative z-[70]">
-                                {isEditingMetadata && (
-                                <div className="flex gap-2">
+                            <div className="flex gap-3 relative z-[100]">
+                                {isEditingMetadata ? (
+                                    <div className="flex gap-2 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-red-600/20">
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); handleSaveMetadata(); }}
+                                            className="px-6 py-2.5 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg flex items-center gap-2"
+                                        >
+                                            <Check size={14} />
+                                            <AutoTranslatedText text="Save Changes" />
+                                        </button>
+                                        <button 
+                                            onClick={() => setIsEditingMetadata(false)}
+                                            className="px-6 py-2.5 rounded-xl bg-neutral-100 text-neutral-600 text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all flex items-center gap-2"
+                                        >
+                                            <X size={14} />
+                                            <AutoTranslatedText text="Cancel" />
+                                        </button>
+                                        <div className="w-[1px] h-8 bg-neutral-200 mx-1" />
+                                        <button 
+                                            onClick={() => heroBgInputRef.current?.click()}
+                                            className="px-6 py-2.5 rounded-xl bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:border-neutral-900 transition-all flex items-center gap-2"
+                                        >
+                                            <UploadCloud size={14} />
+                                            <AutoTranslatedText text="Update Bg" />
+                                        </button>
+                                        <button 
+                                            onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                                            className="px-6 py-2.5 rounded-xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
+                                        >
+                                            <Plus size={14} />
+                                            <AutoTranslatedText text="Add Product" />
+                                        </button>
+                                    </div>
+                                ) : (
                                     <button 
-                                        onClick={(e) => { e.stopPropagation(); isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true); }}
-                                        className={`px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${
-                                            isEditingMetadata 
-                                                ? 'bg-red-600 border-red-600 text-white shadow-lg' 
-                                                : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900'
-                                        }`}
+                                        onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
+                                        className="px-8 py-3 rounded-2xl bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-900 hover:border-red-600 hover:text-red-600 transition-all shadow-xl flex items-center gap-3 active:scale-95"
                                     >
-                                        <AutoTranslatedText text={isEditingMetadata ? "Save Page Info" : "Edit Page Info"} />
+                                        <Edit3 size={16} />
+                                        <AutoTranslatedText text="Edit Page Content" />
                                     </button>
-                                    <button 
-                                        onClick={() => heroBgInputRef.current?.click()}
-                                        className="px-6 py-2 rounded-full bg-white/80 backdrop-blur-md border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:bg-white transition-all flex items-center gap-2"
-                                    >
-                                        <UploadCloud size={14} />
-                                        <AutoTranslatedText text="Hero Bg" />
-                                    </button>
-                                    <input 
-                                        type="file" 
-                                        ref={heroBgInputRef} 
-                                        className="hidden" 
-                                        onChange={async (e) => {
-                                            if (e.target.files?.[0]) {
-                                                setIsUploading(true);
-                                                const url = await uploadFile(e.target.files[0]);
-                                                if (url) setCustomHeroBg(url);
-                                                setIsUploading(false);
-                                            }
-                                        }}
-                                    />
-                                    <button 
-                                        onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
-                                        className="px-6 py-2 rounded-full bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
-                                    >
-                                        <Plus size={14} />
-                                        <AutoTranslatedText text="Add Product" />
-                                    </button>
-                                </div>
-                            )}
-                            {!isEditingMetadata && isManagementAllowed && (
-                                <button 
-                                    onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
-                                    className="px-6 py-2 rounded-full bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:border-neutral-900 transition-all shadow-md"
-                                >
-                                    <AutoTranslatedText text="Edit Page Info" />
-                                </button>
-                            )}
+                                )}
                             </div>
                         )}
+
                     </div>
 
                     <div className="max-w-4xl">
@@ -929,40 +923,30 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </div>
 
                         {isEditingMetadata ? (
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-4 group relative">
                                 <textarea
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white/50 backdrop-blur-md border border-neutral-200 rounded-2xl p-6 text-4xl md:text-5xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
+                                    className="w-full bg-white/80 backdrop-blur-xl border-2 border-red-600/30 rounded-3xl p-8 text-4xl md:text-7xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:border-red-600 transition-all resize-none shadow-2xl"
                                     rows={2}
                                 />
+                                <div className="absolute -top-4 -right-4 bg-red-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-lg">
+                                    Edit Title
+                                </div>
                                 <button 
                                     onClick={() => heroLogoInputRef.current?.click()}
-                                    className="w-fit px-4 py-2 rounded-xl bg-white/80 border border-neutral-200 text-[9px] font-black uppercase tracking-widest text-neutral-500 hover:bg-white transition-all flex items-center gap-2"
+                                    className="w-fit px-6 py-3 rounded-2xl bg-white/90 border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:bg-white hover:border-red-600 transition-all flex items-center gap-3 shadow-lg"
                                 >
-                                    <UploadCloud size={12} />
-                                    <AutoTranslatedText text="Update Logo Image" />
+                                    <UploadCloud size={16} />
+                                    <AutoTranslatedText text="Replace with Logo Image" />
                                 </button>
-                                <input 
-                                    type="file" 
-                                    ref={heroLogoInputRef} 
-                                    className="hidden" 
-                                    onChange={async (e) => {
-                                        if (e.target.files?.[0]) {
-                                            setIsUploading(true);
-                                            const url = await uploadFile(e.target.files[0]);
-                                            if (url) setCustomHeroLogo(url);
-                                            setIsUploading(false);
-                                        }
-                                    }}
-                                />
                             </div>
                         ) : (
                             <div className="flex flex-col gap-4">
                                 {customHeroLogo ? (
-                                    <img src={customHeroLogo} className="h-16 md:h-24 w-auto object-contain mb-4" alt="Brand Logo" />
+                                    <img src={customHeroLogo} className="h-20 md:h-32 w-auto object-contain mb-6 drop-shadow-2xl" alt="Brand Logo" />
                                 ) : (
-                                    <h1 className="text-3xl md:text-7xl font-serif font-black mb-4 md:mb-6 leading-tight text-neutral-900">
+                                    <h1 className="text-4xl md:text-8xl font-serif font-black mb-4 md:mb-8 leading-tight text-neutral-900 tracking-tighter">
                                         <AutoTranslatedText text={tempTitle} />
                                     </h1>
                                 )}
@@ -970,11 +954,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         )}
 
 
+
                         {isEditingMetadata ? (
                             <textarea
                                 value={tempDesc}
                                 onChange={(e) => setTempDesc(e.target.value)}
-                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-6 text-lg text-neutral-600 max-w-2xl leading-relaxed mb-4 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
+                                className="w-full bg-white/50 backdrop-blur-md border border-neutral-200 rounded-2xl p-6 text-lg text-neutral-600 max-w-2xl leading-relaxed mb-4 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
                                 rows={3}
                             />
                         ) : (
@@ -999,8 +984,38 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                             )}
                         </button>
                     </div>
+                    {/* Hidden Inputs for Branding Assets */}
+                    <input 
+                        type="file" 
+                        ref={heroBgInputRef} 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                            if (e.target.files?.[0]) {
+                                setIsUploading(true);
+                                const url = await uploadFile(e.target.files[0]);
+                                if (url) setCustomHeroBg(url);
+                                setIsUploading(false);
+                            }
+                        }}
+                    />
+                    <input 
+                        type="file" 
+                        ref={heroLogoInputRef} 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                            if (e.target.files?.[0]) {
+                                setIsUploading(true);
+                                const url = await uploadFile(e.target.files[0]);
+                                if (url) setCustomHeroLogo(url);
+                                setIsUploading(false);
+                            }
+                        }}
+                    />
                 </div>
             </header>
+
 
             <main className="container mx-auto px-6 md:px-12 py-12">
                 <div className="flex flex-col lg:flex-row gap-16">
