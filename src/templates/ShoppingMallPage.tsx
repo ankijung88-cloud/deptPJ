@@ -839,7 +839,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
             {/* Store Header */}
             {/* Brand Hero Section */}
-            <header className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden flex flex-col justify-center px-6 md:px-20 transition-all duration-700" style={{ backgroundColor: '#F2E7D5' }}>
+            <header className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden flex flex-col justify-center px-6 md:px-20 transition-all duration-700" style={{ backgroundColor: '#F2E7D5' }}>
                 {/* Custom Hero Background */}
                 {customHeroBg && (
                     <div className="absolute inset-0 z-0">
@@ -860,7 +860,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="fixed top-8 right-8 flex gap-3 z-[9999]">
+                            <div className="fixed top-32 right-8 flex gap-3 z-[10000]">
                                 {isEditingMetadata ? (
                                     <div className="flex gap-2 bg-white/95 backdrop-blur-2xl p-3 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-red-600/30 scale-110 origin-right">
                                         <button 
