@@ -9,10 +9,10 @@ import { Notice } from '../types';
 const NOTICES: Notice[] = [
     {
         id: '1',
-        title: { ko: '몽땅쏙 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
+        title: { ko: 'MONGTANG 그랜드 오픈 및 멤버십 혜택 안내', en: 'Grand Opening & Membership Benefits' },
         category: '공지',
         date: '2024-03-01',
-        content: { ko: '몽땅쏙이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.' },
+        content: { ko: 'MONGTANG이 정식 오픈하였습니다. 멤버십 가입 시 다양한 혜택을 드립니다.' },
         is_important: true
     },
     {
@@ -97,7 +97,7 @@ const NoticePage: React.FC = () => {
                         transition={{ delay: 0.2 }}
                         className="text-dancheong-ink/60 max-w-2xl mx-auto italic font-light"
                     >
-                        <AutoTranslatedText text="몽땅쏙의 새로운 소식과 안내사항을 전해드립니다." />
+                        <AutoTranslatedText text="MONGTANG의 새로운 소식과 안내사항을 전해드립니다." />
                     </motion.p>
                 </div>
 

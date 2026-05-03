@@ -217,7 +217,12 @@ const Header: React.FC = () => {
         >
             <div className={`max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between transition-all duration-700 relative z-10 overflow-visible ${isScrolled ? 'h-14 sm:h-16' : 'h-20 sm:h-24'}`}>
                 <Link to="/" className="flex items-center space-x-2 group magnetic-target">
-                    <BrandLogo size={isScrolled ? 48 : 64} className="transition-all duration-500 group-hover:scale-105" />
+                    <div className="sm:hidden">
+                        <BrandLogo size={isScrolled ? 32 : 40} className="transition-all duration-500 group-hover:scale-105" />
+                    </div>
+                    <div className="hidden sm:block">
+                        <BrandLogo size={isScrolled ? 48 : 64} className="transition-all duration-500 group-hover:scale-105" />
+                    </div>
                 </Link>
 
                 {/* Desktop Navigation */}

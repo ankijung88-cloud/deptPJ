@@ -61,7 +61,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             >
                 <Globe size={isFloating ? 20 : isSidebar ? 24 : 18} className={isSidebar ? 'text-white/60 group-hover:text-white' : ''} />
                 {!isSidebar && (
-                    <span className={`${isFloating || isLanding ? 'inline' : 'hidden xl:inline'} tracking-wider text-[10px] sm:text-xs font-black uppercase`}>
+                    <span className={`${isFloating ? 'inline' : isLanding ? 'hidden sm:inline' : 'hidden xl:inline'} tracking-wider text-[10px] sm:text-xs font-black uppercase`}>
                         {getCurrentLangLabel()}
                     </span>
                 )}

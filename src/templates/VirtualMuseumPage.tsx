@@ -802,7 +802,7 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
             <footer className="py-20 px-6 border-t mt-32 bg-white/50" style={{ borderColor: '#E5E7EB' }}>
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
                     <div className="space-y-4">
-                        <div className="text-2xl font-serif font-black text-neutral-300">몽땅쏙 MUSEUM</div>
+                        <div className="text-2xl font-serif font-black text-neutral-300">MONGTANG MUSEUM</div>
                         <p className="text-xs font-bold tracking-widest text-neutral-400 uppercase max-w-md">
                             <AutoTranslatedText text="상호작용하는 가상 전시장, 디지털 헤리티지의 새로운 지평을 엽니다." />
                         </p>

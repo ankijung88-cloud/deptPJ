@@ -200,7 +200,7 @@ const SearchPage: React.FC = () => {
                                             <div className="flex items-center gap-2">
                                                 <Archive size={12} className="text-dancheong-ink/20" />
                                                 <span className="text-[10px] font-black text-dancheong-ink/20 uppercase tracking-tighter">
-                                                    몽땅쏙 ARCHIVE
+                                                    MONGTANG ARCHIVE
                                                 </span>
                                             </div>
                                             {result.date && (

@@ -40,15 +40,15 @@ export const LandingHeader: React.FC = () => {
         <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${isScrolled
-                    ? 'py-3 bg-white shadow-md border-b border-dancheong-ink/5'
-                    : 'py-6 bg-transparent'
+            className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 backdrop-blur-md ${isScrolled
+                    ? 'py-2 bg-white/80 shadow-[0_4px_30px_rgba(255,255,255,0.1)] border-b border-white/20'
+                    : 'py-4 sm:py-6 bg-transparent'
                 }`}
         >
             <div className="container mx-auto px-6 flex items-center justify-between">
                 {/* Logo Section - Left */}
                 <div className="flex items-center gap-4 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                    <BrandLogo size={40} />
+                    <BrandLogo size={isScrolled ? 32 : 40} />
                 </div>
 
                 {/* Navigation Links & Buttons - Right */}
