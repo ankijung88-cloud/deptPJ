@@ -87,53 +87,62 @@ const FloorGuidePage: React.FC = () => {
     return (
         <div className="min-h-screen bg-transparent text-dancheong-ink pb-20">
             {/* Hero Section with Background Image */}
-            <header className="relative w-full h-[25vh] md:h-[70vh] min-h-[220px] md:min-h-[500px] flex items-center overflow-hidden mb-8 md:mb-24 pt-22 md:pt-20">
+            <header className="relative w-full h-[40vh] sm:h-screen flex items-center overflow-hidden mb-8 md:mb-24 pt-22 md:pt-20">
                 {/* Background Image Layer */}
                 <div className="absolute inset-0 z-0">
                     <img 
                         src={floorData.bgImage || '/placeholder_floor.jpg'} 
                         alt={getLocalizedText(floorData.floor, i18n.language)}
-                        className="w-full h-full object-cover transition-transform duration-[2000ms] scale-105"
+                        className="w-full h-full object-cover transition-transform duration-[3000ms] scale-105"
                     />
-                    {/* Sophisticated Gradient Overlay for Text Legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#F9F9F9] via-[#F9F9F9]/95 via-40% to-transparent" />
+                    {/* Sophisticated Glow & Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 via-30% to-white/20 z-[1]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white z-[1]" />
+                    
+                    {/* Floating Glow */}
+                    <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#FFD1D1]/10 blur-[150px] rounded-full z-[0]" />
                 </div>
 
                 <div className="lossless-layout relative z-10 w-full">
-                    <div className="max-w-3xl">
+                    <div className="max-w-4xl">
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-3 text-dancheong-mugwort font-black text-[10px] tracking-[0.5em] uppercase mb-1 md:mb-8"
+                            className="inline-flex items-center gap-4 text-dancheong-mugwort font-black text-[10px] sm:text-[11px] tracking-[0.6em] uppercase mb-4 md:mb-16"
                         >
-                            <Archive size={14} />
-                            <span><AutoTranslatedText text="FLOOR DIRECTORY" /></span>
+                            <div className="w-8 h-[1px] bg-dancheong-mugwort/30" />
+                            <span><AutoTranslatedText text="FLOOR ARCHIVE" /></span>
                         </motion.div>
 
                         <motion.h1
-                            initial={{ opacity: 0, x: -30 }}
+                            initial={{ opacity: 0, x: -50 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="text-3xl md:text-[10rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] mb-2 md:mb-12"
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-6xl md:text-[15rem] font-serif font-black italic text-dancheong-ink tracking-tighter leading-[0.75] mb-6 md:mb-20"
                         >
-                            <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
+                            <span className="inline-block transition-transform hover:translate-x-4 duration-700">
+                                <AutoTranslatedText text={getLocalizedText(floorData.floor, i18n.language)} />
+                            </span>
                         </motion.h1>
 
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="md:text-left"
+                            transition={{ delay: 0.4, duration: 1 }}
+                            className="relative"
                         >
-                            <div className="flex items-center gap-4 mb-1 md:mb-8">
-                                <div className="w-12 h-[2px] bg-dancheong-mugwort"></div>
-                                <h2 className="text-xl font-serif font-bold text-dancheong-ink/90">
-                                    <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
-                                </h2>
+                            <div className="flex flex-col gap-6 md:gap-10">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-16 h-[2px] bg-dancheong-mugwort"></div>
+                                    <h2 className="text-2xl md:text-5xl font-serif font-black text-dancheong-ink tracking-tight">
+                                        <AutoTranslatedText text={getLocalizedText(floorData.title, i18n.language)} />
+                                    </h2>
+                                </div>
+                                
+                                <p className="text-dancheong-ink/60 font-medium text-base md:text-2xl leading-snug max-w-2xl italic">
+                                    <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
+                                </p>
                             </div>
-                            
-                             <p className="text-dancheong-ink/80 font-bold text-sm md:text-2xl leading-tight max-w-2xl whitespace-pre-wrap">
-                                <AutoTranslatedText text={getLocalizedText(floorData.description, i18n.language)} />
-                            </p>
                         </motion.div>
                     </div>
                 </div>
