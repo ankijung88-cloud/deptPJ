@@ -209,7 +209,7 @@ const Header: React.FC = () => {
             onMouseEnter={() => resetUiTimer()}
             onMouseLeave={() => resetUiTimer()}
             style={{
-                backgroundColor: isScrolled ? '#FFFFFF' : '#F2E7D5',
+                backgroundColor: isScrolled ? '#FFFFFF' : '#F9F9F9',
                 boxShadow: isScrolled ? '0 10px 30px rgba(23,23,23,0.05)' : 'none',
                 borderBottom: `1px solid ${theme.borderColor}22`,
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.7s, box-shadow 0.7s'

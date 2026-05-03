@@ -147,7 +147,7 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#F2E7D5] flex items-center justify-center text-black">
+            <div className="min-h-screen bg-[#F9F9F9] flex items-center justify-center text-black">
                 <Loader2 className="animate-spin text-red-600" size={40} />
             </div>
         );
@@ -174,7 +174,7 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
     };
 
     return (
-        <article className="min-h-screen text-black relative overflow-hidden font-sans bg-[#F2E7D5]">
+        <article className="min-h-screen text-black relative overflow-hidden font-sans bg-[#F9F9F9]">
             {/* Ambient Background */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute top-[20%] right-[-10%] w-[60%] h-[60%] rounded-full opacity-5 blur-[150px] bg-red-600" />
@@ -473,7 +473,7 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
                         <motion.div 
                             initial={{ opacity: 0, y: 50, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            className="w-full max-w-4xl bg-[#F2E7D5] border border-black/10 rounded-[3rem] overflow-hidden shadow-2xl relative text-black"
+                            className="w-full max-w-4xl bg-[#F9F9F9] border border-black/10 rounded-[3rem] overflow-hidden shadow-2xl relative text-black"
                             onClick={e => e.stopPropagation()}
                         >
                             <button 

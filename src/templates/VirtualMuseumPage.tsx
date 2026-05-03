@@ -40,10 +40,10 @@ const MuseumCard: React.FC<MuseumCardProps> = ({ item, theme, lang, onImageClick
             >
                 {/* Front Side: Title centric */}
                 <div 
-                    className="absolute inset-0 rounded-2xl border flex flex-col items-center justify-center p-6 text-center shadow-xl overflow-hidden"
+                    className="absolute inset-0 rounded-2xl border flex flex-col items-center justify-center p-6 text-center shadow-xl overflow-hidden group-hover:border-red-600 transition-all duration-500"
                     style={{ 
-                        backgroundColor: '#FFFFFF', 
-                        borderColor: '#E5E7EB', // gray-200
+                        backgroundColor: '#FFF5F5', 
+                        borderColor: '#FEE2E2', // rose-100
                         backfaceVisibility: 'hidden',
                         zIndex: isFlipped ? 0 : 1
                     }}
@@ -156,10 +156,10 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
 
     // Standardized Ivory Theme Tokens
     const theme = {
-        bgStyle: { backgroundColor: '#F2E7D5' },
+        bgStyle: { backgroundColor: '#FFFFFF' },
         color1: '#FFFFFF',
-        color2: '#F2E7D5',
-        color3: '#000000',
+        color2: '#FFFFFF',
+        color3: '#171717',
         accentColor: '#DC2626', // red-600
         highlightColor: '#171717',
         textPrimary: '#171717',
@@ -504,7 +504,7 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
             `}} />
 
             {/* Header Section */}
-            <header className="relative w-full py-16 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
+            <header className="relative w-full py-20 px-6 md:px-12 border-b z-[50] bg-white/80 backdrop-blur-md shadow-sm" style={{ borderColor: 'rgba(23, 23, 23, 0.05)' }}>
                 <div className="container mx-auto relative z-10">
                     <div className="flex justify-between items-start mb-8">
                         <button 
@@ -565,7 +565,7 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
                         <div className="flex items-center gap-4 mb-4">
                             <Link 
                                 to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                className="px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 transition-all relative z-[60] text-neutral-900" 
+                                className="px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase border border-neutral-200 bg-white hover:bg-neutral-50 transition-all relative z-[60] text-neutral-900 shadow-sm" 
                             >
                                 <AutoTranslatedText text="아카이브" /> {floorLabel}
                             </Link>
@@ -634,10 +634,10 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
                         { icon: Compass, title: t("고해상도 뷰어"), desc: t("이미지를 클릭하면 실제 박물관 부럽지 않은 선명한 화질을 경험할 수 있습니다.") },
                         { icon: Plus, title: t("콘텐츠 확장"), desc: t("언제든지 새로운 유물을 추가하여 나만의 가상 전시장을 꾸며보세요.") }
                     ].map((feature, idx) => (
-                        <div key={idx} className="p-8 rounded-3xl border border-neutral-200 bg-white group hover:bg-neutral-50 transition-all duration-500 shadow-sm">
-                             <feature.icon className="mb-6 text-red-600 opacity-60 group-hover:opacity-100 transition-opacity" size={32} />
-                             <h3 className="text-xl font-serif font-bold mb-3 text-neutral-900"><AutoTranslatedText text={feature.title} /></h3>
-                             <p className="text-sm text-neutral-500 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
+                        <div key={idx} className="p-10 rounded-[2.5rem] border border-neutral-200/50 bg-white group hover:bg-neutral-50 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1">
+                             <feature.icon className="mb-8 text-red-600 opacity-60 group-hover:opacity-100 transition-all" size={40} />
+                             <h3 className="text-2xl font-serif font-black mb-4 text-neutral-900"><AutoTranslatedText text={feature.title} /></h3>
+                             <p className="text-base text-neutral-500 leading-relaxed font-light"><AutoTranslatedText text={feature.desc} /></p>
                         </div>
                     ))}
                 </div>

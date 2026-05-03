@@ -86,7 +86,7 @@ export const LandingFloorSection: React.FC = () => {
                                 transition={{ delay: index * 0.1, duration: 0.8 }}
                             >
                                 <div
-                                    className={`w-full aspect-[3/4] p-6 sm:p-8 rounded-[3rem] transition-all duration-1000 relative overflow-hidden flex flex-col items-center text-center justify-between border ${isActive ? 'shadow-[0_50px_80px_rgba(0,0,0,0.08)] sm:-translate-y-8 bg-white' : 'shadow-sm bg-white/40 backdrop-blur-sm'}`}
+                                    className={`w-full aspect-[3/4] p-6 sm:p-8 rounded-[3rem] transition-all duration-1000 relative overflow-hidden flex flex-col items-center text-center justify-between border ${isActive ? 'shadow-[0_50px_80px_rgba(0,0,0,0.08)] sm:-translate-y-8 bg-white' : 'shadow-sm bg-white/80 backdrop-blur-sm'}`}
                                     style={{
                                         borderColor: isActive ? floor.color : 'rgba(0,0,0,0.05)'
                                     }}

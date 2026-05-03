@@ -30,7 +30,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <div
-            className="bg-dancheong-ivory min-h-screen selection:bg-dancheong-mugwort/30 relative"
+            className="bg-white min-h-screen selection:bg-dancheong-mugwort/30 relative"
         >
             {/* Texture Overlay */}
             <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay" 
@@ -38,10 +38,10 @@ const LandingPage: React.FC = () => {
 
             {/* Ambient Background Glows - Beauty Palette */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                {/* Soft Rose Gold Glow */}
-                <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#FFD1D1]/20 blur-[150px] rounded-full opacity-40 animate-pulse" style={{ animationDuration: '8s' }} />
-                {/* Warm Ivory Glow */}
-                <div className="absolute bottom-[10%] left-[-10%] w-[60%] h-[60%] bg-[#F2E7D5]/30 blur-[120px] rounded-full opacity-30" />
+                {/* Soft Rose Pink Glow */}
+                <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#FFECEC]/40 blur-[150px] rounded-full opacity-60 animate-pulse" style={{ animationDuration: '8s' }} />
+                {/* Pure Luminous Glow */}
+                <div className="absolute bottom-[10%] left-[-10%] w-[60%] h-[60%] bg-white/50 blur-[120px] rounded-full opacity-40" />
                 {/* Deep Mugwort Accents */}
                 <div className="absolute top-[40%] right-[10%] w-[30%] h-[30%] bg-dancheong-mugwort/5 blur-[100px] rounded-full opacity-20" />
             </div>

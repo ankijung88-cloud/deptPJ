@@ -117,13 +117,13 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                     <div 
                         className="absolute inset-0 transition-opacity duration-1000"
                         style={{ 
-                            backgroundColor: '#F2E7D5'
+                            backgroundColor: '#F9F9F9'
                         }} 
                     />
 
                     {/* Sansuhwa Sketch Background Overlay */}
                     <div 
-                        className="absolute inset-0 opacity-[0.12] mix-blend-multiply transition-opacity duration-1000"
+                        className="absolute inset-0 opacity-[0.08] mix-blend-multiply transition-opacity duration-1000"
                         style={{ 
                             backgroundImage: "url('/images/sansuhwa-sketch.png')",
                             backgroundSize: 'cover',
@@ -177,7 +177,7 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                             initial={{ x: -30, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="flex-shrink-0 w-full md:w-[400px] bg-white/70 backdrop-blur-xl border border-dancheong-ink/10 p-8 flex flex-col gap-8 rounded-[2rem] shadow-xl h-fit relative md:sticky md:top-0"
+                            className="flex-shrink-0 w-full md:w-[400px] bg-white border border-neutral-200 p-8 flex flex-col gap-8 rounded-[2.5rem] shadow-xl h-fit relative md:sticky md:top-8"
                         >
                             <div className="flex flex-col gap-2">
                                 <h2 className="text-2xl font-bold tracking-tight text-dancheong-ink"><AutoTranslatedText text="나의 기운 알아보기" /></h2>
@@ -340,7 +340,7 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             onClick={() => isMobile && result && setIsModalOpen(true)}
-                            className={`flex-1 bg-white/80 backdrop-blur-xl border border-dancheong-ink/5 p-10 rounded-[2rem] flex flex-col items-center justify-center relative overflow-hidden shadow-sm ${isMobile && result ? 'cursor-pointer hover:bg-white/90 transition-colors active:scale-[0.98]' : ''}`}
+                            className={`flex-1 bg-white border border-neutral-200 p-10 rounded-[2.5rem] flex flex-col items-center justify-center relative overflow-hidden shadow-sm ${isMobile && result ? 'cursor-pointer hover:bg-neutral-50 transition-colors active:scale-[0.98]' : ''}`}
                         >
                             {isMobile && result && (
                                 <div className="absolute top-6 right-6 p-2 bg-dancheong-ink/5 rounded-full text-[#DAA520] animate-pulse">
@@ -392,7 +392,7 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 50 }}
-                            className="fixed inset-0 z-[100] bg-[#F9F6F1] flex flex-col overflow-hidden"
+                            className="fixed inset-0 z-[100] bg-[#F9F9F9] flex flex-col overflow-hidden"
                         >
                             {/* Modal Header */}
                             <div className="flex-shrink-0 p-6 flex justify-between items-center border-b border-dancheong-ink/10 bg-white">

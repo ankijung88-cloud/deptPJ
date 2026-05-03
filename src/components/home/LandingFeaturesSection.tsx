@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
-import { Store, Briefcase, Users, CheckCircle2, Quote } from 'lucide-react';
+import { Store, Briefcase, Users, Quote } from 'lucide-react';
 
 // Helpers for localized text (consistent with AdminPage)
 const displayLocalized = (text: any) => {
@@ -100,8 +100,8 @@ export const LandingFeaturesSection: React.FC = () => {
         <section className="relative py-24 lg:py-64 overflow-hidden bg-transparent">
             {/* Ambient Lighting for Features */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-                <div className="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-dancheong-mugwort/5 blur-[150px] rounded-full opacity-30" />
-                <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-[#FFD1D1]/10 blur-[150px] rounded-full opacity-30" />
+                <div className="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-red-100/10 blur-[150px] rounded-full opacity-30" />
+                <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-[#FFD1D1]/20 blur-[150px] rounded-full opacity-40" />
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
@@ -113,14 +113,14 @@ export const LandingFeaturesSection: React.FC = () => {
                         className="space-y-8"
                     >
                         <div className="inline-flex items-center gap-4 mb-4">
-                            <div className="w-8 h-[1px] bg-dancheong-mugwort"></div>
-                            <span className="text-[10px] font-black tracking-[0.5em] text-dancheong-mugwort uppercase">Philosophy</span>
-                            <div className="w-8 h-[1px] bg-dancheong-mugwort"></div>
+                            <div className="w-8 h-[1px] bg-red-600/30"></div>
+                            <span className="text-[10px] font-black tracking-[0.5em] text-red-600 uppercase">Philosophy</span>
+                            <div className="w-8 h-[1px] bg-red-600/30"></div>
                         </div>
                         <h2 className="text-3xl sm:text-5xl lg:text-7xl text-dancheong-ink font-serif font-black tracking-tighter leading-[1.1] max-w-5xl mx-auto">
                             <AutoTranslatedText text="아름다움 그 이상의 가치를" />
                             <br />
-                            <span className="text-dancheong-mugwort/80 italic">Experience the Essence</span>
+                            <span className="text-red-600 italic">Experience the Essence</span>
                         </h2>
                         <p className="text-dancheong-ink/50 text-sm sm:text-lg max-w-2xl mx-auto font-medium leading-relaxed italic">
                             <AutoTranslatedText text="본연의 아름다움이 피어나는 순간을 위해" />
@@ -153,7 +153,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                 <div className="flex-1 w-full relative">
                                     <motion.div
                                         whileHover={{ scale: 1.02 }}
-                                        className="aspect-[4/5] bg-white rounded-[4rem] sm:rounded-[6rem] p-0 flex items-center justify-center group overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.06)] relative"
+                                        className="aspect-[4/5] bg-rose-50/60 rounded-[4rem] sm:rounded-[6rem] p-0 flex items-center justify-center group overflow-hidden shadow-[0_40px_100px_rgba(255,0,0,0.04)] border border-rose-100 relative"
                                     >
                                         <div className="absolute inset-0 z-0">
                                             {feature.media_url ? (
@@ -176,18 +176,18 @@ export const LandingFeaturesSection: React.FC = () => {
                                         </div>
 
                                         {/* Soft Glow Overlays */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-dancheong-ink/20 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity duration-1000" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity duration-1000" />
                                         
                                         {/* Floating Badge */}
                                         <div className="absolute top-12 left-12 z-20">
-                                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-lg">
+                                            <div className="w-16 h-16 rounded-full bg-red-600 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-lg">
                                                 <span className="text-white font-serif italic text-xl">{feature.number}</span>
                                             </div>
                                         </div>
                                     </motion.div>
                                     
                                     {/* Subtle Shadow/Glow behind card */}
-                                    <div className="absolute -inset-10 bg-dancheong-mugwort/5 blur-[80px] rounded-full z-[-1] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                                    <div className="absolute -inset-10 bg-red-600/5 blur-[80px] rounded-full z-[-1] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                                 </div>
 
                                 {/* Feature Content: Editorial & Clean */}
@@ -197,7 +197,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                             initial={{ opacity: 0, x: -20 }}
                                             whileInView={{ opacity: 1, x: 0 }}
                                             viewport={{ once: true }}
-                                            className="text-[10px] font-black uppercase tracking-[0.4em] text-dancheong-mugwort/60"
+                                            className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600/60"
                                         >
                                             {subtitle}
                                         </motion.div>
@@ -206,7 +206,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                         </h4>
                                     </div>
 
-                                    <div className="h-[1px] w-24 bg-dancheong-ink/10"></div>
+                                    <div className="h-[1px] w-24 bg-red-600/20"></div>
 
                                     <p className="text-dancheong-ink/60 text-base lg:text-xl leading-relaxed break-keep font-medium italic">
                                         <AutoTranslatedText text={description} />
@@ -216,9 +216,9 @@ export const LandingFeaturesSection: React.FC = () => {
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
-                                        className="bg-white/40 backdrop-blur-md p-8 lg:p-12 rounded-[3rem] border border-white shadow-sm relative overflow-hidden"
+                                        className="bg-rose-50/80 backdrop-blur-md p-8 lg:p-12 rounded-[3rem] border border-rose-100 shadow-sm relative overflow-hidden"
                                     >
-                                        <Quote className="absolute top-8 right-8 w-12 h-12 text-dancheong-ink/5" />
+                                        <Quote className="absolute top-8 right-8 w-12 h-12 text-red-600/5" />
                                         <p className="relative z-10 text-dancheong-ink/80 text-sm lg:text-lg leading-loose break-keep font-medium">
                                             <AutoTranslatedText text={detailInfo} />
                                         </p>
@@ -261,11 +261,11 @@ export const LandingFeaturesSection: React.FC = () => {
                     <span className="text-dancheong-mugwort/80 italic">Experience the Difference</span>
                 </h4>
                 <div className="flex flex-wrap justify-center gap-8">
-                    <div className="px-10 py-5 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
+                    <div className="px-10 py-5 bg-white/80 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Users className="text-dancheong-mugwort" />
                         <span className="font-bold text-dancheong-ink/70">1,000+ 기업 도입</span>
                     </div>
-                    <div className="px-10 py-5 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
+                    <div className="px-10 py-5 bg-white/80 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Store className="text-dancheong-navy" />
                         <span className="font-bold text-dancheong-ink/70">2,500+ 가상 상점</span>
                     </div>

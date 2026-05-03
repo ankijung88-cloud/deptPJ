@@ -83,7 +83,7 @@ const FAQPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F2E7D5] font-sans selection:bg-dancheong-ink selection:text-white pt-12 sm:pt-20">
+        <div className="min-h-screen bg-[#F9F9F9] font-sans selection:bg-dancheong-ink selection:text-white pt-12 sm:pt-20">
             <div className="container mx-auto px-4 sm:px-6 lg:px-24 pb-16 sm:pb-24">
                 {/* Header Section */}
                 <div className="text-center mb-10 sm:mb-16">

@@ -96,7 +96,7 @@ const FloorGuidePage: React.FC = () => {
                         className="w-full h-full object-cover transition-transform duration-[2000ms] scale-105"
                     />
                     {/* Sophisticated Gradient Overlay for Text Legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#F2E7D5] via-[#F2E7D5]/95 via-40% to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#F9F9F9] via-[#F9F9F9]/95 via-40% to-transparent" />
                 </div>
 
                 <div className="lossless-layout relative z-10 w-full">

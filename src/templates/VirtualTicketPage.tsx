@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, Plus, Image as ImageIcon, Type, UploadCloud, Check, Edit3, Sparkles } from 'lucide-react';
-import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
+import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, Plus, Image as ImageIcon, UploadCloud, Check, Edit3 } from 'lucide-react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { FeaturedItem } from '../types';
@@ -30,83 +30,78 @@ const BroadwayTicketCard: React.FC<{
 
     return (
         <motion.div
-            whileHover={{ y: -10, scale: 1.02 }}
+            whileHover={{ y: -16, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
-            className="relative group cursor-pointer overflow-hidden rounded-[2rem] bg-white border border-black/10 transition-all duration-500 shadow-lg"
+            className="relative group cursor-pointer overflow-hidden rounded-[3.5rem] bg-white border border-dancheong-ink/5 transition-all duration-1000 shadow-[0_40px_100px_rgba(0,0,0,0.06)] hover:shadow-[0_80px_120px_rgba(0,0,0,0.12)]"
         >
-            {/* Animated Light Border */}
-            <div className="absolute inset-0 z-10 pointer-events-none border-2 border-dashed border-red-600/10 opacity-0 group-hover:opacity-100 animate-[pulse_2s_infinite] rounded-[2rem]" />
-            
-            {/* Broadway Lights */}
-            <div className="absolute top-4 left-4 right-4 h-2 flex justify-between px-4 z-20 overflow-hidden">
+            {/* Status Lights - Refined with more visibility */}
+            <div className="absolute top-8 left-10 right-10 h-1 flex justify-between z-20">
                 {[...Array(10)].map((_, i) => (
-                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-red-600/20 group-hover:bg-red-600 group-hover:animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.3)]" style={{ animationDelay: `${i * 0.1}s` }} />
+                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-dancheong-ink/10 group-hover:bg-[#800020] group-hover:animate-pulse transition-all duration-500 shadow-sm" style={{ animationDelay: `${i * 0.1}s` }} />
                 ))}
             </div>
 
-            {/* Content Preview */}
-            <div className="h-64 relative overflow-hidden">
-                <img src={ticket.imageUrl} alt={getLoc(ticket.title, lang)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0" />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+            {/* Image Section */}
+            <div className="h-80 relative overflow-hidden">
+                <img src={ticket.imageUrl} alt={getLoc(ticket.title, lang)} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80" />
                 
-                {/* Category Badge */}
-                <div className="absolute top-8 left-6 px-3 py-1 rounded-full bg-black/5 border border-black/10 backdrop-blur-sm">
-                        <AutoTranslatedText text={t('ticket.live_show')} />
+                {/* Badge */}
+                <div className="absolute top-12 left-10 px-6 py-2.5 rounded-full bg-white border border-dancheong-ink/10 text-[10px] font-black tracking-widest text-dancheong-ink uppercase shadow-lg">
+                    <AutoTranslatedText text={t('ticket.live_show')} />
                 </div>
             </div>
 
-            {/* Ticket Info */}
-            <div className="p-8 space-y-4">
-                <div className="space-y-1">
-                    <h3 className="text-xl font-black text-black uppercase tracking-tighter leading-tight group-hover:text-red-600 transition-colors whitespace-pre-wrap break-keep">
+            {/* Info Section */}
+            <div className="p-12 space-y-8 relative z-10">
+                <div className="space-y-4">
+                    <h3 className="text-3xl font-serif font-black text-dancheong-ink tracking-tight leading-none group-hover:text-[#800020] transition-colors duration-500 whitespace-pre-wrap break-keep">
                         <AutoTranslatedText text={getLoc(ticket.title, lang)} />
                     </h3>
-                    <div className="flex items-center gap-2 text-black/40">
-                        <MapPin size={12} className="text-red-600" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">{getLoc(ticket.location, lang)}</span>
+                    <div className="flex items-center gap-3 text-dancheong-ink/60">
+                        <MapPin size={14} className="text-[#800020]" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">{getLoc(ticket.location, lang)}</span>
                     </div>
                 </div>
 
-                <div className="flex justify-between items-end pt-4 border-t border-black/5">
-                    <div className="space-y-1">
-                            <AutoTranslatedText text={t('ticket.performance_date')} />
-                        <div className="flex items-center gap-2 text-black/40">
-                            <Calendar size={12} />
-                            <span className="text-[10px] font-bold uppercase">{getLoc(ticket.date, lang)}</span>
+                <div className="flex justify-between items-end pt-10 border-t border-dancheong-ink/5">
+                    <div className="space-y-3">
+                        <div className="text-[9px] font-black text-dancheong-ink/20 tracking-widest uppercase"><AutoTranslatedText text={t('ticket.performance_date')} /></div>
+                        <div className="flex items-center gap-3 text-dancheong-ink/80">
+                            <Calendar size={14} className="text-[#800020]" />
+                            <span className="text-[11px] font-serif italic font-bold">{getLoc(ticket.date, lang)}</span>
                         </div>
                     </div>
                     <div className="text-right">
-                            <AutoTranslatedText text={t('ticket.entry_fee')} />
-                        <div className="text-lg font-black text-red-600">{getLoc(ticket.price, lang)}</div>
+                        <div className="text-[9px] font-black text-dancheong-ink/20 tracking-widest uppercase"><AutoTranslatedText text={t('ticket.entry_fee')} /></div>
+                        <div className="text-3xl font-serif font-black text-[#800020]">{getLoc(ticket.price, lang)}</div>
                     </div>
                 </div>
 
-                {/* Decorative Perforation */}
-                <div className="absolute bottom-20 -left-3 w-6 h-6 rounded-full bg-[#F2E7D5] border border-black/10" />
-                <div className="absolute bottom-20 -right-3 w-6 h-6 rounded-full bg-[#F2E7D5] border border-black/10" />
+                {/* Perforation detail - More defined */}
+                <div className="absolute bottom-28 -left-4 w-10 h-10 rounded-full bg-white border border-dancheong-ink/5 shadow-inner" />
+                <div className="absolute bottom-28 -right-4 w-10 h-10 rounded-full bg-white border border-dancheong-ink/5 shadow-inner" />
             </div>
 
-            {/* Admin Controls */}
             {isAdmin && (
-                <div className="absolute top-8 right-6 z-30 flex gap-2">
+                <div className="absolute top-12 right-10 z-30 flex gap-4">
                     <button 
                         onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
-                        className="w-8 h-8 rounded-full bg-white/80 border border-black/10 flex items-center justify-center text-black/40 hover:text-black hover:bg-white transition-all shadow-sm"
+                        className="w-12 h-12 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-white hover:bg-dancheong-ink transition-all shadow-xl"
                     >
-                        <Type size={14} />
+                        <Edit3 size={16} />
                     </button>
                     <button 
                         onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-                        className="w-8 h-8 rounded-full bg-white/80 border border-black/10 flex items-center justify-center text-black/40 hover:text-red-600 hover:bg-red-600/10 transition-all shadow-sm"
+                        className="w-12 h-12 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-white hover:bg-[#800020] transition-all shadow-xl"
                     >
-                        <X size={14} />
+                        <X size={16} />
                     </button>
                 </div>
             )}
             
-            {/* Reserve Button overlay */}
-            <div className="h-1.5 bg-black/5 group-hover:bg-red-600 transition-colors" />
+            <div className="h-2 bg-dancheong-ink/5 group-hover:bg-[#800020] transition-colors duration-1000" />
         </motion.div>
     );
 };
@@ -141,107 +136,109 @@ const ReservationModal: React.FC<{
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+                    className="fixed inset-0 z-[30000] flex items-center justify-center p-6 bg-dancheong-ink/60 backdrop-blur-md"
                 >
                     <motion.div
-                        initial={{ y: 50, scale: 0.9, opacity: 0 }}
+                        initial={{ y: 80, scale: 0.95, opacity: 0 }}
                         animate={{ y: 0, scale: 1, opacity: 1 }}
-                        exit={{ y: 50, scale: 0.9, opacity: 0 }}
-                        className="bg-[#F2E7D5] border border-black/10 w-full max-w-4xl h-[85vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative text-black"
+                        exit={{ y: 80, scale: 0.95, opacity: 0 }}
+                        className="bg-white border border-dancheong-ink/10 w-full max-w-6xl h-[85vh] rounded-[4.5rem] overflow-hidden shadow-[0_100px_150px_rgba(0,0,0,0.3)] flex flex-col md:flex-row relative text-dancheong-ink"
                     >
                         <button 
                             onClick={onClose}
-                            className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-white border border-black/10 flex items-center justify-center text-black/40 hover:text-black hover:bg-black/5 transition-all shadow-sm"
+                            className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#F9F9F9] transition-all shadow-xl"
                         >
-                            <X size={24} />
+                            <X size={28} />
                         </button>
 
-                        <div className="w-full md:w-1/2 h-full bg-black relative group overflow-hidden">
-                            <img src={ticket.imageUrl} alt={getLoc(ticket.title, lang)} className="w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#F2E7D5] via-transparent to-transparent" />
+                        <div className="w-full md:w-1/2 h-full bg-dancheong-ink relative group overflow-hidden">
+                            <img src={ticket.imageUrl} alt={getLoc(ticket.title, lang)} className="w-full h-full object-cover opacity-80 transition-transform duration-[2000ms] group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
                             
-                            <div className="absolute bottom-12 left-12 right-12">
+                            <div className="absolute bottom-20 left-20 right-20">
+                                <div className="text-[11px] font-black tracking-[0.5em] uppercase text-dancheong-ink/40 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
                                     <AutoTranslatedText text={t('ticket.official_selection')} />
-                                <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-4">
+                                </div>
+                                <h2 className="text-6xl md:text-8xl font-serif font-black text-dancheong-ink uppercase tracking-tighter leading-[0.85] mb-12">
                                     <AutoTranslatedText text={getLoc(ticket.title, lang)} />
                                 </h2>
-                                <div className="flex items-center gap-6">
-                                    <div className="flex items-center gap-2 text-black/60">
-                                        <MapPin size={14} className="text-red-600" />
-                                        <span className="text-xs font-bold uppercase tracking-widest">{getLoc(ticket.location, lang)}</span>
+                                <div className="flex items-center gap-12">
+                                    <div className="flex items-center gap-4 text-dancheong-ink/60">
+                                        <MapPin size={16} className="text-[#800020]" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest">{getLoc(ticket.location, lang)}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-black/60">
-                                        <Clock size={14} className="text-red-600" />
-                                        <span className="text-xs font-bold uppercase tracking-widest">{getLoc(ticket.date, lang)}</span>
+                                    <div className="flex items-center gap-4 text-dancheong-ink/60">
+                                        <Clock size={16} className="text-[#800020]" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest">{getLoc(ticket.date, lang)}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="w-full md:w-1/2 h-full p-12 flex flex-col justify-between border-l border-black/5">
-                            <div className="space-y-10">
+                        <div className="w-full md:w-1/2 h-full p-20 flex flex-col justify-between border-l border-dancheong-ink/5 bg-white">
+                            <div className="space-y-16">
                                 <div>
-                                        <AutoTranslatedText text={t('ticket.event_details')} />
-                                    <p className="text-sm text-black/60 font-medium leading-[1.8]">
+                                    <div className="text-[11px] font-black tracking-[0.5em] uppercase text-dancheong-ink/30 mb-8"><AutoTranslatedText text={t('ticket.event_details')} /></div>
+                                    <p className="text-xl text-dancheong-ink/60 font-serif italic leading-relaxed border-l-[6px] border-[#800020] pl-10">
                                         <AutoTranslatedText text={getLoc(ticket.description, lang) || 'We invite you to a special performance where artisan breath and traditional values harmonize. We promise the best impression.'} />
                                     </p>
                                 </div>
 
-                                <div className="p-8 rounded-3xl bg-white border border-black/10 space-y-6 shadow-sm">
+                                <div className="p-12 rounded-[3.5rem] bg-[#F9F9F9] border border-dancheong-ink/5 shadow-sm space-y-10">
                                     <div className="flex items-center justify-between">
-                                            <AutoTranslatedText text={t('ticket.ticket_quantity')} />
-                                        <div className="flex items-center gap-6 bg-black/5 border border-black/10 rounded-full px-6 py-3">
+                                        <span className="text-[11px] font-black tracking-widest uppercase text-dancheong-ink/40"><AutoTranslatedText text={t('ticket.ticket_quantity')} /></span>
+                                        <div className="flex items-center gap-10 bg-white border border-dancheong-ink/5 rounded-full px-10 py-5 shadow-sm">
                                             <button 
                                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                                className="text-black/40 hover:text-black transition-colors font-bold"
+                                                className="text-dancheong-ink/20 hover:text-[#800020] transition-colors font-black text-xl"
                                             >-</button>
-                                            <span className="text-xl font-black text-black w-8 text-center">{quantity}</span>
+                                            <span className="text-3xl font-serif font-black text-dancheong-ink w-10 text-center">{quantity}</span>
                                             <button 
                                                 onClick={() => setQuantity(quantity + 1)}
-                                                className="text-black/40 hover:text-black transition-colors font-bold"
+                                                className="text-dancheong-ink/20 hover:text-[#800020] transition-colors font-black text-xl"
                                             >+</button>
                                         </div>
                                     </div>
 
-                                    <div className="h-[1px] w-full bg-black/5" />
+                                    <div className="h-px w-full bg-dancheong-ink/5" />
 
                                     <div className="flex items-center justify-between">
-                                            <AutoTranslatedText text={t('ticket.total_payable')} />
-                                        <div className="text-3xl font-black text-red-600">
+                                        <span className="text-[11px] font-black tracking-widest uppercase text-dancheong-ink/40"><AutoTranslatedText text={t('ticket.total_payable')} /></span>
+                                        <div className="text-5xl font-serif font-black text-[#800020]">
                                             ₩{totalPrice.toLocaleString()}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-8">
                                 <button 
                                     onClick={onConfirm}
                                     disabled={isReserving || reservationComplete}
-                                    className="w-full py-6 rounded-2xl bg-black text-white font-black text-sm uppercase tracking-[0.2em] relative overflow-hidden group active:scale-95 transition-all disabled:opacity-50 hover:bg-red-600 shadow-xl"
+                                    className={`w-full py-10 rounded-[3rem] font-black text-[11px] uppercase tracking-[0.5em] relative overflow-hidden group active:scale-[0.98] transition-all duration-700 shadow-2xl disabled:opacity-50 ${reservationComplete ? 'bg-dancheong-mugwort text-white' : 'bg-dancheong-ink text-white hover:bg-[#800020]'}`}
                                 >
                                     <AnimatePresence mode="wait">
                                         {isReserving ? (
-                                            <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                            <motion.div key="loading" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-4">
+                                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                                 <AutoTranslatedText text={t('common.processing')} />
                                             </motion.div>
                                         ) : reservationComplete ? (
-                                            <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                <Check size={18} />
+                                            <motion.div key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-4">
+                                                <Check size={24} />
                                                 <AutoTranslatedText text={t('ticket.reservation_complete')} />
                                             </motion.div>
                                         ) : (
-                                            <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-3">
-                                                <Ticket size={18} />
+                                            <motion.div key="idle" initial={{ opacity:0 }} animate={{ opacity:1 }} className="flex items-center justify-center gap-4">
+                                                <Ticket size={24} />
                                                 <AutoTranslatedText text={t('ticket.confirm_reservation')} />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
                                 </button>
-                                     <p className="text-[10px] text-black/40 text-center uppercase tracking-widest">
-                                        <AutoTranslatedText text={t('ticket.security_delivery_msg')} />
-                                     </p>
+                                <p className="text-[10px] text-dancheong-ink/30 text-center uppercase font-black tracking-[0.4em]">
+                                    <AutoTranslatedText text={t('ticket.security_delivery_msg')} />
+                                </p>
                             </div>
                         </div>
                     </motion.div>
@@ -563,235 +560,254 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
         }
     };
 
-return (
-        <div className="min-h-screen font-sans overflow-hidden bg-[#F2E7D5] text-black">
-            <header className="relative w-full py-16 md:py-24 px-6 md:px-12 border-b border-black/10 z-[50]">
-                <div className="container mx-auto relative z-10">
-                    <div className="flex justify-between items-center mb-10 relative z-[60]">
-                        <button 
-                            onClick={() => {
-                                if (onClose) {
-                                    onClose();
-                                } else if (window.history.state && window.history.state.idx > 0) {
-                                    navigate(-1);
-                                } else if (parentId) {
-                                    navigate(`/detail/${parentId}`);
-                                } else if (currentFloor) {
-                                    navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
-                                } else {
-                                    navigate('/inspiration');
-                                }
-                            }}
-                            className="flex items-center gap-3 text-black/40 hover:text-black transition-opacity uppercase text-[10px] font-black tracking-[0.4em] relative z-[60]"
-                        >
-                            <ArrowLeft size={16} />
-                            <AutoTranslatedText text={t('common.back')} />
-                        </button>
+    return (
+        <div className="min-h-screen bg-white selection:bg-[#800020] selection:text-white overflow-x-hidden">
+            {/* Standard Header is provided by Layout */}
 
-                        {isManagementAllowed && (
-                            <div className="flex gap-2 relative z-[70]">
-                                <button 
-                                    onClick={() => {
-                                        if (isEditingMetadata) {
-                                            handleSaveMetadata();
-                                        } else {
-                                            setIsEditingMetadata(true);
-                                        }
-                                    }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-white border border-black/10 hover:bg-black hover:text-white transition-all text-[10px] font-black tracking-widest uppercase shadow-sm"
-                                >
-                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
-                                    <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
-                                </button>
-                                {isEditingMetadata && (
+            
+            {/* Elegant Hero Section */}
+            <section className="relative pt-60 pb-40 px-10 md:px-20">
+                <div className="max-w-[1800px] mx-auto relative">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-12"
+                    >
+                        <div className="flex justify-between items-center relative z-[60]">
+                            <button 
+                                onClick={() => {
+                                    if (onClose) {
+                                        onClose();
+                                    } else if (window.history.state && window.history.state.idx > 0) {
+                                        navigate(-1);
+                                    } else if (parentId) {
+                                        navigate(`/detail/${parentId}`);
+                                    } else if (currentFloor) {
+                                        navigate(`/inspiration?floor=${currentFloor.floor.toLowerCase()}`);
+                                    } else {
+                                        navigate('/inspiration');
+                                    }
+                                }}
+                                className="group flex items-center gap-6 text-dancheong-ink/40 hover:text-dancheong-ink transition-all uppercase text-[11px] font-black tracking-[0.6em] relative z-[60]"
+                            >
+                                <ArrowLeft size={20} className="group-hover:-translate-x-3 transition-transform duration-500" />
+                                <AutoTranslatedText text={t('common.back')} />
+                            </button>
+
+                            {isManagementAllowed && (
+                                <div className="flex gap-6 relative z-[70]">
                                     <button 
-                                        onClick={() => setIsEditingMetadata(false)}
-                                        className="p-2 rounded-full border border-black/10 hover:bg-black/5 text-black/40"
+                                        onClick={() => {
+                                            if (isEditingMetadata) {
+                                                handleSaveMetadata();
+                                            } else {
+                                                setIsEditingMetadata(true);
+                                            }
+                                        }}
+                                        className="flex items-center gap-4 px-10 py-4 rounded-full bg-white border border-dancheong-ink/10 hover:bg-[#F9F9F9] transition-all text-[11px] font-black tracking-widest uppercase shadow-xl"
                                     >
-                                        <X size={14} />
+                                        {isEditingMetadata ? <Check size={16} className="text-dancheong-mugwort" /> : <Edit3 size={16} />}
+                                        <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
                                     </button>
-                                )}
-                                <button 
-                                    onClick={() => { setIsEditMode(false); setNewTicket({ title: '', date: '', imageUrl: '' }); setShowAddModal(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-white border border-black/10 hover:bg-black hover:text-white transition-all text-[10px] font-black tracking-widest uppercase shadow-sm"
-                                >
-                                    <Plus size={14} />
-                                    <AutoTranslatedText text={t('ticket.add_event')} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                    
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-                        <div className="max-w-4xl">
-                            <div className="flex items-center gap-4 mb-6">
-                                <Link 
-                                    to={currentFloor ? `/inspiration?floor=${currentFloor.floor.toLowerCase()}` : '/inspiration'}
-                                    className="px-5 py-2 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm bg-white border border-black/10 hover:bg-black hover:text-white transition-all uppercase relative z-[60] text-black">
-                                    <AutoTranslatedText text={t('common.archive')} /> {floorLabel}
-                                </Link>
-                                <div className="h-[1px] w-20 bg-black/5" />
-                            </div>
-                            
+                                    {isEditingMetadata && (
+                                        <button 
+                                            onClick={() => setIsEditingMetadata(false)}
+                                            className="w-14 h-14 flex items-center justify-center rounded-full bg-white border border-dancheong-ink/10 hover:bg-white text-dancheong-ink/40 transition-all shadow-xl"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    )}
+                                    <button 
+                                        onClick={() => { setIsEditMode(false); setNewTicket({ title: '', date: '', imageUrl: '' }); setShowAddModal(true); }}
+                                        className="flex items-center gap-4 px-10 py-4 rounded-full bg-dancheong-ink text-white hover:bg-[#800020] transition-all text-[11px] font-black tracking-widest uppercase shadow-2xl"
+                                    >
+                                        <Plus size={16} />
+                                        <AutoTranslatedText text={t('ticket.add_event')} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex items-center gap-6 pt-20">
+                            <div className="h-px w-24 bg-[#800020]" />
+                            <span className="text-[11px] font-black tracking-[0.6em] text-[#800020] uppercase">
+                                <AutoTranslatedText text={t('ticket.title')} />
+                            </span>
+                        </div>
+                        
+                        <div className="max-w-[1800px]">
                             {isEditingMetadata ? (
                                 <textarea 
                                     value={tempTitle}
                                     onChange={(e) => setTempTitle(e.target.value)}
-                                    className="w-full bg-white border border-black/10 rounded-2xl p-4 text-4xl md:text-5xl font-black mb-10 text-black focus:outline-none focus:border-red-600 transition-all resize-none shadow-xl"
+                                    className="w-full bg-white border border-dancheong-ink/10 rounded-[4rem] p-16 text-6xl md:text-[10rem] font-serif font-black text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all resize-none shadow-2xl uppercase tracking-tighter leading-[0.8]"
                                     rows={2}
                                 />
                             ) : (
-                                <h1 className="text-5xl md:text-9xl font-black mb-10 leading-[0.8] tracking-tighter uppercase whitespace-pre-wrap break-keep text-black">
-                                    <AutoTranslatedText text={tempTitle} />
+                                <h1 className="text-[10rem] md:text-[18rem] font-serif font-black text-dancheong-ink tracking-tighter leading-[0.8] uppercase flex flex-col">
+                                    <span className="flex items-center gap-10">
+                                        Virtual <span className="text-xl md:text-3xl font-serif italic text-dancheong-ink/20 tracking-widest align-middle">DEPT.</span>
+                                    </span>
+                                    <span className="ml-20 md:ml-40 text-[#800020]">
+                                        <AutoTranslatedText text={tempTitle} />
+                                    </span>
                                 </h1>
                             )}
-                            
-                            {isEditingMetadata ? (
-                                <textarea 
-                                    value={tempDesc}
-                                    onChange={(e) => setTempDesc(e.target.value)}
-                                    className="w-full bg-white border border-black/10 rounded-2xl p-4 text-lg md:text-xl font-serif italic mb-10 text-black focus:outline-none focus:border-red-600 transition-all resize-none shadow-xl"
-                                    rows={4}
-                                />
-                            ) : (
-                                <p className="text-xl md:text-2xl font-serif italic text-black/40 max-w-2xl leading-relaxed border-l-4 border-red-600 pl-8">
-                                    <AutoTranslatedText text={tempDesc} />
-                                </p>
-                            )}
                         </div>
-                    </div>
-                </div>
-            </header>
 
-              <section id="availability-section" className="relative py-24 px-6 md:px-12 bg-black/5 backdrop-blur-sm">
-                <div className="container mx-auto">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3 text-black/60">
-                                <Sparkles size={16} className="text-red-600" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em]"><AutoTranslatedText text={t('ticket.current_season')} /></span>
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-16 pt-20">
+                            <div className="max-w-4xl">
+                                {isEditingMetadata ? (
+                                    <textarea 
+                                        value={tempDesc}
+                                        onChange={(e) => setTempDesc(e.target.value)}
+                                        className="w-full bg-white border border-dancheong-ink/10 rounded-[3rem] p-12 text-2xl font-serif italic text-dancheong-ink/60 focus:outline-none focus:border-[#800020] transition-all resize-none shadow-xl"
+                                        rows={4}
+                                    />
+                                ) : (
+                                    <p className="text-3xl md:text-5xl text-dancheong-ink/60 font-serif italic leading-tight border-l-[12px] border-[#800020] pl-16">
+                                        <AutoTranslatedText text={tempDesc} />
+                                    </p>
+                                )}
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-black text-black tracking-tighter uppercase leading-none">
-                                <AutoTranslatedText text={t('ticket.now_available')} />
-                            </h2>
+                            
+                            <div className="flex items-center gap-12 text-[11px] font-black tracking-widest text-dancheong-ink/40 uppercase">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-2 h-2 rounded-full bg-dancheong-mugwort" />
+                                    <span>LIVE SHOWS</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-2 h-2 rounded-full bg-[#800020]" />
+                                    <span>LIMITED EDITION</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-6">
-                            <div className="h-px w-12 bg-red-600" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/40">
-                                <AutoTranslatedText text={t('ticket.premium_selection_msg')} />
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-4 mb-16 p-2 rounded-[2rem] bg-black/5 w-fit border border-black/10">
-                        {['ALL', 'MUSICAL', 'TRADITION', 'EXHIBITION'].map((cat) => (
-                            <button 
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`px-8 py-3 rounded-full text-[10px] font-black tracking-widest uppercase transition-all shadow-sm ${
-                                    activeCategory === cat 
-                                    ? 'bg-black text-white' 
-                                    : 'bg-white border border-black/10 text-black/40 hover:bg-black hover:text-white'
-                                }`}
-                            >
-                                <AutoTranslatedText text={cat === 'ALL' ? t('common.all') : cat} />
-                            </button>
-                        ))}
-                    </div>
+                    </motion.div>
+                </div>
 
-                {isLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="h-96 rounded-3xl bg-[#1a1a1a] border border-white/5 animate-pulse" />
-                        ))}
-                    </div>
-                ) : ticketItems.length === 0 ? (
-                         <AutoTranslatedText text={t('ticket.no_events')} />
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {ticketItems.map((ticket) => (
-                            <BroadwayTicketCard 
-                                key={ticket.id} 
-                                ticket={ticket} 
-                                lang={i18n.language}
-                                isAdmin={isManagementAllowed}
-                                onEdit={() => handleEditInitiate(ticket)}
-                                onDelete={() => handleDelete(ticket.id)}
-                                onClick={() => {
-                                    setSelectedTicket(ticket);
-                                    setQuantity(1);
-                                    setShowReservationModal(true);
-                                }}
-                            />
-                        ))}
-                    </div>
-                )}
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-1/2 h-full pointer-events-none overflow-hidden opacity-5">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-to-br from-[#800020] to-transparent rounded-full blur-[200px]" />
                 </div>
             </section>
 
+            {/* Grid Section */}
+            <main className="max-w-[1800px] mx-auto px-10 md:px-20 pb-60">
+                <div className="flex flex-wrap gap-4 mb-32 p-4 rounded-full bg-rose-50 border border-rose-100 w-fit shadow-xl backdrop-blur-md">
+                    {['ALL', 'MUSICAL', 'TRADITION', 'EXHIBITION'].map((cat) => (
+                        <button 
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-12 py-5 rounded-full text-[11px] font-black tracking-widest uppercase transition-all duration-700 ${
+                                activeCategory === cat 
+                                ? 'bg-red-600 text-white shadow-2xl scale-105' 
+                                : 'bg-rose-50 border border-rose-100 text-red-600/60 hover:text-red-600 hover:border-red-600/30 shadow-sm'
+                            }`}
+                        >
+                            <AutoTranslatedText text={cat === 'ALL' ? t('common.all') : cat} />
+                        </button>
+                    ))}
+                </div>
+
+                {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-20">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="h-[600px] rounded-[4rem] bg-white border border-dancheong-ink/5 animate-pulse" />
+                        ))}
+                    </div>
+                ) : (
+                    <motion.div 
+                        layout
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-20"
+                    >
+                        {ticketItems.map((ticket, idx) => (
+                            <motion.div
+                                key={ticket.id}
+                                initial={{ opacity: 0, y: 50 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                            >
+                                <BroadwayTicketCard 
+                                    ticket={ticket} 
+                                    lang={i18n.language}
+                                    isAdmin={isManagementAllowed}
+                                    onEdit={() => handleEditInitiate(ticket)}
+                                    onDelete={() => handleDelete(ticket.id)}
+                                    onClick={() => {
+                                        setSelectedTicket(ticket);
+                                        setQuantity(1);
+                                        setShowReservationModal(true);
+                                    }}
+                                />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </main>
+
+            {/* Modals */}
             <AnimatePresence>
                 {showAddModal && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm"
+                        className="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-dancheong-ink/60 backdrop-blur-md"
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-[#F2E7D5] border border-black/10 w-full max-w-2xl rounded-[3rem] p-12 text-black shadow-2xl relative overflow-y-auto max-h-[90vh]"
+                            initial={{ scale: 0.9, opacity: 0, y: 40 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 40 }}
+                            className="bg-white border border-dancheong-ink/10 w-full max-w-3xl rounded-[4.5rem] p-20 text-dancheong-ink shadow-[0_100px_150px_rgba(0,0,0,0.3)] relative overflow-y-auto max-h-[90vh]"
                         >
-                            {/* Close Button */}
                             <button 
                                 onClick={() => setShowAddModal(false)}
-                                className="absolute top-8 right-8 z-[30010] w-12 h-12 rounded-full bg-white border border-black/10 flex items-center justify-center text-black/40 hover:text-black hover:bg-black/5 transition-all shadow-sm"
+                                className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#F9F9F9] transition-all shadow-xl"
                             >
-                                <X size={24} />
+                                <X size={28} />
                             </button>
 
-                            <h2 className="text-3xl font-black mb-8 uppercase tracking-tighter">
-                                 <AutoTranslatedText text={isEditMode ? t('ticket.edit_event') : t('ticket.add_new_event')} />
+                            <h2 className="text-5xl font-serif font-black mb-16 uppercase tracking-tighter">
+                                <AutoTranslatedText text={isEditMode ? t('ticket.edit_event') : t('ticket.add_new_event')} />
                             </h2>
 
-                            <div className="space-y-8">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40 block">
-                                         <AutoTranslatedText text={t('common.title')} />
+                            <div className="space-y-16">
+                                <div className="space-y-4">
+                                    <label className="text-[11px] font-black uppercase tracking-[0.5em] text-dancheong-ink/30 block ml-4">
+                                        <AutoTranslatedText text={t('common.title')} />
                                     </label>
                                     <input 
                                         type="text"
                                         value={newTicket.title}
                                         onChange={(e) => setNewTicket({...newTicket, title: e.target.value})}
-                                        className="w-full bg-white border border-black/10 rounded-2xl px-6 py-4 text-black focus:outline-none focus:border-red-600 transition-all shadow-sm"
-                                        placeholder="Broadway Musical..."
+                                        className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] px-10 py-6 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
+                                        placeholder="Performance Title..."
                                     />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40 block">
-                                         <AutoTranslatedText text={t('common.date')} />
+                                <div className="space-y-4">
+                                    <label className="text-[11px] font-black uppercase tracking-[0.5em] text-dancheong-ink/30 block ml-4">
+                                        <AutoTranslatedText text={t('common.date')} />
                                     </label>
                                     <div className="relative">
-                                        <Calendar size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-black/20" />
+                                        <Calendar size={20} className="absolute left-10 top-1/2 -translate-y-1/2 text-[#800020]" />
                                         <input 
                                             type="text"
                                             value={newTicket.date}
                                             onChange={(e) => setNewTicket({...newTicket, date: e.target.value})}
                                             placeholder="2026.04.15 ~ 2026.04.30"
-                                            className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-14 pr-6 text-black focus:outline-none focus:border-red-600 transition-all shadow-sm"
+                                            className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40 block">
-                                         <AutoTranslatedText text={t('common.image_url')} />
+                                <div className="space-y-4">
+                                    <label className="text-[11px] font-black uppercase tracking-[0.5em] text-dancheong-ink/30 block ml-4">
+                                        <AutoTranslatedText text={t('common.image_url')} />
                                     </label>
-                                    <div className="space-y-4">
+                                    <div className="space-y-8">
                                         <div className="relative">
-                                            <ImageIcon size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-black/20" />
+                                            <ImageIcon size={20} className="absolute left-10 top-1/2 -translate-y-1/2 text-[#800020]" />
                                             <input 
                                                 type="text"
                                                 value={newTicket.imageUrl}
@@ -800,7 +816,7 @@ return (
                                                     if (previewUrl) setPreviewUrl(null);
                                                 }}
                                                 placeholder="https://example.com/image.jpg"
-                                                className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-14 pr-6 text-black focus:outline-none focus:border-red-600 transition-all shadow-sm"
+                                                className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
                                             />
                                         </div>
 
@@ -809,23 +825,23 @@ return (
                                         {!previewUrl && !newTicket.imageUrl ? (
                                             <button 
                                                 onClick={() => fileInputRef.current?.click()} 
-                                                className="w-full flex flex-col items-center justify-center p-12 rounded-[2rem] border-2 border-dashed border-black/10 hover:border-red-600/30 hover:bg-black/5 transition-all group"
+                                                className="w-full flex flex-col items-center justify-center p-20 rounded-[4rem] border-2 border-dashed border-dancheong-ink/10 hover:border-[#800020] hover:bg-[#F9F9F9] transition-all group"
                                             >
-                                                <UploadCloud size={40} className="text-black/20 group-hover:text-red-600 mb-4 transition-colors" />
-                                                <span className="text-xs font-bold text-black/40 group-hover:text-black">
-                                                    <AutoTranslatedText text="Upload Thumbnail Image" />
+                                                <UploadCloud size={64} className="text-dancheong-ink/10 group-hover:text-[#800020] mb-6 transition-colors duration-700" />
+                                                <span className="text-[11px] font-black tracking-widest text-dancheong-ink/30 group-hover:text-dancheong-ink uppercase">
+                                                    <AutoTranslatedText text="Upload Cinematic Frame" />
                                                 </span>
                                             </button>
                                         ) : (
-                                            <div className="relative rounded-[2rem] overflow-hidden border border-black/10 group shadow-lg">
-                                                <img src={previewUrl || newTicket.imageUrl} alt="Preview" className="w-full h-48 object-cover" />
-                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                            <div className="relative rounded-[4rem] overflow-hidden border border-dancheong-ink/5 group shadow-2xl">
+                                                <img src={previewUrl || newTicket.imageUrl} alt="Preview" className="w-full h-80 object-cover transition-all duration-1000 group-hover:scale-105" />
+                                                <div className="absolute inset-0 bg-dancheong-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                     <button 
                                                         onClick={() => {
                                                             setPreviewUrl(null);
                                                             setNewTicket({...newTicket, imageUrl: ''});
                                                         }} 
-                                                        className="px-6 py-3 rounded-full bg-red-600 text-white text-[10px] font-black tracking-widest uppercase hover:bg-red-700 shadow-xl"
+                                                        className="px-12 py-5 rounded-full bg-[#800020] text-white text-[11px] font-black tracking-widest uppercase hover:bg-red-800 shadow-2xl transition-transform duration-500 hover:scale-110"
                                                     >
                                                         <AutoTranslatedText text="Remove & Replace" />
                                                     </button>
@@ -835,15 +851,15 @@ return (
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4 pt-4">
+                                <div className="flex gap-8 pt-10">
                                     <button 
                                         onClick={handleSaveTicket}
                                         disabled={isUploading}
-                                        className="flex-1 py-6 rounded-2xl bg-black text-white font-black text-sm uppercase tracking-widest hover:bg-red-600 transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                                        className="flex-1 py-10 rounded-[3rem] bg-dancheong-ink text-white font-black text-[11px] uppercase tracking-[0.5em] hover:bg-[#800020] transition-all shadow-2xl active:scale-95 disabled:opacity-50"
                                     >
                                         {isUploading ? (
-                                            <div className="flex items-center justify-center gap-3">
-                                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                            <div className="flex items-center justify-center gap-4">
+                                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                                                 <AutoTranslatedText text={t('common.processing')} />
                                             </div>
                                         ) : (
@@ -852,7 +868,7 @@ return (
                                     </button>
                                     <button 
                                         onClick={() => setShowAddModal(false)}
-                                        className="flex-1 py-6 rounded-2xl bg-white border border-black/10 text-black font-black text-sm uppercase tracking-widest hover:bg-black/5 transition-all shadow-sm active:scale-95"
+                                        className="flex-1 py-10 rounded-[3rem] bg-white border border-dancheong-ink/10 text-dancheong-ink font-black text-[11px] uppercase tracking-[0.5em] hover:bg-[#F9F9F9] transition-all shadow-xl active:scale-95"
                                     >
                                         <AutoTranslatedText text={t('common.cancel')} />
                                     </button>
@@ -863,29 +879,6 @@ return (
                 )}
             </AnimatePresence>
 
-            {/* Ticket Footer */}
-            <footer className="mt-40 border-t border-black/10 py-20 px-6">
-                <div className="container mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
-                    <div className="flex flex-col gap-6">
-                        <div className="text-4xl font-black tracking-tighter text-black/10 uppercase"><AutoTranslatedText text="몽땅쏙 TICKETS" /></div>
-                        <p className="text-[9px] font-bold tracking-[0.5em] text-black/30 uppercase max-w-sm leading-loose">
-                            <AutoTranslatedText text="Certified Virtual Ticketing Infrastructure for premium cultural heritage events." />
-                        </p>
-                    </div>
-                    
-                    <button 
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className="group flex flex-col items-center gap-4 cursor-pointer"
-                    >
-                        <div className="w-14 h-14 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-black group-hover:border-black transition-all shadow-sm">
-                             <div className="w-1 h-1 rounded-full bg-black opacity-40 group-hover:bg-white group-hover:h-8 transition-all" />
-                        </div>
-                        <span className="text-[9px] font-black tracking-widest uppercase text-black/40 group-hover:text-black transition-opacity"><AutoTranslatedText text="Back to Top" /></span>
-                    </button>
-                </div>
-            </footer>
-
-            {/* Broadway Reservation Modal */}
             <ReservationModal 
                 ticket={selectedTicket}
                 isOpen={showReservationModal}
@@ -897,6 +890,30 @@ return (
                 reservationComplete={reservationComplete}
                 lang={i18n.language}
             />
+
+            {/* Global Footer - Minimalist Premium */}
+            <footer className="border-t border-dancheong-ink/5 bg-white pt-60 pb-40 px-20">
+                <div className="max-w-[1800px] mx-auto flex flex-col md:flex-row justify-between items-start gap-40">
+                    <div className="space-y-20">
+                        <h2 className="text-8xl md:text-[12rem] font-serif font-black text-dancheong-ink/10 leading-none uppercase select-none">
+                            Heritage<br />Excellence
+                        </h2>
+                        <div className="flex gap-20">
+                            {[t('footer.about'), t('footer.privacy'), t('footer.terms')].map((link, i) => (
+                                <a key={i} href="#" className="text-[11px] font-black tracking-[0.4em] text-dancheong-ink/40 hover:text-[#800020] transition-colors uppercase">
+                                    <AutoTranslatedText text={link} />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="text-right space-y-8">
+                        <div className="text-4xl font-serif font-black text-dancheong-ink">DEPT.</div>
+                        <p className="text-[11px] font-black text-dancheong-ink/20 tracking-[0.4em] uppercase">
+                            © 2024 DEPT GLOBAL INC. ALL RIGHTS RESERVED.
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };

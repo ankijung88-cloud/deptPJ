@@ -113,7 +113,7 @@ export const HeroSection: React.FC = () => {
     }
 
     return (
-        <section id="hero" className="relative h-[40vh] sm:h-screen w-full overflow-hidden bg-dancheong-ivory group/hero">
+        <section id="hero" className="relative h-[40vh] sm:h-screen w-full overflow-hidden bg-white group/hero">
             <AnimatePresence initial={false} custom={direction}>
                 <motion.div
                     key={currentIndex}
@@ -147,7 +147,7 @@ export const HeroSection: React.FC = () => {
 
                     {/* Sophisticated Gradient Overlays */}
                     <div className="absolute inset-0 bg-gradient-to-r from-dancheong-ink/40 via-transparent to-transparent z-[2]" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-dancheong-ivory/40 z-[2]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/40 z-[2]" />
                     
                     {/* Editorial Content Overlay */}
                     <div className="absolute inset-0 z-[10] flex items-center">

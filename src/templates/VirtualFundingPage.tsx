@@ -113,7 +113,12 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
     const { isAdmin, role, user } = useAdmin();
     const { floors } = useFloors();
 
-    const theme = React.useMemo(() => JOSEON_THEMES[Math.floor(Math.random() * JOSEON_THEMES.length)], []);; // Emerald Green for funding
+    const theme = {
+        bgStyle: { backgroundColor: '#F9F9F9' },
+        accentColor: '#DC2626',
+        highlightColor: '#171717',
+        textPrimary: '#171717'
+    };
 
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -336,11 +341,9 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
     };
 
     return (
-        <div className="min-h-screen font-sans" style={theme.bgStyle}>
-            <div className="absolute inset-0 bg-white/40 z-0 pointer-events-none" />
-
+        <div className="min-h-screen font-sans bg-[#F9F9F9]">
             {/* Header */}
-            <header className="relative w-full py-12 px-6 md:px-12 border-b border-black/10 z-10 bg-white/80 backdrop-blur-sm">
+            <header className="relative w-full py-16 px-6 md:px-12 border-b border-neutral-200 z-10 bg-white shadow-sm">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-6">
                         <button
@@ -361,7 +364,7 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-black/20 hover:bg-black/5 transition-all text-[10px] font-black tracking-widest uppercase text-black shadow-xl bg-white/50"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-black shadow-sm bg-white"
                                 >
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
@@ -436,7 +439,7 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="group relative bg-white border border-black/10 rounded-[2rem] overflow-hidden shadow-xl"
+                                        className="group relative bg-white border border-neutral-200 rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
                                     >
                                         <div className="aspect-[4/3] overflow-hidden relative">
                                             <img src={item.imageUrl} alt="Funding Project" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -524,7 +527,7 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="relative w-full max-w-xl bg-[#F2E7D5] border border-black/10 rounded-3xl p-8 shadow-2xl"
+                            className="relative w-full max-w-xl bg-white border border-neutral-200 rounded-[2.5rem] p-10 shadow-2xl"
                         >
                                                         <h3 className="text-xl text-black mb-6 font-light tracking-tight"><AutoTranslatedText text="크라우드펀딩 상품 추가" /></h3>
                             <div className="space-y-4">

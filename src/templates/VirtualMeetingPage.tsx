@@ -339,10 +339,10 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
 
     return (
         <ErrorBoundary>
-            <div className="relative w-full h-screen bg-[#F2E7D5] overflow-hidden text-black font-sans flex">
+            <div className="relative w-full h-screen bg-[#F9F9F9] overflow-hidden text-black font-sans flex">
                 
                 {/* 1. Left Sidebar - Controls */}
-                <aside className="w-40 h-full bg-white border-r border-black/10 flex flex-col items-center py-8 z-50 shadow-xl">
+                <aside className="w-40 h-full bg-white border-r border-neutral-200 flex flex-col items-center py-8 z-50 shadow-xl">
                     <div className="flex flex-col items-center w-full gap-8 px-4">
                         {/* Logout & Language */}
                         <div className="grid grid-cols-2 gap-2 w-full">
@@ -501,7 +501,7 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                 <main className="flex-1 flex flex-col relative overflow-hidden bg-white/50">
                     
                     {/* Top Status Bar (Minimal) */}
-                    <div className="h-16 border-b border-black/10 flex items-center justify-between px-10 bg-black/5 backdrop-blur-md">
+                    <div className="h-16 border-b border-neutral-200 flex items-center justify-between px-10 bg-white/40 backdrop-blur-md">
                         <div className="flex items-center gap-6">
                             <h2 className="text-sm font-black uppercase tracking-widest text-black"><AutoTranslatedText text={t('meeting.meeting_room')} /></h2>
                             <div className="w-[1px] h-4 bg-black/10" />
@@ -533,7 +533,7 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                     </div>
 
                     {/* Bottom: Participant Videos (1-Row Grid) */}
-                    <div className="h-48 border-t border-black/10 bg-white flex items-center px-6 gap-4 overflow-x-auto custom-scrollbar">
+                    <div className="h-48 border-t border-neutral-200 bg-white/40 backdrop-blur-md flex items-center px-6 gap-4 overflow-x-auto custom-scrollbar">
                         {/* Local Participant */}
                         <div className="flex-shrink-0 w-64 h-36 bg-black rounded-2xl border-2 border-red-600 relative overflow-hidden group">
                             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
@@ -588,7 +588,7 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                             initial={{ width: 0, opacity: 0 }}
                             animate={{ width: 360, opacity: 1 }}
                             exit={{ width: 0, opacity: 0 }}
-                            className="h-full bg-white border-l border-black/10 flex flex-col z-50 shadow-2xl"
+                            className="h-full bg-white border-l border-neutral-200 flex flex-col z-50 shadow-2xl"
                         >
                             <div className="p-8 border-b border-black/10 flex items-center justify-between">
                                 <div className="flex items-center gap-3">

@@ -60,6 +60,7 @@ export interface FeaturedItem {
     reservation_programs?: any[] | string;
     reservation_slots?: string[] | string;
     page_type?: string;
+    metadata?: any;
 }
 
 export interface FloorContent {

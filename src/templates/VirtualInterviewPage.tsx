@@ -316,7 +316,7 @@ const VirtualInterviewPage: React.FC<VirtualInterviewPageProps> = ({ item, produ
     const activeMaterial = sharedMaterials.find(m => m.id === activeMaterialId) || null;
 
     return (
-        <div className="relative w-full h-screen bg-[#F2E7D5] overflow-hidden">
+        <div className="relative w-full h-screen bg-[#F9F9F9] overflow-hidden">
             {/* 3D Canvas */}
             <div className="absolute inset-0 z-0">
                 <ErrorBoundary>
@@ -694,7 +694,7 @@ const VirtualInterviewPage: React.FC<VirtualInterviewPageProps> = ({ item, produ
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-[100] bg-[#F2E7D5] flex flex-col p-12"
+                        className="absolute inset-0 z-[100] bg-[#F9F9F9] flex flex-col p-12"
                     >
                         <div className="flex justify-between items-center mb-10 text-black">
                             <div className="space-y-1">

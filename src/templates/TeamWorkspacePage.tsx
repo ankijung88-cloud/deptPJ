@@ -296,7 +296,17 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
     };
 
     return (
-        <div className="fixed inset-0 bg-[#F2E7D5] text-black overflow-hidden font-sans" onMouseMove={handleActivity}>
+        <div className="fixed inset-0 bg-[#F9F9F9] text-dancheong-ink overflow-hidden font-sans selection:bg-dancheong-mugwort/20" onMouseMove={handleActivity}>
+            {/* Texture Overlay */}
+            <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay" 
+                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
+
+            {/* Ambient Background Glows */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[#FFD1D1]/20 blur-[150px] rounded-full opacity-40 animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className="absolute bottom-[10%] left-[-10%] w-[60%] h-[60%] bg-dancheong-mugwort/5 blur-[120px] rounded-full opacity-30" />
+            </div>
+
             <ErrorBoundary>
                 <div className="absolute inset-0 z-0 pt-24">
                     <OfficeEnvironment2D 
@@ -321,57 +331,57 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                 {/* Assignment Modal */}
             <AnimatePresence>
                 {assigningSeatId && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-dancheong-ink/40 backdrop-blur-md">
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setAssigningSeatId(null)}
-                            className="absolute inset-0 bg-white/95"
+                            className="absolute inset-0"
                         />
                         <motion.div 
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            className="relative w-full max-w-md bg-[#F2E7D5] border border-black/10 rounded-3xl p-8 overflow-hidden shadow-2xl"
+                            initial={{ scale: 0.9, opacity: 0, y: 40 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 40 }}
+                            className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[4rem] p-12 overflow-hidden shadow-[0_100px_150px_rgba(0,0,0,0.2)]"
                         >
-                            <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-black">
-                                <Plus className="text-[#00D2FF]" />
+                            <h3 className="text-3xl font-serif font-black mb-8 flex items-center gap-4 text-dancheong-ink">
+                                <Plus className="text-dancheong-mugwort" />
                                 <AutoTranslatedText text="DESIGNATE SEAT" />
                             </h3>
-                            <div className="flex flex-col mb-6">
-                                <span className="text-[10px] font-black tracking-[0.4em] opacity-40 text-black uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></span>
-                                <h1 className="text-2xl font-black tracking-tight text-black"><AutoTranslatedText text="Team Workspace" /></h1>
+                            <div className="flex flex-col mb-10">
+                                <span className="text-[9px] font-black tracking-[0.4em] opacity-40 text-dancheong-ink uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></span>
+                                <h1 className="text-4xl font-serif font-black tracking-tight text-dancheong-ink leading-none mt-2"><AutoTranslatedText text="Team Workspace" /></h1>
                             </div>
-                            <div className="flex items-center gap-3 bg-black/5 border border-black/10 px-4 py-2 rounded-xl focus-within:border-[#00D2FF]/50 transition-all mb-4">
-                                <Search size={16} className="opacity-60 text-black" />
+                            <div className="flex items-center gap-4 bg-white/40 border border-white/60 px-6 py-4 rounded-3xl focus-within:border-dancheong-mugwort/30 transition-all mb-8 shadow-inner backdrop-blur-md">
+                                <Search size={18} className="opacity-40 text-dancheong-ink" />
                                 <input 
                                     type="text" 
                                     placeholder={_t("Search members...")} 
-                                    className="bg-transparent border-none outline-none text-sm w-full font-medium text-black placeholder:text-black/30"
+                                    className="bg-transparent border-none outline-none text-sm w-full font-serif italic text-dancheong-ink placeholder:text-dancheong-ink/20"
                                 />
                             </div>
-                            <span className="text-[10px] font-bold opacity-30 tracking-widest uppercase"><AutoTranslatedText text="Member Search" /></span>
-                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar pointer-events-auto mt-2">
+                            <span className="text-[9px] font-black opacity-20 tracking-[0.3em] uppercase pl-1"><AutoTranslatedText text="Member Search" /></span>
+                            <div className="space-y-3 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar pointer-events-auto mt-4">
                                 <button 
                                     onClick={() => handleAssignUser(assigningSeatId, null)}
-                                    className="w-full p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-black/10 text-left transition-all"
+                                    className="w-full p-6 rounded-[2.5rem] bg-dancheong-ink/5 border border-white/40 hover:bg-white/60 text-left transition-all backdrop-blur-sm"
                                 >
-                                    <div className="text-sm font-bold opacity-60 text-black"><AutoTranslatedText text="REMOVE ASSIGNMENT" /></div>
+                                    <div className="text-[10px] font-black opacity-40 text-dancheong-ink tracking-widest"><AutoTranslatedText text="REMOVE ASSIGNMENT" /></div>
                                 </button>
                                 {participants.map(p => (
                                     <button 
                                         key={p.id}
                                         onClick={() => handleAssignUser(assigningSeatId, { id: p.id, name: p.name })}
-                                        className="w-full p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-[#00D2FF]/20 hover:border-[#00D2FF]/40 text-left transition-all group pointer-events-auto"
+                                        className="w-full p-8 rounded-[3rem] bg-white/40 border border-white/60 hover:bg-white/80 hover:border-dancheong-mugwort/30 text-left transition-all group pointer-events-auto shadow-sm backdrop-blur-md"
                                     >
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <div className="font-bold text-lg">{p.name}</div>
-                                                <div className="text-[10px] opacity-40 uppercase tracking-widest">{p.status || 'Active'}</div>
+                                                <div className="font-serif font-black text-2xl text-dancheong-ink">{p.name}</div>
+                                                <div className="text-[9px] opacity-40 uppercase font-black tracking-[0.3em] mt-1">{p.status || 'Active'}</div>
                                             </div>
-                                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#00D2FF]/20">
-                                                <Plus className="w-4 h-4" />
+                                            <div className="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center group-hover:bg-dancheong-mugwort group-hover:text-white transition-all shadow-sm">
+                                                <Plus className="w-5 h-5" />
                                             </div>
                                         </div>
                                     </button>
@@ -379,7 +389,7 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                             </div>
                             <button 
                                 onClick={() => setAssigningSeatId(null)}
-                                className="w-full mt-6 py-4 rounded-2xl bg-black/5 font-bold hover:bg-black/10 transition-all pointer-events-auto text-black"
+                                className="w-full mt-10 py-6 rounded-3xl bg-dancheong-ink/5 font-black text-[10px] tracking-widest hover:bg-white/60 transition-all pointer-events-auto text-dancheong-ink uppercase border border-white/40 shadow-sm"
                             >
                                 <AutoTranslatedText text="CANCEL" />
                             </button>
@@ -389,90 +399,90 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
             </AnimatePresence>
 
                 {/* Top Bar */}
-                <header className="p-6 flex justify-between items-center pointer-events-auto">
-                    <div className="flex items-center gap-4">
+                <header className="p-8 flex justify-between items-center pointer-events-auto bg-[#F9F9F9]/20 backdrop-blur-xl border-b border-white/40 z-[100]">
+                    <div className="flex items-center gap-6">
                         <button 
                             onClick={() => onClose ? onClose() : navigate(-1)}
-                            className="w-12 h-12 rounded-full bg-black/5 border border-black/10 flex items-center justify-center hover:bg-black/10 transition-all group"
+                            className="w-14 h-14 rounded-full bg-white/40 border border-white/60 flex items-center justify-center hover:bg-white/80 transition-all group shadow-sm backdrop-blur-md"
                         >
-                            <LogOut className="w-5 h-5 text-black/60 group-hover:text-black transition-colors rotate-180" />
+                            <LogOut className="w-6 h-6 text-dancheong-ink/40 group-hover:text-dancheong-ink transition-colors rotate-180" />
                         </button>
                         <div>
-                            <h1 className="text-xl font-black tracking-tighter text-[#00D2FF]"><AutoTranslatedText text="VIRTUAL OFFICE" /></h1>
-                            <div className="flex items-center gap-2 text-[10px] text-black/60 uppercase tracking-widest font-bold">
-                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <h1 className="text-2xl font-serif font-black tracking-tighter text-dancheong-ink uppercase"><AutoTranslatedText text="VIRTUAL OFFICE" /></h1>
+                            <div className="flex items-center gap-3 text-[9px] text-dancheong-ink/40 uppercase tracking-[0.3em] font-black mt-1">
+                                <span className="w-2 h-2 rounded-full bg-dancheong-mugwort animate-pulse shadow-[0_0_10px_rgba(61,72,61,0.3)]" />
                                 {participants.length} <AutoTranslatedText text="Members Active" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         {DEPARTMENTS.map(dept => (
-                            <div key={dept.id} className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black/60">
-                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dept.color }} />
+                            <div key={dept.id} className="hidden md:flex items-center gap-3 px-5 py-2 rounded-full bg-white/40 border border-white/60 text-[9px] font-black uppercase tracking-[0.2em] text-dancheong-ink/60 backdrop-blur-md shadow-sm">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dept.color, boxShadow: `0 0 10px ${dept.color}40` }} />
                                 <AutoTranslatedText text={dept.name} />
                             </div>
                         ))}
                     </div>
                 </header>
+
                 {/* Main Action Controls (Right Sidebar) */}
-                <aside className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 pointer-events-auto z-20">
-                    <div className="px-5 py-8 rounded-[2.5rem] bg-white border border-black/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-col items-center gap-6">
-                        <div className="pb-4 mb-2 border-b border-black/10 w-full flex justify-center">
+                <aside className="absolute right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 pointer-events-auto z-[200]">
+                    <div className="px-6 py-12 rounded-[4rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_60px_100px_rgba(0,0,0,0.1)] flex flex-col items-center gap-10">
+                        <div className="pb-8 border-b border-dancheong-ink/5 w-full flex justify-center">
                             <LanguageSelector variant="sidebar" />
                         </div>
-                        <div className="flex flex-col items-center gap-4 border-b border-black/10 pb-6 mb-2">
+                        <div className="flex flex-col items-center gap-6 border-b border-dancheong-ink/5 pb-10">
                             {[
-                                { id: 'working', icon: Monitor, color: '#00D2FF', label: <AutoTranslatedText text="Working" /> },
-                                { id: 'break', icon: Coffee, color: '#FF9500', label: <AutoTranslatedText text="Break" /> },
-                                { id: 'smoking', icon: Wind, color: '#FF3B30', label: <AutoTranslatedText text="Smoking" /> },
-                                { id: 'toilet', icon: Users, color: '#AF52DE', label: <AutoTranslatedText text="Away" /> }
+                                { id: 'working', icon: Monitor, color: '#3D483D', label: <AutoTranslatedText text="Working" /> },
+                                { id: 'break', icon: Coffee, color: '#D4A373', label: <AutoTranslatedText text="Break" /> },
+                                { id: 'smoking', icon: Wind, color: '#800020', label: <AutoTranslatedText text="Smoking" /> },
+                                { id: 'toilet', icon: Users, color: '#7E9181', label: <AutoTranslatedText text="Away" /> }
                             ].map(status => (
                                 <button
                                     key={status.id}
                                     onClick={() => setUserStatus(status.id)}
-                                    className={`relative group p-4 rounded-2xl transition-all ${userStatus === status.id ? 'bg-black/5 shadow-[0_0_20px_rgba(0,0,0,0.05)]' : 'hover:bg-black/5'}`}
+                                    className={`relative group p-5 rounded-3xl transition-all duration-500 ${userStatus === status.id ? 'bg-white shadow-[0_15px_30px_rgba(0,0,0,0.08)]' : 'hover:bg-white/60 shadow-none'}`}
                                     title={typeof status.label === 'string' ? status.label : ''}
                                 >
-                                    <status.icon className={`w-6 h-6 ${userStatus === status.id ? '' : 'opacity-60'}`} style={{ color: status.color }} />
+                                    <status.icon className={`w-6 h-6 transition-all duration-500 ${userStatus === status.id ? 'scale-110' : 'opacity-40 grayscale'}`} style={{ color: userStatus === status.id ? status.color : 'inherit' }} />
                                     {userStatus === status.id && (
-                                        <motion.div layoutId="status-indicator" className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-full bg-black" />
+                                        <motion.div layoutId="status-indicator" className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-full bg-dancheong-mugwort" />
                                     )}
                                     
-                                    {/* Tooltip on hover */}
-                                    <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                    <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
                                         {status.label}
                                     </div>
                                 </button>
                             ))}
                         </div>
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex flex-col items-center gap-6">
                             <button 
                                 onClick={() => navigate('/virtual-meeting/default-room')}
-                                className="group relative p-4 rounded-2xl bg-[#00D2FF] text-black hover:bg-[#00D2FF]/80 transition-all shadow-[0_10px_20px_rgba(0,210,255,0.2)]"
+                                className="group relative p-5 rounded-3xl bg-dancheong-mugwort text-white hover:bg-dancheong-ink transition-all shadow-[0_20px_40px_rgba(61,72,61,0.2)] hover:shadow-none active:scale-90"
                             >
                                 <Video className="w-6 h-6" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
                                     <AutoTranslatedText text="Meeting Room" />
                                 </div>
                             </button>
 
                             <button 
                                 onClick={() => setIsChatOpen(!isChatOpen)}
-                                className={`group relative p-4 rounded-2xl transition-all ${isChatOpen ? 'bg-[#00D2FF] text-black shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-black/5 text-black/60 hover:text-black'}`}
+                                className={`group relative p-5 rounded-3xl transition-all duration-500 active:scale-90 ${isChatOpen ? 'bg-[#800020] text-white shadow-[0_20px_40px_rgba(128,0,32,0.2)]' : 'bg-white/40 text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-white/60 shadow-sm'}`}
                             >
                                 <MessageCircle className="w-6 h-6" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
                                     <AutoTranslatedText text="Office Chat" />
                                 </div>
                             </button>
                             
                             <button 
                                 onClick={() => {/* Settings logic */}}
-                                className="group relative p-4 rounded-2xl bg-black/5 border border-black/10 hover:bg-black/10 transition-all"
+                                className="group relative p-5 rounded-3xl bg-white/40 border border-white/60 hover:bg-white/80 transition-all shadow-sm active:scale-90"
                             >
-                                <Settings className="w-6 h-6 text-black/60" />
-                                <div className="absolute right-full mr-4 px-3 py-1.5 rounded-lg bg-white border border-black/10 text-[10px] font-bold uppercase tracking-widest text-black opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                <Settings className="w-6 h-6 text-dancheong-ink/40" />
+                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
                                     <AutoTranslatedText text="Settings" />
                                 </div>
                             </button>
@@ -484,30 +494,30 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                 <AnimatePresence>
                     {isChatOpen && (
                         <motion.div
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 100 }}
-                            className="absolute right-8 top-24 bottom-32 w-80 bg-white border border-black/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] pointer-events-auto flex flex-col overflow-hidden"
+                            initial={{ opacity: 0, x: 100, scale: 0.95 }}
+                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                            exit={{ opacity: 0, x: 100, scale: 0.95 }}
+                            className="absolute right-12 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150]"
                         >
-                            <div className="p-4 border-b border-black/10 flex justify-between items-center">
-                                <h3 className="font-bold text-xs uppercase tracking-widest text-black/40"><AutoTranslatedText text="Office Chat" /></h3>
-                                <button onClick={() => setIsChatOpen(false)} className="text-black/20 hover:text-black transition-colors">
+                            <div className="p-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/20">
+                                <h3 className="font-black text-[10px] uppercase tracking-[0.4em] text-dancheong-ink/40"><AutoTranslatedText text="Office Chat" /></h3>
+                                <button onClick={() => setIsChatOpen(false)} className="text-dancheong-ink/20 hover:text-dancheong-ink transition-all p-2 hover:bg-white/40 rounded-full">
                                     <MoreVertical size={16} />
                                 </button>
                             </div>
 
-                            <div className="flex-grow overflow-y-auto p-4 space-y-4 scroll-smooth">
+                            <div className="flex-grow overflow-y-auto p-8 space-y-6 scroll-smooth custom-scrollbar">
                                 {chatMessages.map((msg) => (
                                     <div key={msg.id} className={`flex flex-col ${msg.sender === user?.name ? 'items-end' : 'items-start'}`}>
-                                        <span className="text-[10px] text-black/40 mb-1">{msg.sender}</span>
-                                        <div className={`px-3 py-2 rounded-2xl text-sm ${msg.sender === user?.name ? 'bg-[#00D2FF] text-black font-medium' : 'bg-black/5 text-black'}`}>
+                                        <span className="text-[9px] font-black tracking-widest text-dancheong-ink/30 mb-2 uppercase">{msg.sender}</span>
+                                        <div className={`px-6 py-4 rounded-[2rem] text-sm leading-relaxed ${msg.sender === user?.name ? 'bg-dancheong-mugwort text-white shadow-lg shadow-dancheong-mugwort/20' : 'bg-white/60 border border-white text-dancheong-ink shadow-sm'}`}>
                                             {msg.content}
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="p-4 bg-black/5">
+                            <div className="p-8 bg-white/20 border-t border-dancheong-ink/5">
                                 <div className="relative">
                                     <input 
                                         type="text"
@@ -515,13 +525,13 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                                         placeholder={_t("Send a message...")}
-                                        className="w-full bg-white border border-black/10 rounded-2xl px-4 py-3 pr-12 text-sm outline-none focus:border-[#00D2FF]/50 transition-all text-black"
+                                        className="w-full bg-white/60 border border-white rounded-[2rem] px-8 py-5 pr-16 text-sm outline-none focus:border-dancheong-mugwort/30 transition-all text-dancheong-ink shadow-inner backdrop-blur-md"
                                     />
                                     <button 
                                         onClick={handleSendMessage}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-[#00D2FF] text-black flex items-center justify-center hover:scale-105 transition-all"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-dancheong-mugwort text-white flex items-center justify-center hover:bg-dancheong-ink transition-all shadow-lg active:scale-90"
                                     >
-                                        <Send size={14} />
+                                        <Send size={18} />
                                     </button>
                                 </div>
                             </div>
@@ -531,8 +541,8 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
             </div>
             
             {/* Visual Accents */}
-            <div className="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00D2FF]/20 to-transparent" />
-            <div className="fixed bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00D2FF]/20 to-transparent" />
+            <div className="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent z-[300]" />
+            <div className="fixed bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent z-[300]" />
         </div>
     );
 };

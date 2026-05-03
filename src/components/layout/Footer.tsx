@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <footer className="bg-[#F2E7D5] text-dancheong-ink/70 py-24 relative overflow-hidden border-t border-dancheong-ink/5">
+        <footer className="bg-[#F9F9F9] text-dancheong-ink/70 py-24 relative overflow-hidden border-t border-dancheong-ink/5">
             <div className="lossless-layout relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
 

@@ -171,9 +171,9 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
     // Standardized Ivory Theme Tokens
     const theme = {
-        bgStyle: { backgroundColor: '#F2E7D5' },
+        bgStyle: { backgroundColor: '#FFFFFF' },
         color1: '#FFFFFF',
-        color2: '#F2E7D5',
+        color2: '#FFFFFF',
         color3: '#000000',
         accentColor: '#DC2626', // red-600
         highlightColor: '#171717',
@@ -839,12 +839,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
             {/* Store Header */}
             {/* Brand Hero Section */}
-            <header className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden flex flex-col justify-center px-6 md:px-20 transition-all duration-700" style={{ backgroundColor: '#F2E7D5' }}>
+            <header className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden flex flex-col justify-center px-6 md:px-20 transition-all duration-700" style={{ backgroundColor: '#FFFFFF' }}>
                 {/* Custom Hero Background */}
                 {customHeroBg && (
                     <div className="absolute inset-0 z-0">
                         <img src={customHeroBg} className="w-full h-full object-cover" alt="Hero Background" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#F2E7D5]/80 via-[#F2E7D5]/40 to-transparent backdrop-blur-[2px]" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#FFFFFF]/80 via-[#FFFFFF]/40 to-transparent backdrop-blur-[2px]" />
                     </div>
                 )}
 
@@ -1067,12 +1067,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     onClick={() => setSelectedCategoryId(null)}
                                     className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${
                                         selectedCategoryId === null 
-                                        ? 'bg-neutral-900 text-white shadow-xl lg:translate-x-2' 
-                                        : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900'
+                                        ? 'bg-red-600 text-white shadow-xl lg:translate-x-2' 
+                                        : 'bg-rose-50 border border-rose-100 text-neutral-400 hover:border-red-600 hover:text-neutral-900 shadow-sm'
                                     } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full mb-2`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <span className={`text-[10px] font-black tracking-widest ${selectedCategoryId === null ? 'text-red-600' : 'text-neutral-300'}`}>ALL</span>
+                                        <span className={`text-[10px] font-black tracking-widest ${selectedCategoryId === null ? 'text-white' : 'text-red-300'}`}>ALL</span>
                                         <span className="text-xs font-black uppercase tracking-widest"><AutoTranslatedText text="전체보기" /></span>
                                     </div>
                                 </button>
@@ -1083,8 +1083,8 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                             onClick={() => setSelectedCategoryId(c.id)}
                                             className={`w-full flex items-center justify-between p-5 rounded-[1.5rem] transition-all duration-500 ${
                                                 selectedCategoryId === c.id 
-                                                ? 'bg-neutral-900 text-white shadow-2xl lg:translate-x-2' 
-                                                : 'bg-white border border-neutral-100 text-neutral-400 hover:border-red-600/30 hover:bg-red-600/5 hover:text-neutral-900'
+                                                ? 'bg-red-600 text-white shadow-2xl lg:translate-x-2' 
+                                                : 'bg-rose-50 border border-rose-100 text-neutral-400 hover:border-red-600/30 hover:bg-red-600/5 hover:text-neutral-900 shadow-sm'
                                             } whitespace-nowrap min-w-fit lg:min-w-0 lg:w-full`}
                                         >
                                             <div className="flex items-center gap-5 flex-grow">
@@ -1163,7 +1163,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         <div className="flex flex-wrap gap-3 md:gap-6">
                                             <button
                                                 onClick={() => setActiveTemplate(null)}
-                                                className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${!activeTemplate ? 'bg-neutral-900 text-white border-neutral-900 shadow-lg' : 'bg-white text-neutral-400 border-neutral-100 hover:border-neutral-200'}`}
+                                                className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${!activeTemplate ? 'bg-red-600 text-white border-red-600 shadow-lg' : 'bg-rose-50/50 text-neutral-400 border-rose-100/50 hover:border-red-600 hover:text-red-600'}`}
                                             >
                                                 <AutoTranslatedText text="All Types" />
                                             </button>
@@ -1176,7 +1176,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: idx * 0.1 }}
                                                         onClick={() => setActiveTemplate(type)}
-                                                        className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 border ${activeTemplate === type ? 'bg-red-600 text-white border-red-600 shadow-xl scale-105' : 'bg-white text-neutral-900 border-neutral-100 hover:border-neutral-200'}`}
+                                                        className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 border ${activeTemplate === type ? 'bg-red-600 text-white border-red-600 shadow-xl scale-105' : 'bg-rose-50/50 text-neutral-600 border-rose-100/50 hover:border-red-600 hover:text-red-600'}`}
                                                     >
                                                         <AutoTranslatedText text={type.replace('_', ' ')} />
                                                     </motion.button>
@@ -1220,7 +1220,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     onClick={() => { setSelectedItem(item); setShowDetailModal(true); }}
                                     className="group relative bg-transparent rounded-[1.5rem] md:rounded-[2rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500"
                                 >
-                                    <div className="aspect-[1/1] bg-[#F2E7D5] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
+                                    <div className="aspect-[1/1] bg-[#F9F9F9] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
                                         <img 
                                             src={item.imageUrl} 
                                             alt={getLoc(item.title, 'ko')} 
