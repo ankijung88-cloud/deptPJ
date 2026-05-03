@@ -73,15 +73,29 @@ export const LandingFloorSection: React.FC = () => {
                     {displayFloors.map((floor, index) => {
                         const isActive = hoveredFloor === floor.id;
 
+                        const handleFloorClick = (e: React.MouseEvent | React.TouchEvent) => {
+                            // On mobile/touch devices, we want to highlight on first tap and navigate on second
+                            const isTouch = window.matchMedia("(pointer: coarse)").matches;
+                            if (isTouch && hoveredFloor !== floor.id) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setHoveredFloor(floor.id);
+                            } else {
+                                navigate(`/floor/${floor.id}`);
+                            }
+                        };
+
                         return (
                             <motion.div
                                 key={floor.id}
                                 className="relative flex flex-col group cursor-pointer"
                                 onMouseEnter={() => setHoveredFloor(floor.id)}
                                 onMouseLeave={() => setHoveredFloor(null)}
-                                onTapStart={() => setHoveredFloor(floor.id)}
-                                onTapCancel={() => setHoveredFloor(null)}
-                                onClick={() => navigate(`/floor/${floor.id}`)}
+                                onTapStart={() => {
+                                    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+                                    if (isTouch) setHoveredFloor(floor.id);
+                                }}
+                                onClick={handleFloorClick}
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
