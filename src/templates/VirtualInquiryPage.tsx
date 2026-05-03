@@ -5,7 +5,6 @@ import { ArrowLeft, MessageCircle, Send, User, Mail, FileText, Check, Loader2 } 
 import { useNavigate, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { getProductById } from '../api/products';
-import { JOSEON_THEMES } from '../utils/themeUtils';
 import { useSetBreadcrumbPath } from '../context/NavigationActionContext';
 import { getLocalizedText } from '../utils/i18nUtils';
 
@@ -35,7 +34,7 @@ export const VirtualInquiryPage: React.FC<VirtualInquiryPageProps> = ({ item: pr
     });
 
     const theme = {
-        bgStyle: { backgroundColor: '#F9F9F9' },
+        bgStyle: { backgroundColor: '#FFFFFF' },
         accentColor: '#DC2626',
         highlightColor: '#171717',
         textPrimary: '#171717'

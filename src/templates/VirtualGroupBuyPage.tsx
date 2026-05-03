@@ -5,7 +5,6 @@ import { ArrowLeft, Edit3, Check, Users, Clock, ShoppingCart, Plus, Calendar } f
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
-import { JOSEON_THEMES } from '../utils/themeUtils';
 import { FeaturedItem } from '../types';
 import { getProductById, updateProduct } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
@@ -110,13 +109,6 @@ const VirtualGroupBuyPage: React.FC<VirtualGroupBuyPageProps> = ({ item: propIte
     const parentId = routeId || propProductId || propItem?.id || location.state?.parentId;
     const { isAdmin, role, user } = useAdmin();
     const { floors } = useFloors();
-
-    const theme = {
-        bgStyle: { backgroundColor: '#F9F9F9' },
-        accentColor: '#DC2626',
-        highlightColor: '#171717',
-        textPrimary: '#171717'
-    };
 
     const [items, setItems] = useState<FeaturedItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -343,7 +335,7 @@ const VirtualGroupBuyPage: React.FC<VirtualGroupBuyPageProps> = ({ item: propIte
     };
 
     return (
-        <div className="min-h-screen font-sans bg-[#F9F9F9]">
+        <div className="min-h-screen font-sans bg-[#FFFFFF]">
             {/* Header */}
             <header className="relative w-full py-16 px-6 md:px-12 border-b border-neutral-200 z-10 bg-white shadow-sm">
                 <div className="container mx-auto">

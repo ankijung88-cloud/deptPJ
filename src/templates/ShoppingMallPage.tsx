@@ -1220,7 +1220,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     onClick={() => { setSelectedItem(item); setShowDetailModal(true); }}
                                     className="group relative bg-transparent rounded-[1.5rem] md:rounded-[2rem] border border-neutral-100 overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500"
                                 >
-                                    <div className="aspect-[1/1] bg-[#F9F9F9] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
+                                    <div className="aspect-[1/1] bg-[#FFFFFF] relative overflow-hidden" style={{ mixBlendMode: 'multiply' }}>
                                         <img 
                                             src={item.imageUrl} 
                                             alt={getLoc(item.title, 'ko')} 

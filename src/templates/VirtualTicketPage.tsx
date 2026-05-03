@@ -146,7 +146,7 @@ const ReservationModal: React.FC<{
                     >
                         <button 
                             onClick={onClose}
-                            className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#F9F9F9] transition-all shadow-xl"
+                            className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#FFFFFF] transition-all shadow-xl"
                         >
                             <X size={28} />
                         </button>
@@ -184,7 +184,7 @@ const ReservationModal: React.FC<{
                                     </p>
                                 </div>
 
-                                <div className="p-12 rounded-[3.5rem] bg-[#F9F9F9] border border-dancheong-ink/5 shadow-sm space-y-10">
+                                <div className="p-12 rounded-[3.5rem] bg-[#FFFFFF] border border-dancheong-ink/5 shadow-sm space-y-10">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[11px] font-black tracking-widest uppercase text-dancheong-ink/40"><AutoTranslatedText text={t('ticket.ticket_quantity')} /></span>
                                         <div className="flex items-center gap-10 bg-white border border-dancheong-ink/5 rounded-full px-10 py-5 shadow-sm">
@@ -604,7 +604,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                                 setIsEditingMetadata(true);
                                             }
                                         }}
-                                        className="flex items-center gap-4 px-10 py-4 rounded-full bg-white border border-dancheong-ink/10 hover:bg-[#F9F9F9] transition-all text-[11px] font-black tracking-widest uppercase shadow-xl"
+                                        className="flex items-center gap-4 px-10 py-4 rounded-full bg-white border border-dancheong-ink/10 hover:bg-[#FFFFFF] transition-all text-[11px] font-black tracking-widest uppercase shadow-xl"
                                     >
                                         {isEditingMetadata ? <Check size={16} className="text-dancheong-mugwort" /> : <Edit3 size={16} />}
                                         <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
@@ -762,7 +762,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                         >
                             <button 
                                 onClick={() => setShowAddModal(false)}
-                                className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#F9F9F9] transition-all shadow-xl"
+                                className="absolute top-12 right-12 z-[30010] w-16 h-16 rounded-full bg-white border border-dancheong-ink/10 flex items-center justify-center text-dancheong-ink/20 hover:text-dancheong-ink hover:bg-[#FFFFFF] transition-all shadow-xl"
                             >
                                 <X size={28} />
                             </button>
@@ -780,7 +780,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                         type="text"
                                         value={newTicket.title}
                                         onChange={(e) => setNewTicket({...newTicket, title: e.target.value})}
-                                        className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] px-10 py-6 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
+                                        className="w-full bg-[#FFFFFF] border border-dancheong-ink/5 rounded-[2.5rem] px-10 py-6 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
                                         placeholder="Performance Title..."
                                     />
                                 </div>
@@ -796,7 +796,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                             value={newTicket.date}
                                             onChange={(e) => setNewTicket({...newTicket, date: e.target.value})}
                                             placeholder="2026.04.15 ~ 2026.04.30"
-                                            className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
+                                            className="w-full bg-[#FFFFFF] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
                                         />
                                     </div>
                                 </div>
@@ -816,7 +816,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                                     if (previewUrl) setPreviewUrl(null);
                                                 }}
                                                 placeholder="https://example.com/image.jpg"
-                                                className="w-full bg-[#F9F9F9] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
+                                                className="w-full bg-[#FFFFFF] border border-dancheong-ink/5 rounded-[2.5rem] py-6 pl-20 pr-10 text-xl font-serif italic text-dancheong-ink focus:outline-none focus:border-[#800020] transition-all shadow-sm"
                                             />
                                         </div>
 
@@ -825,7 +825,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                         {!previewUrl && !newTicket.imageUrl ? (
                                             <button 
                                                 onClick={() => fileInputRef.current?.click()} 
-                                                className="w-full flex flex-col items-center justify-center p-20 rounded-[4rem] border-2 border-dashed border-dancheong-ink/10 hover:border-[#800020] hover:bg-[#F9F9F9] transition-all group"
+                                                className="w-full flex flex-col items-center justify-center p-20 rounded-[4rem] border-2 border-dashed border-dancheong-ink/10 hover:border-[#800020] hover:bg-[#FFFFFF] transition-all group"
                                             >
                                                 <UploadCloud size={64} className="text-dancheong-ink/10 group-hover:text-[#800020] mb-6 transition-colors duration-700" />
                                                 <span className="text-[11px] font-black tracking-widest text-dancheong-ink/30 group-hover:text-dancheong-ink uppercase">
@@ -868,7 +868,7 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                                     </button>
                                     <button 
                                         onClick={() => setShowAddModal(false)}
-                                        className="flex-1 py-10 rounded-[3rem] bg-white border border-dancheong-ink/10 text-dancheong-ink font-black text-[11px] uppercase tracking-[0.5em] hover:bg-[#F9F9F9] transition-all shadow-xl active:scale-95"
+                                        className="flex-1 py-10 rounded-[3rem] bg-white border border-dancheong-ink/10 text-dancheong-ink font-black text-[11px] uppercase tracking-[0.5em] hover:bg-[#FFFFFF] transition-all shadow-xl active:scale-95"
                                     >
                                         <AutoTranslatedText text={t('common.cancel')} />
                                     </button>

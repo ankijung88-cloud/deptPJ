@@ -339,7 +339,7 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
 
     return (
         <ErrorBoundary>
-            <div className="relative w-full h-screen bg-[#F9F9F9] overflow-hidden text-black font-sans flex">
+            <div className="relative w-full h-screen bg-[#FFFFFF] overflow-hidden text-black font-sans flex">
                 
                 {/* 1. Left Sidebar - Controls */}
                 <aside className="w-40 h-full bg-white border-r border-neutral-200 flex flex-col items-center py-8 z-50 shadow-xl">

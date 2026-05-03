@@ -296,7 +296,7 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
     };
 
     return (
-        <div className="fixed inset-0 bg-[#F9F9F9] text-dancheong-ink overflow-hidden font-sans selection:bg-dancheong-mugwort/20" onMouseMove={handleActivity}>
+        <div className="fixed inset-0 bg-[#FFFFFF] text-dancheong-ink overflow-hidden font-sans selection:bg-dancheong-mugwort/20" onMouseMove={handleActivity}>
             {/* Texture Overlay */}
             <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay" 
                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
@@ -399,7 +399,7 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
             </AnimatePresence>
 
                 {/* Top Bar */}
-                <header className="p-8 flex justify-between items-center pointer-events-auto bg-[#F9F9F9]/20 backdrop-blur-xl border-b border-white/40 z-[100]">
+                <header className="p-8 flex justify-between items-center pointer-events-auto bg-[#FFFFFF]/20 backdrop-blur-xl border-b border-white/40 z-[100]">
                     <div className="flex items-center gap-6">
                         <button 
                             onClick={() => onClose ? onClose() : navigate(-1)}

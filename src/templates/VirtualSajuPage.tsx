@@ -117,7 +117,7 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                     <div 
                         className="absolute inset-0 transition-opacity duration-1000"
                         style={{ 
-                            backgroundColor: '#F9F9F9'
+                            backgroundColor: '#FFFFFF'
                         }} 
                     />
 
@@ -392,7 +392,7 @@ const VirtualSajuPage: React.FC<VirtualSajuPageProps> = ({ item: _item, productI
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 50 }}
-                            className="fixed inset-0 z-[100] bg-[#F9F9F9] flex flex-col overflow-hidden"
+                            className="fixed inset-0 z-[100] bg-[#FFFFFF] flex flex-col overflow-hidden"
                         >
                             {/* Modal Header */}
                             <div className="flex-shrink-0 p-6 flex justify-between items-center border-b border-dancheong-ink/10 bg-white">
