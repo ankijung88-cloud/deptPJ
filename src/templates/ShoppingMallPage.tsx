@@ -3,13 +3,15 @@ console.log("ShoppingMallPage.tsx loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Trash2, Edit3, Search } from 'lucide-react';
+
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 
 import { FeaturedItem } from '../types';
-import { getProductById, updateProduct } from '../api/products';
+import { getProductById, updateProduct, deleteProduct } from '../api/products';
+
 import { createOrder } from '../api/orders';
 
 import { useFloors } from '../context/FloorContext';
@@ -33,6 +35,7 @@ const ProductDetailViewer: React.FC<{ item: FeaturedItem | null, customDetailHea
             <AutoTranslatedText text="상세설명을 확인할 제품을 선택하세요" />
         </div>
     );
+
 
     return (
         <div className="w-full h-full overflow-y-auto custom-scrollbar relative z-10">
@@ -267,9 +270,12 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             setCustomSubtitleLabel(storeMeta?.customSubtitleLabel || '');
             setCustomAllItemsLabel(storeMeta?.customAllItemsLabel || '');
             setCustomRegisterProductLabel(storeMeta?.customRegisterProductLabel || '');
+            setCustomHeroBg(storeMeta?.customHeroBg || '');
+            setCustomHeroLogo(storeMeta?.customHeroLogo || '');
             setTempFloorLabels(storeMeta?.customFloorLabels || {});
             setCustomCategories(storeMeta?.customCategories || []);
         };
+
 
         fetchParent();
     }, [parentId, i18n.language, propItem]);
@@ -311,10 +317,30 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     const [customSubtitleLabel, setCustomSubtitleLabel] = useState<string>('');
     const [customAllItemsLabel, setCustomAllItemsLabel] = useState<string>('');
     const [customRegisterProductLabel, setCustomRegisterProductLabel] = useState<string>('');
+    const [customHeroBg, setCustomHeroBg] = useState<string>('');
+    const [customHeroLogo, setCustomHeroLogo] = useState<string>('');
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const detailFileInputRef = useRef<HTMLInputElement>(null);
     const leftSideFileInputRef = useRef<HTMLInputElement>(null);
     const backFileInputRef = useRef<HTMLInputElement>(null);
+    const heroBgInputRef = useRef<HTMLInputElement>(null);
+    const heroLogoInputRef = useRef<HTMLInputElement>(null);
+
+
+    const uploadFile = async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const adminToken = sessionStorage.getItem('admin_token');
+        const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        if (!uploadRes.ok) throw new Error('Upload failed');
+        const data = await uploadRes.json();
+        return data.url;
+    };
 
     const fetchItems = async () => {
         setIsLoading(true);
@@ -454,6 +480,18 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
         setShowAddModal(true);
     };
 
+    const handleDeleteContent = async (id: string) => {
+        if (!window.confirm(t('common.confirm_delete') || 'Are you sure you want to delete this item?')) return;
+        try {
+            await deleteProduct(id);
+            fetchItems();
+        } catch (error) {
+            console.error("Delete failed:", error);
+            alert("Delete failed.");
+        }
+    };
+
+
     const handleDelete = async (id: string) => {
         const confirmMsg = t('common.delete_confirm');
         if (!window.confirm(confirmMsg)) return;
@@ -509,21 +547,6 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
             let finalLeftSideImageUrl = newLeftSideImageUrl;
             let finalBackImageUrl = newBackImageUrl;
 
-            const adminToken = sessionStorage.getItem('admin_token');
-
-            const uploadFile = async (file: File) => {
-                const formData = new FormData();
-                formData.append('file', file);
-                const uploadRes = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
-                if (!uploadRes.ok) throw new Error('Upload failed');
-                const data = await uploadRes.json();
-                return data.url;
-            };
-
             if (fileInputRef.current?.files?.[0]) finalImageUrl = await uploadFile(fileInputRef.current.files[0]);
             if (detailFileInputRef.current?.files?.[0]) finalDetailImageUrl = await uploadFile(detailFileInputRef.current.files[0]);
             if (leftSideFileInputRef.current?.files?.[0]) finalLeftSideImageUrl = await uploadFile(leftSideFileInputRef.current.files[0]);
@@ -555,6 +578,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                 agency_id: user?.id || null
             };
 
+            const adminToken = sessionStorage.getItem('admin_token');
             const endpoint = isEditMode ? `/api/products/${editingId}` : '/api/products';
             const method = isEditMode ? 'PUT' : 'POST';
 
@@ -637,8 +661,11 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customSubtitleLabel,
                     customAllItemsLabel,
                     customRegisterProductLabel,
+                    customHeroBg,
+                    customHeroLogo,
                     customFloorLabels: tempFloorLabels,
                     customCategories
+
                 } : t)
                 : [...templates, {
                     id: 'store',
@@ -652,8 +679,11 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                     customSubtitleLabel,
                     customAllItemsLabel,
                     customRegisterProductLabel,
+                    customHeroBg,
+                    customHeroLogo,
                     customFloorLabels: tempFloorLabels,
                     customCategories
+
                 }];
 
             const updatedProduct = {
@@ -793,8 +823,18 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
     return (
         <div className="min-h-screen font-sans" style={theme.bgStyle}>
             {/* Store Header */}
-            <header className="relative w-full py-8 md:py-20 px-6 md:px-12 border-b z-[50] bg-white shadow-sm" style={{ borderColor: '#E5E7EB' }}>
-                <div className="container mx-auto relative z-10">
+            {/* Brand Hero Section */}
+            <header className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden flex flex-col justify-center px-6 md:px-20 transition-all duration-700" style={{ backgroundColor: '#F2E7D5' }}>
+                {/* Custom Hero Background */}
+                {customHeroBg && (
+                    <div className="absolute inset-0 z-0">
+                        <img src={customHeroBg} className="w-full h-full object-cover" alt="Hero Background" />
+                        <div className="absolute inset-0 bg-black/5" />
+                    </div>
+                )}
+
+                <div className="relative z-10">
+
                     <div className="flex justify-between items-start mb-8 relative z-[60]">
                         <button
                             onClick={() => onClose ? onClose() : navigate(-1)}
@@ -806,20 +846,55 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
 
                         {isManagementAllowed && (
                             <div className="flex gap-2 relative z-[70]">
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-neutral-900 shadow-sm"
+                                {isEditingMetadata && (
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true); }}
+                                        className={`px-6 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            isEditingMetadata 
+                                                ? 'bg-red-600 border-red-600 text-white shadow-lg' 
+                                                : 'bg-white border-neutral-200 text-neutral-600 hover:border-neutral-900'
+                                        }`}
+                                    >
+                                        <AutoTranslatedText text={isEditingMetadata ? "Save Page Info" : "Edit Page Info"} />
+                                    </button>
+                                    <button 
+                                        onClick={() => heroBgInputRef.current?.click()}
+                                        className="px-6 py-2 rounded-full bg-white/80 backdrop-blur-md border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:bg-white transition-all flex items-center gap-2"
+                                    >
+                                        <UploadCloud size={14} />
+                                        <AutoTranslatedText text="Hero Bg" />
+                                    </button>
+                                    <input 
+                                        type="file" 
+                                        ref={heroBgInputRef} 
+                                        className="hidden" 
+                                        onChange={async (e) => {
+                                            if (e.target.files?.[0]) {
+                                                setIsUploading(true);
+                                                const url = await uploadFile(e.target.files[0]);
+                                                if (url) setCustomHeroBg(url);
+                                                setIsUploading(false);
+                                            }
+                                        }}
+                                    />
+                                    <button 
+                                        onClick={() => { setIsEditMode(false); setShowAddModal(true); }}
+                                        className="px-6 py-2 rounded-full bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-lg"
+                                    >
+                                        <Plus size={14} />
+                                        <AutoTranslatedText text="Add Product" />
+                                    </button>
+                                </div>
+                            )}
+                            {!isEditingMetadata && isManagementAllowed && (
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
+                                    className="px-6 py-2 rounded-full bg-white border border-neutral-200 text-[10px] font-black uppercase tracking-widest text-neutral-600 hover:border-neutral-900 transition-all shadow-md"
                                 >
-                                    {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
-                                    <AutoTranslatedText text={isEditingMetadata ? t("common.save") : t("common.edit_info")} />
+                                    <AutoTranslatedText text="Edit Page Info" />
                                 </button>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); setIsEditMode(false); setShowAddModal(true); }}
-                                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-lg"
-                                >
-                                    <Plus size={14} />
-                                    <AutoTranslatedText text="Add Product" />
-                                </button>
+                            )}
                             </div>
                         )}
                     </div>
@@ -854,17 +929,46 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </div>
 
                         {isEditingMetadata ? (
-                            <textarea
-                                value={tempTitle}
-                                onChange={(e) => setTempTitle(e.target.value)}
-                                className="w-full bg-neutral-50 border border-neutral-200 rounded-2xl p-6 text-4xl md:text-5xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
-                                rows={2}
-                            />
+                            <div className="flex flex-col gap-4">
+                                <textarea
+                                    value={tempTitle}
+                                    onChange={(e) => setTempTitle(e.target.value)}
+                                    className="w-full bg-white/50 backdrop-blur-md border border-neutral-200 rounded-2xl p-6 text-4xl md:text-5xl font-serif font-black mb-4 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition-all resize-none shadow-inner"
+                                    rows={2}
+                                />
+                                <button 
+                                    onClick={() => heroLogoInputRef.current?.click()}
+                                    className="w-fit px-4 py-2 rounded-xl bg-white/80 border border-neutral-200 text-[9px] font-black uppercase tracking-widest text-neutral-500 hover:bg-white transition-all flex items-center gap-2"
+                                >
+                                    <UploadCloud size={12} />
+                                    <AutoTranslatedText text="Update Logo Image" />
+                                </button>
+                                <input 
+                                    type="file" 
+                                    ref={heroLogoInputRef} 
+                                    className="hidden" 
+                                    onChange={async (e) => {
+                                        if (e.target.files?.[0]) {
+                                            setIsUploading(true);
+                                            const url = await uploadFile(e.target.files[0]);
+                                            if (url) setCustomHeroLogo(url);
+                                            setIsUploading(false);
+                                        }
+                                    }}
+                                />
+                            </div>
                         ) : (
-                            <h1 className="text-3xl md:text-7xl font-serif font-black mb-4 md:mb-6 leading-tight text-neutral-900">
-                                <AutoTranslatedText text={tempTitle} />
-                            </h1>
+                            <div className="flex flex-col gap-4">
+                                {customHeroLogo ? (
+                                    <img src={customHeroLogo} className="h-16 md:h-24 w-auto object-contain mb-4" alt="Brand Logo" />
+                                ) : (
+                                    <h1 className="text-3xl md:text-7xl font-serif font-black mb-4 md:mb-6 leading-tight text-neutral-900">
+                                        <AutoTranslatedText text={tempTitle} />
+                                    </h1>
+                                )}
+                            </div>
                         )}
+
 
                         {isEditingMetadata ? (
                             <textarea
@@ -1113,13 +1217,22 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                                 <AutoTranslatedText text="Add" />
                                             </button>
                                             {isManagementAllowed && (
-                                                <button 
-                                                    onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
-                                                    className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-neutral-200 hover:text-neutral-900 transition-all"
-                                                >
-                                                    <Edit3 size={12} />
-                                                </button>
+                                                <div className="flex gap-1">
+                                                    <button 
+                                                        onClick={(e) => { e.stopPropagation(); handleEditInitiate(item); }}
+                                                        className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-neutral-200 hover:text-neutral-900 transition-all"
+                                                    >
+                                                        <Edit3 size={12} />
+                                                    </button>
+                                                    <button 
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteContent(item.id); }}
+                                                        className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all"
+                                                    >
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                </div>
                                             )}
+
                                         </div>
                                     </div>
                                 </motion.div>
