@@ -79,14 +79,22 @@ export const LandingFloorSection: React.FC = () => {
                                 className="relative flex flex-col group cursor-pointer"
                                 onMouseEnter={() => setHoveredFloor(floor.id)}
                                 onMouseLeave={() => setHoveredFloor(null)}
+                                onTapStart={() => setHoveredFloor(floor.id)}
+                                onTapCancel={() => setHoveredFloor(null)}
                                 onClick={() => navigate(`/floor/${floor.id}`)}
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.8 }}
+                                whileHover={{ y: -16 }}
+                                whileTap={{ y: -8, scale: 0.98 }}
+                                transition={{ 
+                                    opacity: { duration: 0.8, delay: index * 0.1 },
+                                    y: { type: "spring", stiffness: 300, damping: 20 },
+                                    scale: { duration: 0.2 }
+                                }}
                             >
                                 <div
-                                    className={`w-full aspect-[3/4] p-6 sm:p-8 rounded-[3rem] transition-all duration-1000 relative overflow-hidden flex flex-col items-center text-center justify-between border ${isActive ? 'shadow-[0_50px_80px_rgba(0,0,0,0.08)] sm:-translate-y-8 bg-white' : 'shadow-sm bg-white/80 backdrop-blur-sm'}`}
+                                    className={`w-full aspect-[3/4] p-6 sm:p-8 rounded-[3rem] transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center justify-between border ${isActive ? 'shadow-[20px_40px_60px_rgba(0,0,0,0.1)] bg-white' : 'shadow-sm bg-white/80 backdrop-blur-sm'}`}
                                     style={{
                                         borderColor: isActive ? floor.color : 'rgba(0,0,0,0.05)'
                                     }}
