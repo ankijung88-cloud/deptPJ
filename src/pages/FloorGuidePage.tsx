@@ -188,15 +188,12 @@ const FloorGuidePage: React.FC = () => {
 
                                     {/* Main Content Container */}
                                     <div className="relative z-10 w-full h-full flex flex-col items-center justify-between py-1 md:py-2">
-                                        {/* Icon Section - Scaled for 6-col grid */}
-                                        <div className="relative w-10 h-10 md:w-20 md:h-20 flex items-center justify-center">
-                                            {/* Single Blue Circular Border */}
-                                            <div className="absolute inset-0 rounded-full border border-blue-600/40" />
-                                            
+                                        {/* Icon Section - Clean and scaled */}
+                                        <div className="relative w-12 h-12 md:w-24 md:h-24 flex items-center justify-center">
                                             <img 
                                                 src={sub.bgImage || '/placeholder_floor.jpg'} 
                                                 alt=""
-                                                className="w-3/5 h-3/5 object-contain grayscale-0 relative z-10"
+                                                className="w-full h-full object-contain grayscale-0 relative z-10"
                                             />
                                         </div>
 
