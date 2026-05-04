@@ -13,7 +13,7 @@ export const Layout: React.FC = () => {
     const { i18n } = useTranslation();
     const isRTL = ['ar', 'fa', 'he'].includes(i18n.language);
     const location = useLocation();
-    const { isImmersive, isUiVisible } = useNavigationState();
+    const { isImmersive, isUiVisible, isMeeting } = useNavigationState();
     
     const { hideHeader, isAdminPage, isMuseumPage, isSquarePage, isMeetingPage, isOfficePage, isLandingPage } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
@@ -34,11 +34,11 @@ export const Layout: React.FC = () => {
             isAdminPage: admin,
             isMuseumPage: museum,
             isSquarePage: square,
-            isMeetingPage: meeting,
+            isMeetingPage: meeting || isMeeting,
             isOfficePage: office,
             isLandingPage: landing
         };
-    }, [location.pathname]);
+    }, [location.pathname, isMeeting]);
 
     return (
         <div

@@ -860,7 +860,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="fixed top-32 right-8 flex gap-3 z-[10000]">
+                            <div className="fixed top-40 right-8 flex gap-3 z-[10000]">
                                 {isEditingMetadata ? (
                                     <div className="flex gap-2 bg-white/95 backdrop-blur-2xl p-3 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-red-600/30 scale-110 origin-right">
                                         <button 

@@ -30,7 +30,6 @@ export const LandingHeader: React.FC = () => {
     };
 
     const navItems = [
-        { id: 'features', label: t('hero.features') },
         { id: 'partners', label: t('hero.partners') },
         { id: 'recruitment', label: t('hero.philosophy') }
     ];

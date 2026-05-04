@@ -245,12 +245,38 @@ export const DetailPage: React.FC = () => {
         );
     };
 
+    const renderTemplateSwitcher = (isFixed = true) => {
+        if (!(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id)))) return null;
+        const pageType = item?.page_type || 'standard';
+        if (pageType === 'meeting') return null;
+
+        return (
+            <button
+                onClick={() => setIsTemplateModalOpen(true)}
+                className={`${isFixed ? 'fixed top-24 right-10 z-[10000]' : 'mb-10'} py-3 px-6 rounded-full bg-white shadow-xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden`}
+            >
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <LayoutGrid size={20} className="text-black relative z-10" />
+                <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="템플릿 선택" /></span>
+                <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            </button>
+        );
+    };
+
     const activeTemplate = renderTemplate();
 
     if (activeTemplate) {
         return (
             <div className="relative min-h-screen">
                 {activeTemplate}
+                {renderTemplateSwitcher(true)}
+                <TemplateSwitchModal
+                    isOpen={isTemplateModalOpen}
+                    onClose={() => setIsTemplateModalOpen(false)}
+                    onSelect={handleSelectTemplate}
+                    currentTemplateId={item.page_type}
+                    theme={theme}
+                />
             </div>
         );
     }
@@ -376,6 +402,7 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-4 lg:pl-10">
                         <div className="sticky top-32 space-y-12">
                             <div className="space-y-6 px-4">
+                                {renderTemplateSwitcher(false)}
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Curated Category" /></span>
                                     <p className="font-medium tracking-wide" style={{ color: theme.textSecondary }}><AutoTranslatedText text={item.category} /></p>
@@ -390,28 +417,13 @@ export const DetailPage: React.FC = () => {
                 </div>
             </div>
 
-            
-            {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
-                <>
-                    <button
-                        onClick={() => setIsTemplateModalOpen(true)}
-                        className="fixed top-6 right-6 z-[10000] py-3 px-6 rounded-full bg-white shadow-2xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <LayoutGrid size={20} className="text-black relative z-10" />
-                        <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="템플릿 선택" /></span>
-                        <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    </button>
-
-                    <TemplateSwitchModal
-                        isOpen={isTemplateModalOpen}
-                        onClose={() => setIsTemplateModalOpen(false)}
-                        onSelect={handleSelectTemplate}
-                        currentTemplateId={item.page_type}
-                        theme={theme}
-                    />
-                </>
-            )}
+            <TemplateSwitchModal
+                isOpen={isTemplateModalOpen}
+                onClose={() => setIsTemplateModalOpen(false)}
+                onSelect={handleSelectTemplate}
+                currentTemplateId={item.page_type}
+                theme={theme}
+            />
         </article>
     );
 };
