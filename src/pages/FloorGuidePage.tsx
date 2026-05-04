@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Archive } from 'lucide-react';
+import { ArrowRight, Archive, Building } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -173,35 +173,43 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[48px] p-3 md:p-12 flex flex-col items-center relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                <div className={`aspect-square heritage-card !rounded-[40px] md:!rounded-[60px] p-3 md:p-14 flex flex-col items-center relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] hover:-translate-y-3 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
                                     {/* Subtle Background Floor Identifier */}
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none select-none z-0">
-                                        <span className="text-6xl md:text-[16rem] font-serif font-black italic text-dancheong-ink">
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0">
+                                        <span className="text-8xl md:text-[22rem] font-serif font-black italic text-dancheong-ink">
                                             {getLocalizedText(floorData.floor, i18n.language)}
                                         </span>
                                     </div>
 
+                                    {/* Top Right Decorative Icon */}
+                                    <div className="absolute top-6 right-6 md:top-12 md:right-12 opacity-[0.06] pointer-events-none z-10">
+                                        <Building className="w-4 h-4 md:w-14 md:h-14 text-dancheong-ink" />
+                                    </div>
+
                                     {/* Icon Layer - Top Center */}
-                                    <div className="relative z-10 w-16 h-16 md:w-32 md:h-32 mb-4 md:mb-2 flex items-center justify-center">
-                                        {/* Subtle Decorative Circle */}
-                                        <div className="absolute inset-0 rounded-full border border-dancheong-ink/[0.05] scale-90 group-hover/card:scale-110 transition-transform duration-1000" />
+                                    <div className="relative z-10 w-20 h-20 md:w-44 md:h-44 mb-6 md:mb-4 flex items-center justify-center">
+                                        {/* Blue Circular Border */}
+                                        <div className="absolute inset-0 rounded-full border-2 border-blue-600/50 scale-[0.85] group-hover/card:scale-100 transition-transform duration-[1500ms]" />
                                         
                                         <img 
                                             src={sub.bgImage || '/placeholder_floor.jpg'} 
                                             alt=""
-                                            className="w-2/3 h-2/3 md:w-1/2 md:h-1/2 object-contain grayscale opacity-60 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-700 relative z-10"
+                                            className="w-1/2 h-1/2 md:w-3/5 md:h-3/5 object-contain grayscale-0 transition-all duration-700 relative z-10 group-hover/card:scale-110"
+                                            style={{ 
+                                                filter: 'drop-shadow(0 0 20px rgba(37, 99, 235, 0.1))'
+                                            }}
                                         />
                                     </div>
 
                                     {/* Content Overlay */}
-                                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-1 md:gap-4">
-                                         <h3 className="text-[10px] md:text-3xl font-serif font-black text-dancheong-ink tracking-tighter text-center leading-tight">
+                                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-2 md:gap-6">
+                                         <h3 className="text-[10px] md:text-5xl font-serif font-black text-dancheong-ink tracking-tighter text-center leading-tight">
                                              <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                          </h3>
                                         
-                                         <div className="hidden md:flex items-center gap-2 text-dancheong-ink/30 group-hover/card:text-dancheong-mugwort transition-colors duration-300 font-black text-[10px] uppercase tracking-[0.2em]">
-                                            <AutoTranslatedText text="Explore" />
-                                            <ArrowRight size={14} className="group-hover/card:translate-x-1 transition-transform" />
+                                         <div className="hidden md:flex items-center gap-3 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-all duration-500 font-bold text-lg tracking-tight">
+                                            <AutoTranslatedText text="탐험하세요" />
+                                            <ArrowRight size={20} className="text-dancheong-ink/20 group-hover/card:text-blue-600 group-hover/card:translate-x-1 transition-all" />
                                         </div>
                                     </div>
                                 </div>
