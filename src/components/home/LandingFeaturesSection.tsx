@@ -153,7 +153,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                 <div className="flex-1 w-full relative">
                                     <motion.div
                                         whileHover={{ scale: 1.02 }}
-                                        className="aspect-[4/5] bg-rose-50/60 rounded-[4rem] sm:rounded-[6rem] p-0 flex items-center justify-center group overflow-hidden shadow-[0_40px_100px_rgba(255,0,0,0.04)] border border-rose-100 relative"
+                                        className="aspect-[3/2] bg-rose-50/60 rounded-[4rem] sm:rounded-[6rem] p-0 flex items-center justify-center group overflow-hidden shadow-[0_40px_100px_rgba(255,0,0,0.04)] border border-rose-100 relative"
                                     >
                                         <div className="absolute inset-0 z-0">
                                             {feature.media_url ? (
@@ -177,7 +177,7 @@ export const LandingFeaturesSection: React.FC = () => {
 
                                         {/* Soft Glow Overlays */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity duration-1000" />
-                                        
+
                                         {/* Floating Badge */}
                                         <div className="absolute top-12 left-12 z-20">
                                             <div className="w-16 h-16 rounded-full bg-red-600 backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-lg">
@@ -185,7 +185,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                             </div>
                                         </div>
                                     </motion.div>
-                                    
+
                                     {/* Subtle Shadow/Glow behind card */}
                                     <div className="absolute -inset-10 bg-red-600/5 blur-[80px] rounded-full z-[-1] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                                 </div>
@@ -193,7 +193,7 @@ export const LandingFeaturesSection: React.FC = () => {
                                 {/* Feature Content: Editorial & Clean */}
                                 <div className="flex-1 space-y-12 text-left">
                                     <div className="space-y-6">
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ opacity: 0, x: -20 }}
                                             whileInView={{ opacity: 1, x: 0 }}
                                             viewport={{ once: true }}
