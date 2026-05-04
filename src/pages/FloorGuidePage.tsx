@@ -173,44 +173,44 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-[40px] md:!rounded-[60px] p-3 md:p-14 flex flex-col items-center relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] hover:-translate-y-3 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
-                                    {/* Subtle Background Floor Identifier */}
+                                <div className={`aspect-square heritage-card !rounded-[40px] md:!rounded-[64px] p-6 md:p-12 flex flex-col items-center justify-between relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] hover:-translate-y-3 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                    {/* Subtle Background Floor Identifier - Perfectly Centered */}
                                     <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0">
-                                        <span className="text-8xl md:text-[22rem] font-serif font-black italic text-dancheong-ink">
+                                        <span className="text-7xl md:text-[15rem] font-serif font-black italic text-dancheong-ink leading-none">
                                             {getLocalizedText(floorData.floor, i18n.language)}
                                         </span>
                                     </div>
 
                                     {/* Top Right Decorative Icon */}
-                                    <div className="absolute top-6 right-6 md:top-12 md:right-12 opacity-[0.06] pointer-events-none z-10">
-                                        <Building className="w-4 h-4 md:w-14 md:h-14 text-dancheong-ink" />
+                                    <div className="absolute top-4 right-4 md:top-8 md:right-8 opacity-[0.05] pointer-events-none z-10">
+                                        <Building className="w-4 h-4 md:w-10 md:h-10 text-dancheong-ink" />
                                     </div>
 
-                                    {/* Icon Layer - Top Center */}
-                                    <div className="relative z-10 w-20 h-20 md:w-44 md:h-44 mb-6 md:mb-4 flex items-center justify-center">
-                                        {/* Blue Circular Border */}
-                                        <div className="absolute inset-0 rounded-full border-2 border-blue-600/50 scale-[0.85] group-hover/card:scale-100 transition-transform duration-[1500ms]" />
-                                        
-                                        <img 
-                                            src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                            alt=""
-                                            className="w-1/2 h-1/2 md:w-3/5 md:h-3/5 object-contain grayscale-0 transition-all duration-700 relative z-10 group-hover/card:scale-110"
-                                            style={{ 
-                                                filter: 'drop-shadow(0 0 20px rgba(37, 99, 235, 0.1))'
-                                            }}
-                                        />
+                                    {/* Icon Area - Centered Circle */}
+                                    <div className="relative z-10 w-full flex flex-col items-center">
+                                        <div className="relative w-16 h-16 md:w-32 md:h-32 flex items-center justify-center">
+                                            {/* Blue Circular Border - Guaranteed Square */}
+                                            <div className="absolute inset-0 rounded-full border border-blue-600/40 scale-100 transition-transform duration-700" />
+                                            
+                                            <img 
+                                                src={sub.bgImage || '/placeholder_floor.jpg'} 
+                                                alt=""
+                                                className="w-1/2 h-1/2 object-contain grayscale-0 relative z-10 group-hover/card:scale-110 transition-transform duration-500"
+                                            />
+                                        </div>
                                     </div>
 
-                                    {/* Content Overlay */}
-                                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-2 md:gap-6">
-                                         <h3 className="text-[10px] md:text-5xl font-serif font-black text-dancheong-ink tracking-tighter text-center leading-tight">
+                                    {/* Title - Bold and Editorial */}
+                                    <div className="relative z-10 flex flex-col items-center gap-2">
+                                         <h3 className="text-sm md:text-4xl font-serif font-black text-dancheong-ink tracking-tight text-center leading-tight">
                                              <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                          </h3>
-                                        
-                                         <div className="hidden md:flex items-center gap-3 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-all duration-500 font-bold text-lg tracking-tight">
-                                            <AutoTranslatedText text="탐험하세요" />
-                                            <ArrowRight size={20} className="text-dancheong-ink/20 group-hover/card:text-blue-600 group-hover/card:translate-x-1 transition-all" />
-                                        </div>
+                                    </div>
+
+                                    {/* Footer Action - Minimalist */}
+                                    <div className="relative z-10 flex items-center gap-2 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-all duration-500 font-bold text-[10px] md:text-sm tracking-tight">
+                                        <AutoTranslatedText text="탐험하세요" />
+                                        <ArrowRight size={16} className="text-dancheong-ink/20 group-hover/card:text-blue-600 group-hover/card:translate-x-1 transition-all" />
                                     </div>
                                 </div>
                             </motion.div>
