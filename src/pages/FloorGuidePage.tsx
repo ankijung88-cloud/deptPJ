@@ -173,23 +173,23 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-2xl md:!rounded-[40px] p-2 md:p-6 flex flex-col items-center justify-between relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-2' : ''}`}>
-                                    {/* Subtle Background Floor Identifier - Perfectly scaled */}
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none z-0">
-                                        <span className="text-5xl md:text-[10rem] font-serif font-black italic text-dancheong-ink">
+                                <div className={`aspect-square heritage-card !rounded-2xl md:!rounded-[40px] p-3 md:p-6 flex flex-col items-center justify-center relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-2' : ''}`}>
+                                    {/* Subtle Background Floor Identifier */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none z-0">
+                                        <span className="text-4xl md:text-[10rem] font-serif font-black italic text-dancheong-ink">
                                             {getLocalizedText(floorData.floor, i18n.language)}
                                         </span>
                                     </div>
 
-                                    {/* Top Right Decorative Building Icon - Tiny and faint */}
-                                    <div className="absolute top-2 right-2 md:top-4 md:right-4 opacity-[0.06] pointer-events-none z-10">
-                                        <Building className="w-2 h-2 md:w-6 md:h-6 text-dancheong-ink" />
+                                    {/* Top Right Decorative Building Icon - Adjusted for mobile */}
+                                    <div className="absolute top-1.5 right-1.5 md:top-4 md:right-4 opacity-[0.06] pointer-events-none z-10">
+                                        <Building className="w-1.5 h-1.5 md:w-6 md:h-6 text-dancheong-ink" />
                                     </div>
 
-                                    {/* Main Content Container */}
-                                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-between py-1 md:py-2">
-                                        {/* Icon Section - Clean and scaled */}
-                                        <div className="relative w-12 h-12 md:w-24 md:h-24 flex items-center justify-center">
+                                    {/* Main Content Container - Flex layout with better spacing control */}
+                                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-between py-0.5 md:py-2">
+                                        {/* Icon Section - Significantly smaller on mobile */}
+                                        <div className="relative w-8 h-8 md:w-24 md:h-24 flex items-center justify-center mt-1">
                                             <img 
                                                 src={sub.bgImage || '/placeholder_floor.jpg'} 
                                                 alt=""
@@ -197,17 +197,17 @@ const FloorGuidePage: React.FC = () => {
                                             />
                                         </div>
 
-                                        {/* Title Section - Appropriately sized */}
-                                        <div className="px-1 text-center">
-                                             <h3 className="text-[9px] md:text-xl font-serif font-black text-dancheong-ink tracking-tight leading-tight">
+                                        {/* Title Section - Adjusted for legibility */}
+                                        <div className="px-1 text-center flex-1 flex items-center justify-center">
+                                             <h3 className="text-[10px] md:text-xl font-serif font-black text-dancheong-ink tracking-tight leading-none md:leading-tight">
                                                  <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                              </h3>
                                         </div>
 
                                         {/* Action Section - Bottom centered */}
-                                        <div className="flex items-center gap-1 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-colors font-bold text-[7px] md:text-[11px] tracking-tight">
+                                        <div className="flex items-center gap-0.5 md:gap-1 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-colors font-bold text-[7px] md:text-[11px] tracking-tight mb-1">
                                             <AutoTranslatedText text="탐험하세요" />
-                                            <ArrowRight size={12} className="opacity-40 group-hover/card:opacity-100 group-hover/card:translate-x-1 transition-all" />
+                                            <ArrowRight size={10} className="md:size-3 opacity-40 group-hover/card:opacity-100 group-hover/card:translate-x-1 transition-all" />
                                         </div>
                                     </div>
                                 </div>
