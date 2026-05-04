@@ -173,35 +173,45 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[32px] p-1.5 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
-                                    {/* Background Image */}
-                                    <div className="absolute inset-0 z-0">
-                                        <img 
-                                            src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                            alt={getLocalizedText(sub.label, i18n.language)}
-                                            className="w-full h-full object-cover grayscale opacity-20 group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-110 transition-all duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent opacity-80 group-hover/card:from-dancheong-ink/90 group-hover/card:to-dancheong-ink/40 group-hover/card:opacity-100 transition-all duration-500" />
+                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[40px] p-2 md:p-6 flex flex-col items-center text-center relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                    {/* Floor Number Background (Subtle) */}
+                                    <div className="absolute inset-0 flex items-center justify-start pl-4 pointer-events-none opacity-[0.03] select-none z-0">
+                                        <span className="text-8xl font-serif italic font-black text-dancheong-ink">{getLocalizedText(floorData.floor, i18n.language)}</span>
                                     </div>
 
-                                    {/* Content Overlay */}
-                                    <div className="relative z-10">
-                                        <div className="hidden md:block text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
-                                             {idx + 1}F
-                                         </div>
-                                         <h3 className="text-[9px] leading-tight md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 tracking-tighter text-center">
-                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                         </h3>
-                                        
-                                         <div className="hidden md:flex mt-4 items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
-                                            <AutoTranslatedText text="Explore" />
-                                            <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
+                                    <div className="relative z-10 flex flex-col items-center justify-between h-full w-full">
+                                        {/* Top Section: Icon/Image */}
+                                        <div className="pt-2 md:pt-4">
+                                            {sub.bgImage ? (
+                                                <img 
+                                                    src={sub.bgImage} 
+                                                    alt={getLocalizedText(sub.label, i18n.language)}
+                                                    className="w-8 h-8 md:w-16 md:h-16 object-contain transition-transform duration-500 group-hover/card:scale-110"
+                                                />
+                                            ) : (
+                                                <Building className="w-8 h-8 md:w-12 md:h-12 text-dancheong-ink/20" />
+                                            )}
+                                        </div>
+
+                                        {/* Middle Section: Title */}
+                                        <div className="flex-grow flex items-center justify-center py-2">
+                                            <h3 className="text-[10px] md:text-xl font-serif font-black text-dancheong-ink tracking-tighter leading-tight">
+                                                <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                            </h3>
+                                        </div>
+
+                                        {/* Bottom Section: Explore Link */}
+                                        <div className="pb-2 md:pb-0">
+                                            <div className="flex items-center gap-1.5 md:gap-2 text-dancheong-ink/40 group-hover/card:text-dancheong-mugwort transition-colors duration-300 font-black text-[8px] md:text-[10px] uppercase tracking-[0.2em]">
+                                                <AutoTranslatedText text="탐험하세요" />
+                                                <ArrowRight size={10} className="md:size-[14px] group-hover/card:translate-x-1 transition-transform" />
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* Decorative Icon - Smaller for 6-col */}
-                                    <div className="absolute top-2 right-2 md:top-6 md:right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                        <Building className="w-4 h-4 md:w-10 md:h-10 text-dancheong-ink group-hover/card:text-white" />
+                                    {/* Decorative Icon - Top Right Corner */}
+                                    <div className="absolute top-2 right-2 md:top-6 md:right-6 opacity-[0.05] group-hover/card:opacity-20 transition-opacity duration-500 pointer-events-none">
+                                        <Building className="w-4 h-4 md:w-8 md:h-8 text-dancheong-ink" />
                                     </div>
                                 </div>
                             </motion.div>
