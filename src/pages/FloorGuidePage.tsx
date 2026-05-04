@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Building, Archive } from 'lucide-react';
+import { ArrowRight, Archive } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -173,35 +173,36 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[32px] p-1.5 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
-                                    {/* Background Image */}
-                                    <div className="absolute inset-0 z-0">
+                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[48px] p-3 md:p-12 flex flex-col items-center relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                    {/* Subtle Background Floor Identifier */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none select-none z-0">
+                                        <span className="text-6xl md:text-[16rem] font-serif font-black italic text-dancheong-ink">
+                                            {getLocalizedText(floorData.floor, i18n.language)}
+                                        </span>
+                                    </div>
+
+                                    {/* Icon Layer - Top Center */}
+                                    <div className="relative z-10 w-16 h-16 md:w-32 md:h-32 mb-4 md:mb-2 flex items-center justify-center">
+                                        {/* Subtle Decorative Circle */}
+                                        <div className="absolute inset-0 rounded-full border border-dancheong-ink/[0.05] scale-90 group-hover/card:scale-110 transition-transform duration-1000" />
+                                        
                                         <img 
                                             src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                            alt={getLocalizedText(sub.label, i18n.language)}
-                                            className="w-full h-full object-cover grayscale opacity-20 group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-110 transition-all duration-700"
+                                            alt=""
+                                            className="w-2/3 h-2/3 md:w-1/2 md:h-1/2 object-contain grayscale opacity-60 group-hover/card:grayscale-0 group-hover/card:opacity-100 transition-all duration-700 relative z-10"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent opacity-80 group-hover/card:from-dancheong-ink/90 group-hover/card:to-dancheong-ink/40 group-hover/card:opacity-100 transition-all duration-500" />
                                     </div>
 
                                     {/* Content Overlay */}
-                                    <div className="relative z-10">
-                                        <div className="hidden md:block text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
-                                             {idx + 1}F
-                                         </div>
-                                         <h3 className="text-[9px] leading-tight md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 tracking-tighter text-center">
+                                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-1 md:gap-4">
+                                         <h3 className="text-[10px] md:text-3xl font-serif font-black text-dancheong-ink tracking-tighter text-center leading-tight">
                                              <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                          </h3>
                                         
-                                         <div className="hidden md:flex mt-4 items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
+                                         <div className="hidden md:flex items-center gap-2 text-dancheong-ink/30 group-hover/card:text-dancheong-mugwort transition-colors duration-300 font-black text-[10px] uppercase tracking-[0.2em]">
                                             <AutoTranslatedText text="Explore" />
-                                            <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
+                                            <ArrowRight size={14} className="group-hover/card:translate-x-1 transition-transform" />
                                         </div>
-                                    </div>
-
-                                    {/* Decorative Icon - Smaller for 6-col */}
-                                    <div className="absolute top-2 right-2 md:top-6 md:right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                        <Building className="w-4 h-4 md:w-10 md:h-10 text-dancheong-ink group-hover/card:text-white" />
                                     </div>
                                 </div>
                             </motion.div>
