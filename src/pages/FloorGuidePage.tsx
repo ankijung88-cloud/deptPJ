@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Building, Archive } from 'lucide-react';
+import { ArrowRight, Archive, Building } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -173,35 +173,42 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-lg md:!rounded-[32px] p-1.5 md:p-8 flex flex-col justify-end relative overflow-hidden border-dancheong-ink/10 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(23,23,23,0.1)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
-                                    {/* Background Image */}
-                                    <div className="absolute inset-0 z-0">
-                                        <img 
-                                            src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                            alt={getLocalizedText(sub.label, i18n.language)}
-                                            className="w-full h-full object-cover grayscale opacity-20 group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-110 transition-all duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent opacity-80 group-hover/card:from-dancheong-ink/90 group-hover/card:to-dancheong-ink/40 group-hover/card:opacity-100 transition-all duration-500" />
+                                <div className={`aspect-square heritage-card !rounded-2xl md:!rounded-[40px] p-3 md:p-6 flex flex-col items-center justify-center relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-500 hover:shadow-xl hover:-translate-y-1 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-2' : ''}`}>
+                                    {/* Subtle Background Floor Identifier */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.015] pointer-events-none select-none z-0">
+                                        <span className="text-4xl md:text-[10rem] font-serif font-black italic text-dancheong-ink">
+                                            {getLocalizedText(floorData.floor, i18n.language)}
+                                        </span>
                                     </div>
 
-                                    {/* Content Overlay */}
-                                    <div className="relative z-10">
-                                        <div className="hidden md:block text-[10px] font-light italic text-dancheong-ink/20 mb-1 group-hover/card:text-white transition-colors">
-                                             {idx + 1}F
-                                         </div>
-                                         <h3 className="text-[9px] leading-tight md:text-lg font-serif font-black text-dancheong-ink group-hover/card:text-white transition-colors duration-300 tracking-tighter text-center">
-                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                         </h3>
-                                        
-                                         <div className="hidden md:flex mt-4 items-center gap-2 text-dancheong-ink/60 group-hover/card:text-white transition-colors duration-300 font-black text-[9px] uppercase tracking-[0.2em]">
-                                            <AutoTranslatedText text="Explore" />
-                                            <ArrowRight size={12} className="group-hover/card:translate-x-1 transition-transform" />
+                                    {/* Top Right Decorative Building Icon - Adjusted for mobile */}
+                                    <div className="absolute top-1.5 right-1.5 md:top-4 md:right-4 opacity-[0.06] pointer-events-none z-10">
+                                        <Building className="w-1.5 h-1.5 md:w-6 md:h-6 text-dancheong-ink" />
+                                    </div>
+
+                                    {/* Main Content Container - Flex layout with better spacing control */}
+                                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-between py-0.5 md:py-2">
+                                        {/* Icon Section - Significantly smaller on mobile */}
+                                        <div className="relative w-8 h-8 md:w-24 md:h-24 flex items-center justify-center mt-1">
+                                            <img 
+                                                src={sub.bgImage || '/placeholder_floor.jpg'} 
+                                                alt=""
+                                                className="w-full h-full object-contain grayscale-0 relative z-10"
+                                            />
                                         </div>
-                                    </div>
 
-                                    {/* Decorative Icon - Smaller for 6-col */}
-                                    <div className="absolute top-2 right-2 md:top-6 md:right-6 opacity-[0.03] group-hover/card:opacity-10 transition-opacity duration-500 pointer-events-none">
-                                        <Building className="w-4 h-4 md:w-10 md:h-10 text-dancheong-ink group-hover/card:text-white" />
+                                        {/* Title Section - Reduced size to prevent wrap on mobile */}
+                                        <div className="px-0.5 text-center flex-1 flex items-center justify-center min-w-0">
+                                             <h3 className="text-[8.5px] md:text-xl font-serif font-black text-dancheong-ink tracking-tight leading-none md:leading-tight whitespace-nowrap overflow-hidden">
+                                                 <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                             </h3>
+                                        </div>
+
+                                        {/* Action Section - Bottom centered */}
+                                        <div className="flex items-center gap-0.5 md:gap-1 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-colors font-bold text-[7px] md:text-[11px] tracking-tight mb-1">
+                                            <AutoTranslatedText text="탐험하세요" />
+                                            <ArrowRight size={10} className="md:size-3 opacity-40 group-hover/card:opacity-100 group-hover/card:translate-x-1 transition-all" />
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
