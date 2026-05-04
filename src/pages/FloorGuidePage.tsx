@@ -173,44 +173,47 @@ const FloorGuidePage: React.FC = () => {
                                 onClick={() => setSelectedSubId(selectedSubId === sub.id ? null : sub.id)}
                                 className="group/card cursor-pointer w-full"
                             >
-                                <div className={`aspect-square heritage-card !rounded-[32px] md:!rounded-[48px] p-4 md:p-8 flex flex-col items-center justify-between relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:-translate-y-1 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-2' : ''}`}>
-                                    {/* Background Floor Identifier - Subtle and centered */}
+                                <div className={`aspect-square heritage-card !rounded-[32px] md:!rounded-[60px] p-5 md:p-10 flex flex-col items-center relative overflow-hidden border border-dancheong-ink/5 bg-white transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)] hover:-translate-y-2 ${selectedSubId === sub.id ? 'ring-2 ring-dancheong-mugwort ring-offset-4' : ''}`}>
+                                    {/* Subtle Background Floor Identifier - Large and faint */}
                                     <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0">
-                                        <span className="text-6xl md:text-[12rem] font-serif font-black italic text-dancheong-ink">
+                                        <span className="text-8xl md:text-[18rem] font-serif font-black italic text-dancheong-ink">
                                             {getLocalizedText(floorData.floor, i18n.language)}
                                         </span>
                                     </div>
 
                                     {/* Top Right Decorative Building Icon */}
-                                    <div className="absolute top-3 right-3 md:top-6 md:right-6 opacity-[0.08] pointer-events-none z-10">
-                                        <Building className="w-3 h-3 md:w-8 md:h-8 text-dancheong-ink" />
+                                    <div className="absolute top-4 right-4 md:top-10 md:right-10 opacity-[0.06] pointer-events-none z-10">
+                                        <Building className="w-3 h-3 md:w-12 md:h-12 text-dancheong-ink" />
                                     </div>
 
-                                    {/* Category Icon - Top Centered with Blue Circle */}
-                                    <div className="relative z-10 mt-2 md:mt-4 flex flex-col items-center">
-                                        <div className="relative w-12 h-12 md:w-24 md:h-24 flex items-center justify-center">
-                                            {/* Blue Circular Border */}
-                                            <div className="absolute inset-0 rounded-full border border-blue-600/40" />
-                                            
-                                            <img 
-                                                src={sub.bgImage || '/placeholder_floor.jpg'} 
-                                                alt=""
-                                                className="w-3/5 h-3/5 object-contain grayscale-0 relative z-10"
-                                            />
+                                    {/* Main Content Container - Carefully spaced */}
+                                    <div className="relative z-10 w-full h-full flex flex-col items-center">
+                                        {/* Icon Section */}
+                                        <div className="mt-2 md:mt-6 mb-4 md:mb-10">
+                                            <div className="relative w-14 h-14 md:w-36 md:h-36 flex items-center justify-center">
+                                                {/* Blue Circular Border */}
+                                                <div className="absolute inset-0 rounded-full border-2 border-blue-600/40" />
+                                                
+                                                <img 
+                                                    src={sub.bgImage || '/placeholder_floor.jpg'} 
+                                                    alt=""
+                                                    className="w-3/5 h-3/5 object-contain grayscale-0 relative z-10"
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {/* Main Title - Centered Bold Serif */}
-                                    <div className="relative z-10 flex flex-col items-center">
-                                         <h3 className="text-xs md:text-3xl font-serif font-black text-dancheong-ink tracking-tight text-center leading-tight">
-                                             <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
-                                         </h3>
-                                    </div>
+                                        {/* Title Section */}
+                                        <div className="mb-4 md:mb-12">
+                                             <h3 className="text-[10px] md:text-5xl font-serif font-black text-dancheong-ink tracking-tighter text-center leading-tight">
+                                                 <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
+                                             </h3>
+                                        </div>
 
-                                    {/* Action Link - Bottom Gray Text */}
-                                    <div className="relative z-10 flex items-center gap-1 md:gap-2 text-dancheong-ink/40 group-hover/card:text-dancheong-ink transition-colors font-medium text-[8px] md:text-sm">
-                                        <AutoTranslatedText text="탐험하세요" />
-                                        <ArrowRight size={14} className="opacity-40 group-hover/card:opacity-100 group-hover/card:translate-x-1 transition-all" />
+                                        {/* Action Section - Positioned at bottom */}
+                                        <div className="mt-auto flex items-center gap-2 text-dancheong-ink/40 group-hover/card:text-blue-600 transition-colors font-bold text-[8px] md:text-lg">
+                                            <AutoTranslatedText text="탐험하세요" />
+                                            <ArrowRight size={20} className="text-dancheong-ink/20 group-hover/card:text-blue-600 group-hover/card:translate-x-2 transition-all" />
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
