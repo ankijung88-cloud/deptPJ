@@ -197,9 +197,9 @@ const FloorGuidePage: React.FC = () => {
                                             />
                                         </div>
 
-                                        {/* Title Section - Adjusted for legibility */}
-                                        <div className="px-1 text-center flex-1 flex items-center justify-center">
-                                             <h3 className="text-[10px] md:text-xl font-serif font-black text-dancheong-ink tracking-tight leading-none md:leading-tight">
+                                        {/* Title Section - Reduced size to prevent wrap on mobile */}
+                                        <div className="px-0.5 text-center flex-1 flex items-center justify-center min-w-0">
+                                             <h3 className="text-[8.5px] md:text-xl font-serif font-black text-dancheong-ink tracking-tight leading-none md:leading-tight whitespace-nowrap overflow-hidden">
                                                  <AutoTranslatedText text={getLocalizedText(sub.label, i18n.language)} />
                                              </h3>
                                         </div>
