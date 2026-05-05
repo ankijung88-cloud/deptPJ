@@ -26,7 +26,7 @@ export const PremiumBannerSection: React.FC<PremiumBannerSectionProps> = ({ item
                     >
                         <div className="p-10 flex flex-col justify-center items-start flex-1">
                             <h4 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#8B7E66]">
-                                <AutoTranslatedText text="Yeoul Magazine" />
+                                <AutoTranslatedText text={metadata.bannerLabel || "Yeoul Magazine"} />
                             </h4>
                             <h3 className="text-2xl font-serif text-[#2D2924] mb-4">
                                 <AutoTranslatedText text={metadata.bannerTitle || "여울 매거진"} />
@@ -35,7 +35,7 @@ export const PremiumBannerSection: React.FC<PremiumBannerSectionProps> = ({ item
                                 <AutoTranslatedText text={metadata.bannerDesc || "피부와 마음이 편안해지는\n작은 이야기들"} />
                             </p>
                             <button className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-[#2D2924] border-b border-[#2D2924] pb-1 hover:opacity-60 transition-opacity">
-                                <AutoTranslatedText text="자세히 보기" />
+                                <AutoTranslatedText text={metadata.bannerBtnText || "자세히 보기"} />
                                 <ArrowRight size={12} />
                             </button>
                         </div>

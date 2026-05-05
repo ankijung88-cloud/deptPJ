@@ -69,32 +69,69 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                 );
             case 'feature':
                 return (
-                    <div className="space-y-6">
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Feature Title</label>
-                            <input 
-                                type="text"
-                                value={formData.featureTitle || ''} 
-                                onChange={(e) => handleChange('featureTitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="오늘의 여울"
-                            />
+                    <div className="space-y-8">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Section Subtitle</label>
+                                <input 
+                                    type="text"
+                                    value={formData.featureSubtitle || ''} 
+                                    onChange={(e) => handleChange('featureSubtitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-[0.3em] focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="Today's Yeoul"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Section Title</label>
+                                <input 
+                                    type="text"
+                                    value={formData.featureTitle || ''} 
+                                    onChange={(e) => handleChange('featureTitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="오늘의 여울"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Feature Subtitle</label>
-                            <input 
-                                type="text"
-                                value={formData.featureSubtitle || ''} 
-                                onChange={(e) => handleChange('featureSubtitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-[0.3em] focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="Today's Yeoul"
-                            />
+                        
+                        <div className="pt-6 border-t border-[#2D2924]/5">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-[#2D2924] mb-4">Grid Items</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[1, 2, 3, 4].map(num => (
+                                    <div key={num} className="p-4 bg-[#F5F0E8]/50 rounded-2xl space-y-3">
+                                        <label className="block text-[10px] font-black text-[#8B7E66]">Item {num}</label>
+                                        <input 
+                                            type="text"
+                                            value={formData[`feature${num}Title`] || ''} 
+                                            onChange={(e) => handleChange(`feature${num}Title`, e.target.value)}
+                                            className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-serif"
+                                            placeholder={`Item ${num} Title`}
+                                        />
+                                        <input 
+                                            type="text"
+                                            value={formData[`feature${num}Desc`] || ''} 
+                                            onChange={(e) => handleChange(`feature${num}Desc`, e.target.value)}
+                                            className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-light"
+                                            placeholder={`Item ${num} Description`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 );
             case 'banner':
                 return (
                     <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Label</label>
+                            <input 
+                                type="text"
+                                value={formData.bannerLabel || ''} 
+                                onChange={(e) => handleChange('bannerLabel', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-[0.3em] focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Yeoul Magazine"
+                            />
+                        </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Title</label>
                             <input 
@@ -112,6 +149,16 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 onChange={(e) => handleChange('bannerDesc', e.target.value)}
                                 className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
                                 placeholder="피부와 마음이 편안해지는\n작은 이야기들"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Button Text</label>
+                            <input 
+                                type="text"
+                                value={formData.bannerBtnText || ''} 
+                                onChange={(e) => handleChange('bannerBtnText', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="자세히 보기"
                             />
                         </div>
                         <div className="pt-4 border-t border-[#2D2924]/5">
@@ -137,6 +184,16 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
             case 'footer':
                 return (
                     <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Footer Logo Text</label>
+                            <input 
+                                type="text"
+                                value={formData.footerLogoText || ''} 
+                                onChange={(e) => handleChange('footerLogoText', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="여움"
+                            />
+                        </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Footer Intro Text</label>
                             <textarea 

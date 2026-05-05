@@ -18,7 +18,9 @@ export const PremiumFooter: React.FC<PremiumFooterProps> = ({ item }) => {
                     {/* Logo & Info */}
                     <div className="md:col-span-4 flex flex-col items-start">
                         <div className="flex items-center gap-2 mb-6">
-                            <span className="text-3xl font-serif font-black text-[#2D2924]">여움</span>
+                            <span className="text-3xl font-serif font-black text-[#2D2924]">
+                                <AutoTranslatedText text={metadata.footerLogoText || "여움"} />
+                            </span>
                             <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />
                         </div>
                         <p className="text-xs text-[#8B7E66] leading-relaxed mb-10">
