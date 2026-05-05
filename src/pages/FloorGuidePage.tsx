@@ -241,27 +241,25 @@ const FloorGuidePage: React.FC = () => {
                                         </div>
 
                                         {(() => {
-                                            const subProducts = liveProducts.filter(p => {
+                                            const allSubProducts = liveProducts.filter(p => {
                                                 const normalizedP = getNormalizedSubcategoryId(p.subcategory || '');
                                                 const normalizedS = getNormalizedSubcategoryId(sub.id);
-                                                
-                                                if (normalizedP.toLowerCase() !== normalizedS.toLowerCase()) return false;
-                                                
-                                                // Exclude products that belong to a project-type template from being listed individually here
-                                                const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
-                                                                     (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
-                                                if ((p.page_type === 'skincare' || p.page_type === 'project_landing') && !is1FCarService) {
-                                                    return false;
-                                                }
-                                                
-                                                return true;
+                                                return normalizedP.toLowerCase() === normalizedS.toLowerCase();
                                             });
 
-                                            // Determine if this subcategory has a main project template
-                                            const hasMainTemplate = sub.id === 'skincare' || sub.id === 'project_landing';
-                                            const mainTemplatePath = sub.id === 'skincare' ? '/project-template/skincare' : '/project-template';
+                                            const projectMainItems = allSubProducts.filter(p => {
+                                                const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
+                                                                     (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
+                                                return (p.page_type === 'skincare' || p.page_type === 'project_landing') && !is1FCarService;
+                                            });
 
-                                            if (subProducts.length === 0 && !hasMainTemplate) {
+                                            const regularItems = allSubProducts.filter(p => {
+                                                const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
+                                                                     (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
+                                                return !((p.page_type === 'skincare' || p.page_type === 'project_landing') && !is1FCarService);
+                                            });
+
+                                            if (projectMainItems.length === 0 && regularItems.length === 0) {
                                                 return (
                                                     <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
                                                         <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
@@ -273,39 +271,39 @@ const FloorGuidePage: React.FC = () => {
 
                                             return (
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {/* Inject Main Template Card if applicable */}
-                                                    {hasMainTemplate && (
+                                                    {projectMainItems.map((p, idx) => (
                                                         <motion.div
+                                                            key={`project-${p.id}`}
                                                             initial={{ opacity: 0, x: -20 }}
                                                             animate={{ opacity: 1, x: 0 }}
-                                                            transition={{ delay: 0 }}
-                                                            onClick={() => navigate(mainTemplatePath)}
-                                                            className="group p-6 bg-dancheong-ink text-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-black transition-all flex items-center justify-between shadow-xl cursor-pointer overflow-hidden relative"
+                                                            transition={{ delay: idx * 0.05 }}
+                                                            onClick={() => navigate(`/floor/${floorId}/category/${sub.id}/product/${p.id}`)}
+                                                            className="col-span-1 md:col-span-full group p-6 bg-dancheong-ink text-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-black transition-all flex items-center justify-between shadow-xl cursor-pointer overflow-hidden relative"
                                                         >
                                                             <div className="absolute inset-0 bg-gradient-to-r from-dancheong-mugwort/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                             <div className="flex-1 relative z-10">
                                                                 <h3 className="text-lg font-serif font-bold text-white group-hover:text-dancheong-mugwort transition-colors flex items-center gap-3">
-                                                                    <AutoTranslatedText text={`${getLocalizedText(sub.label, i18n.language)} 메인 템플릿`} />
+                                                                    <AutoTranslatedText text={getLocalizedText(p.title, i18n.language) || `${getLocalizedText(sub.label, i18n.language)} 메인 템플릿`} />
                                                                     <span className="px-2 py-0.5 bg-white/20 text-[9px] font-black uppercase tracking-widest rounded-md text-white">
                                                                         PROJECT MAIN
                                                                     </span>
                                                                 </h3>
                                                                 <p className="text-sm text-white/70 font-medium mt-1 line-clamp-1 leading-tight">
-                                                                    <AutoTranslatedText text="해당 프로젝트의 메인 랜딩 페이지로 이동합니다." />
+                                                                    <AutoTranslatedText text={getLocalizedText(p.description, i18n.language) || "해당 프로젝트의 메인 랜딩 페이지로 이동합니다."} />
                                                                 </p>
                                                             </div>
                                                             <div className="p-3 bg-white/10 text-white rounded-full group-hover:bg-dancheong-mugwort group-hover:text-white transition-all relative z-10">
                                                                 <ArrowRight size={20} />
                                                             </div>
                                                         </motion.div>
-                                                    )}
+                                                    ))}
 
-                                                    {subProducts.map((item, idx) => (
+                                                    {regularItems.map((item, idx) => (
                                                         <motion.div
                                                             key={item.id}
                                                             initial={{ opacity: 0, x: -20 }}
                                                             animate={{ opacity: 1, x: 0 }}
-                                                            transition={{ delay: (hasMainTemplate ? idx + 1 : idx) * 0.05 }}
+                                                            transition={{ delay: (projectMainItems.length + idx) * 0.05 }}
                                                             onClick={() => {
                                                                 const is1FCarService = (item.category === 'floor-1' || item.category === 'f1') && 
                                                                                      (item.id?.includes('w2hs2') || item.subcategory === 'car-care');
