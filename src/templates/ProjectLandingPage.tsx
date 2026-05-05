@@ -6,6 +6,7 @@ import { PremiumBannerSection } from '../components/home/PremiumBannerSection';
 import { PremiumFooter } from '../components/home/PremiumFooter';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { FeaturedItem } from '../types';
+import { getFeaturedProducts } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
@@ -21,13 +22,25 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | null>(null);
 
     useEffect(() => {
-        setLocalItem(item);
+        if (!item) {
+            // Fetch a sample skincare project if none is provided
+            const fetchSample = async () => {
+                try {
+                    const products = await getFeaturedProducts();
+                    const sample = products.find(p => p.page_type === 'skincare');
+                    if (sample) setLocalItem(sample);
+                } catch (err) {
+                    console.error('Failed to fetch sample project:', err);
+                }
+            };
+            fetchSample();
+        } else {
+            setLocalItem(item);
+        }
     }, [item]);
 
     // Permissions: Admin or Agency owner of the project
     const canEdit = isAdmin || (isAgency && localItem?.agency_id?.toString() === user?.id?.toString());
-
-    if (!localItem) return null;
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
@@ -68,7 +81,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
             </EditableWrapper>
 
             {/* Editing Modal */}
-            {editingSection && (
+            {localItem && editingSection && (
                 <TemplateTextEditModal 
                     item={localItem}
                     section={editingSection}
