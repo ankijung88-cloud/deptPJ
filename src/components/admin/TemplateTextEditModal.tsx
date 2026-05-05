@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Loader2 } from 'lucide-react';
+import { X, Save, Loader2, Plus } from 'lucide-react';
 import { FeaturedItem } from '../../types';
 import { updateProduct } from '../../api/products';
 
@@ -27,7 +27,8 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
         setIsSaving(true);
         try {
             const updatedMetadata = { ...metadata, ...formData };
-            const response = await updateProduct(item.id, { metadata: updatedMetadata });
+            const updatedItem = { ...item, metadata: updatedMetadata };
+            const response = await updateProduct(item.id, updatedItem);
             onSuccess(response as any);
             onClose();
         } catch (err) {
@@ -68,6 +69,29 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                     </div>
                 );
             case 'feature':
+                const features = formData.features || [1, 2, 3, 4].map(num => ({
+                    title: formData[`feature${num}Title`] || '',
+                    desc: formData[`feature${num}Desc`] || ''
+                }));
+
+                const updateFeatures = (index: number, field: string, value: string) => {
+                    const newFeatures = [...features];
+                    newFeatures[index] = { ...newFeatures[index], [field]: value };
+                    setFormData({ ...formData, features: newFeatures });
+                };
+
+                const addFeature = () => {
+                    setFormData({ 
+                        ...formData, 
+                        features: [...features, { title: '', desc: '' }] 
+                    });
+                };
+
+                const removeFeature = (index: number) => {
+                    const newFeatures = features.filter((_: any, i: number) => i !== index);
+                    setFormData({ ...formData, features: newFeatures });
+                };
+
                 return (
                     <div className="space-y-8">
                         <div className="grid grid-cols-2 gap-4">
@@ -94,24 +118,38 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                         </div>
                         
                         <div className="pt-6 border-t border-[#2D2924]/5">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-[#2D2924] mb-4">Grid Items</h4>
+                            <div className="flex justify-between items-center mb-6">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-[#2D2924]">Feature Items</h4>
+                                <button 
+                                    onClick={addFeature}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2D2924] text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#8B7E66] transition-colors"
+                                >
+                                    <Plus size={12} /> Add Item
+                                </button>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {[1, 2, 3, 4].map(num => (
-                                    <div key={num} className="p-4 bg-[#F5F0E8]/50 rounded-2xl space-y-3">
-                                        <label className="block text-[10px] font-black text-[#8B7E66]">Item {num}</label>
+                                {features.map((feature: any, idx: number) => (
+                                    <div key={idx} className="relative p-4 bg-[#F5F0E8]/50 rounded-2xl space-y-3 group">
+                                        <button 
+                                            onClick={() => removeFeature(idx)}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-lg"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                        <label className="block text-[10px] font-black text-[#8B7E66]">Item {idx + 1}</label>
                                         <input 
                                             type="text"
-                                            value={formData[`feature${num}Title`] || ''} 
-                                            onChange={(e) => handleChange(`feature${num}Title`, e.target.value)}
+                                            value={feature.title} 
+                                            onChange={(e) => updateFeatures(idx, 'title', e.target.value)}
                                             className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-serif"
-                                            placeholder={`Item ${num} Title`}
+                                            placeholder="Title"
                                         />
                                         <input 
                                             type="text"
-                                            value={formData[`feature${num}Desc`] || ''} 
-                                            onChange={(e) => handleChange(`feature${num}Desc`, e.target.value)}
+                                            value={feature.desc} 
+                                            onChange={(e) => updateFeatures(idx, 'desc', e.target.value)}
                                             className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-light"
-                                            placeholder={`Item ${num} Description`}
+                                            placeholder="Description"
                                         />
                                     </div>
                                 ))}

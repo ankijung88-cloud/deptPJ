@@ -33,13 +33,17 @@ export const PremiumFeatureGrid: React.FC<PremiumFeatureGridProps> = ({ item }) 
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-                    {DEFAULT_FEATURES.map((feature, idx) => {
-                        const title = metadata[`feature${idx+1}Title`] || feature.title;
-                        const desc = metadata[`feature${idx+1}Desc`] || feature.desc;
-                        
-                        return (
+                    {(() => {
+                        const features = metadata.features || DEFAULT_FEATURES.map((f, i) => ({
+                            id: f.id,
+                            title: metadata[`feature${i+1}Title`] || f.title,
+                            desc: metadata[`feature${i+1}Desc`] || f.desc,
+                            image: f.image
+                        }));
+
+                        return features.map((feature: any, idx: number) => (
                             <motion.div
-                                key={feature.id}
+                                key={idx}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -48,21 +52,21 @@ export const PremiumFeatureGrid: React.FC<PremiumFeatureGridProps> = ({ item }) 
                             >
                                 <div className="w-full aspect-square relative rounded-[40px] overflow-hidden mb-6 shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                     <img 
-                                        src={feature.image} 
-                                        alt={title} 
+                                        src={feature.image || textureImage} 
+                                        alt={feature.title} 
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     <div className="absolute inset-0 bg-[#2D2924]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 <h4 className="text-lg font-serif text-[#2D2924] mb-1">
-                                    <AutoTranslatedText text={title} />
+                                    <AutoTranslatedText text={feature.title} />
                                 </h4>
                                 <p className="text-xs text-[#8B7E66] tracking-wide">
-                                    <AutoTranslatedText text={desc} />
+                                    <AutoTranslatedText text={feature.desc} />
                                 </p>
                             </motion.div>
-                        );
-                    })}
+                        ));
+                    })()}
                 </div>
             </div>
         </section>
