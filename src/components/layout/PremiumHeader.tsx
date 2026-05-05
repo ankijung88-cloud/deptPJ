@@ -2,15 +2,39 @@ import React from 'react';
 import { Search, User, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
+import { FeaturedItem } from '../../types';
+import { useTranslation } from 'react-i18next';
+import { getLocalizedText } from '../../utils/i18nUtils';
 
-export const PremiumHeader: React.FC = () => {
+interface PremiumHeaderProps {
+    item?: FeaturedItem;
+}
+
+export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
+    const { i18n } = useTranslation();
+    
+    // Fallback to "여움" if no title is provided
+    const titleText = item?.title ? getLocalizedText(item.title, i18n.language) : '여움';
+    // Look for logo in various image fields
+    const logoUrl = item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
+
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 h-20 flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/project-template" className="flex items-center gap-1.5 cursor-pointer group">
-                    <span className="text-3xl font-serif font-black text-[#2D2924] tracking-tight transition-transform duration-300 group-hover:scale-105">여움</span>
-                    <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />
+                    {logoUrl ? (
+                        <img 
+                            src={logoUrl} 
+                            alt={titleText} 
+                            className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+                        />
+                    ) : (
+                        <span className="text-3xl font-serif font-black text-[#2D2924] tracking-tight transition-transform duration-300 group-hover:scale-105">
+                            {titleText}
+                        </span>
+                    )}
+                    {!logoUrl && <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />}
                 </Link>
 
                 {/* Navigation */}

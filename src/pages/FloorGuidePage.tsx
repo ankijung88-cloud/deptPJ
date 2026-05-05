@@ -280,7 +280,7 @@ const FloorGuidePage: React.FC = () => {
                                                             initial={{ opacity: 0, x: -20 }}
                                                             animate={{ opacity: 1, x: 0 }}
                                                             transition={{ delay: idx * 0.05 }}
-                                                            onClick={() => navigate(`/floor/${floorId}/category/${sub.id}/product/${p.id}`)}
+                                                            onClick={() => navigate(`/detail/${p.id}`)}
                                                             className="col-span-1 md:col-span-full group p-6 bg-dancheong-ink text-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-black transition-all flex items-center justify-between shadow-xl cursor-pointer overflow-hidden relative"
                                                         >
                                                             <div className="absolute inset-0 bg-gradient-to-r from-dancheong-mugwort/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

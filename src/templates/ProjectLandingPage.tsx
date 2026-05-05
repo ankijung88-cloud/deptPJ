@@ -5,15 +5,20 @@ import { PremiumFeatureGrid } from '../components/home/PremiumFeatureGrid';
 import { PremiumBannerSection } from '../components/home/PremiumBannerSection';
 import { PremiumFooter } from '../components/home/PremiumFooter';
 import { useImmersiveMode } from '../context/NavigationActionContext';
+import { FeaturedItem } from '../types';
 
-const ProjectLandingPage: React.FC = () => {
+interface ProjectLandingPageProps {
+    item?: FeaturedItem;
+}
+
+const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     useImmersiveMode(true);
     
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader />
+            <PremiumHeader item={item} />
             <main className="pt-20">
-                <PremiumHero />
+                <PremiumHero item={item} />
                 <PremiumFeatureGrid />
                 <PremiumBannerSection />
             </main>
