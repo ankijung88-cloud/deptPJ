@@ -16,15 +16,15 @@ export const Layout: React.FC = () => {
     const { isImmersive, isUiVisible, isMeeting } = useNavigationState();
     
     const { hideHeader, isAdminPage, isMuseumPage, isSquarePage, isMeetingPage, isOfficePage, isLandingPage, isProjectTemplate } = React.useMemo(() => {
-        const normalizedPath = location.pathname.replace(/\/$/, '');
-        const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath === '/inspiration' || normalizedPath === '/floor-guide' || normalizedPath.endsWith('/');
+        const normalizedPath = (location.pathname || '').replace(/\/$/, '');
+        const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath === '/inspiration' || normalizedPath === '/floor-guide' || (normalizedPath && normalizedPath.endsWith('/'));
         const inspiration = normalizedPath === '/inspiration';
-        const museum = normalizedPath.endsWith('/museum');
-        const square = normalizedPath.endsWith('/square');
-        const meeting = normalizedPath.endsWith('/meeting');
-        const office = normalizedPath.endsWith('/office');
-        const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register') || normalizedPath.startsWith('/agency');
-        const projectTemplate = normalizedPath.includes('/project-template');
+        const museum = normalizedPath && normalizedPath.endsWith('/museum');
+        const square = normalizedPath && normalizedPath.endsWith('/square');
+        const meeting = (normalizedPath && normalizedPath.endsWith('/meeting')) || isMeeting;
+        const office = normalizedPath && normalizedPath.endsWith('/office');
+        const admin = normalizedPath?.startsWith('/admin') || normalizedPath?.startsWith('/register') || normalizedPath?.startsWith('/agency');
+        const projectTemplate = normalizedPath && normalizedPath.includes('/project-template');
         
         // Show header on login and registration pages for better UX
         const isAuthPage = normalizedPath.includes('/login') || normalizedPath.includes('/register');
