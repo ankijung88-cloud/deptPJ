@@ -5,6 +5,7 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { FeaturedItem } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
+import { LanguageSelector } from '../common/LanguageSelector';
 
 interface PremiumHeaderProps {
     item?: FeaturedItem;
@@ -61,7 +62,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
                 <div className="flex items-center gap-6">
                     <Link 
                         to="/" 
-                        className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-[#2D2924] text-white rounded-full text-[10px] font-black tracking-[0.15em] uppercase hover:bg-black transition-all shadow-md shadow-black/5 active:scale-95 group"
+                        className="hidden xl:flex items-center gap-2 px-5 py-2.5 bg-[#2D2924] text-white rounded-full text-[10px] font-black tracking-[0.15em] uppercase hover:bg-black transition-all shadow-md shadow-black/5 active:scale-95 group"
                     >
                         <AutoTranslatedText text="몽땅 홈" />
                         <span className="w-1.5 h-1.5 bg-[#FF7F7F] rounded-full group-hover:animate-pulse" />
@@ -69,7 +70,11 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
 
                     <div className="h-6 w-[1px] bg-[#2D2924]/10 hidden md:block" />
 
-                    <div className="flex items-center gap-4 md:gap-6">
+                    <div className="flex items-center gap-4 md:gap-2">
+                        <LanguageSelector variant="premium" />
+
+                        <div className="h-4 w-[1px] bg-[#2D2924]/5 mx-2 hidden sm:block" />
+
                         <button className="p-2 hover:bg-black/5 rounded-full transition-colors group">
                             <Search size={20} className="text-[#2D2924]/60 group-hover:text-[#2D2924] transition-colors" strokeWidth={1.5} />
                         </button>
@@ -84,5 +89,6 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
                 </div>
             </div>
         </header>
+
     );
 };

@@ -15,7 +15,7 @@ export const Layout: React.FC = () => {
     const location = useLocation();
     const { isImmersive, isUiVisible, isMeeting } = useNavigationState();
     
-    const { hideHeader, isAdminPage, isMuseumPage, isSquarePage, isMeetingPage, isOfficePage, isLandingPage } = React.useMemo(() => {
+    const { hideHeader, isAdminPage, isMuseumPage, isSquarePage, isMeetingPage, isOfficePage, isLandingPage, isProjectTemplate } = React.useMemo(() => {
         const normalizedPath = location.pathname.replace(/\/$/, '');
         const landing = normalizedPath === '' || normalizedPath === '/' || normalizedPath === '/inspiration' || normalizedPath === '/floor-guide' || normalizedPath.endsWith('/');
         const inspiration = normalizedPath === '/inspiration';
@@ -24,6 +24,7 @@ export const Layout: React.FC = () => {
         const meeting = normalizedPath.endsWith('/meeting');
         const office = normalizedPath.endsWith('/office');
         const admin = normalizedPath.startsWith('/admin') || normalizedPath.startsWith('/register') || normalizedPath.startsWith('/agency');
+        const projectTemplate = normalizedPath.includes('/project-template');
         
         // Show header on login and registration pages for better UX
         const isAuthPage = normalizedPath.includes('/login') || normalizedPath.includes('/register');
@@ -36,7 +37,8 @@ export const Layout: React.FC = () => {
             isSquarePage: square,
             isMeetingPage: meeting || isMeeting,
             isOfficePage: office,
-            isLandingPage: landing
+            isLandingPage: landing,
+            isProjectTemplate: projectTemplate
         };
     }, [location.pathname, isMeeting]);
 
@@ -47,7 +49,7 @@ export const Layout: React.FC = () => {
         >
 
             {!hideHeader && !isImmersive && <Header />}
-            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && !isSquarePage && !isMeetingPage && !isOfficePage && !isLandingPage && (
+            {(hideHeader || isImmersive) && !isAdminPage && !isMuseumPage && !isSquarePage && !isMeetingPage && !isOfficePage && !isLandingPage && !isProjectTemplate && (
                 <div className={`fixed inset-0 pointer-events-none z-[50000] transition-all duration-700 ${!isUiVisible ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
                     <LanguageSelector variant="floating" />
                 </div>
