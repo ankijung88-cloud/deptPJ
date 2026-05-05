@@ -13,16 +13,18 @@ interface PremiumHeroProps {
 
 export const PremiumHero: React.FC<PremiumHeroProps> = ({ item }) => {
     const { i18n } = useTranslation();
+    const metadata = (item?.metadata as any) || {};
     
-    // Extract dynamic title or use fallback
-    const rawTitle = item?.title ? getLocalizedText(item.title, i18n.language) : "피부에 \n여유를 담다.";
+    // Extract dynamic title: Prefer metadata, then fallback to template title, then static fallback
+    const rawTitle = metadata.heroTitle || (item?.title ? getLocalizedText(item.title, i18n.language) : "피부에 \n여유를 담다.");
     const titleLines = rawTitle.split('\n');
 
-    // Extract dynamic description
-    const rawDesc = item?.description ? getLocalizedText(item.description, i18n.language) : "지친 하루 끝, 당신만을 위한 가장 특별한 시간.\n여움이 전하는 프리미엄 피부 휴식을 경험하세요.";
+    // Extract dynamic description: Prefer metadata, then fallback to template description, then static fallback
+    const rawDesc = metadata.heroDesc || (item?.description ? getLocalizedText(item.description, i18n.language) : "지친 하루 끝, 당신만을 위한 가장 특별한 시간.\n여움이 전하는 프리미엄 피부 휴식을 경험하세요.");
 
     // Use detail_media_url (if video/large image) or imageUrl or fallback to heroImage
     const bgImage = item?.detail_media_url || item?.image_url || item?.imageUrl || heroImage;
+
 
     return (
         <section className="relative w-full h-[700px] md:h-[90vh] overflow-hidden flex items-center justify-center">

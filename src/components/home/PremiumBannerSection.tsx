@@ -4,7 +4,15 @@ import { ArrowRight } from 'lucide-react';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import magazineImage from '../../assets/premium-landing/premium_skincare_hero_1777972489385.png'; // Reusing hero for magazine look
 
-export const PremiumBannerSection: React.FC = () => {
+import { FeaturedItem } from '../../types';
+
+interface PremiumBannerSectionProps {
+    item?: FeaturedItem;
+}
+
+export const PremiumBannerSection: React.FC<PremiumBannerSectionProps> = ({ item }) => {
+    const metadata = (item?.metadata as any) || {};
+
     return (
         <section className="py-12 bg-[#F5F0E8]">
             <div className="container mx-auto px-6 md:px-12 lg:px-24">
@@ -20,9 +28,11 @@ export const PremiumBannerSection: React.FC = () => {
                             <h4 className="text-[10px] font-black tracking-[0.4em] mb-4 uppercase text-[#8B7E66]">
                                 <AutoTranslatedText text="Yeoul Magazine" />
                             </h4>
-                            <h3 className="text-2xl font-serif text-[#2D2924] mb-4">여울 매거진</h3>
+                            <h3 className="text-2xl font-serif text-[#2D2924] mb-4">
+                                <AutoTranslatedText text={metadata.bannerTitle || "여울 매거진"} />
+                            </h3>
                             <p className="text-sm text-[#8B7E66] mb-8 leading-relaxed">
-                                <AutoTranslatedText text="피부와 마음이 편안해지는\n작은 이야기들" />
+                                <AutoTranslatedText text={metadata.bannerDesc || "피부와 마음이 편안해지는\n작은 이야기들"} />
                             </p>
                             <button className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-[#2D2924] border-b border-[#2D2924] pb-1 hover:opacity-60 transition-opacity">
                                 <AutoTranslatedText text="자세히 보기" />
@@ -43,10 +53,10 @@ export const PremiumBannerSection: React.FC = () => {
                     >
                         <div className="relative z-10">
                             <h3 className="text-2xl font-serif text-[#2D2924] mb-4">
-                                여울의 큐레이션이<br />궁금하다면?
+                                <AutoTranslatedText text={metadata.inquiryTitle || "여울의 큐레이션이\n궁금하다면?"} />
                             </h3>
                             <p className="text-sm text-[#8B7E66] mb-8">
-                                <AutoTranslatedText text="카카오톡 채널 추가하고\n더 깊은 여울을 만나보세요." />
+                                <AutoTranslatedText text={metadata.inquiryDesc || "카카오톡 채널 추가하고\n더 깊은 여울을 만나보세요."} />
                             </p>
                             <div className="flex justify-center">
                                 <div className="w-16 h-16 bg-[#2D2924] text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500">

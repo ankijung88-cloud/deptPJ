@@ -2,7 +2,15 @@ import React from 'react';
 import { Instagram, Mail, MessageCircle } from 'lucide-react';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
-export const PremiumFooter: React.FC = () => {
+import { FeaturedItem } from '../../types';
+
+interface PremiumFooterProps {
+    item?: FeaturedItem;
+}
+
+export const PremiumFooter: React.FC<PremiumFooterProps> = ({ item }) => {
+    const metadata = (item?.metadata as any) || {};
+
     return (
         <footer className="bg-[#F5F0E8] border-t border-[#2D2924]/10 py-24">
             <div className="container mx-auto px-6 md:px-12 lg:px-24">
@@ -14,7 +22,7 @@ export const PremiumFooter: React.FC = () => {
                             <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />
                         </div>
                         <p className="text-xs text-[#8B7E66] leading-relaxed mb-10">
-                            <AutoTranslatedText text="피부에 여유를 담다\n프리미엄 스킨케어 큐레이션 서비스" />
+                            <AutoTranslatedText text={metadata.footerText || "피부에 여유를 담다\n프리미엄 스킨케어 큐레이션 서비스"} />
                         </p>
                     </div>
 
