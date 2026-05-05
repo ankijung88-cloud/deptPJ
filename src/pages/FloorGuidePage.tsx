@@ -250,13 +250,16 @@ const FloorGuidePage: React.FC = () => {
                                             const projectMainItems = allSubProducts.filter(p => {
                                                 const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
                                                                      (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
-                                                return (p.page_type === 'skincare' || p.page_type === 'project_landing') && !is1FCarService;
+                                                return p.page_type === 'project_landing' && !is1FCarService;
                                             });
 
                                             const regularItems = allSubProducts.filter(p => {
                                                 const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
                                                                      (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
-                                                return !((p.page_type === 'skincare' || p.page_type === 'project_landing') && !is1FCarService);
+                                                if (is1FCarService) return true;
+                                                
+                                                // Hide 'project_landing' (rendered as main card) and 'skincare' (internal project pages)
+                                                return p.page_type !== 'project_landing' && p.page_type !== 'skincare';
                                             });
 
                                             if (projectMainItems.length === 0 && regularItems.length === 0) {
