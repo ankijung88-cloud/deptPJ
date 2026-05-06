@@ -12,6 +12,7 @@ import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal
 import { ProductFormModal } from '../components/admin/ProductFormModal';
 import { useNavigate } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
+import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 import { PremiumHero } from '../components/home/PremiumHero';
 
 export const ProjectCommunityPage: React.FC = () => {
@@ -21,6 +22,7 @@ export const ProjectCommunityPage: React.FC = () => {
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'community' | null>(null);
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
     const canEdit = isAdmin || isAgency;
@@ -63,16 +65,22 @@ export const ProjectCommunityPage: React.FC = () => {
                 item={localItem}
                 canEdit={canEdit}
                 onEditSettings={() => setShowProjectModal(true)}
-                onEditHeader={() => setEditingSection('header')}
+                onEditHeader={() => setShowNavigationModal(true)}
                 onAdd={() => setShowProjectModal(true)}
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
-            <PremiumHeader item={localItem} />
+            <EditableWrapper 
+                canEdit={canEdit} 
+                label="Header / Navigation" 
+                onEdit={() => setShowNavigationModal(true)}
+            >
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
 
             <main className="pt-20">
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Hero Section" 
                     onEdit={() => setEditingSection('hero')}
                 >
@@ -80,7 +88,7 @@ export const ProjectCommunityPage: React.FC = () => {
                 </EditableWrapper>
 
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Community Section" 
                     onEdit={() => setEditingSection('community')}
                 >
@@ -119,7 +127,7 @@ export const ProjectCommunityPage: React.FC = () => {
             </main>
 
             <EditableWrapper 
-                canEdit={isOwner} 
+                canEdit={canEdit} 
                 label="Edit Footer Content" 
                 onEdit={() => setEditingSection('footer')}
             >
@@ -132,6 +140,14 @@ export const ProjectCommunityPage: React.FC = () => {
                     item={localItem}
                     section={editingSection as any}
                     onClose={() => setEditingSection(null)}
+                    onSuccess={(updated) => setLocalItem(updated)}
+                />
+            )}
+
+            {localItem && showNavigationModal && (
+                <ProjectNavigationModal 
+                    item={localItem}
+                    onClose={() => setShowNavigationModal(false)}
                     onSuccess={(updated) => setLocalItem(updated)}
                 />
             )}

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, Loader2, Plus, Upload } from 'lucide-react';
 import { FeaturedItem } from '../../types';
-import { updateProduct } from '../../api/products';
+import { updateProduct, createProduct } from '../../api/products';
+import { useAdmin } from '../../hooks/useAdmin';
 
 interface TemplateTextEditModalProps {
     item: FeaturedItem;
@@ -19,18 +20,44 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
 }) => {
     const metadata = (item.metadata as any) || {};
     const [formData, setFormData] = useState<any>({ ...metadata });
+    const { isAdmin, isAgency, user } = useAdmin();
     const [isSaving, setIsSaving] = useState(false);
     const [uploading, setUploading] = useState<string | null>(null);
 
     if (!section) return null;
 
     const handleSave = async () => {
+        const isOwner = isAdmin || (isAgency && item.agency_id?.toString() === user?.id?.toString());
+
+        if (isAgency && !isOwner) {
+            if (!window.confirm('이 템플릿은 읽기 전용입니다. 수정한 내용을 본인의 프로젝트로 저장하시겠습니까?')) {
+                return;
+            }
+        }
+
         setIsSaving(true);
         try {
             const updatedMetadata = { ...metadata, ...formData };
-            const updatedItem = { ...item, metadata: updatedMetadata };
-            const response = await updateProduct(item.id, updatedItem);
-            onSuccess(response as any);
+            
+            if (isAgency && !isOwner) {
+                // Duplicate as new project for the agency
+                const newProject = {
+                    title: `${item.title} (Edited by ${user?.name})`,
+                    page_type: item.page_type,
+                    agency_id: user?.id,
+                    metadata: updatedMetadata,
+                    image_url: item.image_url,
+                    description: item.description
+                };
+                const response = await createProduct(newProject as any);
+                alert('본인의 프로젝트로 성공적으로 저장되었습니다.');
+                onSuccess(response as any);
+            } else {
+                // Update existing
+                const updatedItem = { ...item, metadata: updatedMetadata };
+                const response = await updateProduct(item.id, updatedItem);
+                onSuccess(response as any);
+            }
             onClose();
         } catch (err) {
             console.error('Failed to update template text:', err);

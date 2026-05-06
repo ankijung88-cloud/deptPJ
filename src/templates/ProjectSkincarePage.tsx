@@ -12,6 +12,7 @@ import { EditableWrapper } from '../components/common/EditableWrapper';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
+import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 
 export const ProjectSkincarePage: React.FC = () => {
     useImmersiveMode(true);
@@ -22,6 +23,7 @@ export const ProjectSkincarePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'skincare' | null>(null);
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
     const canEdit = isAdmin || isAgency;
@@ -76,16 +78,22 @@ export const ProjectSkincarePage: React.FC = () => {
                 item={localItem}
                 canEdit={canEdit}
                 onEditSettings={() => setShowProjectModal(true)}
-                onEditHeader={() => setEditingSection('header')}
+                onEditHeader={() => setShowNavigationModal(true)}
                 onAdd={() => setShowProjectModal(true)}
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
-            <PremiumHeader item={localItem} />
+            <EditableWrapper 
+                canEdit={canEdit} 
+                label="Header / Navigation" 
+                onEdit={() => setShowNavigationModal(true)}
+            >
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
 
             <main className="pt-20">
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Hero Section" 
                     onEdit={() => setEditingSection('skincare')}
                 >
@@ -127,7 +135,7 @@ export const ProjectSkincarePage: React.FC = () => {
             </main>
 
             <EditableWrapper 
-                canEdit={isOwner} 
+                canEdit={canEdit} 
                 label="Edit Footer Content" 
                 onEdit={() => setEditingSection('footer')}
             >
@@ -141,6 +149,17 @@ export const ProjectSkincarePage: React.FC = () => {
                     onClose={() => setEditingSection(null)}
                     onSuccess={(updatedItem) => {
                         setLocalItem(updatedItem);
+                        fetchAll();
+                    }}
+                />
+            )}
+
+            {localItem && showNavigationModal && (
+                <ProjectNavigationModal 
+                    item={localItem}
+                    onClose={() => setShowNavigationModal(false)}
+                    onSuccess={(updated) => {
+                        setLocalItem(updated);
                         fetchAll();
                     }}
                 />

@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
 
+import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
+
 interface ProjectLandingPageProps {
     item?: FeaturedItem;
 }
@@ -25,6 +27,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(item || null);
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
     const canEdit = isAdmin || isAgency;
@@ -72,16 +75,22 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 item={localItem}
                 canEdit={canEdit}
                 onEditSettings={() => setShowProjectModal(true)}
-                onEditHeader={() => setEditingSection('header')}
+                onEditHeader={() => setShowNavigationModal(true)}
                 onAdd={() => setShowProjectModal(true)}
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
-            <PremiumHeader item={localItem} />
+            <EditableWrapper 
+                canEdit={canEdit} 
+                label="Header / Navigation" 
+                onEdit={() => setShowNavigationModal(true)}
+            >
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
             
             <main className="pt-20">
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Hero Section" 
                     onEdit={() => setEditingSection('hero')}
                 >
@@ -89,7 +98,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 </EditableWrapper>
 
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Features Section" 
                     onEdit={() => setEditingSection('feature')}
                 >
@@ -97,7 +106,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 </EditableWrapper>
 
                 <EditableWrapper 
-                    canEdit={isOwner} 
+                    canEdit={canEdit} 
                     label="Edit Banner & Inquiry" 
                     onEdit={() => setEditingSection('banner')}
                 >
@@ -106,7 +115,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
             </main>
 
             <EditableWrapper 
-                canEdit={isOwner} 
+                canEdit={canEdit} 
                 label="Edit Footer Content" 
                 onEdit={() => setEditingSection('footer')}
             >
@@ -119,6 +128,14 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                     item={localItem}
                     section={editingSection}
                     onClose={() => setEditingSection(null)}
+                    onSuccess={(updated) => setLocalItem(updated)}
+                />
+            )}
+
+            {localItem && showNavigationModal && (
+                <ProjectNavigationModal 
+                    item={localItem}
+                    onClose={() => setShowNavigationModal(false)}
                     onSuccess={(updated) => setLocalItem(updated)}
                 />
             )}
@@ -140,6 +157,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
         </div>
     );
 };
+
 
 export default ProjectLandingPage;
 
