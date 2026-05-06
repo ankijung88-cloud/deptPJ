@@ -36,12 +36,20 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const fetchSample = async () => {
         try {
             const products = await getFeaturedProducts();
-            const sample = products.find(p => 
-                (localItem ? p.id === localItem.id : false) || (
-                    p.page_type === 'skincare' && 
-                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
-                )
-            ) || products.find(p => p.page_type === 'skincare') || products[0];
+            
+            // 1. Try to find the exact localItem if it exists
+            // 2. Try to find ANY project owned by the current agency
+            // 3. Fallback to Skincare template (agency then admin)
+            // 4. Fallback to first available product
+            
+            const agencyProjects = isAgency ? products.filter(p => p.agency_id?.toString() === user?.id?.toString()) : [];
+            
+            const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
+                          agencyProjects.find(p => p.page_type === 'skincare') ||
+                          agencyProjects[0] ||
+                          products.find(p => p.page_type === 'skincare') || 
+                          products[0];
+            
             if (sample) setLocalItem(sample);
         } catch (err) {
             console.error('Failed to fetch sample project:', err);

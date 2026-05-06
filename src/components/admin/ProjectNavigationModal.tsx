@@ -29,6 +29,10 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
         try {
             const updatedMetadata = { ...metadata, ...formData };
             
+            // Persist to localStorage for immediate session-wide consistency
+            if (formData.headerLogoText) localStorage.setItem('agency_brand_name', formData.headerLogoText);
+            if (formData.headerLogoUrl) localStorage.setItem('agency_brand_logo', formData.headerLogoUrl);
+
             if (isOwner) {
                 // Regular update
                 const updatedItem = { ...item, metadata: updatedMetadata };

@@ -17,11 +17,15 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
     const { i18n } = useTranslation();
     const metadata = (item?.metadata as any) || {};
     
-    // Use metadata logo text if available, fallback to title, then "여움"
-    const titleText = metadata.headerLogoText || (item?.title ? getLocalizedText(item.title, i18n.language) : '여움');
+    // Use metadata logo text if available, fallback to localStorage (agency brand), then title, then "여움"
+    const titleText = metadata.headerLogoText || 
+                      localStorage.getItem('agency_brand_name') || 
+                      (item?.title ? getLocalizedText(item.title, i18n.language) : '여움');
     
-    // Use metadata logo URL if available, fallback to various fields
-    const logoUrl = metadata.headerLogoUrl || item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
+    // Use metadata logo URL if available, fallback to localStorage (agency brand), then various fields
+    const logoUrl = metadata.headerLogoUrl || 
+                    localStorage.getItem('agency_brand_logo') || 
+                    item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
 
     const navLinks = metadata.navLinks || [
         { name: '큐레이션', path: '/project-template/curation' },
