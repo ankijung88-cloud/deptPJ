@@ -24,9 +24,19 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     
     const metadata = (item?.metadata as any) || {};
     
-    const titleText = metadata.headerLogoText || 
-                      localStorage.getItem('agency_brand_name') || 
-                      (item?.title ? getLocalizedText(item.title, i18n.language) : '여움');
+    // Ensure we don't show "모든차서비스" or other default titles in agency context
+    const getSafeTitle = () => {
+        if (metadata.headerLogoText) return metadata.headerLogoText;
+        const storedName = localStorage.getItem('agency_brand_name');
+        if (storedName) return storedName;
+        
+        // If it's an agency site but no brand name is set, use "여움" instead of the item title
+        if (urlAgencyId || item?.agency_id) return '여움';
+        
+        return item?.title ? getLocalizedText(item.title, i18n.language) : '여움';
+    };
+
+    const titleText = getSafeTitle();
     
     const logoUrl = metadata.headerLogoUrl || 
                     localStorage.getItem('agency_brand_logo') || 
@@ -40,13 +50,19 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
         return basePath;
     };
 
-    const navLinks = metadata.navLinks || [
-        { name: '큐레이션', path: getPath('/project-template/curation') },
-        { name: '스킨케어', path: getPath('/project-template/skincare') },
-        { name: '브랜드', path: getPath('/project-template/brand') },
-        { name: '매거진', path: getPath('/project-template/magazine') },
-        { name: '커뮤니티', path: getPath('/project-template/community') }
+    const rawNavLinks = metadata.navLinks || [
+        { name: '큐레이션', path: '/project-template/curation' },
+        { name: '스킨케어', path: '/project-template/skincare' },
+        { name: '브랜드', path: '/project-template/brand' },
+        { name: '매거진', path: '/project-template/magazine' },
+        { name: '커뮤니티', path: '/project-template/community' }
     ];
+
+    // Ensure all nav links have the agency context
+    const navLinks = rawNavLinks.map((link: any) => ({
+        ...link,
+        path: getPath(link.path.split('?')[0]) // Strip existing params and re-apply correctly
+    }));
 
     const logoLink = getPath('/project-template');
 
