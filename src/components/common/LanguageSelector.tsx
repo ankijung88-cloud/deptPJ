@@ -47,7 +47,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const isPremium = variant === 'premium';
 
     return (
-        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed bottom-6 right-6 md:top-32 md:right-8 md:bottom-auto z-[10000]' : 'relative'}`}>
+        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed bottom-6 right-6 md:top-64 md:right-8 md:bottom-auto z-[10000]' : 'relative'}`}>
             <button
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 group relative ${

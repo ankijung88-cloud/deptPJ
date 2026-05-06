@@ -262,7 +262,7 @@ export const DetailPage: React.FC = () => {
         if (pageType === 'meeting') return null;
 
         return (
-            <div className={`${isFixed ? 'fixed top-24 right-10 z-[10000] flex flex-col items-end gap-4' : 'mb-10 flex flex-col gap-4'}`}>
+            <div className={`${isFixed ? 'fixed top-40 right-10 z-[10000] flex flex-col items-end gap-4' : 'mb-10 flex flex-col gap-4'}`}>
                 <button
                     onClick={() => {
                         setTemplateModalType('standard');
