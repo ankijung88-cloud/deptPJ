@@ -40,7 +40,7 @@ export const PremiumBannerSection: React.FC<PremiumBannerSectionProps> = ({ item
                             </button>
                         </div>
                         <div className="md:w-1/2 h-[200px] md:h-full relative">
-                            <img src={magazineImage} alt="Magazine" className="w-full h-full object-cover" />
+                            <img src={metadata.bannerImage || magazineImage} alt="Magazine" className="w-full h-full object-cover" />
                         </div>
                     </motion.div>
 

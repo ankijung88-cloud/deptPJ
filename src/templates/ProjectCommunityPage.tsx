@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PremiumHeader } from '../components/layout/PremiumHeader';
 import { PremiumFooter } from '../components/home/PremiumFooter';
+import { motion } from 'framer-motion';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
@@ -85,9 +86,18 @@ export const ProjectCommunityPage: React.FC = () => {
                 >
                     <div className="py-24 px-6 md:px-12 lg:px-24">
                         <div className="max-w-4xl mx-auto text-center space-y-12">
-                            <h2 className="text-3xl font-serif font-black text-[#2D2924]">
-                                <AutoTranslatedText text={(localItem.metadata as any)?.communityTitle || "함께 나누는 여유"} />
-                            </h2>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-4"
+                            >
+                                <h2 className="text-4xl md:text-5xl font-serif text-[#2D2924]">
+                                    <AutoTranslatedText text={(localItem.metadata as any)?.communityTitle || "커뮤니티"} />
+                                </h2>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#8B7E66]">
+                                    <AutoTranslatedText text={(localItem.metadata as any)?.communitySubtitle || "Together in Beauty"} />
+                                </p>
+                            </motion.div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {[1, 2, 3].map(num => (
                                     <div key={num} className="bg-white p-8 rounded-2xl shadow-sm border border-[#2D2924]/5 hover:shadow-xl transition-all duration-500">

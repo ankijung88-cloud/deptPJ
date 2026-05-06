@@ -34,11 +34,10 @@ export const PremiumFeatureGrid: React.FC<PremiumFeatureGridProps> = ({ item }) 
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
                     {(() => {
-                        const features = metadata.features || DEFAULT_FEATURES.map((f, i) => ({
-                            id: f.id,
-                            title: metadata[`feature${i+1}Title`] || f.title,
-                            desc: metadata[`feature${i+1}Desc`] || f.desc,
-                            image: f.image
+                        const features = metadata.features || [1, 2, 3, 4].map((num) => ({
+                            title: metadata[`feature${num}Title`] || DEFAULT_FEATURES[num-1]?.title,
+                            desc: metadata[`feature${num}Desc`] || DEFAULT_FEATURES[num-1]?.desc,
+                            image: metadata[`feature${num}Image`] || DEFAULT_FEATURES[num-1]?.image
                         }));
 
                         return features.map((feature: any, idx: number) => (

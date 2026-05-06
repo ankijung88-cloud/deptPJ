@@ -1,5 +1,11 @@
 import pool from '../config/db.js';
 
+const toJson = (val) => {
+  if (val === null || val === undefined) return null;
+  if (typeof val === 'string') return val;
+  return JSON.stringify(val);
+};
+
 export const getAllProducts = async (req, res) => {
   const { subcategory, agencyId, parentId } = req.query;
   const user = req.user; // From authMiddleware
@@ -188,6 +194,7 @@ export const createProduct = async (req, res) => {
     const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
     const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
     const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
+    const metadata = req.body.metadata;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -206,7 +213,7 @@ export const createProduct = async (req, res) => {
       agency_id = req.user.id;
     }
 
-    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, detail_media_url, detail_media_type, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, detail_media_url, detail_media_type, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id, metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const params = [
       id,
       toJson(title),
@@ -229,7 +236,8 @@ export const createProduct = async (req, res) => {
       parent_id || null,
       toJson(theme_data),
       toJson(selected_templates),
-      agency_id
+      agency_id,
+      toJson(metadata)
     ];
     await pool.query(query, params);
     res.status(201).json({ id, message: 'Product created successfully' });
@@ -262,12 +270,7 @@ export const updateProduct = async (req, res) => {
     const selected_templates = req.body.selected_templates || req.body.selectedTemplates;
     const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
     const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
-
-    const toJson = (val) => {
-      if (val === null || val === undefined) return null;
-      if (typeof val === 'string') return val;
-      return JSON.stringify(val);
-    };
+    const metadata = req.body.metadata;
 
     // Ownership and Role-based agency_id handling
     let agency_id = req.user?.id || null;
@@ -287,7 +290,7 @@ export const updateProduct = async (req, res) => {
 
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, detail_media_url = ?, detail_media_type = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, detail_media_url = ?, detail_media_type = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?, metadata = ?
       WHERE id = ?
     `;
 
@@ -313,10 +316,18 @@ export const updateProduct = async (req, res) => {
       toJson(theme_data),
       toJson(selected_templates),
       agency_id || null,
+      toJson(metadata),
       id
     ];
     const [result] = await pool.query(query, params);
-    res.json({ message: 'Product updated successfully' });
+    
+    // Return the updated item so frontend can sync immediately
+    const [updatedRows] = await pool.query('SELECT * FROM featured_items WHERE id = ?', [id]);
+    if (updatedRows.length > 0) {
+      res.json(updatedRows[0]);
+    } else {
+      res.json({ message: 'Product updated successfully' });
+    }
   } catch (error) {
     console.error('[updateProduct] Error:', error.message);
     res.status(500).json({ message: error.message });

@@ -22,8 +22,8 @@ export const PremiumHero: React.FC<PremiumHeroProps> = ({ item }) => {
     // Extract dynamic description: Prefer metadata, then fallback to template description, then static fallback
     const rawDesc = metadata.heroDesc || (item?.description ? getLocalizedText(item.description, i18n.language) : "지친 하루 끝, 당신만을 위한 가장 특별한 시간.\n여움이 전하는 프리미엄 피부 휴식을 경험하세요.");
 
-    // Use detail_media_url (if video/large image) or imageUrl or fallback to heroImage
-    const bgImage = item?.detail_media_url || item?.image_url || item?.imageUrl || heroImage;
+    // Use metadata.heroImage, then detail_media_url, then imageUrl, then fallback to heroImage
+    const bgImage = metadata.heroImage || item?.detail_media_url || item?.image_url || item?.imageUrl || heroImage;
 
 
     return (

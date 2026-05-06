@@ -102,11 +102,23 @@ export const ProjectMagazinePage: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                                 {[1, 2].map((i) => (
                                     <div key={i} className="space-y-6">
-                                        <div className="aspect-video bg-white/50 rounded-2xl border border-[#2D2924]/5 overflow-hidden shadow-sm" />
+                                        <div className="aspect-video bg-[#F5F0E8] rounded-2xl border border-[#2D2924]/5 overflow-hidden shadow-sm">
+                                            {metadata[`magazineItem${i}Image`] ? (
+                                                <img src={metadata[`magazineItem${i}Image`]} alt="" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center opacity-20">
+                                                    <span className="text-[10px] font-black tracking-widest uppercase">No Image</span>
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="space-y-2">
-                                            <span className="text-[10px] text-[#FF7F7F] font-black uppercase tracking-widest"><AutoTranslatedText text="Editorial" /></span>
-                                            <h3 className="text-2xl font-serif text-[#2D2924]"><AutoTranslatedText text={`Seasonal Beauty Insight Vol.0${i}`} /></h3>
-                                            <p className="text-sm text-[#8B7E66] leading-relaxed"><AutoTranslatedText text="계절의 변화에 대처하는 현명한 스킨케어 가이드. 여움이 제안하는 계절별 필수 케어 팁을 만나보세요." /></p>
+                                            <span className="text-[10px] text-[#8B7E66] font-black uppercase tracking-widest"><AutoTranslatedText text="Editorial" /></span>
+                                            <h3 className="text-2xl font-serif text-[#2D2924]">
+                                                <AutoTranslatedText text={metadata[`magazineItem${i}Title`] || `Seasonal Beauty Insight Vol.0${i}`} />
+                                            </h3>
+                                            <p className="text-sm text-[#8B7E66] leading-relaxed">
+                                                <AutoTranslatedText text={metadata[`magazineItem${i}Desc`] || "계절의 변화에 대처하는 현명한 스킨케어 가이드."} />
+                                            </p>
                                         </div>
                                     </div>
                                 ))}

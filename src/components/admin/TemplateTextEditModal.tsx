@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Loader2, Plus } from 'lucide-react';
+import { X, Save, Loader2, Plus, Upload } from 'lucide-react';
 import { FeaturedItem } from '../../types';
 import { updateProduct } from '../../api/products';
 
@@ -20,6 +20,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
     const metadata = (item.metadata as any) || {};
     const [formData, setFormData] = useState<any>({ ...metadata });
     const [isSaving, setIsSaving] = useState(false);
+    const [uploading, setUploading] = useState<string | null>(null);
 
     if (!section) return null;
 
@@ -39,9 +40,77 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
         }
     };
 
-    const handleChange = (key: string, value: string) => {
+    const handleChange = (key: string, value: any) => {
         setFormData((prev: any) => ({ ...prev, [key]: value }));
     };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(field);
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
+                },
+                body: uploadData
+            });
+            
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            if (data.url) {
+                handleChange(field, data.url);
+            }
+        } catch (err) {
+            console.error('Upload failure:', err);
+            alert('이미지 업로드에 실패했습니다.');
+        } finally {
+            setUploading(null);
+        }
+    };
+
+    const ImageField = ({ label, field, placeholder }: { label: string, field: string, placeholder?: string }) => (
+        <div className="space-y-2 mb-4">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66]">{label}</label>
+            <div className="flex gap-4">
+                <div className="flex-1">
+                    <input 
+                        type="text"
+                        value={formData[field] || ''} 
+                        onChange={(e) => handleChange(field, e.target.value)}
+                        className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-[10px] font-mono focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                        placeholder={placeholder || "https://..."}
+                    />
+                </div>
+                <div className="relative">
+                    <input 
+                        type="file" 
+                        id={`file-${field}`}
+                        onChange={(e) => handleFileUpload(e, field)}
+                        className="hidden"
+                        accept="image/*"
+                    />
+                    <label 
+                        htmlFor={`file-${field}`}
+                        className={`flex items-center justify-center w-12 h-12 rounded-xl border border-dashed border-[#2D2924]/20 hover:border-[#2D2924] transition-colors cursor-pointer ${uploading === field ? 'opacity-50 pointer-events-none' : ''}`}
+                    >
+                        {uploading === field ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                    </label>
+                </div>
+            </div>
+            {formData[field] && (
+                <div className="mt-2 h-20 w-32 rounded-lg border border-[#2D2924]/5 overflow-hidden bg-[#F5F0E8]">
+                    <img src={formData[field]} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+            )}
+        </div>
+    );
 
     const renderFields = () => {
         switch (section) {
@@ -74,8 +143,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
 
                 return (
                     <div className="space-y-8">
-                        {/* Logo Settings */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-6">
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Text</label>
                                 <input 
@@ -86,19 +154,9 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                     placeholder="여움"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Image URL</label>
-                                <input 
-                                    type="text"
-                                    value={formData.headerLogoUrl || ''} 
-                                    onChange={(e) => handleChange('headerLogoUrl', e.target.value)}
-                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                    placeholder="https://example.com/logo.png"
-                                />
-                            </div>
+                            <ImageField label="Logo Image" field="headerLogoUrl" />
                         </div>
 
-                        {/* Navigation Links */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66]">Navigation Links</label>
@@ -160,6 +218,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="지친 하루 끝, 당신만을 위한 가장 특별한 시간..."
                             />
                         </div>
+                        <ImageField label="Hero Background Image" field="heroImage" />
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Button Text</label>
                             <input 
@@ -175,7 +234,8 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
             case 'feature':
                 const features = formData.features || [1, 2, 3, 4].map(num => ({
                     title: formData[`feature${num}Title`] || '',
-                    desc: formData[`feature${num}Desc`] || ''
+                    desc: formData[`feature${num}Desc`] || '',
+                    image: formData[`feature${num}Image`] || ''
                 }));
 
                 const updateFeatures = (index: number, field: string, value: string) => {
@@ -187,7 +247,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                 const addFeature = () => {
                     setFormData({ 
                         ...formData, 
-                        features: [...features, { title: '', desc: '' }] 
+                        features: [...features, { title: '', desc: '', image: '' }] 
                     });
                 };
 
@@ -231,30 +291,72 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                     <Plus size={12} /> Add Item
                                 </button>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-6">
                                 {features.map((feature: any, idx: number) => (
-                                    <div key={idx} className="relative p-4 bg-[#F5F0E8]/50 rounded-2xl space-y-3 group">
+                                    <div key={idx} className="relative p-6 bg-[#F5F0E8]/50 rounded-2xl space-y-4 group">
                                         <button 
                                             onClick={() => removeFeature(idx)}
-                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-lg"
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 shadow-lg z-10"
                                         >
                                             <X size={12} />
                                         </button>
-                                        <label className="block text-[10px] font-black text-[#8B7E66]">Item {idx + 1}</label>
-                                        <input 
-                                            type="text"
-                                            value={feature.title} 
-                                            onChange={(e) => updateFeatures(idx, 'title', e.target.value)}
-                                            className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-serif"
-                                            placeholder="Title"
-                                        />
-                                        <input 
-                                            type="text"
-                                            value={feature.desc} 
-                                            onChange={(e) => updateFeatures(idx, 'desc', e.target.value)}
-                                            className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-light"
-                                            placeholder="Description"
-                                        />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-3">
+                                                <label className="block text-[10px] font-black text-[#8B7E66]">Item {idx + 1} Info</label>
+                                                <input 
+                                                    type="text"
+                                                    value={feature.title} 
+                                                    onChange={(e) => updateFeatures(idx, 'title', e.target.value)}
+                                                    className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-serif"
+                                                    placeholder="Title"
+                                                />
+                                                <textarea 
+                                                    value={feature.desc} 
+                                                    onChange={(e) => updateFeatures(idx, 'desc', e.target.value)}
+                                                    className="w-full bg-white border border-[#2D2924]/10 rounded-lg p-3 text-xs font-light min-h-[60px]"
+                                                    placeholder="Description"
+                                                />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <label className="block text-[10px] font-black text-[#8B7E66]">Item {idx + 1} Image</label>
+                                                <div className="flex gap-2">
+                                                    <input 
+                                                        type="text"
+                                                        value={feature.image} 
+                                                        onChange={(e) => updateFeatures(idx, 'image', e.target.value)}
+                                                        className="flex-1 bg-white border border-[#2D2924]/10 rounded-lg p-3 text-[10px] font-mono"
+                                                        placeholder="Image URL"
+                                                    />
+                                                    <input 
+                                                        type="file" 
+                                                        id={`file-feature-${idx}`}
+                                                        onChange={async (e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (!file) return;
+                                                            setUploading(`feature-${idx}`);
+                                                            const uploadData = new FormData();
+                                                            uploadData.append('file', file);
+                                                            try {
+                                                                const res = await fetch('/api/upload', {
+                                                                    method: 'POST',
+                                                                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}` },
+                                                                    body: uploadData
+                                                                });
+                                                                const data = await res.json();
+                                                                if (data.url) updateFeatures(idx, 'image', data.url);
+                                                            } finally {
+                                                                setUploading(null);
+                                                            }
+                                                        }}
+                                                        className="hidden"
+                                                    />
+                                                    <label htmlFor={`file-feature-${idx}`} className="flex items-center justify-center w-10 h-10 bg-white border border-[#2D2924]/10 rounded-lg cursor-pointer hover:bg-[#F5F0E8]">
+                                                        {uploading === `feature-${idx}` ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                                                    </label>
+                                                </div>
+                                                {feature.image && <img src={feature.image} className="h-12 w-20 object-cover rounded border border-black/5" />}
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -293,6 +395,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="피부와 마음이 편안해지는\n작은 이야기들"
                             />
                         </div>
+                        <ImageField label="Banner Image" field="bannerImage" />
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Button Text</label>
                             <input 
@@ -370,6 +473,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="Personalized Selection"
                             />
                         </div>
+                        <ImageField label="Curation Hero Image" field="curationImage" />
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Main Content Title</label>
                             <input 
@@ -414,7 +518,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="Our Identity"
                             />
                         </div>
-                        <div>
+                        <div className="pt-4 border-t border-[#2D2924]/5">
                             <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Story Title</label>
                             <input 
                                 type="text"
@@ -433,75 +537,100 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="복잡한 도심 속에서 잃어버린 피부의 '여유'를 찾아드리기 위해..."
                             />
                         </div>
+                        <ImageField label="Brand Main Image" field="brandImage" />
                     </div>
                 );
             case 'magazine':
                 return (
                     <div className="space-y-6">
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Title</label>
-                            <input 
-                                type="text"
-                                value={formData.magazineTitle || ''} 
-                                onChange={(e) => handleChange('magazineTitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="매거진"
-                            />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Title</label>
+                                <input 
+                                    type="text"
+                                    value={formData.magazineTitle || ''} 
+                                    onChange={(e) => handleChange('magazineTitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="매거진"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Subtitle</label>
+                                <input 
+                                    type="text"
+                                    value={formData.magazineSubtitle || ''} 
+                                    onChange={(e) => handleChange('magazineSubtitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="Beauty Journal"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Subtitle</label>
-                            <input 
-                                type="text"
-                                value={formData.magazineSubtitle || ''} 
-                                onChange={(e) => handleChange('magazineSubtitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="Beauty Journal"
-                            />
-                        </div>
+
+                        {[1, 2].map(num => (
+                            <div key={num} className="pt-6 border-t border-[#2D2924]/5 space-y-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-[#2D2924]">Article {num}</h4>
+                                <input 
+                                    type="text"
+                                    value={formData[`magazineItem${num}Title`] || ''} 
+                                    onChange={(e) => handleChange(`magazineItem${num}Title`, e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif"
+                                    placeholder={`Article ${num} Title`}
+                                />
+                                <textarea 
+                                    value={formData[`magazineItem${num}Desc`] || ''} 
+                                    onChange={(e) => handleChange(`magazineItem${num}Desc`, e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light min-h-[80px]"
+                                    placeholder={`Article ${num} Description`}
+                                />
+                                <ImageField label={`Article ${num} Image`} field={`magazineItem${num}Image`} />
+                            </div>
+                        ))}
                     </div>
                 );
             case 'community':
                 return (
                     <div className="space-y-6">
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Title</label>
-                            <input 
-                                type="text"
-                                value={formData.communityTitle || ''} 
-                                onChange={(e) => handleChange('communityTitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="커뮤니티"
-                            />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Title</label>
+                                <input 
+                                    type="text"
+                                    value={formData.communityTitle || ''} 
+                                    onChange={(e) => handleChange('communityTitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="커뮤니티"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Subtitle</label>
+                                <input 
+                                    type="text"
+                                    value={formData.communitySubtitle || ''} 
+                                    onChange={(e) => handleChange('communitySubtitle', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="Together in Beauty"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Subtitle</label>
-                            <input 
-                                type="text"
-                                value={formData.communitySubtitle || ''} 
-                                onChange={(e) => handleChange('communitySubtitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="Together in Beauty"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Coming Soon Title</label>
-                            <input 
-                                type="text"
-                                value={formData.communityStatusTitle || ''} 
-                                onChange={(e) => handleChange('communityStatusTitle', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="아직 활성화되지 않은 서비스입니다."
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Coming Soon Description</label>
-                            <textarea 
-                                value={formData.communityStatusDesc || ''} 
-                                onChange={(e) => handleChange('communityStatusDesc', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="조금만 기다려주세요..."
-                            />
-                        </div>
+
+                        {[1, 2, 3].map(num => (
+                            <div key={num} className="pt-6 border-t border-[#2D2924]/5 space-y-4">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-[#2D2924]">Community Item {num}</h4>
+                                <input 
+                                    type="text"
+                                    value={formData[`communityItem${num}Title`] || ''} 
+                                    onChange={(e) => handleChange(`communityItem${num}Title`, e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif"
+                                    placeholder={`Item ${num} Title`}
+                                />
+                                <textarea 
+                                    value={formData[`communityItem${num}Desc`] || ''} 
+                                    onChange={(e) => handleChange(`communityItem${num}Desc`, e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light min-h-[60px]"
+                                    placeholder={`Item ${num} Description`}
+                                />
+                            </div>
+                        ))}
                     </div>
                 );
             case 'skincare':
@@ -527,6 +656,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 placeholder="Essential Care"
                             />
                         </div>
+                        <ImageField label="Skincare Hero Image" field="skincareHeroImage" />
                     </div>
                 );
             default:
@@ -556,7 +686,7 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                         <div>
                             <h2 className="text-2xl font-serif text-[#2D2924]">섹션 문구 수정</h2>
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mt-1">
-                                {section.toUpperCase()} SECTION EDIT
+                                {section?.toUpperCase()} SECTION EDIT
                             </p>
                         </div>
                         <button 
