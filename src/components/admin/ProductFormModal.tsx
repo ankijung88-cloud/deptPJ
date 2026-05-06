@@ -199,6 +199,10 @@ export const ProductFormModal = ({ product, onClose, onSuccess }: ProductFormMod
                                     {(isAdmin || (isAgency && user?.has_project_template_access)) && (
                                         <>
                                             <option value="skincare">Skincare (Premium Template)</option>
+                                            <option value="curation">Curation (Premium Template)</option>
+                                            <option value="brand">Brand (Premium Template)</option>
+                                            <option value="magazine">Magazine (Premium Template)</option>
+                                            <option value="community">Community (Premium Template)</option>
                                             <option value="cinema">Cinema</option>
                                             <option value="museum">Museum</option>
                                         </>

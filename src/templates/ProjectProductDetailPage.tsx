@@ -489,7 +489,7 @@ const ProjectProductDetailPage: React.FC = () => {
     
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader />
+            <PremiumHeader item={product} />
             
             {/* Admin Controls */}
             {(isAdmin || (isAgency && product?.agency_id?.toString() === user?.id?.toString() && user?.has_project_template_access)) && (
@@ -726,7 +726,7 @@ const ProjectProductDetailPage: React.FC = () => {
                 </section>
             </main>
             
-            <PremiumFooter />
+            <PremiumFooter item={product} />
         </div>
     );
 };

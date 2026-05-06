@@ -13,11 +13,13 @@ interface PremiumHeaderProps {
 
 export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
     const { i18n } = useTranslation();
+    const metadata = (item?.metadata as any) || {};
     
-    // Fallback to "여움" if no title is provided
-    const titleText = item?.title ? getLocalizedText(item.title, i18n.language) : '여움';
-    // Look for logo in various image fields
-    const logoUrl = item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
+    // Use metadata logo text if available, fallback to title, then "여움"
+    const titleText = metadata.headerLogoText || (item?.title ? getLocalizedText(item.title, i18n.language) : '여움');
+    
+    // Use metadata logo URL if available, fallback to various fields
+    const logoUrl = metadata.headerLogoUrl || item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
 
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">

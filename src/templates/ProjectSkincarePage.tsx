@@ -4,21 +4,24 @@ import { PremiumFooter } from '../components/home/PremiumFooter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { Link } from 'react-router-dom';
-import { getFeaturedProducts } from '../api/products';
+import { Link, useNavigate } from 'react-router-dom';
+import { getFeaturedProducts, deleteProduct } from '../api/products';
 import { FeaturedItem } from '../types';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus, List } from 'lucide-react';
 import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
-import { deleteProduct } from '../api/products';
+import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
 
 const ProjectSkincarePage: React.FC = () => {
     useImmersiveMode(true);
+    const navigate = useNavigate();
     const { isAdmin, isAgency, user } = useAdmin();
     const [products, setProducts] = useState<FeaturedItem[]>([]);
+    const [localItem, setLocalItem] = useState<FeaturedItem | undefined>();
     const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+    const [editingSection, setEditingSection] = useState<'skincare' | 'header' | 'footer' | null>(null);
     const [editingProduct, setEditingProduct] = useState<FeaturedItem | null>(null);
 
     const canCreate = isAdmin || (isAgency && user?.has_project_template_access);
@@ -33,6 +36,13 @@ const ProjectSkincarePage: React.FC = () => {
                 p.page_type === 'skincare'
             );
             setProducts(skincareProducts.length > 0 ? skincareProducts : allProducts);
+            
+            // Get sample for metadata (header/footer)
+            const sample = skincareProducts.find(p => 
+                p.page_type === 'skincare' && 
+                (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+            ) || skincareProducts.find(p => p.page_type === 'skincare') || skincareProducts[0];
+            if (sample) setLocalItem(sample);
         } catch (err) {
             console.error(err);
         } finally {
@@ -44,7 +54,7 @@ const ProjectSkincarePage: React.FC = () => {
         fetchProducts();
     }, []);
 
-    const handleDelete = async (id: string) => {
+    const handleDeleteProduct = async (id: string) => {
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
             await deleteProduct(id);
@@ -53,26 +63,32 @@ const ProjectSkincarePage: React.FC = () => {
             alert('삭제에 실패했습니다.');
         }
     };
+
+    const metadata = (localItem?.metadata as any) || {};
     
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader />
+            <EditableWrapper canEdit={isAdmin || isAgency} label="Edit Header" onEdit={() => setEditingSection('header')}>
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
             
             <main className="pt-32 pb-24">
                 <div className="container mx-auto px-6 md:px-12 lg:px-24">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-center mb-20"
-                    >
-                        <h1 className="text-4xl md:text-6xl font-serif font-light text-[#2D2924] mb-6">
-                            <AutoTranslatedText text="스킨케어" />
-                        </h1>
-                        <p className="text-[#8B7E66] tracking-[0.3em] uppercase text-xs font-black">
-                            <AutoTranslatedText text="Essential Care" />
-                        </p>
-                    </motion.div>
+                    <EditableWrapper canEdit={isAdmin || isAgency} label="Edit Page Title" onEdit={() => setEditingSection('skincare')}>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-center mb-20"
+                        >
+                            <h1 className="text-4xl md:text-6xl font-serif font-light text-[#2D2924] mb-6">
+                                <AutoTranslatedText text={metadata.skincareTitle || "스킨케어"} />
+                            </h1>
+                            <p className="text-[#8B7E66] tracking-[0.3em] uppercase text-xs font-black">
+                                <AutoTranslatedText text={metadata.skincareSubtitle || "Essential Care"} />
+                            </p>
+                        </motion.div>
+                    </EditableWrapper>
                     
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -83,7 +99,7 @@ const ProjectSkincarePage: React.FC = () => {
                         <EditableWrapper
                             canEdit={canCreate}
                             label="Add Product"
-                            onAdd={() => { setEditingProduct(null); setIsModalOpen(true); }}
+                            onAdd={() => { setEditingProduct(null); setIsProductModalOpen(true); }}
                         >
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                                 {products.map((product) => {
@@ -93,14 +109,14 @@ const ProjectSkincarePage: React.FC = () => {
                                             key={product.id}
                                             canEdit={isOwner}
                                             label={typeof product.title === 'string' ? product.title : 'Product'}
-                                            onEdit={() => { setEditingProduct(product); setIsModalOpen(true); }}
-                                            onDelete={() => handleDelete(product.id)}
+                                            onEdit={() => { setEditingProduct(product); setIsProductModalOpen(true); }}
+                                            onDelete={() => handleDeleteProduct(product.id)}
                                         >
                                             <Link 
                                                 to={`/project-template/product/${product.id}`} 
                                                 className="group cursor-pointer block h-full"
                                             >
-                                                <div className="aspect-[4/5] bg-white rounded-[40px] overflow-hidden mb-8 border border-[#2D2924]/5 group-hover:shadow-2xl transition-all duration-700 relative">
+                                                <div className="aspect-[4/5] bg-white rounded-[40px] overflow-hidden mb-8 border border-[#2D2924]/5 group-hover:shadow-2xl transition-all duration-700 relative shadow-sm">
                                                     {product.imageUrl ? (
                                                         <img 
                                                             src={product.imageUrl} 
@@ -135,16 +151,16 @@ const ProjectSkincarePage: React.FC = () => {
                             </div>
                         </EditableWrapper>
                     ) : (
-                        <div className="text-center py-24 bg-white/30 rounded-[40px] border border-dashed border-[#8B7E66]/30">
+                        <div className="text-center py-24 bg-white/30 rounded-[40px] border border-dashed border-[#8B7E66]/30 shadow-sm">
                             <p className="text-[#8B7E66] mb-8 font-serif italic text-lg">아직 등록된 스킨케어 제품이 없습니다.</p>
                             {isAdmin && (
-                                <Link 
-                                    to="/admin" 
-                                    className="inline-flex items-center gap-2 bg-[#2D2924] text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all"
+                                <button 
+                                    onClick={() => { setEditingProduct(null); setIsProductModalOpen(true); }}
+                                    className="inline-flex items-center gap-2 bg-[#2D2924] text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl"
                                 >
                                     <Plus size={16} />
                                     제품 등록하러 가기
-                                </Link>
+                                </button>
                             )}
                         </div>
                     )}
@@ -152,16 +168,40 @@ const ProjectSkincarePage: React.FC = () => {
             </main>
 
             <AnimatePresence>
-                {isModalOpen && (
+                {isProductModalOpen && (
                     <ProductFormModal
                         product={editingProduct}
-                        onClose={() => setIsModalOpen(false)}
-                        onSuccess={() => { setIsModalOpen(false); fetchProducts(); }}
+                        onClose={() => setIsProductModalOpen(false)}
+                        onSuccess={() => { setIsProductModalOpen(false); fetchProducts(); }}
                     />
                 )}
             </AnimatePresence>
+
+            {localItem && editingSection && (
+                <TemplateTextEditModal 
+                    item={localItem}
+                    section={editingSection as any}
+                    onClose={() => setEditingSection(null)}
+                    onSuccess={(updated) => { setLocalItem(updated); fetchProducts(); }}
+                />
+            )}
             
-            <PremiumFooter />
+            <EditableWrapper canEdit={isAdmin || isAgency} label="Edit Footer" onEdit={() => setEditingSection('footer')}>
+                <PremiumFooter item={localItem} />
+            </EditableWrapper>
+
+            {/* Admin Action Bar */}
+            {(isAdmin || isAgency) && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-3 p-2 bg-[#2D2924]/90 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl">
+                    <button onClick={() => navigate('/admin/products')} className="p-3 hover:bg-white/10 rounded-full text-white/60 hover:text-white transition-all">
+                        <List size={18} />
+                    </button>
+                    <div className="w-px h-4 bg-white/10 mx-1" />
+                    <button onClick={() => setIsProductModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-white text-[#2D2924] rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[#FFD700] transition-all shadow-xl">
+                        <Plus size={14} /> New Product
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

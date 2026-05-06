@@ -1,41 +1,132 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PremiumHeader } from '../components/layout/PremiumHeader';
 import { PremiumFooter } from '../components/home/PremiumFooter';
 import { motion } from 'framer-motion';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { FeaturedItem } from '../types';
+import { getFeaturedProducts, deleteProduct } from '../api/products';
+import { useAdmin } from '../hooks/useAdmin';
+import { EditableWrapper } from '../components/common/EditableWrapper';
+import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
+import { ProductFormModal } from '../components/admin/ProductFormModal';
+import { useNavigate } from 'react-router-dom';
+import { Trash2, Plus, List } from 'lucide-react';
 
 const ProjectCommunityPage: React.FC = () => {
     useImmersiveMode(true);
-    
+    const navigate = useNavigate();
+    const { isAdmin, isAgency, user } = useAdmin();
+    const [localItem, setLocalItem] = useState<FeaturedItem | undefined>();
+    const [editingSection, setEditingSection] = useState<'community' | 'header' | 'footer' | null>(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        const fetchSample = async () => {
+            try {
+                const products = await getFeaturedProducts();
+                const sample = products.find(p => 
+                    p.page_type === 'community' && 
+                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                ) || products.find(p => p.page_type === 'community') || products.find(p => p.page_type === 'skincare');
+                if (sample) setLocalItem(sample);
+            } catch (err) {
+                console.error('Failed to fetch sample project:', err);
+            }
+        };
+        fetchSample();
+    }, []);
+
+    const handleDelete = async () => {
+        if (!localItem || !window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) return;
+        setIsDeleting(true);
+        try {
+            await deleteProduct(localItem.id);
+            alert('성공적으로 삭제되었습니다.');
+            navigate('/admin/products');
+        } catch (err) {
+            console.error('Delete failed:', err);
+            alert('삭제에 실패했습니다.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const canEdit = isAdmin || (isAgency && localItem?.agency_id?.toString() === user?.id?.toString());
+    const metadata = (localItem?.metadata as any) || {};
+
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader />
+            <EditableWrapper canEdit={canEdit} label="Edit Header" onEdit={() => setEditingSection('header')}>
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
             
             <main className="pt-32 pb-24">
                 <div className="container mx-auto px-6 md:px-12 lg:px-24">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-center mb-20"
-                    >
-                        <h1 className="text-4xl md:text-6xl font-serif font-light text-[#2D2924] mb-6">
-                            <AutoTranslatedText text="커뮤니티" />
-                        </h1>
-                        <p className="text-[#8B7E66] tracking-[0.3em] uppercase text-xs font-black">
-                            <AutoTranslatedText text="Together in Beauty" />
-                        </p>
-                    </motion.div>
-                    
-                    <div className="bg-white/50 rounded-[40px] p-12 border border-[#2D2924]/5 min-h-[400px] flex flex-col items-center justify-center space-y-6">
-                        <h2 className="text-2xl font-serif text-[#2D2924]"><AutoTranslatedText text="아직 활성화되지 않은 서비스입니다." /></h2>
-                        <p className="text-[#8B7E66]"><AutoTranslatedText text="조금만 기다려주세요, 당신의 아름다운 이야기를 나눌 공간이 곧 찾아옵니다." /></p>
-                    </div>
+                    <EditableWrapper canEdit={canEdit} label="Edit Page Content" onEdit={() => setEditingSection('community')}>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-center mb-20"
+                        >
+                            <h1 className="text-4xl md:text-6xl font-serif font-light text-[#2D2924] mb-6">
+                                <AutoTranslatedText text={metadata.communityTitle || "커뮤니티"} />
+                            </h1>
+                            <p className="text-[#8B7E66] tracking-[0.3em] uppercase text-xs font-black">
+                                <AutoTranslatedText text={metadata.communitySubtitle || "Together in Beauty"} />
+                            </p>
+                        </motion.div>
+                        
+                        <div className="bg-white/50 rounded-[40px] p-12 border border-[#2D2924]/5 min-h-[400px] flex flex-col items-center justify-center space-y-6 shadow-sm">
+                            <h2 className="text-2xl font-serif text-[#2D2924]">
+                                <AutoTranslatedText text={metadata.communityStatusTitle || "아직 활성화되지 않은 서비스입니다."} />
+                            </h2>
+                            <p className="text-[#8B7E66] text-center max-w-lg leading-relaxed">
+                                <AutoTranslatedText text={metadata.communityStatusDesc || "조금만 기다려주세요, 당신의 아름다운 이야기를 나눌 공간이 곧 찾아옵니다."} />
+                            </p>
+                        </div>
+                    </EditableWrapper>
                 </div>
             </main>
             
-            <PremiumFooter />
+            <EditableWrapper canEdit={canEdit} label="Edit Footer" onEdit={() => setEditingSection('footer')}>
+                <PremiumFooter item={localItem} />
+            </EditableWrapper>
+
+            {/* Admin Action Bar */}
+            {canEdit && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[500] flex items-center gap-3 p-2 bg-[#2D2924]/90 backdrop-blur-2xl rounded-full border border-white/10 shadow-2xl">
+                    <button onClick={() => navigate('/admin/products')} className="p-3 hover:bg-white/10 rounded-full text-white/60 hover:text-white transition-all">
+                        <List size={18} />
+                    </button>
+                    <div className="w-px h-4 bg-white/10 mx-1" />
+                    <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 px-5 py-2.5 bg-white text-[#2D2924] rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[#FFD700] transition-all shadow-xl">
+                        <Plus size={14} /> New Project
+                    </button>
+                    <button onClick={handleDelete} disabled={isDeleting} className="p-3 hover:bg-red-500/20 rounded-full text-red-400 hover:text-red-300 transition-all disabled:opacity-50">
+                        <Trash2 size={18} />
+                    </button>
+                </div>
+            )}
+
+            {/* Editing Modals */}
+            {localItem && editingSection && (
+                <TemplateTextEditModal 
+                    item={localItem}
+                    section={editingSection as any}
+                    onClose={() => setEditingSection(null)}
+                    onSuccess={(updated) => setLocalItem(updated)}
+                />
+            )}
+
+            {showCreateModal && (
+                <ProductFormModal 
+                    onClose={() => setShowCreateModal(false)}
+                    onSuccess={() => navigate('/admin/products')}
+                />
+            )}
         </div>
     );
 };

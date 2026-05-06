@@ -65,7 +65,7 @@ export const PremiumHero: React.FC<PremiumHeroProps> = ({ item }) => {
                         </p>
                         
                         <button className="group flex items-center gap-6 bg-[#2D2924] text-[#F5F0E8] px-10 py-5 rounded-full text-sm font-black tracking-[0.2em] uppercase hover:bg-black transition-all shadow-2xl shadow-black/20 hover:scale-105 active:scale-95">
-                            <AutoTranslatedText text="SHOP COLLECTIONS" />
+                            <AutoTranslatedText text={metadata.heroBtnText || "SHOP COLLECTIONS"} />
                             <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                         </button>
                     </motion.div>

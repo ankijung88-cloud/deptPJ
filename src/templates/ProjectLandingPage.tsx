@@ -23,7 +23,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const navigate = useNavigate();
     const { isAdmin, isAgency, user } = useAdmin();
     const [localItem, setLocalItem] = useState<FeaturedItem | undefined>(item);
-    const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | null>(null);
+    const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -32,7 +32,10 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
             const fetchSample = async () => {
                 try {
                     const products = await getFeaturedProducts();
-                    const sample = products.find(p => p.page_type === 'skincare');
+                    const sample = products.find(p => 
+                        p.page_type === 'skincare' && 
+                        (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                    ) || products.find(p => p.page_type === 'skincare') || products[0];
                     if (sample) setLocalItem(sample);
                 } catch (err) {
                     console.error('Failed to fetch sample project:', err);
@@ -70,7 +73,13 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader item={localItem} />
+            <EditableWrapper 
+                canEdit={canEdit} 
+                label="Edit Header/Logo" 
+                onEdit={() => setEditingSection('header')}
+            >
+                <PremiumHeader item={localItem} />
+            </EditableWrapper>
             
             <main className="pt-20">
                 <EditableWrapper 

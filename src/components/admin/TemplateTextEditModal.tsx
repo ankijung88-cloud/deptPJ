@@ -6,7 +6,7 @@ import { updateProduct } from '../../api/products';
 
 interface TemplateTextEditModalProps {
     item: FeaturedItem;
-    section: 'hero' | 'feature' | 'banner' | 'footer' | null;
+    section: 'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'curation' | 'brand' | 'magazine' | 'community' | 'skincare' | null;
     onClose: () => void;
     onSuccess: (updatedItem: FeaturedItem) => void;
 }
@@ -45,6 +45,31 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
 
     const renderFields = () => {
         switch (section) {
+            case 'header':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Text</label>
+                            <input 
+                                type="text"
+                                value={formData.headerLogoText || ''} 
+                                onChange={(e) => handleChange('headerLogoText', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="여움"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Image URL (Optional)</label>
+                            <input 
+                                type="text"
+                                value={formData.headerLogoUrl || ''} 
+                                onChange={(e) => handleChange('headerLogoUrl', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="https://example.com/logo.png"
+                            />
+                        </div>
+                    </div>
+                );
             case 'hero':
                 return (
                     <div className="space-y-6">
@@ -64,6 +89,16 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 onChange={(e) => handleChange('heroDesc', e.target.value)}
                                 className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none min-h-[100px]"
                                 placeholder="지친 하루 끝, 당신만을 위한 가장 특별한 시간..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Button Text</label>
+                            <input 
+                                type="text"
+                                value={formData.heroBtnText || ''} 
+                                onChange={(e) => handleChange('heroBtnText', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="SHOP COLLECTIONS"
                             />
                         </div>
                     </div>
@@ -239,6 +274,188 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
                                 onChange={(e) => handleChange('footerText', e.target.value)}
                                 className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none min-h-[100px]"
                                 placeholder="피부에 여유를 담다\n프리미엄 스킨케어 큐레이션 서비스"
+                            />
+                        </div>
+                    </div>
+                );
+            case 'curation':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Curation Page Title</label>
+                            <input 
+                                type="text"
+                                value={formData.curationTitle || ''} 
+                                onChange={(e) => handleChange('curationTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="큐레이션"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Curation Page Subtitle</label>
+                            <input 
+                                type="text"
+                                value={formData.curationSubtitle || ''} 
+                                onChange={(e) => handleChange('curationSubtitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Personalized Selection"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Main Content Title</label>
+                            <input 
+                                type="text"
+                                value={formData.curationContentTitle || ''} 
+                                onChange={(e) => handleChange('curationContentTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="당신만을 위한 맞춤 제안"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Main Content Description</label>
+                            <textarea 
+                                value={formData.curationContentDesc || ''} 
+                                onChange={(e) => handleChange('curationContentDesc', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none min-h-[100px]"
+                                placeholder="여움의 전문가들이 선별한 프리미엄 라인업을 만나보세요."
+                            />
+                        </div>
+                    </div>
+                );
+            case 'brand':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Brand Page Title</label>
+                            <input 
+                                type="text"
+                                value={formData.brandTitle || ''} 
+                                onChange={(e) => handleChange('brandTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="브랜드"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Brand Page Subtitle</label>
+                            <input 
+                                type="text"
+                                value={formData.brandSubtitle || ''} 
+                                onChange={(e) => handleChange('brandSubtitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Our Identity"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Story Title</label>
+                            <input 
+                                type="text"
+                                value={formData.brandStoryTitle || ''} 
+                                onChange={(e) => handleChange('brandStoryTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="여움의 시작"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Story Content</label>
+                            <textarea 
+                                value={formData.brandStoryContent || ''} 
+                                onChange={(e) => handleChange('brandStoryContent', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none min-h-[150px]"
+                                placeholder="복잡한 도심 속에서 잃어버린 피부의 '여유'를 찾아드리기 위해..."
+                            />
+                        </div>
+                    </div>
+                );
+            case 'magazine':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Title</label>
+                            <input 
+                                type="text"
+                                value={formData.magazineTitle || ''} 
+                                onChange={(e) => handleChange('magazineTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="매거진"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Magazine Page Subtitle</label>
+                            <input 
+                                type="text"
+                                value={formData.magazineSubtitle || ''} 
+                                onChange={(e) => handleChange('magazineSubtitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Beauty Journal"
+                            />
+                        </div>
+                    </div>
+                );
+            case 'community':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Title</label>
+                            <input 
+                                type="text"
+                                value={formData.communityTitle || ''} 
+                                onChange={(e) => handleChange('communityTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="커뮤니티"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Community Page Subtitle</label>
+                            <input 
+                                type="text"
+                                value={formData.communitySubtitle || ''} 
+                                onChange={(e) => handleChange('communitySubtitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Together in Beauty"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Coming Soon Title</label>
+                            <input 
+                                type="text"
+                                value={formData.communityStatusTitle || ''} 
+                                onChange={(e) => handleChange('communityStatusTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="아직 활성화되지 않은 서비스입니다."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Coming Soon Description</label>
+                            <textarea 
+                                value={formData.communityStatusDesc || ''} 
+                                onChange={(e) => handleChange('communityStatusDesc', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="조금만 기다려주세요..."
+                            />
+                        </div>
+                    </div>
+                );
+            case 'skincare':
+                return (
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Skincare Page Title</label>
+                            <input 
+                                type="text"
+                                value={formData.skincareTitle || ''} 
+                                onChange={(e) => handleChange('skincareTitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="스킨케어"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Skincare Page Subtitle</label>
+                            <input 
+                                type="text"
+                                value={formData.skincareSubtitle || ''} 
+                                onChange={(e) => handleChange('skincareSubtitle', e.target.value)}
+                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-black uppercase tracking-widest focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                placeholder="Essential Care"
                             />
                         </div>
                     </div>
