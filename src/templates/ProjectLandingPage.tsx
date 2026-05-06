@@ -10,10 +10,9 @@ import { getFeaturedProducts, deleteProduct } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
-
 import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 
 interface ProjectLandingPageProps {
@@ -23,8 +22,14 @@ interface ProjectLandingPageProps {
 const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     useImmersiveMode(true);
     const navigate = useNavigate();
+    const location = useLocation();
     const { isAdmin, isAgency, user } = useAdmin();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(item || null);
+    
+    // Parse agencyId from URL query params
+    const queryParams = new URLSearchParams(location.search);
+    const urlAgencyId = queryParams.get('agencyId');
+
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
     const [showProjectModal, setShowProjectModal] = useState(false);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
@@ -37,12 +42,12 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
         try {
             const products = await getFeaturedProducts();
             
-            // 1. Try to find the exact localItem if it exists
-            // 2. Try to find ANY project owned by the current agency
-            // 3. Fallback to Skincare template (agency then admin)
-            // 4. Fallback to first available product
+            // Priority for agency context:
+            // 1. agencyId from URL (for visitors)
+            // 2. agencyId from current logged-in user
+            const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
             
-            const agencyProjects = isAgency ? products.filter(p => p.agency_id?.toString() === user?.id?.toString()) : [];
+            const agencyProjects = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
             
             const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
                           agencyProjects.find(p => p.page_type === 'skincare') ||
@@ -62,7 +67,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
         } else {
             setLocalItem(item);
         }
-    }, [item, isAdmin, isAgency, user]);
+    }, [item, isAdmin, isAgency, user, urlAgencyId]);
 
     if (!localItem) return null;
 

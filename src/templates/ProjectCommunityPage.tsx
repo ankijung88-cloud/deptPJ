@@ -10,7 +10,7 @@ import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
 import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 import { PremiumHero } from '../components/home/PremiumHero';
@@ -19,7 +19,13 @@ export const ProjectCommunityPage: React.FC = () => {
     useImmersiveMode(true);
     const { isAdmin, isAgency, user } = useAdmin();
     const navigate = useNavigate();
+    const location = useLocation();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    
+    // Parse agencyId from URL query params
+    const queryParams = new URLSearchParams(location.search);
+    const urlAgencyId = queryParams.get('agencyId');
+
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'community' | null>(null);
     const [showProjectModal, setShowProjectModal] = useState(false);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
@@ -31,12 +37,21 @@ export const ProjectCommunityPage: React.FC = () => {
     const fetchSample = async () => {
         try {
             const products = await getFeaturedProducts();
-            const sample = products.find(p => 
-                (localItem ? p.id === localItem.id : false) || (
-                    p.page_type === 'community' && 
-                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
-                )
-            ) || products.find(p => p.page_type === 'community') || products.find(p => p.page_type === 'skincare');
+            
+            // Priority for agency context:
+            // 1. agencyId from URL (for visitors)
+            // 2. agencyId from current logged-in user
+            const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
+            
+            const agencyProjects = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
+
+            const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
+                          agencyProjects.find(p => p.page_type === 'community') ||
+                          agencyProjects[0] ||
+                          products.find(p => p.page_type === 'community') || 
+                          products.find(p => p.page_type === 'skincare') ||
+                          products[0];
+
             if (sample) setLocalItem(sample);
         } catch (err) {
             console.error('Failed to fetch sample project:', err);
@@ -45,7 +60,7 @@ export const ProjectCommunityPage: React.FC = () => {
 
     useEffect(() => {
         fetchSample();
-    }, [isAdmin, isAgency, user]);
+    }, [isAdmin, isAgency, user, urlAgencyId]);
 
     if (!localItem) return null;
 

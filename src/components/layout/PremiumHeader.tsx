@@ -27,20 +27,33 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
                     localStorage.getItem('agency_brand_logo') || 
                     item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
 
+    // Helper to generate context-aware paths
+    // If we are on a specific project, we want to stay within that agency's context
+    const getPath = (basePath: string) => {
+        // If the item has an agency_id, we can potentially append it as a query param
+        // to help the next page find the right agency project.
+        if (item?.agency_id) {
+            return `${basePath}?agencyId=${item.agency_id}`;
+        }
+        return basePath;
+    };
+
     const navLinks = metadata.navLinks || [
-        { name: '큐레이션', path: '/project-template/curation' },
-        { name: '스킨케어', path: '/project-template/skincare' },
-        { name: '브랜드', path: '/project-template/brand' },
-        { name: '매거진', path: '/project-template/magazine' },
-        { name: '커뮤니티', path: '/project-template/community' }
+        { name: '큐레이션', path: getPath('/project-template/curation') },
+        { name: '스킨케어', path: getPath('/project-template/skincare') },
+        { name: '브랜드', path: getPath('/project-template/brand') },
+        { name: '매거진', path: getPath('/project-template/magazine') },
+        { name: '커뮤니티', path: getPath('/project-template/community') }
     ];
+
+    const logoLink = item?.agency_id ? `/project-template?agencyId=${item.agency_id}` : '/project-template';
 
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 h-20 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-4">
-                    <Link to="/project-template" className="flex items-center gap-1.5 cursor-pointer group">
+                    <Link to={logoLink} className="flex items-center gap-1.5 cursor-pointer group">
                         {logoUrl ? (
                             <img 
                                 src={logoUrl} 

@@ -3,7 +3,7 @@ import { PremiumHeader } from '../components/layout/PremiumHeader';
 import { PremiumFooter } from '../components/home/PremiumFooter';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getFeaturedProducts, deleteProduct } from '../api/products';
 import { FeaturedItem } from '../types';
 import { Loader2 } from 'lucide-react';
@@ -18,7 +18,13 @@ export const ProjectSkincarePage: React.FC = () => {
     useImmersiveMode(true);
     const { isAdmin, isAgency, user } = useAdmin();
     const navigate = useNavigate();
+    const location = useLocation();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    
+    // Parse agencyId from URL query params
+    const queryParams = new URLSearchParams(location.search);
+    const urlAgencyId = queryParams.get('agencyId');
+
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'skincare' | null>(null);
@@ -32,16 +38,25 @@ export const ProjectSkincarePage: React.FC = () => {
     const fetchAll = async () => {
         try {
             const allProducts = await getFeaturedProducts();
-            const skincareProducts = allProducts.filter(p => p.subcategory === 'skincare' || p.category === 'skincare');
-            setProducts(skincareProducts.length > 0 ? skincareProducts : allProducts);
+            
+            // Priority for agency context:
+            // 1. agencyId from URL (for visitors)
+            // 2. agencyId from current logged-in user
+            const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
+            
+            const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
+            const skincareProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+                .filter(p => p.subcategory === 'skincare' || p.category === 'skincare' || p.page_type === 'skincare');
+            
+            setProducts(skincareProducts.length > 0 ? skincareProducts : (agencyProducts.length > 0 ? agencyProducts : allProducts));
             
             // Get sample for metadata (header/footer)
-            const sample = skincareProducts.find(p => 
-                (localItem ? p.id === localItem.id : false) || (
-                    p.page_type === 'skincare' && 
-                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
-                )
-            ) || skincareProducts.find(p => p.page_type === 'skincare') || skincareProducts[0];
+            const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          agencyProducts.find(p => p.page_type === 'skincare') ||
+                          agencyProducts[0] ||
+                          allProducts.find(p => p.page_type === 'skincare') || 
+                          allProducts[0];
+            
             if (sample) setLocalItem(sample);
         } catch (err) {
             console.error(err);
@@ -52,7 +67,7 @@ export const ProjectSkincarePage: React.FC = () => {
 
     useEffect(() => {
         fetchAll();
-    }, [isAdmin, isAgency, user]);
+    }, [isAdmin, isAgency, user, urlAgencyId]);
 
     if (!localItem || loading) return (
         <div className="min-h-screen bg-[#FCF9F5] flex items-center justify-center">
