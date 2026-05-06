@@ -9,6 +9,8 @@ import { LanguageSelector } from '../common/LanguageSelector';
 
 interface PremiumHeaderProps {
     item?: FeaturedItem;
+    onEdit?: () => void;
+    canEdit?: boolean;
 }
 
 export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
@@ -21,34 +23,38 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
     // Use metadata logo URL if available, fallback to various fields
     const logoUrl = metadata.headerLogoUrl || item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
 
+    const navLinks = metadata.navLinks || [
+        { name: '큐레이션', path: '/project-template/curation' },
+        { name: '스킨케어', path: '/project-template/skincare' },
+        { name: '브랜드', path: '/project-template/brand' },
+        { name: '매거진', path: '/project-template/magazine' },
+        { name: '커뮤니티', path: '/project-template/community' }
+    ];
+
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 h-20 flex items-center justify-between">
                 {/* Logo */}
-                <Link to="/project-template" className="flex items-center gap-1.5 cursor-pointer group">
-                    {logoUrl ? (
-                        <img 
-                            src={logoUrl} 
-                            alt={titleText} 
-                            className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-                        />
-                    ) : (
-                        <span className="text-3xl font-serif font-black text-[#2D2924] tracking-tight transition-transform duration-300 group-hover:scale-105">
-                            {titleText}
-                        </span>
-                    )}
-                    {!logoUrl && <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />}
-                </Link>
+                <div className="flex items-center gap-4">
+                    <Link to="/project-template" className="flex items-center gap-1.5 cursor-pointer group">
+                        {logoUrl ? (
+                            <img 
+                                src={logoUrl} 
+                                alt={titleText} 
+                                className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+                            />
+                        ) : (
+                            <span className="text-3xl font-serif font-black text-[#2D2924] tracking-tight transition-transform duration-300 group-hover:scale-105">
+                                {titleText}
+                            </span>
+                        )}
+                        {!logoUrl && <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />}
+                    </Link>
+                </div>
 
                 {/* Navigation */}
                 <nav className="hidden lg:flex items-center gap-16">
-                    {[
-                        { name: '큐레이션', path: '/project-template/curation' },
-                        { name: '스킨케어', path: '/project-template/skincare' },
-                        { name: '브랜드', path: '/project-template/brand' },
-                        { name: '매거진', path: '/project-template/magazine' },
-                        { name: '커뮤니티', path: '/project-template/community' }
-                    ].map((item) => (
+                    {navLinks.map((item: any) => (
                         <Link 
                             key={item.name} 
                             to={item.path} 

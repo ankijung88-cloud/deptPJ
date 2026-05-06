@@ -46,27 +46,96 @@ export const TemplateTextEditModal: React.FC<TemplateTextEditModalProps> = ({
     const renderFields = () => {
         switch (section) {
             case 'header':
+                const navLinks = formData.navLinks || [
+                    { name: '큐레이션', path: '/project-template/curation' },
+                    { name: '스킨케어', path: '/project-template/skincare' },
+                    { name: '브랜드', path: '/project-template/brand' },
+                    { name: '매거진', path: '/project-template/magazine' },
+                    { name: '커뮤니티', path: '/project-template/community' }
+                ];
+
+                const updateNavLink = (index: number, field: string, value: string) => {
+                    const newLinks = [...navLinks];
+                    newLinks[index] = { ...newLinks[index], [field]: value };
+                    setFormData({ ...formData, navLinks: newLinks });
+                };
+
+                const addNavLink = () => {
+                    setFormData({ 
+                        ...formData, 
+                        navLinks: [...navLinks, { name: '', path: '' }] 
+                    });
+                };
+
+                const removeNavLink = (index: number) => {
+                    const newLinks = navLinks.filter((_: any, i: number) => i !== index);
+                    setFormData({ ...formData, navLinks: newLinks });
+                };
+
                 return (
-                    <div className="space-y-6">
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Text</label>
-                            <input 
-                                type="text"
-                                value={formData.headerLogoText || ''} 
-                                onChange={(e) => handleChange('headerLogoText', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="여움"
-                            />
+                    <div className="space-y-8">
+                        {/* Logo Settings */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Text</label>
+                                <input 
+                                    type="text"
+                                    value={formData.headerLogoText || ''} 
+                                    onChange={(e) => handleChange('headerLogoText', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-serif focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="여움"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Image URL</label>
+                                <input 
+                                    type="text"
+                                    value={formData.headerLogoUrl || ''} 
+                                    onChange={(e) => handleChange('headerLogoUrl', e.target.value)}
+                                    className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
+                                    placeholder="https://example.com/logo.png"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66] mb-2">Logo Image URL (Optional)</label>
-                            <input 
-                                type="text"
-                                value={formData.headerLogoUrl || ''} 
-                                onChange={(e) => handleChange('headerLogoUrl', e.target.value)}
-                                className="w-full bg-[#F5F0E8] border border-[#2D2924]/10 rounded-xl p-4 text-sm font-light focus:ring-2 focus:ring-[#2D2924]/20 outline-none"
-                                placeholder="https://example.com/logo.png"
-                            />
+
+                        {/* Navigation Links */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[#8B7E66]">Navigation Links</label>
+                                <button 
+                                    onClick={addNavLink}
+                                    className="flex items-center gap-1 text-[10px] font-black text-[#2D2924] hover:opacity-70"
+                                >
+                                    <Plus size={12} /> ADD LINK
+                                </button>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                {navLinks.map((link: any, idx: number) => (
+                                    <div key={idx} className="flex gap-3 items-center bg-white/50 p-3 rounded-xl border border-[#2D2924]/5">
+                                        <input 
+                                            type="text"
+                                            value={link.name}
+                                            onChange={(e) => updateNavLink(idx, 'name', e.target.value)}
+                                            placeholder="Link Name"
+                                            className="flex-1 bg-transparent border-b border-[#2D2924]/10 p-1 text-xs font-bold outline-none"
+                                        />
+                                        <input 
+                                            type="text"
+                                            value={link.path}
+                                            onChange={(e) => updateNavLink(idx, 'path', e.target.value)}
+                                            placeholder="/path"
+                                            className="flex-1 bg-transparent border-b border-[#2D2924]/10 p-1 text-[10px] font-mono outline-none"
+                                        />
+                                        <button 
+                                            onClick={() => removeNavLink(idx)}
+                                            className="p-1 text-red-400 hover:text-red-600 transition-colors"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 );
