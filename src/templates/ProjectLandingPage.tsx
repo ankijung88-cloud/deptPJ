@@ -93,13 +93,11 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
-            <EditableWrapper 
-                canEdit={canEdit} 
-                label="Header / Navigation" 
+            <PremiumHeader 
+                item={localItem} 
+                canEdit={canEdit}
                 onEdit={() => setShowNavigationModal(true)}
-            >
-                <PremiumHeader item={localItem} />
-            </EditableWrapper>
+            />
             
             <main className="pt-20">
                 <EditableWrapper 

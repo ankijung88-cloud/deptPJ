@@ -85,13 +85,11 @@ export const ProjectCommunityPage: React.FC = () => {
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
-            <EditableWrapper 
-                canEdit={canEdit} 
-                label="Header / Navigation" 
+            <PremiumHeader 
+                item={localItem} 
+                canEdit={canEdit}
                 onEdit={() => setShowNavigationModal(true)}
-            >
-                <PremiumHeader item={localItem} />
-            </EditableWrapper>
+            />
 
             <main className="pt-20">
                 <EditableWrapper 
