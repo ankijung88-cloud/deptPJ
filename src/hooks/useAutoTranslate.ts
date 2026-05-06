@@ -53,15 +53,42 @@ function findTranslationByKoreanValue(koText: string, targetLang: string): strin
  * Custom hook to automatically translate text using Google Gemini AI.
  * It handles caching, language changes, and provides a fallback to local i18n resources.
  */
-export const useAutoTranslate = (text: string | null | undefined, targetLangOverride?: string) => {
+export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
     const { i18n: i18nInstance } = useTranslation();
-    const [translatedText, setTranslatedText] = useState<string>(text || '');
+    
+    const extractString = (val: any, depth = 0): string => {
+        if (!val || depth > 2) return '';
+        if (typeof val === 'string') {
+            if (val.trim().startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(val);
+                    const lang = targetLangOverride || i18nInstance.language || 'ko';
+                    const short = lang.split('-')[0];
+                    const extracted = parsed[short] || parsed['ko'] || parsed['en'] || Object.values(parsed)[0];
+                    return typeof extracted === 'string' ? extracted : extractString(extracted, depth + 1);
+                } catch (e) {
+                    return val;
+                }
+            }
+            return val;
+        }
+        if (typeof val === 'object') {
+            const lang = targetLangOverride || i18nInstance.language || 'ko';
+            const short = lang.split('-')[0];
+            const extracted = val[short] || val['ko'] || val['en'] || Object.values(val)[0];
+            return typeof extracted === 'string' ? extracted : extractString(extracted, depth + 1);
+        }
+        return String(val);
+    };
+
+    // Initialize with a safe string extracted from the input
+    const [translatedText, setTranslatedText] = useState<string>(() => extractString(text));
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Sync state immediately when input text or language switch occurs
     useEffect(() => {
-        if (text) setTranslatedText(text);
-    }, [text, targetLangOverride]);
+        setTranslatedText(extractString(text));
+    }, [text, targetLangOverride, i18nInstance.language]);
 
     // Get primary language code (e.g., 'en-US' -> 'en')
     const getTargetLang = () => {

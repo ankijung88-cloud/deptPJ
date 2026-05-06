@@ -6,7 +6,7 @@ import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getFeaturedProducts, deleteProduct } from '../api/products';
 import { FeaturedItem } from '../types';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Edit2, Trash2 } from 'lucide-react';
 import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
@@ -28,7 +28,8 @@ export const ProjectSkincarePage: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'skincare' | null>(null);
-    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<FeaturedItem | null>(null);
+    const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
@@ -54,7 +55,8 @@ export const ProjectSkincarePage: React.FC = () => {
             const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'skincare') ||
                           agencyProducts[0] ||
-                          allProducts.find(p => p.page_type === 'skincare') || 
+                          allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'skincare') ||
+                          allProducts.filter(p => !p.agency_id)[0] ||
                           allProducts[0];
             
             if (sample) setLocalItem(sample);
@@ -75,27 +77,37 @@ export const ProjectSkincarePage: React.FC = () => {
         </div>
     );
 
-    const handleDelete = async () => {
+    const handleDelete = async (productId?: string) => {
+        const idToDelete = productId || localItem.id;
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            await deleteProduct(localItem.id);
-            navigate('/');
+            await deleteProduct(idToDelete);
+            if (!productId) {
+                navigate('/');
+            } else {
+                fetchAll();
+            }
         } catch (err) {
             alert('삭제에 실패했습니다.');
         }
     };
 
-    const metadata = (localItem?.metadata as any) || {};
+    const handleEditProduct = (product: FeaturedItem) => {
+        setSelectedProduct(product);
+        setModalMode('edit');
+    };
+
+
 
     return (
         <div className="min-h-screen bg-[#FCF9F5]">
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}
-                onEditSettings={() => setShowProjectModal(true)}
+                onEditSettings={() => handleEditProduct(localItem)}
                 onEditHeader={() => setShowNavigationModal(true)}
-                onAdd={() => setShowProjectModal(true)}
-                onDelete={isOwner ? handleDelete : undefined}
+                onAdd={() => setModalMode('add')}
+                onDelete={isOwner ? () => handleDelete() : undefined}
             />
 
             <PremiumHeader 
@@ -105,43 +117,56 @@ export const ProjectSkincarePage: React.FC = () => {
             />
 
             <main className="pt-20">
-                <EditableWrapper 
-                    canEdit={canEdit} 
-                    label="Edit Hero Section" 
-                    onEdit={() => setEditingSection('skincare')}
-                >
-                    <div className="bg-[#2D2924] py-32 px-6 md:px-12 lg:px-24 text-center">
-                        <h1 className="text-5xl font-serif font-black text-white mb-6">
-                            <AutoTranslatedText text={metadata.skincareTitle || "프리미엄 스킨케어 컬렉션"} />
-                        </h1>
-                        <p className="text-white/60 max-w-2xl mx-auto leading-relaxed">
-                            <AutoTranslatedText text={metadata.skincareSubtitle || "피부 본연의 빛을 찾아주는 여움만의 특별한 큐레이션을 경험해보세요."} />
-                        </p>
-                    </div>
-                </EditableWrapper>
+
 
                 <div className="py-24 container mx-auto px-6 md:px-12 lg:px-24">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         {products.map((product) => (
-                            <Link 
-                                key={product.id}
-                                to={`/product/${product.id}`}
-                                className="group block"
-                            >
-                                <div className="aspect-[3/4] bg-[#F5F0E8] rounded-2xl overflow-hidden mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
-                                    <img 
-                                        src={product.imageUrl} 
-                                        alt={product.id} 
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                    />
-                                </div>
-                                <h3 className="text-lg font-serif font-bold text-[#2D2924] mb-2 group-hover:text-[#FF7F7F] transition-colors">
-                                    <AutoTranslatedText text={product.title} />
-                                </h3>
-                                <p className="text-xs text-[#8B7E66] line-clamp-2 leading-relaxed">
-                                    <AutoTranslatedText text={product.description} />
-                                </p>
-                            </Link>
+                            <div key={product.id} className="group relative">
+                                <Link 
+                                    to={`/project-template/product/${product.id}`}
+                                    className="block"
+                                >
+                                    <div className="aspect-[3/4] bg-[#F5F0E8] rounded-2xl overflow-hidden mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
+                                        <img 
+                                            src={product.imageUrl} 
+                                            alt={product.id} 
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        />
+                                    </div>
+                                    <h3 className="text-lg font-serif font-bold text-[#2D2924] mb-2 group-hover:text-[#FF7F7F] transition-colors">
+                                        <AutoTranslatedText text={product.title} />
+                                    </h3>
+                                    <p className="text-xs text-[#8B7E66] line-clamp-2 leading-relaxed">
+                                        <AutoTranslatedText text={product.description} />
+                                    </p>
+                                </Link>
+
+                                {canEdit && (
+                                    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button 
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleEditProduct(product);
+                                            }}
+                                            className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-[#2D2924] hover:bg-[#2D2924] hover:text-white transition-all"
+                                        >
+                                            <Edit2 size={14} />
+                                        </button>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleDelete(product.id);
+                                            }}
+                                            className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -178,18 +203,23 @@ export const ProjectSkincarePage: React.FC = () => {
                 />
             )}
 
-            {showProjectModal && (
+            {modalMode && (
                 <ProductFormModal 
-                    product={isOwner ? localItem : null}
-                    onClose={() => setShowProjectModal(false)}
-                    onSuccess={(updated) => {
-                        setShowProjectModal(false);
-                        if (updated) {
-                            setLocalItem(updated);
-                            fetchAll(); // Refresh grid too
-                        } else {
-                            fetchAll();
-                        }
+                    product={modalMode === 'edit' ? selectedProduct : null}
+                    initialData={modalMode === 'add' ? {
+                        page_type: 'skincare',
+                        category: 'skincare',
+                        subcategory: 'skincare',
+                        agency_id: localItem.agency_id
+                    } : undefined}
+                    onClose={() => {
+                        setModalMode(null);
+                        setSelectedProduct(null);
+                    }}
+                    onSuccess={() => {
+                        setModalMode(null);
+                        setSelectedProduct(null);
+                        fetchAll();
                     }}
                 />
             )}

@@ -10,10 +10,11 @@ import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
 import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
-import { PremiumHero } from '../components/home/PremiumHero';
+
+import { Edit2, Trash2, Loader2 } from 'lucide-react';
 
 export const ProjectBrandPage: React.FC = () => {
     useImmersiveMode(true);
@@ -21,59 +22,76 @@ export const ProjectBrandPage: React.FC = () => {
     const location = useLocation();
     const { isAdmin, isAgency, user } = useAdmin();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    const [products, setProducts] = useState<FeaturedItem[]>([]);
+    const [loading, setLoading] = useState(true);
     
     // Parse agencyId from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'brand' | null>(null);
-    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<FeaturedItem | null>(null);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
     const canEdit = isAdmin || isAgency;
     const isOwner = isAdmin || (isAgency && localItem?.agency_id?.toString() === user?.id?.toString());
 
-    const fetchSample = async () => {
+    const fetchAll = async () => {
+        setLoading(true);
         try {
-            const products = await getFeaturedProducts();
+            const allProducts = await getFeaturedProducts();
             
-            // Priority for agency context:
-            // 1. agencyId from URL (for visitors)
-            // 2. agencyId from current logged-in user
+            // Priority for agency context
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
-            
-            const agencyProjects = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
+            const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
 
-            const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
-                          agencyProjects.find(p => p.page_type === 'brand') ||
-                          agencyProjects[0] ||
-                          products.find(p => p.page_type === 'brand') || 
-                          products.find(p => p.page_type === 'skincare') ||
-                          products[0];
+            // Main template item
+            const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          agencyProducts.find(p => p.page_type === 'brand') ||
+                          agencyProducts[0] ||
+                          allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'brand') ||
+                          allProducts.filter(p => !p.agency_id)[0] ||
+                          allProducts[0];
 
             if (sample) setLocalItem(sample);
+
+            // Filter products for this page type
+            const brandProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+                .filter(p => p.page_type === 'brand' || p.category === 'brand');
+            
+            setProducts(brandProducts);
         } catch (err) {
-            console.error('Failed to fetch sample project:', err);
+            console.error('Failed to fetch data:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSample();
+        fetchAll();
     }, [isAdmin, isAgency, user, urlAgencyId]);
 
-    if (!localItem) return null;
-
-    const handleDelete = async () => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const handleDelete = async (id?: string) => {
+        const targetId = id || localItem?.id;
+        if (!targetId || !window.confirm('정말 삭제하시겠습니까?')) return;
+        
         try {
-            await deleteProduct(localItem.id);
-            navigate('/');
+            await deleteProduct(targetId);
+            if (!id) navigate('/');
+            else fetchAll();
         } catch (err) {
-            console.error('Delete failed:', err);
             alert('삭제에 실패했습니다.');
         }
     };
+
+    const handleEditProduct = (product: FeaturedItem) => {
+        setSelectedProduct(product);
+        setModalMode('edit');
+    };
+
+    if (!localItem) return null;
 
     const metadata = (localItem?.metadata as any) || {};
 
@@ -82,10 +100,13 @@ export const ProjectBrandPage: React.FC = () => {
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}
-                onEditSettings={() => setShowProjectModal(true)}
+                onEditSettings={() => handleEditProduct(localItem)}
                 onEditHeader={() => setShowNavigationModal(true)}
-                onAdd={() => setShowProjectModal(true)}
-                onDelete={isOwner ? handleDelete : undefined}
+                onAdd={() => {
+                    setSelectedProduct(null);
+                    setModalMode('add');
+                }}
+                onDelete={isOwner ? () => handleDelete() : undefined}
             />
 
             <PremiumHeader 
@@ -95,14 +116,6 @@ export const ProjectBrandPage: React.FC = () => {
             />
             
             <main className="pt-20">
-                <EditableWrapper 
-                    canEdit={canEdit} 
-                    label="Edit Hero Section" 
-                    onEdit={() => setEditingSection('hero')}
-                >
-                    <PremiumHero item={localItem} />
-                </EditableWrapper>
-
                 <div className="container mx-auto px-6 md:px-12 lg:px-24">
                     <EditableWrapper canEdit={canEdit} label="Edit Page Content" onEdit={() => setEditingSection('brand')}>
                         <div className="py-24">
@@ -120,21 +133,68 @@ export const ProjectBrandPage: React.FC = () => {
                                 </p>
                             </motion.div>
                             
-                            <div className="max-w-4xl mx-auto space-y-24 text-center">
-                                <section>
-                                    <h2 className="text-3xl font-serif text-[#2D2924] mb-8 italic">
-                                        <AutoTranslatedText text={metadata.brandStoryTitle || "여움의 시작"} />
-                                    </h2>
-                                    <p className="text-[#5C564D] leading-loose text-lg whitespace-pre-line">
-                                        <AutoTranslatedText text={metadata.brandStoryContent || "복잡한 도심 속에서 잃어버린 피부의 '여유'를 찾아드리기 위해 시작되었습니다.\n우리는 자연의 순수함과 현대 과학의 조화를 지향합니다."} />
-                                    </p>
-                                </section>
-                                <div className="w-full h-[500px] bg-white/50 rounded-[60px] shadow-sm border border-[#2D2924]/5 overflow-hidden">
-                                    {metadata.brandImage && (
-                                        <img src={metadata.brandImage} alt="Brand" className="w-full h-full object-cover" />
-                                    )}
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                                {products.map((product) => (
+                                    <div key={product.id} className="group relative">
+                                        <Link to={`/project-template/product/${product.id}`} className="block space-y-8">
+                                            <div className="aspect-[4/3] bg-white rounded-[40px] shadow-sm border border-[#2D2924]/5 overflow-hidden group-hover:shadow-xl transition-all duration-500">
+                                                {product.imageUrl ? (
+                                                    <img src={product.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center opacity-20">
+                                                        <span className="text-[10px] font-black tracking-widest uppercase">No Image</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="space-y-4 text-center">
+                                                <h3 className="text-2xl font-serif text-[#2D2924] group-hover:text-[#FF7F7F] transition-colors">
+                                                    <AutoTranslatedText text={product.title} />
+                                                </h3>
+                                                <p className="text-[#5C564D] leading-relaxed text-sm max-w-lg mx-auto line-clamp-3">
+                                                    <AutoTranslatedText text={product.description} />
+                                                </p>
+                                            </div>
+                                        </Link>
+
+                                        {canEdit && (
+                                            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleEditProduct(product);
+                                                    }}
+                                                    className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-[#2D2924] hover:bg-[#2D2924] hover:text-white transition-all"
+                                                >
+                                                    <Edit2 size={14} />
+                                                </button>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleDelete(product.id);
+                                                    }}
+                                                    className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
+
+                            {products.length === 0 && !loading && (
+                                <div className="text-center py-20 bg-[#F5F0E8]/30 rounded-[40px] border border-dashed border-[#2D2924]/10">
+                                    <p className="text-[#8B7E66] text-sm italic font-serif">등록된 브랜드가 없습니다.</p>
+                                </div>
+                            )}
+
+                            {loading && (
+                                <div className="flex justify-center py-20">
+                                    <Loader2 className="animate-spin text-[#8B7E66]" />
+                                </div>
+                            )}
                         </div>
                     </EditableWrapper>
                 </div>
@@ -162,17 +222,19 @@ export const ProjectBrandPage: React.FC = () => {
                 />
             )}
 
-            {showProjectModal && (
+            {modalMode && (
                 <ProductFormModal 
-                    product={isOwner ? localItem : null}
-                    onClose={() => setShowProjectModal(false)}
-                    onSuccess={(updated) => {
-                        setShowProjectModal(false);
-                        if (updated) {
-                            setLocalItem(updated);
-                        } else {
-                            fetchSample();
-                        }
+                    product={modalMode === 'edit' ? selectedProduct : null}
+                    initialData={modalMode === 'add' ? {
+                        page_type: 'brand',
+                        category: 'brand',
+                        subcategory: 'brand',
+                        agency_id: localItem.agency_id
+                    } : undefined}
+                    onClose={() => setModalMode(null)}
+                    onSuccess={() => {
+                        setModalMode(null);
+                        fetchAll();
                     }}
                 />
             )}

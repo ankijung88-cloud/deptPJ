@@ -6,6 +6,8 @@ import { authenticateAdmin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Auth routes
+router.get('/agencies/public', authController.getPublicAgencies);
+router.get('/agency/:id', authController.getAgencyPublicInfo);
 router.post('/login', authController.login);
 router.post('/register', authController.register);
 router.post('/find-id', authController.findId);

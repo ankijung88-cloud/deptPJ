@@ -10,10 +10,11 @@ import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
 import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
-import { PremiumHero } from '../components/home/PremiumHero';
+
 import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
+import { Edit2, Trash2, Loader2 } from 'lucide-react';
 
 export const ProjectCurationPage: React.FC = () => {
     useImmersiveMode(true);
@@ -21,59 +22,76 @@ export const ProjectCurationPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    const [products, setProducts] = useState<FeaturedItem[]>([]);
+    const [loading, setLoading] = useState(true);
     
     // Parse agencyId from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'curation' | null>(null);
-    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<FeaturedItem | null>(null);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
     const canEdit = isAdmin || isAgency;
     const isOwner = isAdmin || (isAgency && localItem?.agency_id?.toString() === user?.id?.toString());
 
-    const fetchSample = async () => {
+    const fetchAll = async () => {
+        setLoading(true);
         try {
-            const products = await getFeaturedProducts();
+            const allProducts = await getFeaturedProducts();
             
-            // Priority for agency context:
-            // 1. agencyId from URL (for visitors)
-            // 2. agencyId from current logged-in user
+            // Priority for agency context
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
-            
-            const agencyProjects = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
+            const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
 
-            const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
-                          agencyProjects.find(p => p.page_type === 'curation') ||
-                          agencyProjects[0] ||
-                          products.find(p => p.page_type === 'curation') || 
-                          products.find(p => p.page_type === 'skincare') ||
-                          products[0];
+            // Main template item
+            const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          agencyProducts.find(p => p.page_type === 'curation') ||
+                          agencyProducts[0] ||
+                          allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'curation') ||
+                          allProducts.filter(p => !p.agency_id)[0] ||
+                          allProducts[0];
 
             if (sample) setLocalItem(sample);
+
+            // Filter products for this page type
+            const curationProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+                .filter(p => p.page_type === 'curation' || p.category === 'curation');
+            
+            setProducts(curationProducts);
         } catch (err) {
-            console.error('Failed to fetch sample project:', err);
+            console.error('Failed to fetch data:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSample();
+        fetchAll();
     }, [isAdmin, isAgency, user, urlAgencyId]);
 
-    if (!localItem) return null;
-
-    const handleDelete = async () => {
-        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const handleDelete = async (id?: string) => {
+        const targetId = id || localItem?.id;
+        if (!targetId || !window.confirm('정말 삭제하시겠습니까?')) return;
+        
         try {
-            await deleteProduct(localItem.id);
-            navigate('/');
+            await deleteProduct(targetId);
+            if (!id) navigate('/');
+            else fetchAll();
         } catch (err) {
-            console.error('Delete failed:', err);
             alert('삭제에 실패했습니다.');
         }
     };
+
+    const handleEditProduct = (product: FeaturedItem) => {
+        setSelectedProduct(product);
+        setModalMode('edit');
+    };
+
+    if (!localItem) return null;
 
     const metadata = (localItem?.metadata as any) || {};
 
@@ -82,10 +100,13 @@ export const ProjectCurationPage: React.FC = () => {
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}
-                onEditSettings={() => setShowProjectModal(true)}
+                onEditSettings={() => handleEditProduct(localItem)}
                 onEditHeader={() => setShowNavigationModal(true)}
-                onAdd={() => setShowProjectModal(true)}
-                onDelete={isOwner ? handleDelete : undefined}
+                onAdd={() => {
+                    setSelectedProduct(null);
+                    setModalMode('add');
+                }}
+                onDelete={isOwner ? () => handleDelete() : undefined}
             />
 
             <PremiumHeader 
@@ -95,14 +116,6 @@ export const ProjectCurationPage: React.FC = () => {
             />
             
             <main className="pt-20">
-                <EditableWrapper 
-                    canEdit={canEdit} 
-                    label="Edit Hero Section" 
-                    onEdit={() => setEditingSection('hero')}
-                >
-                    <PremiumHero item={localItem} />
-                </EditableWrapper>
-
                 <div className="container mx-auto px-6 md:px-12 lg:px-24">
                     <EditableWrapper
                         canEdit={canEdit}
@@ -124,21 +137,68 @@ export const ProjectCurationPage: React.FC = () => {
                                 </p>
                             </motion.div>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                <div className="aspect-[4/5] bg-white/50 rounded-[40px] overflow-hidden shadow-sm border border-[#2D2924]/5">
-                                    {metadata.curationImage && (
-                                        <img src={metadata.curationImage} alt="Curation" className="w-full h-full object-cover" />
-                                    )}
-                                </div>
-                                <div className="flex flex-col justify-center space-y-8">
-                                    <h2 className="text-3xl font-serif text-[#2D2924]">
-                                        <AutoTranslatedText text={metadata.curationContentTitle || "당신만을 위한 맞춤 제안"} />
-                                    </h2>
-                                    <p className="text-[#5C564D] leading-relaxed">
-                                        <AutoTranslatedText text={metadata.curationContentDesc || "여움의 전문가들이 선별한 프리미엄 라인업을 만나보세요. 피부 상태와 고민에 맞춘 최적의 조합을 제안합니다."} />
-                                    </p>
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                                {products.map((product) => (
+                                    <div key={product.id} className="group relative">
+                                        <Link to={`/project-template/product/${product.id}`} className="flex flex-col md:flex-row gap-8 bg-white/50 p-8 rounded-[40px] border border-[#2D2924]/5 group-hover:shadow-xl transition-all duration-500">
+                                            <div className="w-full md:w-1/2 aspect-square rounded-[30px] overflow-hidden">
+                                                {product.imageUrl ? (
+                                                    <img src={product.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                                ) : (
+                                                    <div className="w-full h-full bg-[#F5F0E8] flex items-center justify-center opacity-20">
+                                                        <span className="text-xs font-black uppercase tracking-widest">CURA</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="w-full md:w-1/2 flex flex-col justify-center space-y-4">
+                                                <h3 className="text-2xl font-serif text-[#2D2924] group-hover:text-[#FF7F7F] transition-colors">
+                                                    <AutoTranslatedText text={product.title} />
+                                                </h3>
+                                                <p className="text-[#5C564D] leading-relaxed text-sm line-clamp-4">
+                                                    <AutoTranslatedText text={product.description} />
+                                                </p>
+                                            </div>
+                                        </Link>
+
+                                        {canEdit && (
+                                            <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleEditProduct(product);
+                                                    }}
+                                                    className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-[#2D2924] hover:bg-[#2D2924] hover:text-white transition-all"
+                                                >
+                                                    <Edit2 size={14} />
+                                                </button>
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleDelete(product.id);
+                                                    }}
+                                                    className="p-2 bg-white/90 backdrop-blur shadow-lg rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
+
+                            {products.length === 0 && !loading && (
+                                <div className="text-center py-20 bg-[#F5F0E8]/30 rounded-[40px] border border-dashed border-[#2D2924]/10">
+                                    <p className="text-[#8B7E66] text-sm italic font-serif">등록된 큐레이션이 없습니다.</p>
+                                </div>
+                            )}
+
+                            {loading && (
+                                <div className="flex justify-center py-20">
+                                    <Loader2 className="animate-spin text-[#8B7E66]" />
+                                </div>
+                            )}
                         </div>
                     </EditableWrapper>
                 </div>
@@ -170,17 +230,19 @@ export const ProjectCurationPage: React.FC = () => {
                 />
             )}
 
-            {showProjectModal && (
+            {modalMode && (
                 <ProductFormModal 
-                    product={isOwner ? localItem : null}
-                    onClose={() => setShowProjectModal(false)}
-                    onSuccess={(updated) => {
-                        setShowProjectModal(false);
-                        if (updated) {
-                            setLocalItem(updated);
-                        } else {
-                            fetchSample();
-                        }
+                    product={modalMode === 'edit' ? selectedProduct : null}
+                    initialData={modalMode === 'add' ? {
+                        page_type: 'curation',
+                        category: 'curation',
+                        subcategory: 'curation',
+                        agency_id: localItem.agency_id
+                    } : undefined}
+                    onClose={() => setModalMode(null)}
+                    onSuccess={() => {
+                        setModalMode(null);
+                        fetchAll();
                     }}
                 />
             )}

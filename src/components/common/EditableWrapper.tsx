@@ -9,6 +9,7 @@ interface EditableWrapperProps {
     onAdd?: () => void;
     label?: string;
     canEdit: boolean;
+    className?: string;
 }
 
 export const EditableWrapper: React.FC<EditableWrapperProps> = ({ 
@@ -17,7 +18,8 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
     onDelete, 
     onAdd, 
     label,
-    canEdit 
+    canEdit,
+    className
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -25,7 +27,7 @@ export const EditableWrapper: React.FC<EditableWrapperProps> = ({
 
     return (
         <div 
-            className="relative group/editable"
+            className={`relative group/editable ${className || ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >

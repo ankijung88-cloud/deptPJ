@@ -16,13 +16,8 @@ const pool = mysql.createPool({
 });
 
 async function run() {
-  try {
-    const [result] = await pool.query("DELETE FROM featured_items WHERE id = 'item-20260331-w2hs2' OR JSON_UNQUOTE(JSON_EXTRACT(title, '$.ko')) = '모든차 서비스'");
-    console.log('Deleted bad products:', result.affectedRows);
-    process.exit(0);
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
+  const [rows] = await pool.query('SELECT DISTINCT role FROM users');
+  console.log('Distinct roles:', rows);
+  process.exit(0);
 }
 run();

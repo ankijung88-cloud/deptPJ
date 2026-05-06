@@ -6,10 +6,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { ArrowRight, ChevronRight, Droplets, Leaf, Sparkles, Edit2, X, Check, Upload, Loader2 } from 'lucide-react';
-import { getProductById, updateProduct } from '../api/products';
+import { getProductById, updateProduct, deleteProduct } from '../api/products';
 import { FeaturedItem } from '../types';
 import { useAdmin } from '../hooks/useAdmin';
 import { EditableWrapper } from '../components/common/EditableWrapper';
+import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
+import { ProductFormModal } from '../components/admin/ProductFormModal';
+import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 
 // --- Types ---
 interface PremiumDetailConfig {
@@ -399,30 +402,30 @@ const EditModal = ({ product, config, initialSection, onClose, onSave }: { produ
                             </div>
                         </div>
                     </section>
-                </div>
+                    </div>
 
-                <div className="p-8 bg-[#F5F0E8]/50 border-t border-[#2D2924]/5 flex justify-end gap-4">
-                    <button 
-                        onClick={onClose}
-                        className="px-8 py-3 rounded-full text-xs font-black tracking-widest uppercase text-[#8B7E66] hover:bg-black/5 transition-colors"
-                    >
-                        취소
-                    </button>
-                    <button 
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className="bg-[#2D2924] text-white px-10 py-3 rounded-full text-xs font-black tracking-widest uppercase hover:bg-black transition-all flex items-center gap-3"
-                    >
-                        {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                        저장하기
-                    </button>
+                    <div className="p-8 bg-[#F5F0E8]/50 border-t border-[#2D2924]/5 flex justify-end gap-4">
+                        <button 
+                            onClick={onClose}
+                            className="px-8 py-3 rounded-full text-xs font-black tracking-widest uppercase text-[#8B7E66] hover:bg-black/5 transition-colors"
+                        >
+                            취소
+                        </button>
+                        <button 
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="bg-[#2D2924] text-white px-10 py-3 rounded-full text-xs font-black tracking-widest uppercase hover:bg-black transition-all flex items-center gap-3"
+                        >
+                            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                            저장하기
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
-};
+        );
+    };
 
-// --- Main Component ---
+    // --- Main Component ---
 const ProjectProductDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { isAdmin, isAgency, user } = useAdmin();
@@ -434,8 +437,11 @@ const ProjectProductDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editTargetSection, setEditTargetSection] = useState<string | null>(null);
+    const [showProductModal, setShowProductModal] = useState(false);
+    const [showNavigationModal, setShowNavigationModal] = useState(false);
 
-    const canEdit = isAdmin || (isAgency && product?.agency_id?.toString() === user?.id?.toString() && user?.has_project_template_access);
+    const canEdit = isAdmin || isAgency;
+    const isOwner = isAdmin || (isAgency && product?.agency_id?.toString() === user?.id?.toString());
 
     const openEditSection = (section: string) => {
         setEditTargetSection(section);
@@ -454,14 +460,40 @@ const ProjectProductDetailPage: React.FC = () => {
             const data = await getProductById(id!);
             if (data) {
                 setProduct(data);
-                if (data.metadata?.premiumDetail) {
-                    setConfig(data.metadata.premiumDetail);
-                }
+                // Deep merge or fallback for nested config
+                const savedConfig = data.metadata?.premiumDetail || {};
+                const mergedConfig = {
+                    ...DEFAULT_CONFIG,
+                    ...savedConfig,
+                    hero: { ...DEFAULT_CONFIG.hero, ...savedConfig.hero },
+                    quote: { ...DEFAULT_CONFIG.quote, ...savedConfig.quote },
+                    usage: { ...DEFAULT_CONFIG.usage, ...savedConfig.usage },
+                    features: Array.isArray(savedConfig.features) && savedConfig.features.length > 0 
+                        ? savedConfig.features 
+                        : DEFAULT_CONFIG.features,
+                    recommendations: Array.isArray(savedConfig.recommendations) && savedConfig.recommendations.length > 0 
+                        ? savedConfig.recommendations 
+                        : DEFAULT_CONFIG.recommendations,
+                };
+                setConfig(mergedConfig);
+            } else {
+                setProduct(null);
             }
         } catch (err) {
             console.error('Failed to fetch product:', err);
+            setProduct(null);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        try {
+            await deleteProduct(product!.id);
+            navigate(-1);
+        } catch (err) {
+            alert('삭제에 실패했습니다.');
         }
     };
 
@@ -478,22 +510,38 @@ const ProjectProductDetailPage: React.FC = () => {
             <div className="min-h-screen bg-[#F5F0E8] flex flex-col items-center justify-center space-y-6">
                 <h2 className="text-2xl font-serif text-[#2D2924]">제품을 찾을 수 없습니다.</h2>
                 <button 
-                    onClick={() => navigate('/project-template/skincare')}
+                    onClick={() => navigate('/')}
                     className="text-sm font-black text-[#8B7E66] underline tracking-widest uppercase"
                 >
-                    돌아가기
+                    홈으로 돌아가기
                 </button>
             </div>
         );
     }
     
+    // Safety check for title
+    const displayTitle = config.hero?.title || product.title || "Product Detail";
+
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
-            <PremiumHeader item={product} />
+            <ProjectAdminBar 
+                item={product}
+                canEdit={canEdit}
+                onEditSettings={() => setShowProductModal(true)}
+                onEditHeader={() => setShowNavigationModal(true)}
+                onAdd={() => setShowProductModal(true)}
+                onDelete={isOwner ? handleDelete : undefined}
+            />
+
+            <PremiumHeader 
+                item={product} 
+                canEdit={canEdit}
+                onEdit={() => setShowNavigationModal(true)}
+            />
             
             {/* Admin Controls */}
-            {(isAdmin || (isAgency && product?.agency_id?.toString() === user?.id?.toString() && user?.has_project_template_access)) && (
-                <div className="fixed bottom-12 right-12 z-[500]">
+            {canEdit && (
+                <div className="fixed bottom-12 right-12 z-[500] flex flex-col gap-4">
                     <button 
                         onClick={() => setIsEditModalOpen(true)}
                         className="w-16 h-16 bg-[#2D2924] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 group"
@@ -521,17 +569,40 @@ const ProjectProductDetailPage: React.FC = () => {
                 )}
             </AnimatePresence>
 
+            <AnimatePresence>
+                {showProductModal && (
+                    <ProductFormModal
+                        onClose={() => setShowProductModal(false)}
+                        onSuccess={() => {
+                            setShowProductModal(false);
+                            fetchProductData();
+                        }}
+                        product={product}
+                    />
+                )}
+                {showNavigationModal && (
+                    <ProjectNavigationModal
+                        onClose={() => setShowNavigationModal(false)}
+                        onSuccess={(updated) => {
+                            setProduct(updated);
+                            setShowNavigationModal(false);
+                        }}
+                        item={product}
+                    />
+                )}
+            </AnimatePresence>
+
             <main className="pt-24">
                 {/* Breadcrumbs */}
                 <div className="container mx-auto px-6 md:px-12 lg:px-24 py-6">
                     <nav className="flex items-center gap-2 text-[10px] text-[#8B7E66] tracking-widest uppercase">
                         <AutoTranslatedText text="홈" />
                         <ChevronRight size={10} />
-                        <AutoTranslatedText text="스킨케어" />
+                        <AutoTranslatedText text={product.page_type === 'curation' ? '큐레이션' : product.page_type === 'brand' ? '브랜드' : '스킨케어'} />
                         <ChevronRight size={10} />
                         <AutoTranslatedText text="제품" />
                         <ChevronRight size={10} />
-                        <span className="text-[#2D2924] font-black"><AutoTranslatedText text={config.hero.title} /></span>
+                        <span className="text-[#2D2924] font-black"><AutoTranslatedText text={displayTitle} /></span>
                     </nav>
                 </div>
 
@@ -550,16 +621,16 @@ const ProjectProductDetailPage: React.FC = () => {
                                     transition={{ duration: 0.8 }}
                                 >
                                     <h1 className="text-5xl md:text-7xl font-serif text-[#2D2924] mb-4">
-                                        <AutoTranslatedText text={config.hero.title} />
+                                        <AutoTranslatedText text={config.hero?.title || product.title} />
                                     </h1>
                                     <div className="flex items-center gap-2 mb-8">
                                         <span className="text-xl md:text-2xl text-[#8B7E66] font-light">
-                                            <AutoTranslatedText text={config.hero.subtitle} />
+                                            <AutoTranslatedText text={config.hero?.subtitle || "Premium Quality"} />
                                         </span>
                                         <div className="w-2 h-2 bg-[#FF7F7F] rounded-full" />
                                     </div>
                                     <p className="text-[#5C564D] max-w-sm mb-12 leading-relaxed whitespace-pre-line">
-                                        <AutoTranslatedText text={config.hero.description} />
+                                        <AutoTranslatedText text={config.hero?.description || product.description} />
                                     </p>
                                     <button className="bg-[#8B7E66] text-white px-10 py-4 rounded-full text-xs font-black tracking-widest uppercase hover:bg-[#2D2924] transition-all flex items-center gap-4 group">
                                         <AutoTranslatedText text="지금 구매하기" />
@@ -567,8 +638,8 @@ const ProjectProductDetailPage: React.FC = () => {
                                     </button>
                                     
                                     <div className="flex gap-12 mt-16">
-                                        {config.hero.features.map((f, idx) => {
-                                            const Icon = IconMap[f.iconType];
+                                        {config.hero?.features?.map((f, idx) => {
+                                            const Icon = IconMap[f.iconType] || Sparkles;
                                             return (
                                                 <div key={idx} className="flex flex-col items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center text-[#8B7E66]">
@@ -583,8 +654,8 @@ const ProjectProductDetailPage: React.FC = () => {
                             </div>
                             <div className="w-full md:w-1/2 aspect-square md:h-full relative p-12">
                                 <div className="w-full h-full bg-white/60 rounded-[40px] overflow-hidden flex items-center justify-center">
-                                    {config.hero.imageUrl ? (
-                                        <img src={config.hero.imageUrl} alt="" className="w-full h-full object-cover" />
+                                    {config.hero?.imageUrl || product.image_url ? (
+                                        <img src={config.hero?.imageUrl || product.image_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#E8DCCB] to-[#F5F0E8] rounded-2xl shadow-2xl rotate-3" />
                                     )}
@@ -609,11 +680,11 @@ const ProjectProductDetailPage: React.FC = () => {
                                 transition={{ duration: 1 }}
                             >
                                 <h2 className="text-3xl md:text-4xl font-serif text-[#2D2924] leading-relaxed mb-12 whitespace-pre-line">
-                                    <AutoTranslatedText text={config.quote.text} />
+                                    <AutoTranslatedText text={config.quote?.text || "Story behind the product"} />
                                 </h2>
                                 <div className="w-12 h-[1px] bg-[#2D2924]/20 mx-auto mb-12" />
                                 <p className="text-[#8B7E66] max-w-xl mx-auto leading-loose font-light whitespace-pre-line">
-                                    <AutoTranslatedText text={config.quote.subtext} />
+                                    <AutoTranslatedText text={config.quote?.subtext || "Crafted with passion and dedication to quality."} />
                                 </p>
                             </motion.div>
                         </div>
@@ -629,8 +700,8 @@ const ProjectProductDetailPage: React.FC = () => {
                 >
                     <section className="container mx-auto px-6 md:px-12 lg:px-24 mb-48">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {config.features.map((item, idx) => {
-                                const Icon = IconMap[item.iconType];
+                            {config.features?.map((item, idx) => {
+                                const Icon = IconMap[item.iconType] || Sparkles;
                                 return (
                                     <motion.div
                                         key={idx}
@@ -668,7 +739,7 @@ const ProjectProductDetailPage: React.FC = () => {
                             <span className="text-[#FF7F7F]">.</span>
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {config.recommendations.map((item, idx) => (
+                            {config.recommendations?.map((item, idx) => (
                                 <div key={idx} className="group cursor-pointer">
                                     <div className="aspect-[4/3] bg-white/60 rounded-[32px] overflow-hidden mb-6 border border-[#2D2924]/5 group-hover:shadow-lg transition-all">
                                         {item.imageUrl && <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />}
@@ -701,14 +772,14 @@ const ProjectProductDetailPage: React.FC = () => {
                     <section className="container mx-auto px-6 md:px-12 lg:px-24 mb-48">
                         <div className="bg-white/40 rounded-[60px] overflow-hidden flex flex-col md:flex-row border border-[#2D2924]/5">
                             <div className="w-full md:w-1/2 p-12 md:p-24 flex flex-col justify-center">
-                                <h2 className="text-3xl font-serif text-[#2D2924] mb-8"><AutoTranslatedText text={config.usage.title} /></h2>
+                                <h2 className="text-3xl font-serif text-[#2D2924] mb-8"><AutoTranslatedText text={config.usage?.title || "How to use"} /></h2>
                                 <div className="w-12 h-[1px] bg-[#2D2924]/20 mb-8" />
                                 <p className="text-[#5C564D] leading-loose whitespace-pre-line">
-                                    <AutoTranslatedText text={config.usage.description} />
+                                    <AutoTranslatedText text={config.usage?.description || "Follow these steps for best results."} />
                                 </p>
                             </div>
                             <div className="w-full md:w-1/2 aspect-video md:aspect-auto bg-white/60">
-                                {config.usage.imageUrl && <img src={config.usage.imageUrl} alt="" className="w-full h-full object-cover" />}
+                                {config.usage?.imageUrl && <img src={config.usage.imageUrl} alt="" className="w-full h-full object-cover" />}
                             </div>
                         </div>
                     </section>

@@ -31,7 +31,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const urlAgencyId = queryParams.get('agencyId');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
-    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
     const [showNavigationModal, setShowNavigationModal] = useState(false);
 
     // Permission logic
@@ -42,19 +42,18 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
         try {
             const products = await getFeaturedProducts();
             
-            // Priority for agency context:
-            // 1. agencyId from URL (for visitors)
-            // 2. agencyId from current logged-in user
+            // Priority for agency context
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
-            
-            const agencyProjects = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
-            
+            const agencyProducts = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
+
+            // Main template item
             const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
-                          agencyProjects.find(p => p.page_type === 'skincare') ||
-                          agencyProjects[0] ||
-                          products.find(p => p.page_type === 'skincare') || 
+                          agencyProducts.find(p => p.page_type === 'project_landing') ||
+                          agencyProducts[0] ||
+                          products.filter(p => !p.agency_id).find(p => p.page_type === 'project_landing') ||
+                          products.filter(p => !p.agency_id)[0] ||
                           products[0];
-            
+
             if (sample) setLocalItem(sample);
         } catch (err) {
             console.error('Failed to fetch sample project:', err);
@@ -87,9 +86,9 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}
-                onEditSettings={() => setShowProjectModal(true)}
+                onEditSettings={() => setModalMode('edit')}
                 onEditHeader={() => setShowNavigationModal(true)}
-                onAdd={() => setShowProjectModal(true)}
+                onAdd={() => setModalMode('add')}
                 onDelete={isOwner ? handleDelete : undefined}
             />
 
@@ -151,13 +150,17 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 />
             )}
 
-            {showProjectModal && (
+            {modalMode && (
                 <ProductFormModal 
-                    product={isOwner ? localItem : null}
-                    onClose={() => setShowProjectModal(false)}
+                    product={modalMode === 'edit' ? localItem : null}
+                    initialData={modalMode === 'add' ? {
+                        agency_id: localItem.agency_id,
+                        page_type: 'skincare' // Default to skincare for new products from landing
+                    } : undefined}
+                    onClose={() => setModalMode(null)}
                     onSuccess={(updated) => {
-                        setShowProjectModal(false);
-                        if (updated) {
+                        setModalMode(null);
+                        if (modalMode === 'edit' && updated) {
                             setLocalItem(updated);
                         } else {
                             fetchSample();

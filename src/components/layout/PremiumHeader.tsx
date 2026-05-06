@@ -1,11 +1,10 @@
 import React from 'react';
-import { Search, User, ShoppingBag } from 'lucide-react';
+import { Search, User, ShoppingBag, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { FeaturedItem } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../../utils/i18nUtils';
-import { LanguageSelector } from '../common/LanguageSelector';
 import { EditableWrapper } from '../common/EditableWrapper';
 
 interface PremiumHeaderProps {
@@ -26,21 +25,36 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     
     // Ensure we don't show "모든차서비스" or other default titles in agency context
     const getSafeTitle = () => {
+        // 1. Priority: Explicitly set logo text in metadata
         if (metadata.headerLogoText) return metadata.headerLogoText;
+        
+        // 2. Secondary: Stored brand name from agency settings
         const storedName = localStorage.getItem('agency_brand_name');
         if (storedName) return storedName;
         
-        // If it's an agency site but no brand name is set, use "여움" instead of the item title
-        if (urlAgencyId || item?.agency_id) return '여움';
+        // 3. Check current item title
+        const currentTitle = item?.title ? getLocalizedText(item.title, i18n.language) : '';
         
-        return item?.title ? getLocalizedText(item.title, i18n.language) : '여움';
+        // 4. If it's a generic sample or agency context without branding, use "여움"
+        const isGeneric = !currentTitle || 
+                          currentTitle === '신선마트' || 
+                          currentTitle === '모든차서비스' || 
+                          currentTitle.includes('Sample');
+        
+        if (isGeneric || urlAgencyId || item?.agency_id || location.pathname.includes('/project-template')) {
+            return '여움';
+        }
+        
+        return currentTitle;
     };
 
     const titleText = getSafeTitle();
     
+    // For logo URL, we want to be careful not to show a random product thumbnail as a store logo
+    const isGenericItem = !item?.title || (typeof item.title === 'string' && (item.title === '신선마트' || item.title === '모든차서비스'));
     const logoUrl = metadata.headerLogoUrl || 
                     localStorage.getItem('agency_brand_logo') || 
-                    item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
+                    (!isGenericItem && item?.page_type ? (item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url) : null);
 
     const getPath = (basePath: string) => {
         const agencyId = item?.agency_id || urlAgencyId;
@@ -75,16 +89,16 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     };
 
     return (
-        <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
-            <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 h-20">
-                <EditableWrapper canEdit={!!canEdit} onEdit={onEdit} label="Navigation Settings">
-                    <div className="w-full h-full flex items-center justify-between">
-                        {/* Logo */}
-                        <div className="flex items-center gap-4">
+        <header className="fixed top-0 left-0 w-full z-[100] bg-white border-b border-[#2D2924]/5">
+            <div className="max-w-[1920px] mx-auto px-8 h-[72px]">
+                <EditableWrapper canEdit={!!canEdit} onEdit={onEdit} label="Navigation Settings" className="h-full">
+                    <div className="w-full h-full grid grid-cols-3 items-center">
+                        {/* Logo - Left aligned */}
+                        <div className="flex items-center justify-start">
                             <Link 
                                 to={logoLink} 
                                 onClick={handleLogoClick}
-                                className="flex items-center gap-1.5 cursor-pointer group"
+                                className="flex items-center gap-1 cursor-pointer group"
                             >
                                 {logoUrl ? (
                                     <img 
@@ -93,56 +107,62 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
                                         className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
                                     />
                                 ) : (
-                                    <span className="text-3xl font-serif font-black text-[#2D2924] tracking-tight transition-transform duration-300 group-hover:scale-105">
-                                        {titleText}
-                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[24px] font-bold text-[#2D2924] tracking-tighter leading-none">
+                                            {titleText}
+                                        </span>
+                                        <div className="w-1.5 h-1.5 bg-[#FF7F7F] rounded-full translate-y-[1px]" />
+                                    </div>
                                 )}
-                                {!logoUrl && <div className="w-2 h-2 bg-[#FF7F7F] rounded-full mt-2 shadow-[0_0_8px_rgba(255,127,127,0.4)]" />}
                             </Link>
                         </div>
 
-                        {/* Navigation */}
-                        <nav className="hidden lg:flex items-center gap-16">
-                            {navLinks.map((item: any) => (
+                        {/* Navigation - Perfectly Centered */}
+                        <nav className="hidden lg:flex items-center justify-center gap-14">
+                            {navLinks.map((link: any) => (
                                 <Link 
-                                    key={item.name} 
-                                    to={item.path} 
-                                    className="relative text-sm font-semibold text-[#2D2924]/70 hover:text-[#2D2924] transition-all duration-300 tracking-normal group whitespace-nowrap"
+                                    key={link.name} 
+                                    to={link.path} 
+                                    className="relative text-[14px] font-medium text-[#2D2924] hover:text-[#2D2924]/60 transition-all duration-300 tracking-tight whitespace-nowrap"
                                 >
-                                    <AutoTranslatedText text={item.name} />
-                                    <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-[#2D2924] transition-all duration-300 group-hover:w-full" />
+                                    <AutoTranslatedText text={link.name} />
                                 </Link>
                             ))}
                         </nav>
 
-                        {/* Icons & Home Button */}
-                        <div className="flex items-center gap-6">
+                        {/* Icons & Home Button - Right aligned */}
+                        <div className="flex items-center justify-end gap-5">
                             {!urlAgencyId && (
                                 <Link 
                                     to="/" 
-                                    className="hidden xl:flex items-center gap-2 px-5 py-2.5 bg-[#2D2924] text-white rounded-full text-[10px] font-black tracking-[0.15em] uppercase hover:bg-black transition-all shadow-md shadow-black/5 active:scale-95 group"
+                                    className="flex items-center gap-1.5 px-5 py-2 bg-[#2D2924] text-white rounded-full text-[12px] font-bold hover:bg-black transition-all group shrink-0"
                                 >
-                                    <AutoTranslatedText text="몽땅 홈" />
-                                    <span className="w-1.5 h-1.5 bg-[#FF7F7F] rounded-full group-hover:animate-pulse" />
+                                    <AutoTranslatedText text="통합 홈" />
+                                    <div className="w-1 h-1 bg-[#FF7F7F] rounded-full" />
                                 </Link>
                             )}
 
-                            <div className="h-6 w-[1px] bg-[#2D2924]/10 hidden md:block" />
+                            <div className="h-4 w-[1px] bg-[#2D2924]/20 shrink-0" />
 
-                            <div className="flex items-center gap-4 md:gap-2">
-                                <LanguageSelector variant="premium" />
+                            <div className="flex items-center gap-1.5 text-[#2D2924] text-[12px] cursor-pointer hover:text-[#2D2924]/60 transition-colors shrink-0">
+                                <Globe size={16} strokeWidth={1.5} />
+                                <AutoTranslatedText text="한국어" />
+                            </div>
 
-                                <div className="h-4 w-[1px] bg-[#2D2924]/5 mx-2 hidden sm:block" />
+                            <div className="h-4 w-[1px] bg-[#2D2924]/20 shrink-0" />
 
+                            <div className="flex items-center gap-0.5">
                                 <button className="p-2 hover:bg-black/5 rounded-full transition-colors group">
-                                    <Search size={20} className="text-[#2D2924]/60 group-hover:text-[#2D2924] transition-colors" strokeWidth={1.5} />
+                                    <Search size={20} className="text-[#2D2924] group-hover:text-[#2D2924]/60 transition-colors" strokeWidth={1.5} />
                                 </button>
                                 <button className="p-2 hover:bg-black/5 rounded-full transition-colors group">
-                                    <User size={20} className="text-[#2D2924]/60 group-hover:text-[#2D2924] transition-colors" strokeWidth={1.5} />
+                                    <User size={20} className="text-[#2D2924] group-hover:text-[#2D2924]/60 transition-colors" strokeWidth={1.5} />
                                 </button>
                                 <button className="p-2 hover:bg-black/5 rounded-full transition-colors group relative">
-                                    <ShoppingBag size={20} className="text-[#2D2924]/60 group-hover:text-[#2D2924] transition-colors" strokeWidth={1.5} />
-                                    <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-[#FF7F7F] text-white text-[8px] font-black flex items-center justify-center rounded-full shadow-sm">1</span>
+                                    <ShoppingBag size={20} className="text-[#2D2924] group-hover:text-[#2D2924]/60 transition-colors" strokeWidth={1.5} />
+                                    <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-[#FF7F7F] text-white text-[8px] font-bold flex items-center justify-center rounded-full border border-white">
+                                        1
+                                    </span>
                                 </button>
                             </div>
                         </div>

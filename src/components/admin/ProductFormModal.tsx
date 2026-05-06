@@ -12,6 +12,7 @@ import { normalizeLocalizedString } from '../../utils/i18nUtils';
 
 interface ProductFormModalProps {
     product?: FeaturedItem | null;
+    initialData?: Partial<FeaturedItem>;
     onClose: () => void;
     onSuccess: (updatedItem?: FeaturedItem) => void;
 }
@@ -19,34 +20,34 @@ interface ProductFormModalProps {
 // normalizeLocalizedString moved to i18nUtils.ts
 
 
-const normalizeProductData = (product: any) => {
+const normalizeProductData = (product: any, initialData?: any) => {
     return {
         id: product?.id || '',
-        title: normalizeLocalizedString(product?.title),
-        description: normalizeLocalizedString(product?.description),
-        category: product?.category || '',
-        subcategory: product?.subcategory || '',
-        image_url: product?.image_url || '',
-        image_url_2: product?.image_url_2 || '',
-        price: product?.price || 0,
-        page_type: product?.page_type || 'standard',
-        parent_id: product?.parent_id || '',
-        long_description: normalizeLocalizedString(product?.long_description),
-        detail_media_type: product?.detail_media_type || 'image',
-        detail_media_url: product?.detail_media_url || '',
-        metadata: product?.metadata || {}
+        title: normalizeLocalizedString(product?.title || initialData?.title),
+        description: normalizeLocalizedString(product?.description || initialData?.description),
+        category: product?.category || initialData?.category || '',
+        subcategory: product?.subcategory || initialData?.subcategory || '',
+        image_url: product?.image_url || initialData?.image_url || '',
+        image_url_2: product?.image_url_2 || initialData?.image_url_2 || '',
+        price: product?.price || initialData?.price || 0,
+        page_type: product?.page_type || initialData?.page_type || 'standard',
+        parent_id: product?.parent_id || initialData?.parent_id || '',
+        long_description: normalizeLocalizedString(product?.long_description || initialData?.long_description),
+        detail_media_type: product?.detail_media_type || initialData?.detail_media_type || 'image',
+        detail_media_url: product?.detail_media_url || initialData?.detail_media_url || '',
+        metadata: product?.metadata || initialData?.metadata || {}
     };
 };
 
-export const ProductFormModal = ({ product, onClose, onSuccess }: ProductFormModalProps) => {
+export const ProductFormModal = ({ product, initialData, onClose, onSuccess }: ProductFormModalProps) => {
     const { isAdmin, isAgency, user } = useAdmin();
     const { floors } = useFloors();
     const [agencies, setAgencies] = useState<any[]>([]);
     const [formData, setFormData] = useState<any>(() => {
-        const data = normalizeProductData(product);
+        const data = normalizeProductData(product, initialData);
         return {
             ...data,
-            agency_id: (product as any)?.agency_id || ''
+            agency_id: (product as any)?.agency_id || (initialData as any)?.agency_id || ''
         };
     });
     const [uploading, setUploading] = useState<string | null>(null);

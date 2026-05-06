@@ -57,7 +57,7 @@ export const ProjectAdminBar: React.FC<ProjectAdminBarProps> = ({
                         className="flex items-center gap-2 px-3 py-1.5 bg-[#FFD700] hover:bg-[#FFC000] text-[#2D2924] rounded-lg text-[10px] font-black transition-all shadow-lg shadow-[#FFD700]/20"
                     >
                         <Plus size={14} />
-                        새 프로젝트 생성
+                        제품 추가등록
                     </button>
                 )}
                 
