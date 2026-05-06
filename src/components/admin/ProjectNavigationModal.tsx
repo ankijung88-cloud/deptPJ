@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, Loader2, Plus, Upload, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { FeaturedItem } from '../../types';
-import { updateProduct, createProduct } from '../../api/products';
+import { updateProduct, createProduct, getFeaturedProducts } from '../../api/products';
 import { useAdmin } from '../../hooks/useAdmin';
 
 interface ProjectNavigationModalProps {
@@ -28,34 +28,67 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
         setIsSaving(true);
         try {
             const updatedMetadata = { ...metadata, ...formData };
+            const agencyId = user?.id?.toString();
             
             // Persist to localStorage for immediate session-wide consistency
             if (formData.headerLogoText) localStorage.setItem('agency_brand_name', formData.headerLogoText);
             if (formData.headerLogoUrl) localStorage.setItem('agency_brand_logo', formData.headerLogoUrl);
 
+            // Fetch all products to find other agency projects for propagation
+            const allProducts = await getFeaturedProducts();
+            const agencyProjects = agencyId ? allProducts.filter(p => p.agency_id?.toString() === agencyId) : [];
+
             if (isOwner) {
-                // Regular update
+                // Update current project
                 const updatedItem = { ...item, metadata: updatedMetadata };
                 const response = await updateProduct(item.id, updatedItem);
+                
+                // Propagate branding to ALL other agency projects
+                const propagationTargets = agencyProjects.filter(p => p.id !== item.id);
+                if (propagationTargets.length > 0) {
+                    await Promise.all(propagationTargets.map(p => {
+                        const newMetadata = { 
+                            ...(p.metadata as any || {}), 
+                            headerLogoText: formData.headerLogoText,
+                            headerLogoUrl: formData.headerLogoUrl,
+                            navLinks: formData.navLinks
+                        };
+                        return updateProduct(p.id, { ...p, metadata: newMetadata });
+                    }));
+                }
+                
                 onSuccess(response as any);
             } else {
-                // If not owner (e.g. agency editing admin template), create a NEW project entry
-                if (window.confirm('이 템플릿의 소유자가 아닙니다. 수정한 내용으로 새로운 프로젝트를 생성하시겠습니까?')) {
-                    const newId = `${item.id}-${user?.id || 'agency'}-${Date.now()}`;
-                    const newItem = { 
-                        ...item, 
-                        id: newId,
-                        agency_id: user?.id,
-                        metadata: updatedMetadata,
-                        title: {
-                            ko: `${(item.title as any)?.ko || item.title} (수정본)`,
-                            en: `${(item.title as any)?.en || item.title} (Edited)`
-                        }
-                    };
-                    const response = await createProduct(newItem);
-                    alert('새로운 프로젝트가 생성되었습니다.');
-                    onSuccess(response as any);
+                // Initializing a new project for the agency
+                const newId = `${item.id}-${agencyId || 'agency'}-${Date.now()}`;
+                const newItem = { 
+                    ...item, 
+                    id: newId,
+                    agency_id: agencyId,
+                    metadata: updatedMetadata,
+                    title: {
+                        ko: `${(item.title as any)?.ko || item.title}`,
+                        en: `${(item.title as any)?.en || item.title}`
+                    }
+                };
+                const response = await createProduct(newItem);
+                
+                // If the agency doesn't have a landing page (skincare type) yet, 
+                // and this isn't one, consider this the start of their site.
+                const hasLanding = agencyProjects.some(p => p.page_type === 'skincare');
+                if (!hasLanding && item.page_type !== 'skincare') {
+                    // Create a default landing page for them too so the logo click works immediately
+                    const landingId = `landing-${agencyId}-${Date.now()}`;
+                    await createProduct({
+                        ...newItem,
+                        id: landingId,
+                        page_type: 'skincare',
+                        title: { ko: `${formData.headerLogoText || 'Home'}`, en: 'Home' }
+                    });
                 }
+
+                alert('에이전시 전용 프로젝트로 설정되었습니다. 이제 모든 페이지에 브랜드가 적용됩니다.');
+                onSuccess(response as any);
             }
             onClose();
         } catch (err) {

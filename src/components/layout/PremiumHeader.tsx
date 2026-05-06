@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, User, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { FeaturedItem } from '../../types';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,12 @@ interface PremiumHeaderProps {
 
 export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
     const { i18n } = useTranslation();
+    const location = useLocation();
+    
+    // Parse agencyId from current URL
+    const queryParams = new URLSearchParams(location.search);
+    const urlAgencyId = queryParams.get('agencyId');
+    
     const metadata = (item?.metadata as any) || {};
     
     // Use metadata logo text if available, fallback to localStorage (agency brand), then title, then "여움"
@@ -28,12 +34,11 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
                     item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url;
 
     // Helper to generate context-aware paths
-    // If we are on a specific project, we want to stay within that agency's context
     const getPath = (basePath: string) => {
-        // If the item has an agency_id, we can potentially append it as a query param
-        // to help the next page find the right agency project.
-        if (item?.agency_id) {
-            return `${basePath}?agencyId=${item.agency_id}`;
+        // Use agency_id from item if available, otherwise from URL
+        const agencyId = item?.agency_id || urlAgencyId;
+        if (agencyId) {
+            return `${basePath}?agencyId=${agencyId}`;
         }
         return basePath;
     };
@@ -46,7 +51,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
         { name: '커뮤니티', path: getPath('/project-template/community') }
     ];
 
-    const logoLink = item?.agency_id ? `/project-template?agencyId=${item.agency_id}` : '/project-template';
+    const logoLink = getPath('/project-template');
 
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
