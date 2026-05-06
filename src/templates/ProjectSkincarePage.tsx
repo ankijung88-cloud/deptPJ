@@ -35,8 +35,10 @@ export const ProjectSkincarePage: React.FC = () => {
             
             // Get sample for metadata (header/footer)
             const sample = skincareProducts.find(p => 
-                p.page_type === 'skincare' && 
-                (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                (localItem ? p.id === localItem.id : false) || (
+                    p.page_type === 'skincare' && 
+                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                )
             ) || skincareProducts.find(p => p.page_type === 'skincare') || skincareProducts[0];
             if (sample) setLocalItem(sample);
         } catch (err) {
@@ -113,10 +115,10 @@ export const ProjectSkincarePage: React.FC = () => {
                                     />
                                 </div>
                                 <h3 className="text-lg font-serif font-bold text-[#2D2924] mb-2 group-hover:text-[#FF7F7F] transition-colors">
-                                    <AutoTranslatedText text={typeof product.title === 'string' ? product.title : 'Product'} />
+                                    <AutoTranslatedText text={product.title} />
                                 </h3>
                                 <p className="text-xs text-[#8B7E66] line-clamp-2 leading-relaxed">
-                                    <AutoTranslatedText text={typeof product.description === 'string' ? product.description : "상세 설명이 없습니다."} />
+                                    <AutoTranslatedText text={product.description} />
                                 </p>
                             </Link>
                         ))}
@@ -148,9 +150,14 @@ export const ProjectSkincarePage: React.FC = () => {
                 <ProductFormModal 
                     product={isOwner ? localItem : null}
                     onClose={() => setShowProjectModal(false)}
-                    onSuccess={() => {
+                    onSuccess={(updated) => {
                         setShowProjectModal(false);
-                        fetchAll();
+                        if (updated) {
+                            setLocalItem(updated);
+                            fetchAll(); // Refresh grid too
+                        } else {
+                            fetchAll();
+                        }
                     }}
                 />
             )}

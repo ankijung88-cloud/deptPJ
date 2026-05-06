@@ -34,8 +34,10 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
         try {
             const products = await getFeaturedProducts();
             const sample = products.find(p => 
-                p.page_type === 'skincare' && 
-                (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                (localItem ? p.id === localItem.id : false) || (
+                    p.page_type === 'skincare' && 
+                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                )
             ) || products.find(p => p.page_type === 'skincare') || products[0];
             if (sample) setLocalItem(sample);
         } catch (err) {
@@ -125,9 +127,13 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
                 <ProductFormModal 
                     product={isOwner ? localItem : null}
                     onClose={() => setShowProjectModal(false)}
-                    onSuccess={() => {
+                    onSuccess={(updated) => {
                         setShowProjectModal(false);
-                        fetchSample();
+                        if (updated) {
+                            setLocalItem(updated);
+                        } else {
+                            fetchSample();
+                        }
                     }}
                 />
             )}

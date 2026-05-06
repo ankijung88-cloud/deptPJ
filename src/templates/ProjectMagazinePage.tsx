@@ -30,8 +30,10 @@ export const ProjectMagazinePage: React.FC = () => {
         try {
             const products = await getFeaturedProducts();
             const sample = products.find(p => 
-                p.page_type === 'magazine' && 
-                (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                (localItem ? p.id === localItem.id : false) || (
+                    p.page_type === 'magazine' && 
+                    (isAdmin || (isAgency && p.agency_id?.toString() === user?.id?.toString()))
+                )
             ) || products.find(p => p.page_type === 'magazine') || products.find(p => p.page_type === 'skincare');
             if (sample) setLocalItem(sample);
         } catch (err) {
@@ -132,9 +134,13 @@ export const ProjectMagazinePage: React.FC = () => {
                 <ProductFormModal 
                     product={isOwner ? localItem : null}
                     onClose={() => setShowProjectModal(false)}
-                    onSuccess={() => {
+                    onSuccess={(updated) => {
                         setShowProjectModal(false);
-                        fetchSample();
+                        if (updated) {
+                            setLocalItem(updated);
+                        } else {
+                            fetchSample();
+                        }
                     }}
                 />
             )}

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { X, Upload } from 'lucide-react';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useFloors } from '../../context/FloorContext';
-import { createProduct, updateProduct } from '../../api/products';
+import { createProduct, updateProduct, getProductById } from '../../api/products';
 import { getAgencies } from '../../api/auth';
 import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { TEMPLATE_CATEGORIES } from '../../utils/constants';
@@ -13,7 +13,7 @@ import { normalizeLocalizedString } from '../../utils/i18nUtils';
 interface ProductFormModalProps {
     product?: FeaturedItem | null;
     onClose: () => void;
-    onSuccess: () => void;
+    onSuccess: (updatedItem?: FeaturedItem) => void;
 }
 
 // normalizeLocalizedString moved to i18nUtils.ts
@@ -114,11 +114,14 @@ export const ProductFormModal = ({ product, onClose, onSuccess }: ProductFormMod
         setIsSaving(true);
         try {
             if (isEdit) {
-                await updateProduct(product!.id, formData);
+                const updated = await updateProduct(product!.id, formData);
+                onSuccess(updated);
             } else {
-                await createProduct(formData);
+                const created = await createProduct(formData);
+                // For create, we might need to fetch the full object if created only has ID
+                const fullItem = await getProductById(created.id);
+                onSuccess(fullItem || undefined);
             }
-            onSuccess();
         } catch (err: any) {
             console.error('[handleSubmit] Error:', err);
             alert(`Operation failed: ${err.message || JSON.stringify(err)}`);

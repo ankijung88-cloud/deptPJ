@@ -1,8 +1,9 @@
 import React from 'react';
 import { useAutoTranslate } from '../../hooks/useAutoTranslate';
+import { displayLocalized } from '../../utils/i18nUtils';
 
 interface AutoTranslatedTextProps {
-    text: string;
+    text: any;
     className?: string;
     as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
     verticalRotateHyphen?: boolean;
@@ -23,10 +24,10 @@ export const AutoTranslatedText: React.FC<AutoTranslatedTextProps> = ({
 
     const renderText = () => {
         if (isLoading) {
-            return <span className="opacity-50 animate-pulse">{text}</span>;
+            return <span className="opacity-50 animate-pulse">{displayLocalized(text)}</span>;
         }
 
-        const displayText = translatedText || text;
+        const displayText = translatedText || displayLocalized(text);
 
         if (verticalRotateHyphen && typeof displayText === 'string' && displayText.includes('-')) {
             const parts = displayText.split('-');
