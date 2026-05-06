@@ -53,12 +53,23 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
 
     const logoLink = getPath('/project-template');
 
+    const handleLogoClick = (e: React.MouseEvent) => {
+        if (location.pathname === '/project-template') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
     return (
         <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-[#2D2924]/5">
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-16 h-20 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-4">
-                    <Link to={logoLink} className="flex items-center gap-1.5 cursor-pointer group">
+                    <Link 
+                        to={logoLink} 
+                        onClick={handleLogoClick}
+                        className="flex items-center gap-1.5 cursor-pointer group"
+                    >
                         {logoUrl ? (
                             <img 
                                 src={logoUrl} 
@@ -90,13 +101,15 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item }) => {
 
                 {/* Icons & Home Button */}
                 <div className="flex items-center gap-6">
-                    <Link 
-                        to="/" 
-                        className="hidden xl:flex items-center gap-2 px-5 py-2.5 bg-[#2D2924] text-white rounded-full text-[10px] font-black tracking-[0.15em] uppercase hover:bg-black transition-all shadow-md shadow-black/5 active:scale-95 group"
-                    >
-                        <AutoTranslatedText text="몽땅 홈" />
-                        <span className="w-1.5 h-1.5 bg-[#FF7F7F] rounded-full group-hover:animate-pulse" />
-                    </Link>
+                    {!urlAgencyId && (
+                        <Link 
+                            to="/" 
+                            className="hidden xl:flex items-center gap-2 px-5 py-2.5 bg-[#2D2924] text-white rounded-full text-[10px] font-black tracking-[0.15em] uppercase hover:bg-black transition-all shadow-md shadow-black/5 active:scale-95 group"
+                        >
+                            <AutoTranslatedText text="몽땅 홈" />
+                            <span className="w-1.5 h-1.5 bg-[#FF7F7F] rounded-full group-hover:animate-pulse" />
+                        </Link>
+                    )}
 
                     <div className="h-6 w-[1px] bg-[#2D2924]/10 hidden md:block" />
 
