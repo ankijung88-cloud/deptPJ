@@ -82,7 +82,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8]">
+        <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8] overflow-x-hidden w-full max-w-full">
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}

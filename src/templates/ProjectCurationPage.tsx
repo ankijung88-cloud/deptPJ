@@ -96,7 +96,7 @@ export const ProjectCurationPage: React.FC = () => {
     const metadata = (localItem?.metadata as any) || {};
 
     return (
-        <div className="min-h-screen bg-[#FCF9F5]">
+        <div className="min-h-screen bg-[#FCF9F5] overflow-x-hidden w-full max-w-full">
             <ProjectAdminBar 
                 item={localItem}
                 canEdit={canEdit}

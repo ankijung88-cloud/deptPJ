@@ -92,9 +92,9 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
         <header className="fixed top-0 left-0 w-full z-[100] bg-white border-b border-[#2D2924]/5">
             <div className="max-w-[1920px] mx-auto px-8 h-[72px]">
                 <EditableWrapper canEdit={!!canEdit} onEdit={onEdit} label="Navigation Settings" className="h-full">
-                    <div className="w-full h-full grid grid-cols-3 items-center">
+                    <div className="w-full h-full flex items-center justify-between gap-4">
                         {/* Logo - Left aligned */}
-                        <div className="flex items-center justify-start">
+                        <div className="flex items-center justify-start shrink-0">
                             <Link 
                                 to={logoLink} 
                                 onClick={handleLogoClick}
@@ -118,7 +118,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
                         </div>
 
                         {/* Navigation - Perfectly Centered */}
-                        <nav className="hidden lg:flex items-center justify-center gap-14">
+                        <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-14">
                             {navLinks.map((link: any) => (
                                 <Link 
                                     key={link.name} 
@@ -131,7 +131,7 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
                         </nav>
 
                         {/* Icons & Home Button - Right aligned */}
-                        <div className="flex items-center justify-end gap-5">
+                        <div className="flex items-center justify-end gap-3 md:gap-5 shrink-0">
                             {!urlAgencyId && (
                                 <Link 
                                     to="/" 
