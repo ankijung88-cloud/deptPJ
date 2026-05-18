@@ -24,18 +24,22 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const urlSubcategory = queryParams.get('subcategory');
     
     const metadata = (item?.metadata as any) || {};
+    const categoryKey = item?.category || urlCategory || '';
+    const storedNameKey = categoryKey ? `agency_brand_name_${categoryKey}` : 'agency_brand_name';
+    const storedLogoKey = categoryKey ? `agency_brand_logo_${categoryKey}` : 'agency_brand_logo';
+    const isLanding = item?.page_type === 'project_landing' || location.pathname.includes('/project-template');
     
     // Ensure we don't show "모든차서비스" or other default titles in agency context
     const getSafeTitle = () => {
-        // 1. Priority: Explicitly set logo text in metadata
-        if (metadata.headerLogoText) return metadata.headerLogoText;
+        // 1. Priority: Explicitly set logo text in metadata (only if isLanding)
+        if (isLanding && metadata.headerLogoText) return metadata.headerLogoText;
         
-        // 2. Secondary: Stored brand name from agency settings
-        const storedName = localStorage.getItem('agency_brand_name');
+        // 2. Secondary: Stored brand name from agency settings (category-scoped)
+        const storedName = localStorage.getItem(storedNameKey);
         if (storedName) return storedName;
         
-        // 3. Check current item title
-        const currentTitle = item?.title ? getLocalizedText(item.title, i18n.language) : '';
+        // 3. Check current item title (only if isLanding)
+        const currentTitle = (isLanding && item?.title) ? getLocalizedText(item.title, i18n.language) : '';
         
         // 4. If it's a generic sample or agency context without branding, use "여움"
         const isGeneric = !currentTitle || 
@@ -53,8 +57,8 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const titleText = getSafeTitle();
     
     // For logo URL, we want to be careful not to show a random product thumbnail as a store logo
-    const logoUrl = metadata.headerLogoUrl || 
-                    localStorage.getItem('agency_brand_logo') || 
+    const logoUrl = (isLanding && metadata.headerLogoUrl) ? metadata.headerLogoUrl :
+                    localStorage.getItem(storedLogoKey) || 
                     null;
 
     const getPath = (basePath: string) => {
@@ -93,8 +97,8 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const logoLink = getPath('/project-template');
 
     const handleLogoClick = (e: React.MouseEvent) => {
-        // If on any project-related page, prevent page redirection and scroll up smoothly
-        if (location.pathname.startsWith('/project-template') || location.pathname.includes('/detail/')) {
+        // Only prevent redirection and scroll up smoothly if exactly on the main landing page
+        if (location.pathname === '/project-template') {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }

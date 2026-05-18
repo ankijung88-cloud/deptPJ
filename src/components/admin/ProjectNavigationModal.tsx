@@ -29,10 +29,21 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
         try {
             const updatedMetadata = { ...metadata, ...formData };
             const agencyId = user?.id?.toString();
+            const categoryKey = item.category || '';
+            const storedNameKey = categoryKey ? `agency_brand_name_${categoryKey}` : 'agency_brand_name';
+            const storedLogoKey = categoryKey ? `agency_brand_logo_${categoryKey}` : 'agency_brand_logo';
             
-            // Persist to localStorage for immediate session-wide consistency
-            if (formData.headerLogoText) localStorage.setItem('agency_brand_name', formData.headerLogoText);
-            if (formData.headerLogoUrl) localStorage.setItem('agency_brand_logo', formData.headerLogoUrl);
+            // Persist to localStorage for immediate session-wide consistency (category-scoped)
+            if (formData.headerLogoText) {
+                localStorage.setItem(storedNameKey, formData.headerLogoText);
+            } else {
+                localStorage.removeItem(storedNameKey);
+            }
+            if (formData.headerLogoUrl) {
+                localStorage.setItem(storedLogoKey, formData.headerLogoUrl);
+            } else {
+                localStorage.removeItem(storedLogoKey);
+            }
 
             // Fetch all products to find other agency projects for propagation
             const allProducts = await getFeaturedProducts();
@@ -43,8 +54,8 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
                 const updatedItem = { ...item, metadata: updatedMetadata };
                 const response = await updateProduct(item.id, updatedItem);
                 
-                // Propagate branding to ALL other agency projects
-                const propagationTargets = agencyProjects.filter(p => p.id !== item.id);
+                // Propagate branding only to other agency projects of the SAME category
+                const propagationTargets = agencyProjects.filter(p => p.id !== item.id && p.category === item.category);
                 if (propagationTargets.length > 0) {
                     await Promise.all(propagationTargets.map(p => {
                         const newMetadata = { 
@@ -73,16 +84,16 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
                 };
                 const response = await createProduct(newItem);
                 
-                // If the agency doesn't have a landing page (skincare type) yet, 
+                // If the agency doesn't have a landing page (project_landing type) yet in this category, 
                 // and this isn't one, consider this the start of their site.
-                const hasLanding = agencyProjects.some(p => p.page_type === 'skincare');
-                if (!hasLanding && item.page_type !== 'skincare') {
+                const hasLanding = agencyProjects.some(p => p.page_type === 'project_landing' && p.category === item.category);
+                if (!hasLanding && item.page_type !== 'project_landing') {
                     // Create a default landing page for them too so the logo click works immediately
                     const landingId = `landing-${agencyId}-${Date.now()}`;
                     await createProduct({
                         ...newItem,
                         id: landingId,
-                        page_type: 'skincare',
+                        page_type: 'project_landing',
                         title: { ko: `${formData.headerLogoText || 'Home'}`, en: 'Home' }
                     });
                 }

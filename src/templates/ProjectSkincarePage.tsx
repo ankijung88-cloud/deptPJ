@@ -60,9 +60,10 @@ export const ProjectSkincarePage: React.FC = () => {
             
             setProducts(skincareProducts);
             
-            // Get sample for metadata (header/footer)
-            const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+            // Get sample for metadata (header/footer) (Prioritize urlCategory matching to break local state stickiness)
+            const sample = (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
                           (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare') : null) ||
+                          (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'skincare') ||
                           agencyProducts[0] ||
                           allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'skincare') ||
@@ -78,6 +79,10 @@ export const ProjectSkincarePage: React.FC = () => {
     };
 
     useEffect(() => {
+        // If sticky localItem has a different category than urlCategory, reset it
+        if (localItem && urlCategory && localItem.category !== urlCategory) {
+            setLocalItem(null);
+        }
         fetchAll();
     }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 

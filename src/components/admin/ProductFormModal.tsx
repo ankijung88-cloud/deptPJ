@@ -114,11 +114,20 @@ export const ProductFormModal = ({ product, initialData, onClose, onSuccess }: P
         e.preventDefault();
         setIsSaving(true);
         try {
+            let finalFormData = { ...formData };
+            if (!isEdit) {
+                const isProjectTemplate = ['skincare', 'curation', 'brand', 'magazine', 'community', 'project_landing'].includes(formData.page_type);
+                if (isProjectTemplate) {
+                    const cleanId = formData.id.trim().replace(/-[0-9]+$/, '');
+                    finalFormData.id = `${cleanId}-${Date.now()}`;
+                }
+            }
+
             if (isEdit) {
-                const updated = await updateProduct(product!.id, formData);
+                const updated = await updateProduct(product!.id, finalFormData);
                 onSuccess(updated);
             } else {
-                const created = await createProduct(formData);
+                const created = await createProduct(finalFormData);
                 // For create, we might need to fetch the full object if created only has ID
                 const fullItem = await getProductById(created.id);
                 onSuccess(fullItem || undefined);

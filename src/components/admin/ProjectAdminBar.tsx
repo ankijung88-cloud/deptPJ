@@ -73,13 +73,18 @@ export const ProjectAdminBar: React.FC<ProjectAdminBarProps> = ({
                 
                 // Let's redirect based on template ID:
                 const isProjectTemplate = ['skincare', 'curation', 'brand', 'magazine', 'community', 'project_landing'].includes(templateId);
-                const queryAgencyParam = item.agency_id ? `?agencyId=${item.agency_id}` : '';
                 
                 if (isProjectTemplate) {
+                    const params = new URLSearchParams();
+                    if (item.agency_id) params.append('agencyId', String(item.agency_id));
+                    if (item.category) params.append('category', String(item.category));
+                    if (item.subcategory) params.append('subcategory', String(item.subcategory));
+                    const queryString = params.toString() ? `?${params.toString()}` : '';
+                    
                     if (templateId === 'project_landing') {
-                        window.location.href = `/project-template${queryAgencyParam}`;
+                        window.location.href = `/project-template${queryString}`;
                     } else {
-                        window.location.href = `/project-template/${templateId}${queryAgencyParam}`;
+                        window.location.href = `/project-template/${templateId}${queryString}`;
                     }
                 } else {
                     window.location.href = `/detail/${item.id}`;

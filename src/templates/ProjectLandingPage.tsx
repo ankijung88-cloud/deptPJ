@@ -26,9 +26,10 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const { isAdmin, isAgency, user } = useAdmin();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(item || null);
     
-    // Parse agencyId from URL query params
+    // Parse agencyId and category from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
+    const urlCategory = queryParams.get('category');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
     const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
@@ -46,8 +47,10 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
             const agencyProducts = targetAgencyId ? products.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
 
-            // Main template item
-            const sample = (localItem ? products.find(p => p.id === localItem.id) : null) || 
+            // Main template item (Prioritize urlCategory matching to break local state stickiness)
+            const sample = (urlCategory ? products.find(p => p.category === urlCategory && p.page_type === 'project_landing' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory ? products.find(p => p.category === urlCategory && p.page_type === 'project_landing') : null) ||
+                          (localItem ? products.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'project_landing') ||
                           agencyProducts[0] ||
                           products.filter(p => !p.agency_id).find(p => p.page_type === 'project_landing') ||
@@ -61,12 +64,12 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     };
 
     useEffect(() => {
-        if (!item) {
+        if (!item || (urlCategory && item.category !== urlCategory)) {
             fetchSample();
         } else {
             setLocalItem(item);
         }
-    }, [item, isAdmin, isAgency, user, urlAgencyId]);
+    }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory]);
 
     if (!localItem) return null;
 

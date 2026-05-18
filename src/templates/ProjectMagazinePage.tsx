@@ -49,9 +49,10 @@ export const ProjectMagazinePage: React.FC = () => {
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
             const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
 
-            // Main template item
-            const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+            // Main template item (Prioritize urlCategory matching to break local state stickiness)
+            const sample = (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'magazine' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
                           (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'magazine') : null) ||
+                          (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'magazine') ||
                           agencyProducts[0] ||
                           allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'magazine') ||
@@ -62,7 +63,7 @@ export const ProjectMagazinePage: React.FC = () => {
 
             // Filter products for this page type
             let magazineProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
-                .filter(p => p.page_type === 'magazine' || p.category === 'magazine');
+                .filter(p => p.page_type === 'magazine');
             
             if (urlCategory) {
                 magazineProducts = magazineProducts.filter(p => p.category === urlCategory);
@@ -80,6 +81,10 @@ export const ProjectMagazinePage: React.FC = () => {
     };
 
     useEffect(() => {
+        // If sticky localItem has a different category than urlCategory, reset it
+        if (localItem && urlCategory && localItem.category !== urlCategory) {
+            setLocalItem(null);
+        }
         fetchAll();
     }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
