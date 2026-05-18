@@ -185,7 +185,7 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
             }
 
             // 1단계: i18n 리소스 역조회로 번역 시도
-            const localTranslated = findTranslationByKoreanValue(text, targetLang);
+            const localTranslated = findTranslationByKoreanValue(processingText, targetLang);
             if (localTranslated) {
                 translationCache.set(cacheKey, localTranslated);
                 setTranslatedText(localTranslated);
@@ -210,7 +210,7 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
                 Output ONLY the translated text without any quotes or explanations.
                 Preserve the original meaning and tone.
                 If the text is already in ${targetLangName}, return it exactly as is.
-                Text: ${text}`;
+                Text: ${processingText}`;
 
                 let translated = '';
                 try {
