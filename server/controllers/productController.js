@@ -195,6 +195,8 @@ export const createProduct = async (req, res) => {
     const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
     const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
     const metadata = req.body.metadata;
+    const reservation_programs = req.body.reservation_programs || req.body.reservationPrograms;
+    const reservation_slots = req.body.reservation_slots || req.body.reservationSlots;
 
     const toJson = (val) => {
       if (val === null || val === undefined) return null;
@@ -213,7 +215,7 @@ export const createProduct = async (req, res) => {
       agency_id = req.user.id;
     }
 
-    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, detail_media_url, detail_media_type, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id, metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO featured_items (id, title, category, subcategory, description, long_description, detail_media_url, detail_media_type, image_url, thumbnail_url, side_image_url, back_image_url, event_date, `location`, price, closed_days, video_url, page_type, parent_id, theme_data, selected_templates, agency_id, metadata, reservation_programs, reservation_slots) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const params = [
       id,
       toJson(title),
@@ -237,7 +239,9 @@ export const createProduct = async (req, res) => {
       toJson(theme_data),
       toJson(selected_templates),
       agency_id,
-      toJson(metadata)
+      toJson(metadata),
+      toJson(reservation_programs),
+      toJson(reservation_slots)
     ];
     await pool.query(query, params);
     res.status(201).json({ id, message: 'Product created successfully' });
@@ -271,6 +275,8 @@ export const updateProduct = async (req, res) => {
     const detail_media_url = req.body.detail_media_url || req.body.detailMediaUrl;
     const detail_media_type = req.body.detail_media_type || req.body.detailMediaType || 'image';
     const metadata = req.body.metadata;
+    const reservation_programs = req.body.reservation_programs || req.body.reservationPrograms;
+    const reservation_slots = req.body.reservation_slots || req.body.reservationSlots;
 
     // Ownership and Role-based agency_id handling
     let agency_id = req.user?.id || null;
@@ -290,7 +296,7 @@ export const updateProduct = async (req, res) => {
 
     const query = `
       UPDATE featured_items 
-      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, detail_media_url = ?, detail_media_type = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?, metadata = ?
+      SET title = ?, category = ?, subcategory = ?, description = ?, long_description = ?, detail_media_url = ?, detail_media_type = ?, image_url = ?, thumbnail_url = ?, side_image_url = ?, back_image_url = ?, event_date = ?, \`location\` = ?, price = ?, closed_days = ?, video_url = ?, page_type = ?, parent_id = ?, theme_data = ?, selected_templates = ?, agency_id = ?, metadata = ?, reservation_programs = ?, reservation_slots = ?
       WHERE id = ?
     `;
 
@@ -317,6 +323,8 @@ export const updateProduct = async (req, res) => {
       toJson(selected_templates),
       agency_id || null,
       toJson(metadata),
+      toJson(reservation_programs),
+      toJson(reservation_slots),
       id
     ];
     const [result] = await pool.query(query, params);
