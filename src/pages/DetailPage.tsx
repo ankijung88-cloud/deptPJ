@@ -261,6 +261,10 @@ export const DetailPage: React.FC = () => {
         const pageType = item?.page_type || 'standard';
         if (pageType === 'meeting') return null;
 
+        // Hide floating template switcher for project templates (they are now inside ProjectAdminBar)
+        const isProjectTemplate = ['project_landing', 'skincare', 'curation', 'brand', 'magazine', 'community'].includes(pageType);
+        if (isProjectTemplate && isFixed) return null;
+
         return (
             <div className={`${isFixed ? 'fixed top-40 right-10 z-[10000] flex flex-col items-end gap-4' : 'mb-10 flex flex-col gap-4'}`}>
                 <button
