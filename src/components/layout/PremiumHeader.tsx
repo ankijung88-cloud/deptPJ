@@ -51,10 +51,9 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const titleText = getSafeTitle();
     
     // For logo URL, we want to be careful not to show a random product thumbnail as a store logo
-    const isGenericItem = !item?.title || (typeof item.title === 'string' && (item.title === '신선마트' || item.title === '모든차서비스'));
     const logoUrl = metadata.headerLogoUrl || 
                     localStorage.getItem('agency_brand_logo') || 
-                    (!isGenericItem && item?.page_type ? (item?.thumbnailUrl || item?.imageUrl || item?.thumbnail_url || item?.image_url) : null);
+                    null;
 
     const getPath = (basePath: string) => {
         const agencyId = item?.agency_id || urlAgencyId;
@@ -81,8 +80,8 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const logoLink = getPath('/project-template');
 
     const handleLogoClick = (e: React.MouseEvent) => {
-        // If already on the landing page (base or with query params), just scroll up
-        if (location.pathname === '/project-template') {
+        // If on any project-related page, prevent page redirection and scroll up smoothly
+        if (location.pathname.startsWith('/project-template') || location.pathname.includes('/detail/')) {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }

@@ -85,7 +85,8 @@ export const DetailPage: React.FC = () => {
                 const data = await getProductById(id);
                 if (data) {
                     // [REDIRECTION LOGIC] If it's a project-type template, redirect to the specific project path
-                    if (data.page_type === 'skincare') {
+                    const projectTypes = ['skincare', 'curation', 'brand', 'magazine', 'community'];
+                    if (data.page_type && projectTypes.includes(data.page_type)) {
                         navigate(`/project-template/product/${id}`, { replace: true });
                         return;
                     }
