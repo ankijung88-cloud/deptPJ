@@ -55,3 +55,35 @@ export const supportedLanguages = [
     { code: 'id', label: 'Bahasa Indonesia' },
     { code: 'hi', label: 'हिन्दी' },
 ];
+
+export const normalizeLocalizedString = (val: any): { ko: string; en: string } => {
+    if (!val) return { ko: '', en: '' };
+    if (typeof val === 'object' && val !== null) {
+        return { ko: val.ko || '', en: val.en || '' };
+    }
+    if (typeof val === 'string' && val.trim().startsWith('{')) {
+        try {
+            const parsed = JSON.parse(val);
+            if (typeof parsed === 'object' && parsed !== null) {
+                return normalizeLocalizedString(parsed);
+            }
+        } catch (e) {}
+    }
+    return { ko: val || '', en: '' };
+};
+
+export const displayLocalized = (text: any): string => {
+    if (!text) return '';
+    if (typeof text === 'string') {
+        if (text.trim().startsWith('{')) {
+            try {
+                const parsed = JSON.parse(text);
+                return parsed.ko || parsed.en || Object.values(parsed)[0] as string || '';
+            } catch (e) {
+                return text;
+            }
+        }
+        return text;
+    }
+    return text.ko || text.en || Object.values(text)[0] as string || '';
+};

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supportedLanguages } from '../../utils/i18nUtils';
 
 interface LanguageSelectorProps {
-    variant?: 'header' | 'floating' | 'landing' | 'sidebar';
+    variant?: 'header' | 'floating' | 'landing' | 'sidebar' | 'premium';
 }
 
 /**
@@ -44,9 +44,10 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const isFloating = variant === 'floating';
     const isLanding = variant === 'landing';
     const isSidebar = variant === 'sidebar';
+    const isPremium = variant === 'premium';
 
     return (
-        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed bottom-6 right-6 md:top-32 md:right-8 md:bottom-auto z-[10000]' : 'relative'}`}>
+        <div className={`lang-selector-container pointer-events-auto ${isFloating ? 'fixed bottom-6 right-6 md:top-64 md:right-8 md:bottom-auto z-[10000]' : 'relative'}`}>
             <button
                 onClick={toggleMenu}
                 className={`flex items-center text-sm font-medium transition-colors gap-1.5 p-2 group relative ${
@@ -56,6 +57,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                     ? 'text-dancheong-ink/60 hover:text-dancheong-ink'
                     : isSidebar
                     ? 'p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all'
+                    : isPremium
+                    ? 'text-[#2D2924]/60 hover:text-[#2D2924] hover:bg-black/5 rounded-full'
                     : 'rounded-full text-[#171717]/80 hover:text-[#171717]'
                 }`}
             >
@@ -75,22 +78,24 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                     ? 'absolute right-0 bg-white border-t-2 border-dancheong-ink w-[450px] top-full mt-4 rounded-b-xl'
                     : isSidebar
                     ? 'bg-[#0a0a0a] border border-white/10 text-white w-[200px] left-full ml-4 top-1/2 -translate-y-1/2 rounded-2xl shadow-2xl'
+                    : isPremium
+                    ? 'absolute right-0 bg-white border border-[#2D2924]/10 w-[200px] top-full mt-2 rounded-2xl shadow-xl'
                     : 'absolute right-0 bg-zinc-900 border-t-2 border-dancheong-red text-white w-[450px] top-full mt-4 rounded-b-xl'
                 }`}>
-                    <div className={`grid ${isFloating || isSidebar ? 'grid-cols-1' : 'grid-cols-3'} gap-1`}>
+                    <div className={`grid ${isFloating || isSidebar || isPremium ? 'grid-cols-1' : 'grid-cols-3'} gap-1`}>
                         {supportedLanguages.map((lang) => (
                             <button
                                 key={lang.code}
                                 onClick={() => changeLanguage(lang.code)}
                                 className={`flex items-center px-4 py-2.5 text-xs rounded-lg transition-all duration-300 relative group/lang tracking-wider ${
                                     i18n.language === lang.code
-                                    ? (isLanding ? 'text-dancheong-ink font-black bg-dancheong-ink/5' : 'text-[#D4AF37] font-extrabold bg-white/10')
-                                    : (isLanding ? 'text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-dancheong-ink/5' : 'text-zinc-400 hover:text-white hover:bg-white/10 hover:translate-x-1')
+                                    ? (isLanding || isPremium ? 'text-[#2D2924] font-black bg-[#2D2924]/5' : 'text-[#D4AF37] font-extrabold bg-white/10')
+                                    : (isLanding || isPremium ? 'text-[#2D2924]/40 hover:text-[#2D2924] hover:bg-[#2D2924]/5' : 'text-zinc-400 hover:text-white hover:bg-white/10 hover:translate-x-1')
                                 }`}
                             >
                                 <span className="relative z-10 truncate">{lang.label}</span>
                                 {i18n.language === lang.code && (
-                                    <div className={`absolute left-1 top-1/2 -translate-y-1/2 w-[2px] h-2/5 ${isLanding ? 'bg-dancheong-ink' : 'bg-dancheong-red'}`} />
+                                    <div className={`absolute left-1 top-1/2 -translate-y-1/2 w-[2px] h-2/5 ${isLanding ? 'bg-dancheong-ink' : isPremium ? 'bg-[#FF7F7F]' : 'bg-dancheong-red'}`} />
                                 )}
                             </button>
                         ))}

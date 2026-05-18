@@ -30,8 +30,6 @@ export const LandingHeader: React.FC = () => {
     };
 
     const navItems = [
-        { id: 'floors', label: t('floor_guide') },
-        { id: 'features', label: t('hero.features') },
         { id: 'partners', label: t('hero.partners') },
         { id: 'recruitment', label: t('hero.philosophy') }
     ];
@@ -54,7 +52,7 @@ export const LandingHeader: React.FC = () => {
                 {/* Navigation Links & Buttons - Right */}
                 <div className="flex items-center gap-4 sm:gap-6 md:gap-10">
                     <nav className="hidden xl:flex items-center gap-6 md:gap-8 border-r border-dancheong-ink/10 pr-10">
-                        {navItems.filter(item => item.id !== 'floors').map((item) => (
+                        {navItems.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => scrollToSection(item.id)}
@@ -70,12 +68,6 @@ export const LandingHeader: React.FC = () => {
 
                     <div className="hidden xl:flex items-center gap-4">
                         <LanguageSelector variant="landing" />
-                        <button
-                            onClick={() => scrollToSection('floors')}
-                            className="text-xs sm:text-sm font-black text-dancheong-ink/60 hover:text-dancheong-ink transition-colors duration-300 uppercase tracking-widest px-2"
-                        >
-                            {t('floor_guide')}
-                        </button>
                         <button
                             onClick={() => navigate('/admin/login')}
                             className="heritage-button-outline px-6 py-2.5 text-[10px] sm:text-xs font-black rounded-full border border-dancheong-ink/20 hover:border-dancheong-ink transition-all duration-500 tracking-widest uppercase bg-white"

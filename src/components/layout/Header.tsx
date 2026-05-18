@@ -43,7 +43,7 @@ const Header: React.FC = () => {
 
     // Dynamic Theme Detection
     const getThemeData = () => {
-        const path = location.pathname;
+        const path = location.pathname || '';
         if (path.startsWith('/category/')) {
             const subId = path.split('/')[2];
             return { id: subId, floor: getFloorBySubId(subId) || '1' };

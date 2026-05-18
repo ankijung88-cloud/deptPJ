@@ -140,6 +140,7 @@ async function initDB() {
     await addColumnSafely('theme_data', "ALTER TABLE featured_items ADD COLUMN theme_data JSON NULL");
     await addColumnSafely('reservation_programs', "ALTER TABLE featured_items ADD COLUMN reservation_programs JSON NULL");
     await addColumnSafely('reservation_slots', "ALTER TABLE featured_items ADD COLUMN reservation_slots JSON NULL");
+    await addColumnSafely('metadata', "ALTER TABLE featured_items ADD COLUMN metadata JSON NULL");
 
     // NEW: Ensure 'description' column is TEXT to prevent "Data too long" errors
     try {

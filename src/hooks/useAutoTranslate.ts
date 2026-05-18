@@ -53,15 +53,42 @@ function findTranslationByKoreanValue(koText: string, targetLang: string): strin
  * Custom hook to automatically translate text using Google Gemini AI.
  * It handles caching, language changes, and provides a fallback to local i18n resources.
  */
-export const useAutoTranslate = (text: string | null | undefined, targetLangOverride?: string) => {
+export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
     const { i18n: i18nInstance } = useTranslation();
-    const [translatedText, setTranslatedText] = useState<string>(text || '');
+    
+    const extractString = (val: any, depth = 0): string => {
+        if (!val || depth > 2) return '';
+        if (typeof val === 'string') {
+            if (val.trim().startsWith('{')) {
+                try {
+                    const parsed = JSON.parse(val);
+                    const lang = targetLangOverride || i18nInstance.language || 'ko';
+                    const short = lang.split('-')[0];
+                    const extracted = parsed[short] || parsed['ko'] || parsed['en'] || Object.values(parsed)[0];
+                    return typeof extracted === 'string' ? extracted : extractString(extracted, depth + 1);
+                } catch (e) {
+                    return val;
+                }
+            }
+            return val;
+        }
+        if (typeof val === 'object') {
+            const lang = targetLangOverride || i18nInstance.language || 'ko';
+            const short = lang.split('-')[0];
+            const extracted = val[short] || val['ko'] || val['en'] || Object.values(val)[0];
+            return typeof extracted === 'string' ? extracted : extractString(extracted, depth + 1);
+        }
+        return String(val);
+    };
+
+    // Initialize with a safe string extracted from the input
+    const [translatedText, setTranslatedText] = useState<string>(() => extractString(text));
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Sync state immediately when input text or language switch occurs
     useEffect(() => {
-        if (text) setTranslatedText(text);
-    }, [text, targetLangOverride]);
+        setTranslatedText(extractString(text));
+    }, [text, targetLangOverride, i18nInstance.language]);
 
     // Get primary language code (e.g., 'en-US' -> 'en')
     const getTargetLang = () => {
@@ -100,45 +127,39 @@ export const useAutoTranslate = (text: string | null | undefined, targetLangOver
 
     useEffect(() => {
         const translate = async () => {
-            if (!text || typeof text !== 'string' || !text.trim()) {
-                setTranslatedText(typeof text === 'string' ? text : '');
+            if (!text) {
+                setTranslatedText('');
                 return;
             }
 
-            // --- JSON Parsing Safety Net ---
-            // If the text itself is stringified JSON, parse it first.
-            let cleanText = text as any;
-            if (typeof cleanText === 'string' && cleanText.trim().startsWith('{')) {
+            // --- Object/JSON Parsing Safety Net ---
+            let cleanText: any = text;
+
+            // If it's a raw object {ko: "...", en: "..."}
+            if (typeof cleanText === 'object' && cleanText !== null) {
+                const langCode = targetLangOverride || i18nInstance.language || 'ko';
+                const short = langCode.split('-')[0];
+                cleanText = cleanText[short] || cleanText['ko'] || cleanText['en'] || Object.values(cleanText)[0] || '';
+            } 
+            // If it's a stringified JSON
+            else if (typeof cleanText === 'string' && cleanText.trim().startsWith('{')) {
                 try {
                     const parsed = JSON.parse(cleanText);
                     if (typeof parsed === 'object' && parsed !== null) {
-                        // Use getTargetLang() logic but inline for efficiency here
                         const langCode = targetLangOverride || i18nInstance.language || 'ko';
                         const short = langCode.split('-')[0];
-                        
                         cleanText = parsed[short] || parsed['ko'] || parsed['en'] || Object.values(parsed)[0] || cleanText;
-                        
-                        // If it's still JSON, we could recurse, but usually one level is enough.
-                        // For absolute safety, if it's still a string and still looks like JSON:
-                        if (typeof cleanText === 'string' && cleanText.trim().startsWith('{')) {
-                            const secondPass = JSON.parse(cleanText);
-                             cleanText = secondPass[short] || secondPass['ko'] || secondPass['en'] || Object.values(secondPass)[0] || cleanText;
-                        }
                     }
-                } catch (e) {
-                    // Fail silently and proceed with original text
-                }
+                } catch (e) {}
             }
 
-            // If parsing gave us a fresh string, update and see if we still need to translate
-            if (cleanText !== text) {
-                setTranslatedText(cleanText as string);
-                // If it's already in the right script or we don't have an API key, we might stop here.
-                // But for now, let's keep going with cleanText correctly.
+            if (typeof cleanText !== 'string') {
+                cleanText = String(cleanText || '');
             }
             
-            const processingText = typeof cleanText === 'string' ? cleanText.trim() : String(cleanText || '').trim();
+            const processingText = cleanText.trim();
             if (!processingText) {
+                setTranslatedText('');
                 setIsLoading(false);
                 return;
             }

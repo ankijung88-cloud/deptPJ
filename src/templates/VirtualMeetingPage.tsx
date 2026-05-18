@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { MeetingRoomEnvironment2D } from '../components/gallery/MeetingRoomEnvironment2D';
 import { LanguageSelector } from '../components/common/LanguageSelector';
+import { TemplateSwitchModal } from '../components/common/TemplateSwitchModal';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { FeaturedItem } from '../types';
@@ -35,7 +36,7 @@ import { io, Socket } from 'socket.io-client';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { useAdmin } from '../hooks/useAdmin';
 import { useWebRTCScreenShare } from '../hooks/useWebRTCScreenShare';
-import { useImmersiveMode } from '../context/NavigationActionContext';
+import { useImmersiveMode, useMeetingMode } from '../context/NavigationActionContext';
 
 interface Participant {
     id: string;
@@ -86,6 +87,7 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
     const [tokenError, setTokenError] = useState('');
     
     useImmersiveMode(true);
+    useMeetingMode(true);
     
     const [localParticipant, setLocalParticipant] = useState<Participant>({
         id: 'local',
@@ -105,6 +107,10 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
     const [isScreenMaximized, setIsScreenMaximized] = useState(false);
     const [inviteLink, setInviteLink] = useState<string | null>(null);
     const [showInviteModal, setShowInviteModal] = useState(false);
+    const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    
+    const localVideoRef = React.useRef<HTMLVideoElement>(null);
+    const [localCameraStream, setLocalCameraStream] = useState<MediaStream | null>(null);
 
     // Close maximize view if presentation ends
     useEffect(() => {
@@ -253,10 +259,36 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
         if (socket) socket.emit('toggle-mute', !isMuted);
     };
 
-    const toggleVideo = () => {
-        setIsVideoOff(!isVideoOff);
-        if (socket) socket.emit('toggle-video', !isVideoOff);
+    const toggleVideo = async () => {
+        const nextState = !isVideoOff;
+        setIsVideoOff(nextState);
+        
+        if (nextState) {
+            // Turning OFF
+            if (localCameraStream) {
+                localCameraStream.getTracks().forEach(track => track.stop());
+                setLocalCameraStream(null);
+            }
+        } else {
+            // Turning ON
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                setLocalCameraStream(stream);
+            } catch (err) {
+                console.error('Camera access denied:', err);
+                setIsVideoOff(true);
+            }
+        }
+        
+        if (socket) socket.emit('toggle-video', nextState);
     };
+
+    // Attach local camera stream to video element
+    useEffect(() => {
+        if (localVideoRef.current && localCameraStream) {
+            localVideoRef.current.srcObject = localCameraStream;
+        }
+    }, [localCameraStream, isVideoOff]);
 
     const handleKickParticipant = (participantId: string) => {
         if (!isHost || !socket) return;
@@ -337,6 +369,26 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
         }
     };
 
+    const handleSelectTemplate = async (templateId: string) => {
+        if (!roomId) return;
+        try {
+            const adminToken = sessionStorage.getItem('admin_token');
+            const res = await fetch(`/api/products/${roomId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${adminToken}`
+                },
+                body: JSON.stringify({ page_type: templateId })
+            });
+            if (res.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Template update error:', error);
+        }
+    };
+
     return (
         <ErrorBoundary>
             <div className="relative w-full h-screen bg-[#FFFFFF] overflow-hidden text-black font-sans flex">
@@ -344,7 +396,30 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                 {/* 1. Left Sidebar - Controls */}
                 <aside className="w-40 h-full bg-white border-r border-neutral-200 flex flex-col items-center py-8 z-50 shadow-xl">
                     <div className="flex flex-col items-center w-full gap-8 px-4">
-                        {/* Logout & Language */}
+                        {/* Template & Language */}
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                            {(isAdmin || isAgency) && (
+                                <button 
+                                    onClick={() => setIsTemplateModalOpen(true)}
+                                    className="group relative flex items-center justify-center p-3 bg-white rounded-xl hover:bg-neutral-50 transition-all border border-neutral-200"
+                                >
+                                    <LayoutGrid size={18} className="text-black" />
+                                    <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black text-white border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                        <AutoTranslatedText text="템플릿 선택" />
+                                    </span>
+                                </button>
+                            )}
+                            <div className="group relative flex items-center justify-center p-3 bg-black rounded-xl hover:bg-neutral-800 transition-all">
+                                <LanguageSelector variant="sidebar" />
+                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black text-white border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                    {t('common.language')}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="w-full h-[1px] bg-black/5" />
+
+                        {/* Navigation & Utilities */}
                         <div className="grid grid-cols-2 gap-2 w-full">
                             <button 
                                 onClick={() => {
@@ -361,12 +436,6 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                                     {t('common.back')}
                                 </span>
                             </button>
-                            <div className="group relative flex items-center justify-center p-3 bg-black/5 rounded-xl hover:bg-black/10 transition-all">
-                                <LanguageSelector variant="sidebar" />
-                                <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg bg-black text-white border border-white/10 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
-                                    {t('common.language')}
-                                </span>
-                            </div>
                         </div>
 
                         <div className="w-full h-[1px] bg-black/5" />
@@ -535,11 +604,24 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                     {/* Bottom: Participant Videos (1-Row Grid) */}
                     <div className="h-48 border-t border-neutral-200 bg-white/40 backdrop-blur-md flex items-center px-6 gap-4 overflow-x-auto custom-scrollbar">
                         {/* Local Participant */}
-                        <div className="flex-shrink-0 w-64 h-36 bg-black rounded-2xl border-2 border-red-600 relative overflow-hidden group">
+                        <div 
+                            onClick={toggleVideo}
+                            className="flex-shrink-0 w-64 h-36 bg-black rounded-2xl border-2 border-red-600 relative overflow-hidden group cursor-pointer hover:border-red-500 transition-colors"
+                        >
                             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-black">
-                                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black text-black" style={{ backgroundColor: localParticipant.color }}>
-                                    {localParticipant.name[0].toUpperCase()}
-                                </div>
+                                {!isVideoOff && localCameraStream ? (
+                                    <video 
+                                        ref={localVideoRef}
+                                        autoPlay
+                                        playsInline
+                                        muted
+                                        className="w-full h-full object-cover scale-x-[-1]"
+                                    />
+                                ) : (
+                                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black text-black" style={{ backgroundColor: localParticipant.color }}>
+                                        {localParticipant.name[0].toUpperCase()}
+                                    </div>
+                                )}
                             </div>
                             <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                                 <span className="text-[10px] font-bold tracking-tight">{localParticipant.name} (Me)</span>
@@ -936,6 +1018,13 @@ const VirtualMeetingPage: React.FC<VirtualMeetingPageProps> = ({ item, productId
                         </motion.div>
                     )}
                 </AnimatePresence>
+        <TemplateSwitchModal
+            isOpen={isTemplateModalOpen}
+            onClose={() => setIsTemplateModalOpen(false)}
+            onSelect={handleSelectTemplate}
+            currentTemplateId={item?.page_type}
+            theme={{ highlightColor: '#FF4757', glowColor: 'rgba(255, 71, 87, 0.3)' } as any}
+        />
                 {/* Secure Entry Modal */}
                 <AnimatePresence>
                     {showTokenModal && (

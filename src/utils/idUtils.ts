@@ -30,16 +30,18 @@ export const getNormalizedSubcategoryId = (sub: string): string => {
     if (!sub) return '';
     const s = sub.toLowerCase();
     
-    // Normalize subcategories based on keywords
-    if (['car', 'trend', 'exchange', 'car-care', 'global', 'tech'].some(k => s.includes(k))) {
-        return 'car-care';
-    }
-    if (['window', 'digital'].some(k => s.includes(k))) {
-        return 'window';
-    }
-    if (['mall', 'b2b', 'talk', 'interview'].some(k => s.includes(k))) {
-        return 'b2b-mall';
-    }
+    // F1 mappings
+    if (s === 'tech') return 'f1_tech';
+    if (s === 'trend' || s === 'library') return 'f1_library';
+    if (s === 'kpop' || s === 'k-pop') return 'f1_kpop';
+    
+    // F6 mappings
+    if (s === 'gourmet') return 'f6_gourmet';
+    if (s === 'craft') return 'f6_craft';
+    if (s === 'tour') return 'f6_tour';
+    
+    // F5 mappings
+    if (s === 'fitting') return 'f5_fitting';
     
     return sub;
 };

@@ -24,6 +24,13 @@ const VirtualFundingPage = lazy(() => import('./templates/VirtualFundingPage'));
 const TeamWorkspacePage = lazy(() => import('./templates/TeamWorkspacePage'));
 import AgencyRegisterPage from './pages/AgencyRegisterPage';
 const FloorGuidePage = lazy(() => import('./pages/FloorGuidePage'));
+const ProjectTemplatePage = lazy(() => import('./pages/ProjectTemplatePage'));
+const ProjectCurationPage = lazy(() => import('./templates/ProjectCurationPage'));
+const ProjectSkincarePage = lazy(() => import('./templates/ProjectSkincarePage'));
+const ProjectBrandPage = lazy(() => import('./templates/ProjectBrandPage'));
+const ProjectMagazinePage = lazy(() => import('./templates/ProjectMagazinePage'));
+const ProjectCommunityPage = lazy(() => import('./templates/ProjectCommunityPage'));
+const ProjectProductDetailPage = lazy(() => import('./templates/ProjectProductDetailPage'));
 
 import NoticePage from './pages/NoticePage';
 import FAQPage from './pages/FAQPage';
@@ -73,6 +80,13 @@ function App() {
                                         <Route path="/detail/:id/groupbuy" element={<VirtualGroupBuyPage />} />
                                         <Route path="/detail/:id/funding" element={<VirtualFundingPage />} />
                                         <Route path="/detail/:id/office" element={<TeamWorkspacePage />} />
+                                        <Route path="/project-template" element={<ProjectTemplatePage />} />
+                                        <Route path="/project-template/curation" element={<ProjectCurationPage />} />
+                                        <Route path="/project-template/skincare" element={<ProjectSkincarePage />} />
+                                        <Route path="/project-template/brand" element={<ProjectBrandPage />} />
+                                        <Route path="/project-template/magazine" element={<ProjectMagazinePage />} />
+                                        <Route path="/project-template/community" element={<ProjectCommunityPage />} />
+                                        <Route path="/project-template/product/:id" element={<ProjectProductDetailPage />} />
                                     </Route>
 
                                     {/* Presentation Pages (No Layout/Navbar) */}

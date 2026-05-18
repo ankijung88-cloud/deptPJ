@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { normalizeLocalizedString, displayLocalized } from '../utils/i18nUtils';
 
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,7 +30,7 @@ import {
     MonitorPlay
 } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
-import { getFeaturedProducts, deleteProduct, createProduct, updateProduct } from '../api/products';
+import { getFeaturedProducts, deleteProduct } from '../api/products';
 import { 
     createFloorCategory, 
     updateFloorCategory, 
@@ -41,121 +42,12 @@ import { getAgencies, createAgency, updateAgency, deleteAgency, updateAgencyStat
 import { getOrders, updateOrderStatus, deleteOrder } from '../api/orders';
 import { FeaturedItem, Notice, FAQ } from '../types';
 import { getNormalizedFloorId, getNormalizedSubcategoryId } from '../utils/idUtils';
+import { ProductFormModal } from '../components/admin/ProductFormModal';
 
-// Helper for localized text
-const displayLocalized = (text: any) => {
-    if (!text) return '';
-    if (typeof text === 'string') {
-        // 만약 문자열이 JSON 형태라면 파싱 시도
-        if (text.trim().startsWith('{')) {
-            try {
-                const parsed = JSON.parse(text);
-                return parsed.ko || parsed.en || Object.values(parsed)[0] || '';
-            } catch (e) {
-                return text;
-            }
-        }
-        return text;
-    }
-    return text.ko || text.en || Object.values(text)[0] || '';
-};
+// Helper functions moved to i18nUtils.ts
 
-const normalizeLocalizedString = (val: any): { ko: string; en: string } => {
-    if (!val) return { ko: '', en: '' };
-    
-    // If it's already an object, just ensure it has ko/en keys
-    if (typeof val === 'object' && val !== null) {
-        return {
-            ko: val.ko || '',
-            en: val.en || ''
-        };
-    }
 
-    // If it's a string, try to parse it as JSON
-    if (typeof val === 'string' && val.trim().startsWith('{')) {
-        try {
-            const parsed = JSON.parse(val);
-            // Recursively call for potentially nested JSON or return if it's the right shape
-            if (typeof parsed === 'object' && parsed !== null) {
-                return normalizeLocalizedString(parsed);
-            }
-        } catch (e) {
-            // If parsing fails, fall back to treating it as a normal string
-        }
-    }
-
-    // If it's just a regular string
-    return {
-        ko: val || '',
-        en: ''
-    };
-};
-
-const generateUniqueId = () => {
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const random = Math.random().toString(36).substring(2, 7).toLowerCase();
-    return `item-${date}-${random}`;
-};
-
-const DEFAULT_LONG_DESCRIPTION = {
-    ko: "현대 시대를 위해 재해석된 전통 한국 미학의 깊이를 탐험하세요.\n\n각 요소는 단순한 시청을 초월하는 몰입형 경험을 제공하도록 세심하게 큐레이팅되었습니다. 이 프레젠테이션의 건축물 안에 담긴 질감, 리듬, 그리고 침묵의 이야기에 참여하시기 바랍니다.",
-    en: "Explore the depths of traditional Korean aesthetics reimagined for the modern era. Handcrafted with precision and a deep respect for historical legacy, this piece represents more than just a functional object—it is a vessel of culture, carrying signatures of the past into the digital frontier.\n\nEach element has been meticulously curated to provide an immersive experience that transcends simple viewing. We invite you to engage with the textures, the rhythms, and the silent stories embedded within the architecture of this presentation."
-};
-
-const normalizeProductData = (product: any) => {
-    const defaultData = {
-        id: generateUniqueId(),
-        title: { ko: '', en: '' },
-        category: '',
-        subcategory: '',
-        description: { ko: '', en: '' },
-        image_url: '',
-        event_date: { ko: '', en: '' },
-        location: { ko: '', en: '' },
-        price: '',
-        video_url: '',
-        long_description: { ...DEFAULT_LONG_DESCRIPTION },
-        closed_days: [],
-        parent_id: '',
-        detail_media_url: '',
-        detail_media_type: 'image',
-        reservation_programs: [],
-        reservation_slots: []
-    };
-    if (!product) return defaultData;
-
-    // FeaturedItem 타입(camelCase)과 DB 원본(snake_case) 모두 지원
-    const image_url = product.image_url || product.imageUrl || '';
-    const video_url = product.video_url || product.videoUrl || '';
-    // event_date: FeaturedItem에서는 'date' 필드에 매핑됨
-    const raw_event_date = product.event_date || product.date || '';
-    // closed_days: FeaturedItem에서는 'closedDays' 필드에 매핑됨
-    const raw_closed_days = product.closed_days || product.closedDays || [];
-
-    const normalized_long_description = normalizeLocalizedString(product.long_description);
-    if (!normalized_long_description.ko && !normalized_long_description.en) {
-        normalized_long_description.ko = DEFAULT_LONG_DESCRIPTION.ko;
-        normalized_long_description.en = DEFAULT_LONG_DESCRIPTION.en;
-    }
-
-    return {
-        ...defaultData,
-        ...product,
-        image_url,
-        video_url,
-        title: normalizeLocalizedString(product.title),
-        description: normalizeLocalizedString(product.description),
-        long_description: normalized_long_description,
-        event_date: normalizeLocalizedString(raw_event_date),
-        location: normalizeLocalizedString(product.location),
-        closed_days: Array.isArray(raw_closed_days) ? raw_closed_days : [],
-        parent_id: product.parent_id || '',
-        detail_media_url: product.detail_media_url || product.detailMediaUrl || '',
-        detail_media_type: product.detail_media_type || product.detailMediaType || 'image',
-        reservation_programs: typeof product.reservation_programs === 'string' ? JSON.parse(product.reservation_programs) : (product.reservation_programs || []),
-        reservation_slots: typeof product.reservation_slots === 'string' ? JSON.parse(product.reservation_slots) : (product.reservation_slots || [])
-    };
-};
+// Helper functions moved to ProductFormModal.tsx
 
 const normalizeNoticeData = (notice: any) => {
     const defaultData = {
@@ -654,562 +546,7 @@ const ProductManager = ({ agencies }: { agencies: any[] }) => {
     );
 };
 
-const ProductFormModal = ({ product, onClose, onSuccess }: any) => {
-    const { isAdmin } = useAdmin();
-    const { floors } = useFloors();
-    const [agencies, setAgencies] = useState<any[]>([]);
-    const [formData, setFormData] = useState<any>(() => {
-        const data = normalizeProductData(product);
-        return {
-            ...data,
-            agency_id: (product as any)?.agency_id || ''
-        };
-    });
-    const [uploading, setUploading] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (isAdmin) {
-            fetchAgencies();
-        }
-    }, [isAdmin]);
-
-    const fetchAgencies = async () => {
-        try {
-            const data = await getAgencies();
-            setAgencies(data);
-        } catch (err) {
-            console.error('Failed to fetch agencies for modal:', err);
-        }
-    };
-
-    const isEdit = !!product;
-
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(field);
-        const uploadData = new FormData();
-        uploadData.append('file', file);
-
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('admin_token')}`
-                },
-                body: uploadData
-            });
-            
-            if (!response.ok) {
-                let errorMsg = 'Unknown error';
-                try {
-                    const errorData = await response.json();
-                    errorMsg = errorData.message || errorData.error || JSON.stringify(errorData);
-                } catch (e) {
-                    errorMsg = await response.text();
-                }
-                console.error('Upload Error:', errorMsg);
-                throw new Error(errorMsg);
-            }
-
-            const data = await response.json();
-            if (data.url) {
-                setFormData({ ...formData, [field]: data.url });
-            }
-        } catch (err: any) {
-            console.error('Upload failure:', err);
-            alert(`Upload failed: ${err.message || 'Unknown error'}`);
-        } finally {
-            setUploading(null);
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            if (isEdit) {
-                await updateProduct(product.id, formData);
-            } else {
-                await createProduct(formData);
-            }
-            onSuccess();
-        } catch (err: any) {
-            console.error('[handleSubmit] Error:', err);
-            alert(`Operation failed: ${err.message || JSON.stringify(err)}`);
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 sm:p-6">
-            <motion.div 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/95" onClick={onClose} 
-            />
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-4xl bg-white border border-dancheong-ink/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-            >
-                <div className="p-6 border-b border-dancheong-ink/10 flex justify-between items-center">
-                    <h3 className="text-xl font-serif font-bold text-dancheong-ink">
-                        {isEdit ? 'Edit Product' : 'Add New Product'}
-                    </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-dancheong-ink/40"><X size={20} /></button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* 1. ID & 2. Title */}
-                        <div className="space-y-4">
-                            {!isEdit && (
-                                <div>
-                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block">1. Unique ID</label>
-                                    <input 
-                                        type="text" required
-                                        value={formData.id} onChange={(e) => setFormData({...formData, id: e.target.value})}
-                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                        placeholder="e.g. k-heritage-001"
-                                    />
-                                </div>
-                            )}
-                            <div>
-                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="2. 제목" /></label>
-                                <input 
-                                    type="text" required
-                                    value={formData.title.ko} onChange={(e) => setFormData({...formData, title: {...formData.title, ko: e.target.value}})}
-                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                />
-                            </div>
-                        </div>
-
-                        {/* 3. Category & 4. Subcategory */}
-                        <div className="space-y-4">
-                            {isAdmin && (
-                                <div>
-                                    <label className="text-xs font-bold text-dancheong-mugwort uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="Agency Owner" /></label>
-                                    <select 
-                                        value={formData.agency_id || ''} 
-                                        onChange={(e) => setFormData({...formData, agency_id: e.target.value})}
-                                        className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-mugwort focus:border-[#00FFC2]/50 font-bold"
-                                    >
-                                        <option value="">Admin (Default)</option>
-                                        {agencies.map(a => (
-                                            <option key={a.id} value={a.id}>{a.agency_name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
-                            <div>
-                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="3. Category (Floor)" /></label>
-                                <select 
-                                    required
-                                    value={formData.category} 
-                                    onChange={(e) => {
-                                        const newFloorId = e.target.value;
-                                        const floor = floors.find(f => f.id === newFloorId);
-                                        setFormData({
-                                            ...formData, 
-                                            category: newFloorId,
-                                            subcategory: floor?.subitems?.[0]?.id || ''
-                                        });
-                                    }}
-                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                >
-                                    <option value="">Select Floor</option>
-                                    {floors.map(floor => (
-                                        <option key={floor.id} value={floor.id}>
-                                            {floor.floor} - {typeof floor.title === 'string' ? floor.title : floor.title.ko}
-                                        </option>
-                                    ))}
-                                    <optgroup label="Templates">
-                                        {TEMPLATE_CATEGORIES.map(t => (
-                                            <option key={t} value={t}>{t.toUpperCase()}</option>
-                                        ))}
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="4. Subcategory ID" /></label>
-                                <select 
-                                    required
-                                    value={formData.subcategory} 
-                                    onChange={(e) => setFormData({...formData, subcategory: e.target.value})}
-                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                    disabled={!formData.category}
-                                >
-                                    <option value="">Select Subcategory</option>
-                                    {TEMPLATE_CATEGORIES.includes(formData.category) ? (
-                                        <option value="general">General</option>
-                                    ) : (
-                                        floors.find(f => f.id === formData.category)?.subitems?.map(sub => (
-                                            <option key={sub.id} value={sub.id}>
-                                                {typeof sub.label === 'string' ? sub.label : sub.label.ko}
-                                            </option>
-                                        ))
-                                    )}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 5. Description */}
-                    <div>
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5. 설명" /></label>
-                        <textarea 
-                            rows={4} required
-                            value={formData.description.ko} onChange={(e) => setFormData({...formData, description: {...formData.description, ko: e.target.value}})}
-                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                        />
-                    </div>
-
-                    {/* Template specific fields: Parent ID */}
-                    {TEMPLATE_CATEGORIES.includes(formData.category) && (
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block">
-                                <AutoTranslatedText text="Template Linked Parent ID (필수)" />
-                            </label>
-                            <input 
-                                type="text" 
-                                value={formData.parent_id || ''} 
-                                onChange={(e) => setFormData({...formData, parent_id: e.target.value})}
-                                className="w-full bg-black/5 border border-dancheong-mugwort/30 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                placeholder="연결할 상위 제품의 ID를 입력하세요 (예: car-care-exchange-week)"
-                            />
-                            <p className="text-[10px] text-dancheong-ink/30 mt-2 px-1">
-                                * 템플릿(Cinema, Museum 등) 데이터는 상위 제품 ID가 정확히 입력되어야 해당 페이지에서 노출됩니다.
-                            </p>
-                        </div>
-                    )}
-
-                    {/* 5-2. Detailed Description */}
-                    <div>
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-2. 상세 설명 (상세 페이지용)" /></label>
-                        <textarea 
-                            rows={8}
-                            value={formData.long_description.ko} onChange={(e) => setFormData({...formData, long_description: {...formData.long_description, ko: e.target.value}})}
-                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                            placeholder="상세 페이지 하단에 표시될 긴 설명을 입력하세요. 빈 칸인 경우 기본 하드코딩된 텍스트가 표시됩니다."
-                        />
-                    </div>
-
-                    {/* 5-3. 상세 미디어 (상세 설명 하단) */}
-                    <div>
-                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="5-3. 상세 미디어 (상세 설명 하단)" /></label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-black/20 p-6 rounded-2xl border border-dancheong-ink/5">
-                            <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase block tracking-wider">미디어 타입 (Media Type)</label>
-                                <div className="flex gap-4">
-                                    <button 
-                                        type="button"
-                                        onClick={() => setFormData({...formData, detail_media_type: 'image'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'image' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-black/5 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
-                                    >
-                                        이미지 (Image)
-                                    </button>
-                                    <button 
-                                        type="button"
-                                        onClick={() => setFormData({...formData, detail_media_type: 'video'})}
-                                        className={`flex-1 py-3 rounded-xl border transition-all font-bold ${formData.detail_media_type === 'video' ? 'bg-dancheong-ink text-white border-[#00FFC2]' : 'bg-black/5 text-dancheong-ink/40 border-dancheong-ink/10 hover:bg-dancheong-ink/5'}`}
-                                    >
-                                        영상 (Video)
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <label className="text-[10px] font-bold text-dancheong-ink/50 uppercase block tracking-wider">미디어 업로드 / URL (Upload / URL)</label>
-                                <div className="flex gap-2">
-                                    <div className="flex-1 relative group">
-                                        <input 
-                                            type="text" 
-                                            value={formData.detail_media_url || ''} 
-                                            onChange={(e) => setFormData({...formData, detail_media_url: e.target.value})}
-                                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-xs focus:border-[#00FFC2]/50 pr-12"
-                                            placeholder="https://..."
-                                        />
-                                        <label className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg cursor-pointer text-dancheong-ink/40 hover:text-dancheong-mugwort transition-all">
-                                            {uploading === 'detail_media_url' ? <div className="w-4 h-4 border-2 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={16} />}
-                                            <input type="file" className="hidden" accept={formData.detail_media_type === 'video' ? "video/*" : "image/*"} onChange={(e) => handleFileUpload(e, 'detail_media_url')} />
-                                        </label>
-                                    </div>
-                                </div>
-                                <div className="p-4 bg-dancheong-ink/5 rounded-xl border border-dancheong-ink/10 min-h-[150px] flex items-center justify-center overflow-hidden">
-                                    {formData.detail_media_url ? (
-                                        formData.detail_media_type === 'video' ? (
-                                            <video src={formData.detail_media_url} className="max-h-[300px] w-auto" muted loop autoPlay />
-                                        ) : (
-                                            <div className="max-h-[400px] w-full overflow-y-auto custom-scrollbar flex justify-center">
-                                                <img 
-                                                    src={formData.detail_media_url} 
-                                                    alt="" 
-                                                    className="w-full h-auto max-w-full" 
-                                                    style={{ objectFit: 'contain' }}
-                                                />
-                                            </div>
-                                        )
-                                    ) : (
-                                        <span className="text-[10px] text-dancheong-ink/20 uppercase tracking-widest italic">미리보기 (No Preview)</span>
-                                    )}
-                                </div>
-                                <p className="text-[9px] text-dancheong-ink/20 px-1 italic">
-                                    * 상세 페이지 하단에 표시될 미디어입니다. {formData.detail_media_type === 'video' ? 'MP4/M4V 영상 권장.' : 'JPG/PNG 이미지 권장.'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* 6. Main Image */}
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="6. Main Image" /></label>
-                            <div className="space-y-4">
-                                <div className="relative group aspect-video bg-black/5 border border-dancheong-ink/10 rounded-2xl overflow-hidden flex items-center justify-center">
-                                    {formData.image_url ? (
-                                        <>
-                                            <img src={formData.image_url} alt="" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <label className="cursor-pointer bg-dancheong-ink text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
-                                                    <Upload size={18} />
-                                                    <AutoTranslatedText text="Change Image" />
-                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'image_url')} />
-                                                </label>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <label className="cursor-pointer flex flex-col items-center gap-3 text-dancheong-ink/50 hover:text-dancheong-mugwort transition-colors">
-                                            <div className="w-16 h-16 rounded-2xl bg-dancheong-ink/5 flex items-center justify-center">
-                                                {uploading === 'image_url' ? <div className="w-8 h-8 border-4 border-[#00FFC2] border-t-transparent rounded-full animate-spin" /> : <Upload size={32} />}
-                                            </div>
-                                            <span className="text-sm font-bold uppercase tracking-wider"><AutoTranslatedText text="Upload Main Image" /></span>
-                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'image_url')} />
-                                        </label>
-                                    )}
-                                </div>
-                                <input 
-                                    type="text" placeholder="https://..."
-                                    value={formData.image_url} onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-                                    className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 8. Event Date & 9. Location */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="8. 행사 기간" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.event_date.ko} onChange={(e) => setFormData({...formData, event_date: {...formData.event_date, ko: e.target.value}})}
-                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                placeholder="예: 2025.03.15 - 04.30"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="9. 장소" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.location.ko} onChange={(e) => setFormData({...formData, location: {...formData.location, ko: e.target.value}})}
-                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                placeholder="예: 6층 K-컬처 센터"
-                            />
-                        </div>
-                    </div>
-
-                    {/* 10. Price, 11. Closed Days, 12. Video URL */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="10. Price" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.price || ''} onChange={(e) => setFormData({...formData, price: e.target.value})}
-                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                placeholder="예: 50,000원"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="11. Closed Days" /></label>
-                            <input 
-                                type="text"
-                                value={Array.isArray(formData.closed_days) ? JSON.stringify(formData.closed_days) : (formData.closed_days || '[]')} 
-                                onChange={(e) => {
-                                    try {
-                                        const parsed = JSON.parse(e.target.value);
-                                        if (Array.isArray(parsed)) setFormData({...formData, closed_days: parsed});
-                                    } catch(err) { /* ignore parse errors while typing */ }
-                                }}
-                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink font-mono text-sm focus:border-[#00FFC2]/50"
-                                placeholder='["2025-03-25"]'
-                            />
-                        </div>
-                        <div>
-                            <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block"><AutoTranslatedText text="12. 사이트 URL" /></label>
-                            <input 
-                                type="text" 
-                                value={formData.video_url || ''} onChange={(e) => setFormData({...formData, video_url: e.target.value})}
-                                className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
-                                placeholder="https://youtube.com/..."
-                            />
-                        </div>
-                    </div>
-
-                    {/* Reservation Settings Section */}
-                    <div className="space-y-6 pt-6 border-t border-dancheong-ink/5">
-                        <div className="flex items-center gap-2">
-                            <Layers className="text-dancheong-mugwort" size={18} />
-                            <h4 className="text-sm font-bold text-dancheong-ink uppercase tracking-widest">Reservation Settings</h4>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 gap-8">
-                            {/* Programs Management */}
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1">Programs</label>
-                                    <button 
-                                        type="button"
-                                        onClick={() => {
-                                            const newProgram = {
-                                                id: `prog-${Date.now()}`,
-                                                title: { ko: '', en: '' },
-                                                description: { ko: '', en: '' },
-                                                price: ''
-                                            };
-                                            setFormData({
-                                                ...formData,
-                                                reservation_programs: [...formData.reservation_programs, newProgram]
-                                            });
-                                        }}
-                                        className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
-                                    >
-                                        + Add Program
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {formData.reservation_programs.map((prog: any, idx: number) => (
-                                        <div key={prog.id} className="bg-black/20 border border-dancheong-ink/5 rounded-2xl p-6 relative group">
-                                            <button 
-                                                type="button"
-                                                onClick={() => {
-                                                    const updated = formData.reservation_programs.filter((_: any, i: number) => i !== idx);
-                                                    setFormData({ ...formData, reservation_programs: updated });
-                                                }}
-                                                className="absolute top-4 right-4 p-2 text-dancheong-ink/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="space-y-4">
-                                                    <input 
-                                                        type="text"
-                                                        placeholder="Program Title (KO)"
-                                                        value={prog.title?.ko || ''}
-                                                        onChange={(e) => {
-                                                            const updated = [...formData.reservation_programs];
-                                                            updated[idx] = { ...updated[idx], title: { ...updated[idx].title, ko: e.target.value } };
-                                                            setFormData({ ...formData, reservation_programs: updated });
-                                                        }}
-                                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
-                                                    />
-                                                    <input 
-                                                        type="text"
-                                                        placeholder="Price (e.g. 50,000원)"
-                                                        value={prog.price || ''}
-                                                        onChange={(e) => {
-                                                            const updated = [...formData.reservation_programs];
-                                                            updated[idx] = { ...updated[idx], price: e.target.value };
-                                                            setFormData({ ...formData, reservation_programs: updated });
-                                                        }}
-                                                        className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <textarea 
-                                                        placeholder="Description (KO)"
-                                                        rows={3}
-                                                        value={prog.description?.ko || ''}
-                                                        onChange={(e) => {
-                                                            const updated = [...formData.reservation_programs];
-                                                            updated[idx] = { ...updated[idx], description: { ...updated[idx].description, ko: e.target.value } };
-                                                            setFormData({ ...formData, reservation_programs: updated });
-                                                        }}
-                                                        className="w-full h-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-3 text-dancheong-ink text-sm focus:border-[#00FFC2]/50"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {formData.reservation_programs.length === 0 && (
-                                        <div className="text-center py-8 border border-dashed border-dancheong-ink/5 rounded-2xl text-dancheong-ink/20 text-xs italic">
-                                            No programs registered. Default programs will be used.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Time Slots Management */}
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1">Time Slots</label>
-                                    <button 
-                                        type="button"
-                                        onClick={() => {
-                                            setFormData({
-                                                ...formData,
-                                                reservation_slots: [...formData.reservation_slots, "10:00"]
-                                            });
-                                        }}
-                                        className="text-[10px] font-bold text-dancheong-mugwort bg-dancheong-mugwort/10 px-3 py-1.5 rounded-lg hover:bg-[#00FFC2]/20 transition-all font-mono"
-                                    >
-                                        + Add Slot
-                                    </button>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {formData.reservation_slots.map((slot: string, idx: number) => (
-                                        <div key={idx} className="flex items-center gap-2 bg-black/5 border border-dancheong-ink/10 rounded-xl p-1 pl-3">
-                                            <input 
-                                                type="text"
-                                                value={slot}
-                                                onChange={(e) => {
-                                                    const updated = [...formData.reservation_slots];
-                                                    updated[idx] = e.target.value;
-                                                    setFormData({ ...formData, reservation_slots: updated });
-                                                }}
-                                                className="bg-transparent border-none text-dancheong-ink text-xs font-mono w-16 focus:outline-none"
-                                            />
-                                            <button 
-                                                type="button"
-                                                onClick={() => {
-                                                    const updated = formData.reservation_slots.filter((_: any, i: number) => i !== idx);
-                                                    setFormData({ ...formData, reservation_slots: updated });
-                                                }}
-                                                className="p-1.5 hover:bg-white/10 rounded-lg text-dancheong-ink/20 hover:text-red-400 transition-all font-sans"
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {formData.reservation_slots.length === 0 && (
-                                        <div className="w-full text-center py-4 border border-dashed border-dancheong-ink/5 rounded-2xl text-dancheong-ink/20 text-xs italic">
-                                            No time slots registered. Default slots will be used.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-4 flex justify-end gap-4 border-t border-dancheong-ink/5">
-                        <button type="button" onClick={onClose} className="px-6 py-3 rounded-xl text-dancheong-ink/40 hover:text-dancheong-ink transition-colors"><AutoTranslatedText text="Cancel" /></button>
-                        <button type="submit" className="px-8 py-3 rounded-xl bg-dancheong-ink text-white font-bold hover:scale-105 transition-all">
-                            <AutoTranslatedText text={isEdit ? 'Update Product' : 'Create Product'} />
-                        </button>
-                    </div>
-                </form>
-            </motion.div>
-        </div>
-    );
-};
+// Local ProductFormModal removed (moved to components/admin/ProductFormModal.tsx)
 
 const FloorManager = () => {
     const { floors, loading, refreshFloors } = useFloors();
@@ -2903,13 +2240,20 @@ const AgencyManager = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                                        agency.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
-                                        agency.status === 'REJECTED' ? 'bg-red-500/20 text-red-400' :
-                                        'bg-yellow-500/20 text-yellow-400'
-                                    }`}>
-                                        {agency.status}
-                                    </span>
+                                    <div className="flex flex-col gap-1">
+                                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider w-fit ${
+                                            agency.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
+                                            agency.status === 'REJECTED' ? 'bg-red-500/20 text-red-400' :
+                                            'bg-yellow-500/20 text-yellow-400'
+                                        }`}>
+                                            {agency.status}
+                                        </span>
+                                        {agency.has_project_template_access && (
+                                            <span className="bg-dancheong-mugwort/20 text-dancheong-mugwort px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter w-fit">
+                                                Project Template Auth
+                                            </span>
+                                        )}
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end items-center gap-2">
@@ -2971,7 +2315,8 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
         agencyName: agency?.agency_name || '',
         birthDate: agency?.birth_date || '',
         phoneMobile: agency?.phone_mobile || '',
-        logoUrl: agency?.logo_url || ''
+        logoUrl: agency?.logo_url || '',
+        hasProjectTemplateAccess: agency?.has_project_template_access || false
     });
 
     // Manual address entry enabled; no additional scripts needed.
@@ -2983,7 +2328,8 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
         try {
             const dataToSubmit = {
                 ...formData,
-                logo_url: formData.logoUrl // Map to backend field name if different
+                logo_url: formData.logoUrl,
+                has_project_template_access: formData.hasProjectTemplateAccess
             };
             if (isEdit) await updateAgency(agency.id, dataToSubmit);
             else await createAgency(dataToSubmit);
@@ -3035,6 +2381,19 @@ const AgencyFormModal = ({ agency, onClose, onSuccess }: any) => {
                             <div>
                                 <label className="text-xs font-bold text-dancheong-ink/60 uppercase mb-2 block"><AutoTranslatedText text="Logo Image URL (Optional)" /></label>
                                 <input type="text" placeholder="https://..." value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50" />
+                            </div>
+                            <div className="flex items-center gap-3 p-4 bg-dancheong-mugwort/5 border border-dancheong-mugwort/10 rounded-2xl">
+                                <input 
+                                    type="checkbox" 
+                                    id="templateAccess"
+                                    checked={formData.hasProjectTemplateAccess} 
+                                    onChange={e => setFormData({...formData, hasProjectTemplateAccess: e.target.checked})}
+                                    className="w-5 h-5 accent-dancheong-mugwort cursor-pointer"
+                                />
+                                <label htmlFor="templateAccess" className="text-xs font-bold text-dancheong-mugwort uppercase cursor-pointer select-none">
+                                    <AutoTranslatedText text="Grant Project Template Access" />
+                                    <span className="block text-[9px] text-dancheong-mugwort/60 font-normal normal-case mt-0.5">Allow agency to use and edit Premium/Project templates.</span>
+                                </label>
                             </div>
                         </div>
                     </div>

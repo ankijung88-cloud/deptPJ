@@ -7,6 +7,8 @@ interface NavigationActionContextType {
     setBreadcrumbTitle: (title: string | null) => void;
     isImmersive: boolean;
     setIsImmersive: (value: boolean) => void;
+    isMeeting: boolean;
+    setIsMeeting: (value: boolean) => void;
     isUiVisible: boolean;
     resetUiTimer: () => void;
     breadcrumbPath: any[];
@@ -19,6 +21,7 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
     const [action, setAction] = useState<React.ReactNode>(null);
     const [breadcrumbTitle, setBreadcrumbTitle] = useState<string | null>(null);
     const [isImmersive, setIsImmersive] = useState(false);
+    const [isMeeting, setIsMeeting] = useState(false);
     const [isUiVisible, setIsUiVisible] = useState(true);
     const [breadcrumbPath, setBreadcrumbPath] = useState<any[]>([]);
     const uiTimerRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -61,6 +64,7 @@ export const NavigationActionProvider: React.FC<{ children: React.ReactNode }> =
             action, setAction, 
             breadcrumbTitle, setBreadcrumbTitle,
             isImmersive, setIsImmersive,
+            isMeeting, setIsMeeting,
             isUiVisible, resetUiTimer,
             breadcrumbPath, setBreadcrumbPath
         }}>
@@ -109,6 +113,19 @@ export const useImmersiveMode = (isImmersive: boolean) => {
 };
 
 /**
+ * Hook for pages to set meeting mode flag.
+ */
+export const useMeetingMode = (isMeeting: boolean) => {
+    const context = useContext(NavigationActionContext);
+    if (!context) return;
+
+    useEffect(() => {
+        context.setIsMeeting(isMeeting);
+        return () => context.setIsMeeting(false);
+    }, [isMeeting, context.setIsMeeting]);
+};
+
+/**
  * Hook for pages to set a canonical breadcrumb path.
  */
 export const useSetBreadcrumbPath = (path: any[]) => {
@@ -138,6 +155,8 @@ export const useNavigationState = () => {
         breadcrumbTitle: context?.breadcrumbTitle || null,
         isImmersive: context?.isImmersive || false,
         setIsImmersive: context?.setIsImmersive || (() => {}),
+        isMeeting: context?.isMeeting || false,
+        setIsMeeting: context?.setIsMeeting || (() => {}),
         isUiVisible: context?.isUiVisible ?? true,
         resetUiTimer: context?.resetUiTimer || (() => {}),
         breadcrumbPath: context?.breadcrumbPath || []

@@ -7,6 +7,7 @@ import { useFloors } from '../context/FloorContext';
 import { useEditorial } from '../hooks/useEditorial';
 import { getLocalizedText } from '../utils/i18nUtils';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
+import { getNormalizedSubcategoryId } from '../utils/idUtils';
 
 const VisitorCounter: React.FC = () => {
     const [count, setCount] = useState(Math.floor(Math.random() * 15) + 8);
@@ -239,48 +240,106 @@ const FloorGuidePage: React.FC = () => {
                                             </button>
                                         </div>
 
-                                        {liveProducts.filter(p => p.subcategory === sub.id).length > 0 ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {liveProducts.filter(p => p.subcategory === sub.id).map((item, idx) => (
-                                                    <motion.div
-                                                        key={item.id}
-                                                        initial={{ opacity: 0, x: -20 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: idx * 0.05 }}
-                                                        className="group p-6 bg-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white transition-all flex items-center justify-between shadow-sm"
-                                                    >
-                                                        <div className="flex-1">
-                                                            <h3 
-                                                                onClick={() => navigate(`/detail/${item.id}`)}
-                                                                className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort cursor-pointer transition-colors flex items-center gap-3"
-                                                            >
-                                                                <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
-                                                                {item.page_type && item.page_type !== 'standard' && (
-                                                                    <span className="px-2 py-0.5 bg-dancheong-ink/5 text-[9px] font-black uppercase tracking-widest rounded-md text-dancheong-ink/40 group-hover:bg-dancheong-mugwort/20 group-hover:text-dancheong-mugwort transition-colors">
-                                                                        {item.page_type}
-                                                                    </span>
-                                                                )}
-                                                            </h3>
-                                                            <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-tight">
-                                                                <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
-                                                            </p>
-                                                        </div>
-                                                        <button 
-                                                            onClick={() => navigate(`/detail/${item.id}`)}
-                                                            className="p-3 bg-dancheong-ink/5 text-dancheong-ink rounded-full group-hover:bg-dancheong-ink group-hover:text-white transition-all"
+                                        {(() => {
+                                            const allSubProducts = liveProducts.filter(p => {
+                                                const normalizedP = getNormalizedSubcategoryId(p.subcategory || '');
+                                                const normalizedS = getNormalizedSubcategoryId(sub.id);
+                                                return normalizedP.toLowerCase() === normalizedS.toLowerCase();
+                                            });
+
+                                            const projectMainItems = allSubProducts.filter(p => {
+                                                const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
+                                                                     (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
+                                                return p.page_type === 'project_landing' && !is1FCarService;
+                                            });
+
+                                            const regularItems = allSubProducts.filter(p => {
+                                                const is1FCarService = (p.category === 'floor-1' || p.category === 'f1') && 
+                                                                     (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
+                                                if (is1FCarService) return true;
+                                                
+                                                // Hide 'project_landing' (rendered as main card) and 'skincare' (internal project pages)
+                                                return p.page_type !== 'project_landing' && p.page_type !== 'skincare';
+                                            });
+
+                                            if (projectMainItems.length === 0 && regularItems.length === 0) {
+                                                return (
+                                                    <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
+                                                        <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
+                                                            <AutoTranslatedText text="No items currently in this archive section." />
+                                                        </p>
+                                                    </div>
+                                                );
+                                            }
+
+                                            return (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    {projectMainItems.map((p, idx) => (
+                                                        <motion.div
+                                                            key={`project-${p.id}`}
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: idx * 0.05 }}
+                                                            onClick={() => navigate(`/detail/${p.id}`)}
+                                                            className="col-span-1 md:col-span-full group p-6 bg-dancheong-ink text-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-black transition-all flex items-center justify-between shadow-xl cursor-pointer overflow-hidden relative"
                                                         >
-                                                            <ArrowRight size={16} />
-                                                        </button>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="py-12 text-center bg-dancheong-ink/5 rounded-2xl border border-dashed border-dancheong-ink/10">
-                                                <p className="text-dancheong-ink/80 font-serif font-black italic text-lg">
-                                                    <AutoTranslatedText text="No items currently in this archive section." />
-                                                </p>
-                                            </div>
-                                        )}
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-dancheong-mugwort/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                            <div className="flex-1 relative z-10">
+                                                                <h3 className="text-lg font-serif font-bold text-white group-hover:text-dancheong-mugwort transition-colors flex items-center gap-3">
+                                                                    <AutoTranslatedText text={getLocalizedText(p.title, i18n.language) || `${getLocalizedText(sub.label, i18n.language)} 메인 템플릿`} />
+                                                                    <span className="px-2 py-0.5 bg-white/20 text-[9px] font-black uppercase tracking-widest rounded-md text-white">
+                                                                        PROJECT MAIN
+                                                                    </span>
+                                                                </h3>
+                                                                <p className="text-sm text-white/70 font-medium mt-1 line-clamp-1 leading-tight">
+                                                                    <AutoTranslatedText text={getLocalizedText(p.description, i18n.language) || "해당 프로젝트의 메인 랜딩 페이지로 이동합니다."} />
+                                                                </p>
+                                                            </div>
+                                                            <div className="p-3 bg-white/10 text-white rounded-full group-hover:bg-dancheong-mugwort group-hover:text-white transition-all relative z-10">
+                                                                <ArrowRight size={20} />
+                                                            </div>
+                                                        </motion.div>
+                                                    ))}
+
+                                                    {regularItems.map((item, idx) => (
+                                                        <motion.div
+                                                            key={item.id}
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: (projectMainItems.length + idx) * 0.05 }}
+                                                            onClick={() => {
+                                                                const is1FCarService = (item.category === 'floor-1' || item.category === 'f1') && 
+                                                                                     (item.id?.includes('w2hs2') || item.subcategory === 'car-care');
+                                                                
+                                                                const path = (item.page_type === 'skincare' && !is1FCarService)
+                                                                    ? `/project-template/product/${item.id}` 
+                                                                    : `/detail/${item.id}`;
+                                                                navigate(path);
+                                                            }}
+                                                            className="group p-6 bg-white rounded-2xl border border-dancheong-ink/5 hover:border-dancheong-mugwort/30 hover:bg-white transition-all flex items-center justify-between shadow-sm cursor-pointer"
+                                                        >
+                                                            <div className="flex-1">
+                                                                <h3 className="text-lg font-serif font-bold text-dancheong-ink group-hover:text-dancheong-mugwort transition-colors flex items-center gap-3">
+                                                                    <AutoTranslatedText text={getLocalizedText(item.title, i18n.language)} />
+                                                                    {item.page_type && item.page_type !== 'standard' && 
+                                                                     !(item.category === 'floor-1' && item.subcategory === 'car-care') && (
+                                                                        <span className="px-2 py-0.5 bg-dancheong-ink/5 text-[9px] font-black uppercase tracking-widest rounded-md text-dancheong-ink/40 group-hover:bg-dancheong-mugwort/20 group-hover:text-dancheong-mugwort transition-colors">
+                                                                            {item.page_type}
+                                                                        </span>
+                                                                    )}
+                                                                </h3>
+                                                                <p className="text-sm text-dancheong-ink/60 font-medium mt-1 line-clamp-1 leading-tight">
+                                                                    <AutoTranslatedText text={getLocalizedText(item.description, i18n.language) || 'Explore the curated narrative.'} />
+                                                                </p>
+                                                            </div>
+                                                            <div className="p-3 bg-dancheong-ink/5 text-dancheong-ink rounded-full group-hover:bg-dancheong-ink group-hover:text-white transition-all">
+                                                                <ArrowRight size={16} />
+                                                            </div>
+                                                        </motion.div>
+                                                    ))}
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                 </motion.div>
                             )}

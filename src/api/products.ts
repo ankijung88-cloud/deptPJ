@@ -102,7 +102,7 @@ const mapToFeaturedItem = (item: any): FeaturedItem => {
         reservation_programs: parseJsonIfNeeded(item.reservation_programs) || [],
         reservation_slots: parseJsonIfNeeded(item.reservation_slots) || [],
         page_type: item.page_type || 'standard',
-        metadata: item.metadata
+        metadata: parseJsonIfNeeded(item.metadata) || {}
     };
 };
 
@@ -262,7 +262,7 @@ export const deleteProduct = async (id: string): Promise<void> => {
     }
 };
 
-export const createProduct = async (productData: any): Promise<{ id: string }> => {
+export const createProduct = async (productData: any): Promise<FeaturedItem> => {
     const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 
@@ -275,10 +275,13 @@ export const createProduct = async (productData: any): Promise<{ id: string }> =
         const err = await response.json();
         throw new Error(err.message || 'Create failed');
     }
-    return await response.json();
+    const data = await response.json();
+    const newItem = await getProductById(data.id || productData.id);
+    if (!newItem) throw new Error('Failed to fetch new product after creation');
+    return newItem;
 };
 
-export const updateProduct = async (id: string, productData: any): Promise<void> => {
+export const updateProduct = async (id: string, productData: any): Promise<FeaturedItem> => {
     const response = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'PUT',
         headers: { 
@@ -291,4 +294,9 @@ export const updateProduct = async (id: string, productData: any): Promise<void>
         const err = await response.json();
         throw new Error(err.message || 'Update failed');
     }
+    
+    // Fetch and return the updated product
+    const updated = await getProductById(id);
+    if (!updated) throw new Error('Failed to fetch updated product after saving');
+    return updated;
 };

@@ -117,3 +117,37 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+export const getAgencyPublicInfo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, username, agency_name FROM users WHERE id = ?',
+      [id]
+    );
+    
+    if (rows.length > 0) {
+      res.json({ 
+        success: true, 
+        agencyName: rows[0].agency_name,
+        username: rows[0].username
+      });
+    } else {
+      res.status(404).json({ message: 'Agency not found' });
+    }
+  } catch (error) {
+    console.error('[Auth] getAgencyPublicInfo error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+export const getPublicAgencies = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, agency_name as name, 'Certified Partner' as industry FROM users WHERE role = 'AGENCY' LIMIT 20"
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error('[Auth] getPublicAgencies error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
