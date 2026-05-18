@@ -16,12 +16,12 @@ import { ProjectNavigationModal } from '../components/admin/ProjectNavigationMod
 
 import { Edit2, Trash2, Loader2 } from 'lucide-react';
 
-export const ProjectCommunityPage: React.FC = () => {
+export const ProjectCommunityPage: React.FC<{ item?: FeaturedItem }> = ({ item }) => {
     useImmersiveMode(true);
     const { isAdmin, isAgency, user } = useAdmin();
     const navigate = useNavigate();
     const location = useLocation();
-    const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    const [localItem, setLocalItem] = useState<FeaturedItem | null>(item || null);
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     
@@ -81,12 +81,16 @@ export const ProjectCommunityPage: React.FC = () => {
     };
 
     useEffect(() => {
-        // If sticky localItem has a different category than urlCategory, reset it
-        if (localItem && urlCategory && localItem.category !== urlCategory) {
-            setLocalItem(null);
+        if (!item || (urlCategory && item.category !== urlCategory)) {
+            // If sticky localItem has a different category than urlCategory, reset it
+            if (localItem && urlCategory && localItem.category !== urlCategory) {
+                setLocalItem(null);
+            }
+            fetchAll();
+        } else {
+            setLocalItem(item);
         }
-        fetchAll();
-    }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
+    }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     const handleDelete = async (id?: string) => {
         const targetId = id || localItem?.id;

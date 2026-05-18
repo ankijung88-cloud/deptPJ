@@ -14,12 +14,12 @@ import { TemplateTextEditModal } from '../components/admin/TemplateTextEditModal
 import { ProjectAdminBar } from '../components/admin/ProjectAdminBar';
 import { ProjectNavigationModal } from '../components/admin/ProjectNavigationModal';
 
-export const ProjectSkincarePage: React.FC = () => {
+export const ProjectSkincarePage: React.FC<{ item?: FeaturedItem }> = ({ item }) => {
     useImmersiveMode(true);
     const { isAdmin, isAgency, user } = useAdmin();
     const navigate = useNavigate();
     const location = useLocation();
-    const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
+    const [localItem, setLocalItem] = useState<FeaturedItem | null>(item || null);
     
     // Parse agencyId and category/subcategory context from URL query params
     const queryParams = new URLSearchParams(location.search);
@@ -79,12 +79,16 @@ export const ProjectSkincarePage: React.FC = () => {
     };
 
     useEffect(() => {
-        // If sticky localItem has a different category than urlCategory, reset it
-        if (localItem && urlCategory && localItem.category !== urlCategory) {
-            setLocalItem(null);
+        if (!item || (urlCategory && item.category !== urlCategory)) {
+            // If sticky localItem has a different category than urlCategory, reset it
+            if (localItem && urlCategory && localItem.category !== urlCategory) {
+                setLocalItem(null);
+            }
+            fetchAll();
+        } else {
+            setLocalItem(item);
         }
-        fetchAll();
-    }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
+    }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     if (!localItem || loading) return (
         <div className="min-h-screen bg-[#FCF9F5] flex items-center justify-center">
