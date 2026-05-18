@@ -21,9 +21,11 @@ export const ProjectSkincarePage: React.FC = () => {
     const location = useLocation();
     const [localItem, setLocalItem] = useState<FeaturedItem | null>(null);
     
-    // Parse agencyId from URL query params
+    // Parse agencyId and category/subcategory context from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
+    const urlCategory = queryParams.get('category');
+    const urlSubcategory = queryParams.get('subcategory');
 
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -46,13 +48,21 @@ export const ProjectSkincarePage: React.FC = () => {
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
             
             const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
-            const skincareProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+            let skincareProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
                 .filter(p => p.subcategory === 'skincare' || p.category === 'skincare' || p.page_type === 'skincare');
             
-            setProducts(skincareProducts.length > 0 ? skincareProducts : (agencyProducts.length > 0 ? agencyProducts : allProducts));
+            if (urlCategory) {
+                skincareProducts = skincareProducts.filter(p => p.category === urlCategory);
+            }
+            if (urlSubcategory) {
+                skincareProducts = skincareProducts.filter(p => p.subcategory === urlSubcategory);
+            }
+            
+            setProducts(skincareProducts);
             
             // Get sample for metadata (header/footer)
             const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare') : null) ||
                           agencyProducts.find(p => p.page_type === 'skincare') ||
                           agencyProducts[0] ||
                           allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'skincare') ||
@@ -69,7 +79,7 @@ export const ProjectSkincarePage: React.FC = () => {
 
     useEffect(() => {
         fetchAll();
-    }, [isAdmin, isAgency, user, urlAgencyId]);
+    }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     if (!localItem || loading) return (
         <div className="min-h-screen bg-[#FCF9F5] flex items-center justify-center">
@@ -208,8 +218,8 @@ export const ProjectSkincarePage: React.FC = () => {
                     product={modalMode === 'edit' ? selectedProduct : null}
                     initialData={modalMode === 'add' ? {
                         page_type: 'skincare',
-                        category: 'skincare',
-                        subcategory: 'skincare',
+                        category: urlCategory || 'skincare',
+                        subcategory: urlSubcategory || 'skincare',
                         agency_id: localItem.agency_id
                     } : undefined}
                     onClose={() => {

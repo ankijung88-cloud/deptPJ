@@ -17,9 +17,11 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     const { i18n } = useTranslation();
     const location = useLocation();
     
-    // Parse agencyId from current URL
+    // Parse agencyId and category/subcategory contexts from current URL
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
+    const urlCategory = queryParams.get('category');
+    const urlSubcategory = queryParams.get('subcategory');
     
     const metadata = (item?.metadata as any) || {};
     
@@ -57,10 +59,21 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
 
     const getPath = (basePath: string) => {
         const agencyId = item?.agency_id || urlAgencyId;
-        if (agencyId) {
-            return `${basePath}?agencyId=${agencyId}`;
+        const category = item?.category || urlCategory;
+        const subcategory = item?.subcategory || urlSubcategory;
+        
+        let path = basePath;
+        const params = new URLSearchParams();
+        
+        if (agencyId) params.append('agencyId', String(agencyId));
+        if (category) params.append('category', String(category));
+        if (subcategory) params.append('subcategory', String(subcategory));
+        
+        const queryString = params.toString();
+        if (queryString) {
+            path = `${basePath}?${queryString}`;
         }
-        return basePath;
+        return path;
     };
 
     const rawNavLinks = metadata.navLinks || [

@@ -25,9 +25,11 @@ export const ProjectBrandPage: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     
-    // Parse agencyId from URL query params
+    // Parse agencyId and category/subcategory context from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
+    const urlCategory = queryParams.get('category');
+    const urlSubcategory = queryParams.get('subcategory');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'brand' | null>(null);
     const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
@@ -49,6 +51,7 @@ export const ProjectBrandPage: React.FC = () => {
 
             // Main template item
             const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'brand') : null) ||
                           agencyProducts.find(p => p.page_type === 'brand') ||
                           agencyProducts[0] ||
                           allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'brand') ||
@@ -58,8 +61,15 @@ export const ProjectBrandPage: React.FC = () => {
             if (sample) setLocalItem(sample);
 
             // Filter products for this page type
-            const brandProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+            let brandProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
                 .filter(p => p.page_type === 'brand' || p.category === 'brand');
+            
+            if (urlCategory) {
+                brandProducts = brandProducts.filter(p => p.category === urlCategory);
+            }
+            if (urlSubcategory) {
+                brandProducts = brandProducts.filter(p => p.subcategory === urlSubcategory);
+            }
             
             setProducts(brandProducts);
         } catch (err) {
@@ -71,7 +81,7 @@ export const ProjectBrandPage: React.FC = () => {
 
     useEffect(() => {
         fetchAll();
-    }, [isAdmin, isAgency, user, urlAgencyId]);
+    }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     const handleDelete = async (id?: string) => {
         const targetId = id || localItem?.id;
@@ -227,8 +237,8 @@ export const ProjectBrandPage: React.FC = () => {
                     product={modalMode === 'edit' ? selectedProduct : null}
                     initialData={modalMode === 'add' ? {
                         page_type: 'brand',
-                        category: 'brand',
-                        subcategory: 'brand',
+                        category: urlCategory || 'brand',
+                        subcategory: urlSubcategory || 'brand',
                         agency_id: localItem.agency_id
                     } : undefined}
                     onClose={() => setModalMode(null)}

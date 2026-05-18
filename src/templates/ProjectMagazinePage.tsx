@@ -25,9 +25,11 @@ export const ProjectMagazinePage: React.FC = () => {
     const [products, setProducts] = useState<FeaturedItem[]>([]);
     const [loading, setLoading] = useState(true);
     
-    // Parse agencyId from URL query params
+    // Parse agencyId and category/subcategory context from URL query params
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
+    const urlCategory = queryParams.get('category');
+    const urlSubcategory = queryParams.get('subcategory');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | 'magazine' | null>(null);
     const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
@@ -49,6 +51,7 @@ export const ProjectMagazinePage: React.FC = () => {
 
             // Main template item
             const sample = (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
+                          (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'magazine') : null) ||
                           agencyProducts.find(p => p.page_type === 'magazine') ||
                           agencyProducts[0] ||
                           allProducts.filter(p => !p.agency_id).find(p => p.page_type === 'magazine') ||
@@ -58,8 +61,15 @@ export const ProjectMagazinePage: React.FC = () => {
             if (sample) setLocalItem(sample);
 
             // Filter products for this page type
-            const magazineProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
+            let magazineProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
                 .filter(p => p.page_type === 'magazine' || p.category === 'magazine');
+            
+            if (urlCategory) {
+                magazineProducts = magazineProducts.filter(p => p.category === urlCategory);
+            }
+            if (urlSubcategory) {
+                magazineProducts = magazineProducts.filter(p => p.subcategory === urlSubcategory);
+            }
             
             setProducts(magazineProducts);
         } catch (err) {
@@ -71,7 +81,7 @@ export const ProjectMagazinePage: React.FC = () => {
 
     useEffect(() => {
         fetchAll();
-    }, [isAdmin, isAgency, user, urlAgencyId]);
+    }, [isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     const handleDelete = async (id?: string) => {
         const targetId = id || localItem?.id;
@@ -230,8 +240,8 @@ export const ProjectMagazinePage: React.FC = () => {
                     product={modalMode === 'edit' ? selectedProduct : null}
                     initialData={modalMode === 'add' ? {
                         page_type: 'magazine',
-                        category: 'magazine',
-                        subcategory: 'magazine',
+                        category: urlCategory || 'magazine',
+                        subcategory: urlSubcategory || 'magazine',
                         agency_id: localItem.agency_id
                     } : undefined}
                     onClose={() => setModalMode(null)}
