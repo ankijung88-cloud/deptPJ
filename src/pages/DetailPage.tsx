@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Loader2, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Loader2, LayoutGrid, Layout } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -27,6 +27,7 @@ const VirtualInquiryPage = React.lazy(() => import('../templates/VirtualInquiryP
 const VirtualReservationPage = React.lazy(() => import('../templates/VirtualReservationPage'));
 const GroupBuyPage = React.lazy(() => import('../templates/VirtualGroupBuyPage'));
 const FundingPage = React.lazy(() => import('../templates/VirtualFundingPage'));
+const ProjectLandingPage = React.lazy(() => import('../templates/ProjectLandingPage'));
 
 export const DetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -51,6 +52,7 @@ export const DetailPage: React.FC = () => {
 
     const [loading, setLoading] = useState(true);
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    const [templateModalType, setTemplateModalType] = useState<'standard' | 'project'>('standard');
     const { isAdmin: isAdminLoggedIn, role, user } = useAdmin();
     const { floors } = useFloors();
     const [isMuted, setIsMuted] = useState(() => {
@@ -82,6 +84,12 @@ export const DetailPage: React.FC = () => {
             try {
                 const data = await getProductById(id);
                 if (data) {
+                    // [REDIRECTION LOGIC] If it's a project-type template, redirect to the specific project path
+                    if (data.page_type === 'skincare') {
+                        navigate(`/project-template/product/${id}`, { replace: true });
+                        return;
+                    }
+                    
                     setItem(data);
                     
                     // Fetch parent if parent_id exists
@@ -99,7 +107,7 @@ export const DetailPage: React.FC = () => {
 
         window.scrollTo(0, 0);
         fetchItem();
-    }, [id]);
+    }, [id, navigate]);
 
     useEffect(() => {
         const handleGlobalMute = (e: any) => {
@@ -213,8 +221,10 @@ export const DetailPage: React.FC = () => {
     // Dynamic Template Rendering
     const renderTemplate = () => {
         const pageType = item?.page_type || 'standard';
+        const is1F = item?.category === 'floor-1' || item?.category === 'f1';
         
         if (pageType === 'standard') return null;
+        if (pageType === 'project_landing' && is1F) return null;
 
         const templateProps = {
             productId: item.id,
@@ -241,7 +251,44 @@ export const DetailPage: React.FC = () => {
                 {pageType === 'reservation' && <VirtualReservationPage {...templateProps as any} />}
                 {pageType === 'groupbuy' && <GroupBuyPage {...templateProps as any} />}
                 {pageType === 'funding' && <FundingPage {...templateProps as any} />}
+                {pageType === 'project_landing' && !(item.category === 'floor-1' || item.category === 'f1') && <ProjectLandingPage {...templateProps as any} />}
             </React.Suspense>
+        );
+    };
+
+    const renderTemplateSwitcher = (isFixed = true) => {
+        if (!(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id)))) return null;
+        const pageType = item?.page_type || 'standard';
+        if (pageType === 'meeting') return null;
+
+        return (
+            <div className={`${isFixed ? 'fixed top-40 right-10 z-[10000] flex flex-col items-end gap-4' : 'mb-10 flex flex-col gap-4'}`}>
+                <button
+                    onClick={() => {
+                        setTemplateModalType('standard');
+                        setIsTemplateModalOpen(true);
+                    }}
+                    className="py-3 px-6 rounded-full bg-white shadow-xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <LayoutGrid size={20} className="text-black relative z-10" />
+                    <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="템플릿 선택" /></span>
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                </button>
+
+                <button
+                    onClick={() => {
+                        setTemplateModalType('project');
+                        setIsTemplateModalOpen(true);
+                    }}
+                    className="py-3 px-6 rounded-full bg-white shadow-xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Layout size={20} className="text-black relative z-10" />
+                    <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="프로젝트형 템플릿 선택" /></span>
+                    <div className="absolute top-0 right-0 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                </button>
+            </div>
         );
     };
 
@@ -251,6 +298,15 @@ export const DetailPage: React.FC = () => {
         return (
             <div className="relative min-h-screen">
                 {activeTemplate}
+                {renderTemplateSwitcher(true)}
+                <TemplateSwitchModal
+                    isOpen={isTemplateModalOpen}
+                    onClose={() => setIsTemplateModalOpen(false)}
+                    onSelect={handleSelectTemplate}
+                    currentTemplateId={item.page_type}
+                    theme={theme}
+                    filterType={templateModalType}
+                />
             </div>
         );
     }
@@ -376,6 +432,7 @@ export const DetailPage: React.FC = () => {
                     <div className="lg:col-span-4 lg:pl-10">
                         <div className="sticky top-32 space-y-12">
                             <div className="space-y-6 px-4">
+                                {renderTemplateSwitcher(false)}
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Curated Category" /></span>
                                     <p className="font-medium tracking-wide" style={{ color: theme.textSecondary }}><AutoTranslatedText text={item.category} /></p>
@@ -390,28 +447,14 @@ export const DetailPage: React.FC = () => {
                 </div>
             </div>
 
-            
-            {(isAdminLoggedIn || (role === 'agency' && String(item?.agency_id) === String(user?.id))) && (
-                <>
-                    <button
-                        onClick={() => setIsTemplateModalOpen(true)}
-                        className="fixed top-6 right-6 z-[10000] py-3 px-6 rounded-full bg-white shadow-2xl border border-black/5 hover:scale-105 transition-all group flex items-center gap-3 overflow-hidden"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <LayoutGrid size={20} className="text-black relative z-10" />
-                        <span className="text-sm font-bold tracking-tighter relative z-10"><AutoTranslatedText text="템플릿 선택" /></span>
-                        <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    </button>
-
-                    <TemplateSwitchModal
-                        isOpen={isTemplateModalOpen}
-                        onClose={() => setIsTemplateModalOpen(false)}
-                        onSelect={handleSelectTemplate}
-                        currentTemplateId={item.page_type}
-                        theme={theme}
-                    />
-                </>
-            )}
+            <TemplateSwitchModal
+                isOpen={isTemplateModalOpen}
+                onClose={() => setIsTemplateModalOpen(false)}
+                onSelect={handleSelectTemplate}
+                currentTemplateId={item.page_type}
+                filterType={templateModalType}
+                theme={theme}
+            />
         </article>
     );
 };

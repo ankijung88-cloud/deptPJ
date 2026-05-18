@@ -9,6 +9,7 @@ interface TemplateSwitchModalProps {
     onClose: () => void;
     onSelect: (templateId: string) => void;
     currentTemplateId?: string | null;
+    filterType?: 'standard' | 'project';
     theme: {
         bgColor: string;
         textPrimary: string;
@@ -19,19 +20,20 @@ interface TemplateSwitchModalProps {
 }
 
 export const TEMPLATES = [
-    { id: 'standard', label: '기본 소개', icon: Layout, color: '#666666', description: '매거진 스타일의 기본 제품 소개 페이지' },
-    { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B', description: '몰입형 비디오 및 미디어 감상 공간' },
-    { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600', description: '3D 오브젝트 및 작품 전시를 위한 가상 뮤지엄' },
-    { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2', description: '편리한 쇼핑 및 결제 기능을 갖춘 쇼핑몰' },
-    { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92', description: '공연 및 이벤트 티켓 예매 전용 템플릿' },
-    { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe', description: '1:1 상담 및 상세 문의를 위한 고객 접점' },
-    { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe', description: '실시간 일정 확인 및 서비스 예약 시스템' },
-    { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6', description: '화상 회의 및 실시간 협업을 위한 가상 회의실' },
-    { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0', description: '운세 및 사주 풀이를 위한 신비로운 분위기의 공간' },
-    { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B', description: '함께 사면 더 저렴한 공동구매 전용 페이지' },
-    { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981', description: '새로운 프로젝트의 시작을 돕는 펀딩 플랫폼' },
-    { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F', description: '가상 면접 및 채용 상담을 위한 오피스 공간' },
-    { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE', description: '우리 팀만의 독립된 가상 작업 공간' }
+    { id: 'standard', label: '기본 소개', icon: Layout, color: '#666666', description: '매거진 스타일의 기본 제품 소개 페이지', type: 'standard' },
+    { id: 'cinema', label: '감상하기', icon: Video, color: '#FF3B3B', description: '몰입형 비디오 및 미디어 감상 공간', type: 'standard' },
+    { id: 'museum', label: '전시보기', icon: Rotate3d, color: '#FFD600', description: '3D 오브젝트 및 작품 전시를 위한 가상 뮤지엄', type: 'standard' },
+    { id: 'store', label: '구매하기', icon: ShoppingBag, color: '#00FFC2', description: '편리한 쇼핑 및 결제 기능을 갖춘 쇼핑몰', type: 'standard' },
+    { id: 'ticket', label: '예매하기', icon: Ticket, color: '#FF2E92', description: '공연 및 이벤트 티켓 예매 전용 템플릿', type: 'standard' },
+    { id: 'inquiry', label: '문의하기', icon: MessageCircle, color: '#4facfe', description: '1:1 상담 및 상세 문의를 위한 고객 접점', type: 'standard' },
+    { id: 'reservation', label: '예약하기', icon: CalendarClock, color: '#00f2fe', description: '실시간 일정 확인 및 서비스 예약 시스템', type: 'standard' },
+    { id: 'meeting', label: '회의참여', icon: Users, color: '#9B59B6', description: '화상 회의 및 실시간 협업을 위한 가상 회의실', type: 'standard' },
+    { id: 'saju', label: '사주보기', icon: Moon, color: '#9C27B0', description: '운세 및 사주 풀이를 위한 신비로운 분위기의 공간', type: 'standard' },
+    { id: 'groupbuy', label: '공동구매', icon: ShoppingCart, color: '#FF6B6B', description: '함께 사면 더 저렴한 공동구매 전용 페이지', type: 'standard' },
+    { id: 'funding', label: '크라우드펀딩', icon: Target, color: '#10B981', description: '새로운 프로젝트의 시작을 돕는 펀딩 플랫폼', type: 'standard' },
+    { id: 'interview', label: '면접참여', icon: Briefcase, color: '#F1C40F', description: '가상 면접 및 채용 상담을 위한 오피스 공간', type: 'standard' },
+    { id: 'office', label: '사무실입장', icon: LayoutGrid, color: '#A29BFE', description: '우리 팀만의 독립된 가상 작업 공간', type: 'standard' },
+    { id: 'project_landing', label: '프로젝트 랜딩', icon: Layout, color: '#E67E22', description: '이미지 기반의 프리미엄 프로젝트 랜딩 페이지', type: 'project' }
 ];
 
 export const TemplateSwitchModal: React.FC<TemplateSwitchModalProps> = ({
@@ -39,8 +41,13 @@ export const TemplateSwitchModal: React.FC<TemplateSwitchModalProps> = ({
     onClose,
     onSelect,
     currentTemplateId,
+    filterType = 'standard',
     theme
 }) => {
+    // If filterType is 'project', show ALL templates. Otherwise, show all templates EXCEPT project-type ones.
+    const filteredTemplates = filterType === 'project' 
+        ? TEMPLATES 
+        : TEMPLATES.filter(tpl => tpl.type !== 'project');
 
     return (
         <AnimatePresence>
@@ -86,7 +93,7 @@ export const TemplateSwitchModal: React.FC<TemplateSwitchModalProps> = ({
                         {/* Content */}
                         <div className="p-8 md:p-12 overflow-y-auto max-h-[calc(90vh-180px)] custom-scrollbar">
                             <div className="grid grid-cols-2 gap-6">
-                                {TEMPLATES.map((tpl) => {
+                                {filteredTemplates.map((tpl) => {
                                     const isActive = (currentTemplateId || 'standard') === tpl.id;
                                     
                                     return (
