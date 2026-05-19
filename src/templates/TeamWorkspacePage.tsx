@@ -297,6 +297,98 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
 
     return (
         <div className="fixed inset-0 bg-[#FFFFFF] text-dancheong-ink overflow-hidden font-sans selection:bg-dancheong-mugwort/20" onMouseMove={handleActivity}>
+            {/* Custom Responsive Styles for Sidebar to prevent overlapping with Navigation Header */}
+            <style>{`
+                .responsive-aside {
+                    top: 140px !important; /* Safely starts below the 120px top header to avoid navigation collision */
+                    transform: none !important;
+                    max-height: calc(100vh - 180px);
+                }
+                .responsive-sidebar {
+                    max-height: calc(100vh - 180px);
+                    overflow-y: auto;
+                    scrollbar-width: none; /* Firefox */
+                }
+                .responsive-sidebar::-webkit-scrollbar {
+                    display: none; /* Chrome, Safari, Opera */
+                }
+                
+                @media (max-height: 850px) {
+                    .responsive-sidebar-container {
+                        padding-top: 1.5rem !important;
+                        padding-bottom: 1.5rem !important;
+                        gap: 1.5rem !important;
+                    }
+                    .responsive-sidebar-group {
+                        padding-bottom: 1rem !important;
+                        gap: 0.75rem !important;
+                    }
+                    .responsive-sidebar-btn {
+                        padding: 0.75rem !important;
+                    }
+                }
+                @media (max-height: 700px) {
+                    .responsive-aside {
+                        top: 130px !important;
+                    }
+                    .responsive-sidebar-container {
+                        padding-top: 1rem !important;
+                        padding-bottom: 1rem !important;
+                        gap: 1rem !important;
+                    }
+                    .responsive-sidebar-group {
+                        padding-bottom: 0.5rem !important;
+                        gap: 0.5rem !important;
+                    }
+                    .responsive-sidebar-btn {
+                        padding: 0.5rem !important;
+                    }
+                    .responsive-sidebar-lang {
+                        padding-bottom: 1rem !important;
+                    }
+                }
+                
+                /* On small screens, transition to a beautiful floating horizontal bottom bar */
+                @media (max-width: 640px) {
+                    .responsive-aside {
+                        left: 1.5rem !important;
+                        right: auto !important;
+                        top: auto !important;
+                        bottom: 1.5rem !important;
+                        transform: none !important;
+                        flex-direction: row !important;
+                        width: calc(100% - 3rem) !important;
+                        height: auto !important;
+                        max-height: none !important;
+                        justify-content: center !important;
+                        z-index: 250 !important;
+                    }
+                    .responsive-sidebar-container {
+                        flex-direction: row !important;
+                        padding: 0.75rem !important;
+                        gap: 1rem !important;
+                        border-radius: 2rem !important;
+                        width: 100% !important;
+                        justify-content: space-around !important;
+                        max-height: none !important;
+                        overflow-y: visible !important;
+                    }
+                    .responsive-sidebar-lang {
+                        display: none !important; /* Hide language selector in mobile bottom bar to save space */
+                    }
+                    .responsive-sidebar-group {
+                        flex-direction: row !important;
+                        padding-bottom: 0 !important;
+                        border-bottom: none !important;
+                        gap: 0.75rem !important;
+                    }
+                    .responsive-sidebar-btn-group {
+                        flex-direction: row !important;
+                        gap: 0.75rem !important;
+                    }
+                }
+            `}</style>
+
             {/* Texture Overlay */}
             <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay" 
                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
@@ -426,13 +518,13 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                     </div>
                 </header>
 
-                {/* Main Action Controls (Right Sidebar) */}
-                <aside className="absolute right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 pointer-events-auto z-[200]">
-                    <div className="px-6 py-12 rounded-[4rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_60px_100px_rgba(0,0,0,0.1)] flex flex-col items-center gap-10">
-                        <div className="pb-8 border-b border-dancheong-ink/5 w-full flex justify-center">
+                {/* Main Action Controls (Left Sidebar) - Safely positioned below Header */}
+                <aside className="responsive-aside absolute left-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 pointer-events-auto z-[200]">
+                    <div className="responsive-sidebar responsive-sidebar-container px-6 py-12 rounded-[4rem] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_60px_100px_rgba(0,0,0,0.1)] flex flex-col items-center gap-10">
+                        <div className="responsive-sidebar-lang pb-8 border-b border-dancheong-ink/5 w-full flex justify-center">
                             <LanguageSelector variant="sidebar" />
                         </div>
-                        <div className="flex flex-col items-center gap-6 border-b border-dancheong-ink/5 pb-10">
+                        <div className="responsive-sidebar-group flex flex-col items-center gap-6 border-b border-dancheong-ink/5 pb-10">
                             {[
                                 { id: 'working', icon: Monitor, color: '#3D483D', label: <AutoTranslatedText text="Working" /> },
                                 { id: 'break', icon: Coffee, color: '#D4A373', label: <AutoTranslatedText text="Break" /> },
@@ -442,47 +534,47 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                                 <button
                                     key={status.id}
                                     onClick={() => setUserStatus(status.id)}
-                                    className={`relative group p-5 rounded-3xl transition-all duration-500 ${userStatus === status.id ? 'bg-white shadow-[0_15px_30px_rgba(0,0,0,0.08)]' : 'hover:bg-white/60 shadow-none'}`}
+                                    className={`responsive-sidebar-btn relative group p-5 rounded-3xl transition-all duration-500 ${userStatus === status.id ? 'bg-white shadow-[0_15px_30px_rgba(0,0,0,0.08)]' : 'hover:bg-white/60 shadow-none'}`}
                                     title={typeof status.label === 'string' ? status.label : ''}
                                 >
                                     <status.icon className={`w-6 h-6 transition-all duration-500 ${userStatus === status.id ? 'scale-110' : 'opacity-40 grayscale'}`} style={{ color: userStatus === status.id ? status.color : 'inherit' }} />
                                     {userStatus === status.id && (
-                                        <motion.div layoutId="status-indicator" className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-full bg-dancheong-mugwort" />
+                                        <motion.div layoutId="status-indicator" className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-full bg-dancheong-mugwort max-sm:hidden" />
                                     )}
                                     
-                                    <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
+                                    <div className="absolute left-full ml-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl -translate-x-4 group-hover:translate-x-0 z-[300] max-sm:hidden">
                                         {status.label}
                                     </div>
                                 </button>
                             ))}
                         </div>
-                        <div className="flex flex-col items-center gap-6">
+                        <div className="responsive-sidebar-btn-group flex flex-col items-center gap-6">
                             <button 
                                 onClick={() => navigate('/virtual-meeting/default-room')}
-                                className="group relative p-5 rounded-3xl bg-dancheong-mugwort text-white hover:bg-dancheong-ink transition-all shadow-[0_20px_40px_rgba(61,72,61,0.2)] hover:shadow-none active:scale-90"
+                                className="responsive-sidebar-btn group relative p-5 rounded-3xl bg-dancheong-mugwort text-white hover:bg-dancheong-ink transition-all shadow-[0_20px_40px_rgba(61,72,61,0.2)] hover:shadow-none active:scale-90"
                             >
                                 <Video className="w-6 h-6" />
-                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
+                                <div className="absolute left-full ml-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl -translate-x-4 group-hover:translate-x-0 z-[300] max-sm:hidden">
                                     <AutoTranslatedText text="Meeting Room" />
                                 </div>
                             </button>
 
                             <button 
                                 onClick={() => setIsChatOpen(!isChatOpen)}
-                                className={`group relative p-5 rounded-3xl transition-all duration-500 active:scale-90 ${isChatOpen ? 'bg-[#800020] text-white shadow-[0_20px_40px_rgba(128,0,32,0.2)]' : 'bg-white/40 text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-white/60 shadow-sm'}`}
+                                className={`responsive-sidebar-btn group relative p-5 rounded-3xl transition-all duration-500 active:scale-90 ${isChatOpen ? 'bg-[#800020] text-white shadow-[0_20px_40px_rgba(128,0,32,0.2)]' : 'bg-white/40 text-dancheong-ink/40 hover:text-dancheong-ink hover:bg-white/60 shadow-sm'}`}
                             >
                                 <MessageCircle className="w-6 h-6" />
-                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
+                                <div className="absolute left-full ml-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl -translate-x-4 group-hover:translate-x-0 z-[300] max-sm:hidden">
                                     <AutoTranslatedText text="Office Chat" />
                                 </div>
                             </button>
                             
                             <button 
                                 onClick={() => {/* Settings logic */}}
-                                className="group relative p-5 rounded-3xl bg-white/40 border border-white/60 hover:bg-white/80 transition-all shadow-sm active:scale-90"
+                                className="responsive-sidebar-btn group relative p-5 rounded-3xl bg-white/40 border border-white/60 hover:bg-white/80 transition-all shadow-sm active:scale-90"
                             >
                                 <Settings className="w-6 h-6 text-dancheong-ink/40" />
-                                <div className="absolute right-full mr-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl translate-x-4 group-hover:translate-x-0">
+                                <div className="absolute left-full ml-6 px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/60 text-[9px] font-black uppercase tracking-[0.3em] text-dancheong-ink opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none whitespace-nowrap shadow-2xl -translate-x-4 group-hover:translate-x-0 z-[300] max-sm:hidden">
                                     <AutoTranslatedText text="Settings" />
                                 </div>
                             </button>
@@ -490,14 +582,14 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                     </div>
                 </aside>
 
-                {/* Chat Sidebar Overlay */}
+                {/* Chat Sidebar Overlay - Anchored on the Left next to Sidebar */}
                 <AnimatePresence>
                     {isChatOpen && (
                         <motion.div
-                            initial={{ opacity: 0, x: 100, scale: 0.95 }}
+                            initial={{ opacity: 0, x: -100, scale: 0.95 }}
                             animate={{ opacity: 1, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: 100, scale: 0.95 }}
-                            className="absolute right-12 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150]"
+                            exit={{ opacity: 0, x: -100, scale: 0.95 }}
+                            className="absolute left-40 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150] max-sm:left-6 max-sm:right-6 max-sm:w-auto"
                         >
                             <div className="p-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/20">
                                 <h3 className="font-black text-[10px] uppercase tracking-[0.4em] text-dancheong-ink/40"><AutoTranslatedText text="Office Chat" /></h3>
