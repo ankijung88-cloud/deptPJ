@@ -297,7 +297,7 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
 
     return (
         <div className="fixed inset-0 bg-[#FFFFFF] text-dancheong-ink overflow-hidden font-sans selection:bg-dancheong-mugwort/20" onMouseMove={handleActivity}>
-            {/* Custom Responsive Styles for Sidebar to prevent overlapping with Navigation Header */}
+            {/* Custom Responsive Styles for Sidebar and Chat to prevent overlapping with Navigation Header */}
             <style>{`
                 .responsive-aside {
                     top: 140px !important; /* Safely starts below the 120px top header to avoid navigation collision */
@@ -311,6 +311,12 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                 }
                 .responsive-sidebar::-webkit-scrollbar {
                     display: none; /* Chrome, Safari, Opera */
+                }
+                
+                .responsive-chat {
+                    top: 140px !important; /* Starts safely below the 120px top header to avoid navigation collision */
+                    bottom: 32px !important;
+                    max-height: calc(100vh - 180px);
                 }
                 
                 @media (max-height: 850px) {
@@ -330,6 +336,11 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                 @media (max-height: 700px) {
                     .responsive-aside {
                         top: 130px !important;
+                    }
+                    .responsive-chat {
+                        top: 130px !important;
+                        bottom: 24px !important;
+                        max-height: calc(100vh - 160px);
                     }
                     .responsive-sidebar-container {
                         padding-top: 1rem !important;
@@ -385,6 +396,12 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                     .responsive-sidebar-btn-group {
                         flex-direction: row !important;
                         gap: 0.75rem !important;
+                    }
+                    .responsive-chat {
+                        top: 100px !important; /* On mobile, stay below top header */
+                        bottom: 6rem !important; /* Keep distance from mobile horizontal bottom bar */
+                        height: auto !important;
+                        max-height: none !important;
                     }
                 }
             `}</style>
@@ -589,7 +606,7 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                             initial={{ opacity: 0, x: 100, scale: 0.95 }}
                             animate={{ opacity: 1, x: 0, scale: 1 }}
                             exit={{ opacity: 0, x: 100, scale: 0.95 }}
-                            className="absolute right-12 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150] max-sm:left-6 max-sm:right-6 max-sm:w-auto"
+                            className="responsive-chat absolute right-12 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150] max-sm:left-6 max-sm:right-6 max-sm:w-auto"
                         >
                             <div className="p-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/20">
                                 <h3 className="font-black text-[10px] uppercase tracking-[0.4em] text-dancheong-ink/40"><AutoTranslatedText text="Office Chat" /></h3>
