@@ -582,14 +582,14 @@ const TeamWorkspacePage: React.FC<TeamWorkspacePageProps> = ({ item, productId: 
                     </div>
                 </aside>
 
-                {/* Chat Sidebar Overlay - Anchored on the Left next to Sidebar */}
+                {/* Chat Sidebar Overlay - Anchored on the Right */}
                 <AnimatePresence>
                     {isChatOpen && (
                         <motion.div
-                            initial={{ opacity: 0, x: -100, scale: 0.95 }}
+                            initial={{ opacity: 0, x: 100, scale: 0.95 }}
                             animate={{ opacity: 1, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: -100, scale: 0.95 }}
-                            className="absolute left-40 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150] max-sm:left-6 max-sm:right-6 max-sm:w-auto"
+                            exit={{ opacity: 0, x: 100, scale: 0.95 }}
+                            className="absolute right-12 top-24 bottom-32 w-96 bg-white/80 backdrop-blur-3xl border border-white/60 rounded-[4rem] shadow-[0_100px_150px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden z-[150] max-sm:left-6 max-sm:right-6 max-sm:w-auto"
                         >
                             <div className="p-8 border-b border-dancheong-ink/5 flex justify-between items-center bg-white/20">
                                 <h3 className="font-black text-[10px] uppercase tracking-[0.4em] text-dancheong-ink/40"><AutoTranslatedText text="Office Chat" /></h3>
