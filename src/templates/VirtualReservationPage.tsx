@@ -10,6 +10,7 @@ import { getLocalizedText } from '../utils/i18nUtils';
 import { updateProduct } from '../api/products';
 import { useAdmin } from '../hooks/useAdmin';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
+import { createReservation } from '../api/reservations';
 
 interface VirtualReservationPageProps {
     item?: any;
@@ -30,12 +31,17 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
     const [booking, setBooking] = useState(false);
     const [booked, setBooked] = useState(false);
 
+    // Guest Info
+    const [userName, setUserName] = useState('');
+    const [userPhone, setUserPhone] = useState('');
+
     // Reservation states
     const [step, setStep] = useState<'program' | 'calendar' | 'summary'>('program');
     const [selectedProgram, setSelectedProgram] = useState<any>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [guests, setGuests] = useState(1);
+
 
     // Admin/Agency management states
     const [canManage, setCanManage] = useState(false);
@@ -137,12 +143,39 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
             alert(msg);
             return;
         }
+        if (!userName.trim()) {
+            const msg = await translateAsync('예약자 이름을 입력해주세요.');
+            alert(msg);
+            return;
+        }
+        if (!userPhone.trim()) {
+            const msg = await translateAsync('연락처를 입력해주세요.');
+            alert(msg);
+            return;
+        }
         setBooking(true);
-        // Simulate booking
-        setTimeout(() => {
-            setBooking(false);
+        try {
+            await createReservation({
+                user_id: currentUser?.id ? String(currentUser.id) : 'anonymous',
+                user_name: userName,
+                user_phone: userPhone,
+                product_id: String(item.id),
+                product_name: getLocalizedText(item.title, i18n.language),
+                agency_id: item.agency_id || null,
+                program_id: selectedProgram?.id || 'default',
+                program_title: selectedProgram ? getLocalizedText(selectedProgram.title, i18n.language) : 'Default Tour',
+                reservation_date: selectedDate,
+                reservation_time: selectedTime,
+                guests: guests
+            });
             setBooked(true);
-        }, 2000);
+        } catch (error) {
+            console.error('Reservation booking failed:', error);
+            const msg = await translateAsync('예약에 실패했습니다. 다시 시도해주세요.');
+            alert(msg);
+        } finally {
+            setBooking(false);
+        }
     };
 
     if (loading) {
@@ -241,6 +274,14 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
                                             </p>
                                         </div>
                                         <div className="bg-black/5 border border-black/10 rounded-3xl p-8 w-full max-w-sm space-y-4">
+                                            <div className="flex justify-between items-center text-xs">
+                                                <span className="opacity-40 font-bold uppercase tracking-widest font-sans">Name</span>
+                                                <span className="font-mono text-red-600">{userName}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-xs">
+                                                <span className="opacity-40 font-bold uppercase tracking-widest font-sans">Phone</span>
+                                                <span className="font-mono text-red-600">{userPhone}</span>
+                                            </div>
                                             <div className="flex justify-between items-center text-xs">
                                                 <span className="opacity-40 font-bold uppercase tracking-widest">Date / Time</span>
                                                 <span className="font-mono text-red-600">{selectedDate} / {selectedTime}</span>
@@ -380,6 +421,35 @@ export const VirtualReservationPage: React.FC<VirtualReservationPageProps> = ({ 
                                                             className="w-10 h-10 rounded-full bg-white border border-black/10 flex items-center justify-center hover:bg-black/10 hover:text-white transition-colors text-black"
                                                         >+</button>
                                                         <span className="text-[10px] font-black uppercase tracking-widest text-black/40 ml-4"><AutoTranslatedText text="Limit: 8 Persons" /></span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-black">05</div>
+                                                        <h3 className="text-xl font-bold uppercase tracking-tight text-black"><AutoTranslatedText text="Guest Details" /></h3>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                        <div className="space-y-2">
+                                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40"><AutoTranslatedText text="Name" /></label>
+                                                            <input 
+                                                                type="text" 
+                                                                value={userName}
+                                                                onChange={e => setUserName(e.target.value)}
+                                                                placeholder="e.g. John Doe"
+                                                                className="w-full bg-black/5 border border-black/10 rounded-2xl p-4 text-base text-black focus:border-red-600 focus:bg-white focus:outline-none transition-all"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <label className="text-[10px] font-black uppercase tracking-widest text-black/40"><AutoTranslatedText text="Phone Number" /></label>
+                                                            <input 
+                                                                type="tel" 
+                                                                value={userPhone}
+                                                                onChange={e => setUserPhone(e.target.value)}
+                                                                placeholder="e.g. 010-1234-5678"
+                                                                className="w-full bg-black/5 border border-black/10 rounded-2xl p-4 text-base text-black focus:border-red-600 focus:bg-white focus:outline-none transition-all"
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
 

@@ -27,7 +27,8 @@ import {
     ShoppingCart,
     LayoutGrid,
     ExternalLink,
-    MonitorPlay
+    MonitorPlay,
+    Calendar
 } from 'lucide-react';
 import { useFloors } from '../context/FloorContext';
 import { getFeaturedProducts, deleteProduct } from '../api/products';
@@ -40,6 +41,7 @@ import { getNotices, createNotice as apiCreateNotice, updateNotice as apiUpdateN
 import { getFaqs, createFaq as apiCreateFaq, updateFaq as apiUpdateFaq, deleteFaq as apiDeleteFaq } from '../api/faqs';
 import { getAgencies, createAgency, updateAgency, deleteAgency, updateAgencyStatus } from '../api/auth';
 import { getOrders, updateOrderStatus, deleteOrder } from '../api/orders';
+import { getReservations, updateReservationStatus, deleteReservation } from '../api/reservations';
 import { FeaturedItem, Notice, FAQ } from '../types';
 import { getNormalizedFloorId, getNormalizedSubcategoryId } from '../utils/idUtils';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
@@ -1619,6 +1621,235 @@ const OrderEditModal = ({ order, onClose, onSuccess }: any) => {
     );
 };
 
+const ReservationManager = ({ agencies }: { agencies: any[] }) => {
+    const { isAdmin, isAgency, user } = useAdmin();
+    const [reservations, setReservations] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingReservation, setEditingReservation] = useState<any>(null);
+
+    useEffect(() => { fetchReservations(); }, []);
+
+    const fetchReservations = async () => {
+        setLoading(true);
+        try {
+            const data = await getReservations();
+            setReservations(data || []);
+        } catch (err) {
+            console.error('Failed to fetch reservations:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('Are you sure you want to delete this reservation?')) {
+            try {
+                await deleteReservation(id);
+                fetchReservations();
+            } catch (err) {
+                alert('Delete failed');
+            }
+        }
+    };
+
+    const filteredReservations = reservations.filter(r => {
+        const matchesSearch = 
+            (r.user_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (r.user_phone || '').includes(searchTerm) ||
+            (r.product_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (r.program_title || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = !selectedStatus || r.status === selectedStatus;
+        
+        if (isAgency && user?.id) {
+            return matchesSearch && matchesStatus && String(r.agency_id) === String(user.id);
+        }
+        
+        return matchesSearch && matchesStatus;
+    });
+
+    const statusColors: any = {
+        'PENDING': 'bg-yellow-500/20 text-yellow-500',
+        'CONFIRMED': 'bg-green-500/20 text-green-500',
+        'CANCELLED': 'bg-red-500/20 text-red-500',
+        'COMPLETED': 'bg-blue-500/20 text-blue-500'
+    };
+
+    return (
+        <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-serif font-bold text-dancheong-ink"><AutoTranslatedText text="Reservation Management" /></h2>
+                <div className="flex gap-4">
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dancheong-ink/30" size={18} />
+                        <input 
+                            type="text" 
+                            placeholder="Search reservations..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="bg-black/5 border border-dancheong-ink/10 rounded-xl py-2 pl-12 pr-4 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                        />
+                    </div>
+                    <select 
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        className="bg-black/5 border border-dancheong-ink/10 rounded-xl px-4 py-2 text-dancheong-ink focus:outline-none focus:border-[#00FFC2]/50"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="CONFIRMED">CONFIRMED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className="bg-black/5 border border-dancheong-ink/5 rounded-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-black/5 text-dancheong-ink/40 text-xs font-bold uppercase tracking-widest">
+                            <tr>
+                                <th className="px-6 py-4">Date/Time</th>
+                                <th className="px-6 py-4">Guest</th>
+                                <th className="px-6 py-4">Product / Program</th>
+                                <th className="px-6 py-4">Guests</th>
+                                <th className="px-6 py-4">Status</th>
+                                {isAdmin && <th className="px-6 py-4">Agency</th>}
+                                <th className="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {filteredReservations.map(reservation => (
+                                <tr key={reservation.id} className="hover:bg-dancheong-ink/5 transition-colors border-b border-dancheong-ink/5 last:border-0">
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-dancheong-ink text-sm font-bold">{reservation.reservation_date}</span>
+                                            <span className="text-dancheong-ink/60 text-xs">{reservation.reservation_time}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-dancheong-ink font-bold">{reservation.user_name}</span>
+                                            <span className="text-dancheong-ink/40 text-[10px]">{reservation.user_phone}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-dancheong-ink text-sm font-bold">{reservation.product_name}</span>
+                                            <span className="text-dancheong-ink/40 text-xs">{reservation.program_title}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-dancheong-ink font-bold whitespace-nowrap">{reservation.guests}명</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${statusColors[reservation.status || 'PENDING']}`}>
+                                            {reservation.status || 'PENDING'}
+                                        </span>
+                                    </td>
+                                    {isAdmin && (
+                                        <td className="px-6 py-4 text-dancheong-mugwort font-bold text-xs whitespace-nowrap">
+                                            {agencies.find(a => Number(a.id) === Number(reservation.agency_id))?.agency_name || 'Admin'}
+                                        </td>
+                                    )}
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <button onClick={() => { setEditingReservation(reservation); setIsModalOpen(true); }} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-dancheong-mugwort"><Edit2 size={18} /></button>
+                                            <button onClick={() => handleDelete(reservation.id)} className="p-2 hover:bg-white/10 rounded-lg text-dancheong-ink/40 hover:text-red-400"><Trash2 size={18} /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {loading && <div className="py-20 text-center text-dancheong-ink/20">Loading reservations...</div>}
+                {!loading && filteredReservations.length === 0 && <div className="py-20 text-center text-dancheong-ink/20">No reservations found.</div>}
+            </div>
+
+            {isModalOpen && (
+                <ReservationEditModal 
+                    reservation={editingReservation} 
+                    onClose={() => setIsModalOpen(false)} 
+                    onSuccess={() => { setIsModalOpen(false); fetchReservations(); }} 
+                />
+            )}
+        </div>
+    );
+};
+
+const ReservationEditModal = ({ reservation, onClose, onSuccess }: any) => {
+    const [status, setStatus] = useState(reservation.status || 'PENDING');
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleUpdate = async () => {
+        setIsUpdating(true);
+        try {
+            await updateReservationStatus(reservation.id, status);
+            onSuccess();
+        } catch (err) {
+            alert('Update failed');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/95" onClick={onClose} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative w-full max-w-lg bg-white border border-dancheong-ink/10 rounded-3xl p-8 shadow-2xl">
+                <h3 className="text-xl font-serif font-bold text-dancheong-ink mb-6 uppercase tracking-widest">Update Reservation Status</h3>
+                
+                <div className="space-y-6">
+                    <div className="p-4 rounded-xl bg-dancheong-ink/5 border border-dancheong-ink/5 space-y-2">
+                        <div className="flex justify-between">
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Guest</span>
+                            <span className="text-sm text-dancheong-ink font-bold">{reservation.user_name} ({reservation.user_phone})</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Product</span>
+                            <span className="text-sm text-dancheong-ink/70">{reservation.product_name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Program</span>
+                            <span className="text-sm text-dancheong-ink/70">{reservation.program_title}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-dancheong-ink/5 pt-2">
+                            <span className="text-[10px] text-dancheong-ink/40 font-bold uppercase">Date & Time</span>
+                            <span className="text-sm text-dancheong-ink font-bold">{reservation.reservation_date} {reservation.reservation_time}</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase block">Status</label>
+                        <select 
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                        >
+                            <option value="PENDING">PENDING</option>
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                        </select>
+                    </div>
+
+                    <div className="flex justify-end gap-4 pt-4">
+                        <button onClick={onClose} className="px-6 py-2 text-dancheong-ink/40 hover:text-dancheong-ink transition-colors">Cancel</button>
+                        <button 
+                            onClick={handleUpdate}
+                            disabled={isUpdating}
+                            className="bg-dancheong-ink text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-all disabled:opacity-50"
+                        >
+                            {isUpdating ? 'Updating...' : 'Update Status'}
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
 const HeroManager = () => {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -2443,6 +2674,7 @@ export const AdminPage: React.FC = () => {
     const tabs = [
         { id: 'products', label: 'Products', icon: Package },
         { id: 'orders', label: 'Orders', icon: ShoppingCart },
+        { id: 'reservations', label: 'Reservations', icon: Calendar },
         ...(isAdmin ? [
             { id: 'agencies', label: 'Agencies', icon: Layers },
             { id: 'floors', label: 'Floors', icon: Layers },
@@ -2507,7 +2739,7 @@ export const AdminPage: React.FC = () => {
                         <button
                             key={tab.id}
                             onClick={() => {
-                                setActiveTab(tab.id);
+                                  setActiveTab(tab.id);
                                 if (window.innerWidth < 1024) setIsSidebarOpen(false);
                             }}
                             className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${
@@ -2565,6 +2797,7 @@ export const AdminPage: React.FC = () => {
                     >
                         {activeTab === 'products' && <ProductManager agencies={agencies} />}
                         {activeTab === 'orders' && <OrderManager agencies={agencies} />}
+                        {activeTab === 'reservations' && <ReservationManager agencies={agencies} />}
                         {activeTab === 'agencies' && <AgencyManager />}
                         {activeTab === 'floors' && <FloorManager />}
 

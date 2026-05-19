@@ -19,10 +19,10 @@ const AdminLoginPage: React.FC = () => {
         setError('');
         try {
             if (identifier === 'admin' && password === 'admin1234') {
-                login(`mock-admin-token-${Date.now()}`, { role: 'admin', name: 'Master Admin' });
+                login(`mock-admin-token-${Date.now()}-0`, { role: 'admin', name: 'Master Admin' });
                 navigate('/admin');
             } else if (identifier === 'agency' && password === 'agency1234') {
-                login(`mock-agency-token-${Date.now()}`, { role: 'agency', name: 'Partner Agency', agency_name: 'Partner Agency' });
+                login(`mock-agency-token-${Date.now()}-1`, { id: 1, role: 'agency', name: 'Partner Agency', agency_name: 'Partner Agency' });
                 navigate('/admin');
             } else {
                 setError('Invalid credentials. Please check your ID and password.');
