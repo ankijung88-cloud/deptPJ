@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, Plus, Image as ImageIcon, UploadCloud, Check, Edit3 } from 'lucide-react';
+import { X, Ticket, Calendar, ArrowLeft, MapPin, Clock, Plus, Image as ImageIcon, UploadCloud, Check, Edit3, LayoutGrid, Layout } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -251,9 +251,10 @@ interface VirtualTicketPageProps {
     item?: any;
     productId?: string;
     onClose?: () => void;
+    onOpenTemplateModal?: (type: 'standard' | 'project') => void;
 }
 
-export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
+export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: propItem, productId: propProductId, onClose, onOpenTemplateModal }) => {
     useImmersiveMode(true);
     const { t, i18n } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
@@ -595,7 +596,25 @@ export const VirtualTicketPage: React.FC<VirtualTicketPageProps> = ({ item: prop
                             </button>
 
                             {isManagementAllowed && (
-                                <div className="flex gap-6 relative z-[70]">
+                                <div className="flex gap-6 relative z-[70] items-center">
+                                    {onOpenTemplateModal && (
+                                        <>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('standard'); }}
+                                                className="flex items-center gap-4 px-10 py-4 rounded-full bg-white border border-dancheong-ink/10 hover:bg-neutral-50 transition-all text-[11px] font-black tracking-widest uppercase shadow-xl text-neutral-900"
+                                            >
+                                                <LayoutGrid size={16} className="text-[#800020]" />
+                                                <AutoTranslatedText text="템플릿 선택" />
+                                            </button>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('project'); }}
+                                                className="flex items-center gap-4 px-10 py-4 rounded-full bg-white border border-dancheong-ink/10 hover:bg-neutral-50 transition-all text-[11px] font-black tracking-widest uppercase shadow-xl text-neutral-900"
+                                            >
+                                                <Layout size={16} className="text-[#800020]" />
+                                                <AutoTranslatedText text="프로젝트형 템플릿" />
+                                            </button>
+                                        </>
+                                    )}
                                     <button 
                                         onClick={() => {
                                             if (isEditingMetadata) {

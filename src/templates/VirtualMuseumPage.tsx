@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2, Check } from 'lucide-react';
+import { X, Compass, Info, ArrowLeft, Maximize2, Plus, Image as ImageIcon, Type, UploadCloud, Edit3, Trash2, Check, LayoutGrid, Layout } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useAutoTranslate } from '../hooks/useAutoTranslate';
@@ -126,9 +126,10 @@ interface VirtualMuseumPageProps {
     item?: FeaturedItem;
     productId?: string;
     onClose?: () => void;
+    onOpenTemplateModal?: (type: 'standard' | 'project') => void;
 }
 
-const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, productId: _propProductId, onClose }) => {
+const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, productId: _propProductId, onClose, onOpenTemplateModal }) => {
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
     const navigate = useNavigate();
@@ -528,7 +529,25 @@ const VirtualMuseumPage: React.FC<VirtualMuseumPageProps> = ({ item: propItem, p
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="flex gap-2 relative z-[70]">
+                            <div className="flex gap-2 relative z-[70] items-center">
+                                {onOpenTemplateModal && (
+                                    <>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('standard'); }}
+                                            className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-neutral-900 shadow-sm"
+                                        >
+                                            <LayoutGrid size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="템플릿 선택" />
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('project'); }}
+                                            className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-neutral-900 shadow-sm"
+                                        >
+                                            <Layout size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="프로젝트형 템플릿" />
+                                        </button>
+                                    </>
+                                )}
                                 <button 
                                     onClick={() => {
                                         if (isEditingMetadata) {

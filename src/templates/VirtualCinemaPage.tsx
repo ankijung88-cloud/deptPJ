@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Play, ArrowLeft, Plus, Image as ImageIcon, Edit3, Trash2, Check } from 'lucide-react';
+import { X, Play, ArrowLeft, Plus, Image as ImageIcon, Edit3, Trash2, Check, LayoutGrid, Layout } from 'lucide-react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 
@@ -16,9 +16,10 @@ interface VirtualCinemaPageProps {
     item?: FeaturedItem;
     productId?: string;
     onClose?: () => void;
+    onOpenTemplateModal?: (type: 'standard' | 'project') => void;
 }
 
-const VirtualCinemaPage: React.FC<VirtualCinemaPageProps> = ({ productId, onClose }) => {
+const VirtualCinemaPage: React.FC<VirtualCinemaPageProps> = ({ productId, onClose, onOpenTemplateModal }) => {
     const { i18n, t } = useTranslation();
     const { id: routeId } = useParams();
     const location = useLocation();
@@ -253,7 +254,19 @@ const VirtualCinemaPage: React.FC<VirtualCinemaPageProps> = ({ productId, onClos
                             <AutoTranslatedText text="Back" />
                         </button>
                         {isManagementAllowed && (
-                            <div className="flex gap-4 relative z-[70]">
+                            <div className="flex gap-4 relative z-[70] items-center">
+                                {onOpenTemplateModal && (
+                                    <>
+                                        <button onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('standard'); }} className="flex items-center gap-3 px-8 py-3 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-dancheong-ink shadow-sm">
+                                            <LayoutGrid size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="템플릿 선택" />
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('project'); }} className="flex items-center gap-3 px-8 py-3 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-dancheong-ink shadow-sm">
+                                            <Layout size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="프로젝트형 템플릿" />
+                                        </button>
+                                    </>
+                                )}
                                 <button onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)} className="flex items-center gap-3 px-8 py-3 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-dancheong-ink shadow-sm">
                                     {isEditingMetadata ? <Check size={14} /> : <Edit3 size={14} />}
                                     <AutoTranslatedText text={isEditingMetadata ? "Save Changes" : "Edit Page Info"} />

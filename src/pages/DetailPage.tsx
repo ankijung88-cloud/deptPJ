@@ -231,7 +231,11 @@ export const DetailPage: React.FC = () => {
             productId: item.id,
             item: item,
             theme: theme,
-            onClose: handleBack
+            onClose: handleBack,
+            onOpenTemplateModal: (type: 'standard' | 'project') => {
+                setTemplateModalType(type);
+                setIsTemplateModalOpen(true);
+            }
         };
 
         return (
@@ -265,6 +269,10 @@ export const DetailPage: React.FC = () => {
         // Hide floating template switcher for project templates (they are now inside ProjectAdminBar)
         const isProjectTemplate = ['project_landing', 'skincare', 'curation', 'brand', 'magazine', 'community'].includes(pageType);
         if (isProjectTemplate && isFixed) return null;
+
+        // Hide floating template switcher for standard templates as they render their switchers inline next to info edit buttons
+        const isStandardTemplate = ['cinema', 'museum', 'store', 'ticket', 'inquiry', 'reservation', 'groupbuy', 'funding', 'saju', 'interview', 'office'].includes(pageType);
+        if (isStandardTemplate && isFixed) return null;
 
         return (
             <div className={`${isFixed ? 'fixed top-40 right-10 z-[10000] flex flex-col items-end gap-4' : 'mb-10 flex flex-col gap-4'}`}>

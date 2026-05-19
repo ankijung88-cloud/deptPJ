@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit3, Check, TrendingUp, Clock, ShoppingCart, Plus, Calendar } from 'lucide-react';
+import { ArrowLeft, Edit3, Check, TrendingUp, Clock, ShoppingCart, Plus, Calendar, LayoutGrid, Layout } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { FeaturedItem } from '../types';
@@ -99,9 +99,10 @@ interface VirtualFundingPageProps {
     item?: any;
     productId?: string;
     onClose?: () => void;
+    onOpenTemplateModal?: (type: 'standard' | 'project') => void;
 }
 
-const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem, productId: propProductId, onClose }) => {
+const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem, productId: propProductId, onClose, onOpenTemplateModal }) => {
     useImmersiveMode(false);
     const { i18n, t } = useTranslation();
     const { id: routeId } = useParams();
@@ -353,7 +354,25 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 items-center">
+                                {onOpenTemplateModal && (
+                                    <>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('standard'); }}
+                                            className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-black shadow-sm"
+                                        >
+                                            <LayoutGrid size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="템플릿 선택" />
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('project'); }}
+                                            className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-black shadow-sm"
+                                        >
+                                            <Layout size={14} className="text-red-600" />
+                                            <AutoTranslatedText text="프로젝트형 템플릿" />
+                                        </button>
+                                    </>
+                                )}
                                 <button
                                     onClick={() => isEditingMetadata ? handleSaveMetadata() : setIsEditingMetadata(true)}
                                     className="flex items-center gap-2 px-6 py-2 rounded-full border border-neutral-200 hover:bg-neutral-50 transition-all text-[10px] font-black tracking-widest uppercase text-black shadow-sm bg-white"
@@ -366,7 +385,7 @@ const VirtualFundingPage: React.FC<VirtualFundingPageProps> = ({ item: propItem,
                                     className="flex items-center gap-2 px-6 py-2 rounded-full border border-transparent bg-[#FF6B6B] hover:bg-[#ff5555] transition-all text-[10px] font-black tracking-widest uppercase text-white shadow-[0_0_20px_rgba(255,107,107,0.3)]"
                                 >
                                     <Plus size={14} />
-                                                                        <AutoTranslatedText text={t('common.add_product', '상품 추가')} />
+                                    <AutoTranslatedText text={t('common.add_product', '상품 추가')} />
                                 </button>
                             </div>
                         )}

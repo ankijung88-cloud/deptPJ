@@ -3,7 +3,7 @@ console.log("ShoppingMallPage.tsx loaded");
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search } from 'lucide-react';
+import { X, ShoppingBag, CreditCard, ArrowLeft, ShoppingCart, Info, Plus, UploadCloud, ChevronRight, Check, Trash2, Edit3, Search, LayoutGrid, Layout } from 'lucide-react';
 
 
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
@@ -92,9 +92,10 @@ interface ShoppingMallPageProps {
     item?: FeaturedItem;
     productId?: string;
     onClose?: () => void;
+    onOpenTemplateModal?: (type: 'standard' | 'project') => void;
 }
 
-const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, productId: _propProductId, onClose }) => {
+const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, productId: _propProductId, onClose, onOpenTemplateModal }) => {
     useImmersiveMode(false);
     const { i18n, t } = useTranslation();
     const { translateAsync } = useAutoTranslate('');
@@ -860,7 +861,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         </button>
 
                         {isManagementAllowed && (
-                            <div className="fixed top-40 right-8 flex gap-3 z-[10000]">
+                            <div className="fixed top-40 right-8 flex gap-3 z-[10000] items-center">
                                 {isEditingMetadata ? (
                                     <div className="flex gap-2 bg-white/95 backdrop-blur-2xl p-3 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-red-600/30 scale-110 origin-right">
                                         <button 
@@ -894,13 +895,33 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                         </button>
                                     </div>
                                 ) : (
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
-                                        className="px-8 py-4 rounded-3xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 active:scale-95 border-2 border-white/20"
-                                    >
-                                        <Edit3 size={18} className="text-red-500" />
-                                        <AutoTranslatedText text="Edit Page Content" />
-                                    </button>
+                                    <div className="flex gap-3 items-center">
+                                        {onOpenTemplateModal && (
+                                            <>
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('standard'); }}
+                                                    className="px-8 py-4 rounded-3xl bg-white border border-neutral-200 text-neutral-800 text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex items-center gap-3 active:scale-95"
+                                                >
+                                                    <LayoutGrid size={18} className="text-red-500" />
+                                                    <AutoTranslatedText text="템플릿 선택" />
+                                                </button>
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); onOpenTemplateModal('project'); }}
+                                                    className="px-8 py-4 rounded-3xl bg-white border border-neutral-200 text-neutral-800 text-[10px] font-black uppercase tracking-widest hover:bg-neutral-50 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex items-center gap-3 active:scale-95"
+                                                >
+                                                    <Layout size={18} className="text-red-500" />
+                                                    <AutoTranslatedText text="프로젝트형 템플릿" />
+                                                </button>
+                                            </>
+                                        )}
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); setIsEditingMetadata(true); }}
+                                            className="px-8 py-4 rounded-3xl bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)] flex items-center gap-3 active:scale-95 border-2 border-white/20"
+                                        >
+                                            <Edit3 size={18} className="text-red-500" />
+                                            <AutoTranslatedText text="Edit Page Content" />
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         )}
