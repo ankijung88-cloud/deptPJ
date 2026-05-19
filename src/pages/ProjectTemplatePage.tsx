@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { getFeaturedProducts, createProduct } from '../api/products';
-import { FeaturedItem, LocalizedString } from '../types';
+import { FeaturedItem } from '../types';
 import { Loader2 } from 'lucide-react';
 import ProjectLandingPage from '../templates/ProjectLandingPage';
 import { ProjectSkincarePage } from '../templates/ProjectSkincarePage';
@@ -11,11 +11,7 @@ import { ProjectMagazinePage } from '../templates/ProjectMagazinePage';
 import { ProjectCommunityPage } from '../templates/ProjectCommunityPage';
 import { useAdmin } from '../hooks/useAdmin';
 
-const getLocalizedValue = (val: LocalizedString, lang: 'ko' | 'en'): string => {
-    if (!val) return '';
-    if (typeof val === 'string') return val;
-    return val[lang] || val['ko'] || '';
-};
+
 
 const ProjectTemplatePage: React.FC = () => {
     const { pageId } = useParams<{ pageId?: string }>();
@@ -24,6 +20,7 @@ const ProjectTemplatePage: React.FC = () => {
     const { user } = useAdmin();
 
     const [resolvedItem, setResolvedItem] = useState<FeaturedItem | null>(null);
+    const [activePageType, setActivePageType] = useState<string>('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -40,21 +37,10 @@ const ProjectTemplatePage: React.FC = () => {
             console.log(`[ProjectTemplatePage] Resolving Page - ID: ${pageId}, Category: ${urlCategory}, Subcategory: ${urlSubcategory}, Agency: ${urlAgencyId}`);
             const allProducts = await getFeaturedProducts();
 
-            // 1. If pageId is provided, look for exact ID match
+            // 1. If pageId is provided, resolve project-scoped page or fallback to the parent project landing page
             if (pageId) {
-                const exactMatch = allProducts.find(p => p.id === pageId);
-                if (exactMatch) {
-                    console.log(`[ProjectTemplatePage] Found exact ID match in DB:`, exactMatch);
-                    setResolvedItem(exactMatch);
-                    setLoading(false);
-                    return;
-                }
-
-                // 2. Exact match not found -> Auto-provisioning scenario!
-                console.log(`[ProjectTemplatePage] Exact ID match not found. Attempting to auto-provision: ${pageId}`);
-                
                 // Determine page type from the ID string
-                let resolvedPageType = 'skincare'; // default fallback
+                let resolvedPageType = '';
                 const lowerId = pageId.toLowerCase();
                 
                 if (lowerId.includes('curation')) {
@@ -71,45 +57,48 @@ const ProjectTemplatePage: React.FC = () => {
                     resolvedPageType = 'skincare';
                 }
 
-                // Find a base template to clone from
-                const baseTemplate = allProducts.find(p => p.page_type === resolvedPageType && !p.agency_id) || 
-                                     allProducts.find(p => p.page_type === resolvedPageType) || 
-                                     allProducts.find(p => p.page_type === 'skincare') || 
-                                     allProducts[0];
+                // 2. We no longer auto-provision child pages as separate database records.
+                // Instead, ALL child pages of a project template (Brand, Curation, etc.) 
+                // use the PARENT landing page's database record to store their content via metadata.
+                const isExplicitNull = urlAgencyId === 'null';
+                const searchAgencyId = isExplicitNull ? null : (urlAgencyId || user?.id?.toString() || null);
 
-                if (!baseTemplate) {
-                    throw new Error(`Could not find a base template of type ${resolvedPageType} to clone.`);
+                let parentLandingPage = null;
+                if (urlCategory && urlSubcategory) {
+                    parentLandingPage = allProducts.find(p => 
+                        p.page_type === 'project_landing' && 
+                        p.category === urlCategory && 
+                        p.subcategory === urlSubcategory &&
+                        (searchAgencyId ? p.agency_id?.toString() === searchAgencyId : !p.agency_id)
+                    );
+                }
+                
+                if (!parentLandingPage) {
+                    parentLandingPage = allProducts.find(p => 
+                        p.page_type === 'project_landing' && 
+                        p.category === urlCategory && 
+                        (searchAgencyId ? p.agency_id?.toString() === searchAgencyId : !p.agency_id)
+                    );
                 }
 
-                // Construct a clean display title from the ID
-                const cleanTitle = pageId
-                    .replace(/^(skincare|curation|brand|magazine|community|landing|home)-/, '')
-                    .replace(/[-_]/g, ' ')
-                    .replace(/\b\w/g, c => c.toUpperCase());
+                if (parentLandingPage) {
+                    console.log(`[ProjectTemplatePage] Serving parent landing page data for child view: ${resolvedPageType}`);
+                    setActivePageType(resolvedPageType || 'project_landing');
+                    setResolvedItem(parentLandingPage);
+                    setLoading(false);
+                    return;
+                }
 
-                const agencyIdToUse = urlAgencyId || user?.id?.toString() || null;
-
-                const newItem: any = {
-                    ...baseTemplate,
-                    id: pageId,
-                    agency_id: agencyIdToUse,
-                    category: urlCategory || baseTemplate.category || '',
-                    subcategory: urlSubcategory || baseTemplate.subcategory || '',
-                    title: {
-                        ko: `${cleanTitle} (${getLocalizedValue(baseTemplate.title, 'ko')})`,
-                        en: `${cleanTitle} (${getLocalizedValue(baseTemplate.title, 'en')})`
-                    }
-                };
-
-                // Delete auto-incrementing/PK fields that shouldn't be duplicated if any
-                delete newItem.created_at;
-                delete newItem.updated_at;
-
-                console.log(`[ProjectTemplatePage] Auto-provisioning product in DB:`, newItem);
-                const created = await createProduct(newItem);
-                setResolvedItem(created);
-                setLoading(false);
-                return;
+                // Try exact ID match if it doesn't match any known page type (direct link to product)
+                const exactMatch = allProducts.find(p => p.id === pageId);
+                if (exactMatch) {
+                    console.log(`[ProjectTemplatePage] Found exact ID match in DB:`, exactMatch);
+                    setActivePageType(exactMatch.page_type || 'project_landing');
+                    setResolvedItem(exactMatch);
+                    setLoading(false);
+                    return;
+                }
+                console.warn(`[ProjectTemplatePage] Could not find parent landing page for category ${urlCategory}. Falling back to default.`);
             }
 
             // 3. No pageId provided -> We are at the Landing Page (/project-template)
@@ -119,11 +108,19 @@ const ProjectTemplatePage: React.FC = () => {
                                                    p.subcategory === urlSubcategory && 
                                                    (urlAgencyId ? p.agency_id?.toString() === urlAgencyId : !p.agency_id));
 
-            if (!landingItem && urlCategory) {
-                // Fallback to category only match
+            if (!landingItem && urlCategory && !urlSubcategory) {
+                // Fallback to category only match when no subcategory is specified
                 landingItem = allProducts.find(p => p.page_type === 'project_landing' && 
                                                    p.category === urlCategory && 
                                                    (urlAgencyId ? p.agency_id?.toString() === urlAgencyId : !p.agency_id));
+            }
+
+            if (landingItem) {
+                console.log(`[ProjectTemplatePage] Resolved precise landing page via category match:`, landingItem);
+                setActivePageType('project_landing');
+                setResolvedItem(landingItem);
+                setLoading(false);
+                return;
             }
 
             if (!landingItem) {
@@ -151,16 +148,20 @@ const ProjectTemplatePage: React.FC = () => {
                     delete (newLanding as any).updated_at;
 
                     const createdLanding = await createProduct(newLanding);
+                    setActivePageType('project_landing');
                     setResolvedItem(createdLanding);
                     setLoading(false);
                     return;
                 }
             }
 
-            if (landingItem) {
-                setResolvedItem(landingItem);
+            // Ultimate fallback
+            const fallbackItem = allProducts.find(p => p.page_type === 'project_landing') || allProducts[0];
+            if (fallbackItem) {
+                console.log(`[ProjectTemplatePage] Resolved absolute fallback:`, fallbackItem);
+                setActivePageType(fallbackItem.page_type || 'project_landing');
+                setResolvedItem(fallbackItem);
             } else {
-                // Ultimate fallback
                 const fallback = allProducts.find(p => p.page_type === 'project_landing') || allProducts[0];
                 setResolvedItem(fallback || null);
             }
@@ -201,7 +202,9 @@ const ProjectTemplatePage: React.FC = () => {
     }
 
     // Render corresponding template based on resolved page type
-    switch (resolvedItem.page_type) {
+    const renderPageType = activePageType || resolvedItem.page_type;
+    
+    switch (renderPageType) {
         case 'skincare':
             return <ProjectSkincarePage item={resolvedItem} />;
         case 'curation':

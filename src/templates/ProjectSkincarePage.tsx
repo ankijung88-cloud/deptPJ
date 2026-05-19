@@ -49,7 +49,7 @@ export const ProjectSkincarePage: React.FC<{ item?: FeaturedItem }> = ({ item })
             
             const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
             let skincareProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
-                .filter(p => p.subcategory === 'skincare' || p.category === 'skincare' || p.page_type === 'skincare');
+                .filter(p => p.page_type === 'skincare');
             
             if (urlCategory) {
                 skincareProducts = skincareProducts.filter(p => p.category === urlCategory);
@@ -60,9 +60,11 @@ export const ProjectSkincarePage: React.FC<{ item?: FeaturedItem }> = ({ item })
             
             setProducts(skincareProducts);
             
-            // Get sample for metadata (header/footer) (Prioritize urlCategory matching to break local state stickiness)
-            const sample = (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
-                          (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare') : null) ||
+            // Get sample for metadata (header/footer) (Prioritize urlCategory & urlSubcategory matching to break local state stickiness)
+            const sample = (urlCategory && urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.subcategory === urlSubcategory && p.page_type === 'skincare' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.subcategory === urlSubcategory && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && !urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && !urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'skincare') : null) ||
                           (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'skincare') ||
                           agencyProducts[0] ||
@@ -70,7 +72,11 @@ export const ProjectSkincarePage: React.FC<{ item?: FeaturedItem }> = ({ item })
                           allProducts.filter(p => !p.agency_id)[0] ||
                           allProducts[0];
             
-            if (sample) setLocalItem(sample);
+            if (item) {
+                setLocalItem(item);
+            } else if (sample) {
+                setLocalItem(sample);
+            }
         } catch (err) {
             console.error(err);
         } finally {
@@ -79,15 +85,15 @@ export const ProjectSkincarePage: React.FC<{ item?: FeaturedItem }> = ({ item })
     };
 
     useEffect(() => {
-        if (!item || (urlCategory && item.category !== urlCategory)) {
-            // If sticky localItem has a different category than urlCategory, reset it
-            if (localItem && urlCategory && localItem.category !== urlCategory) {
+        if (!item || (urlCategory && item.category !== urlCategory) || (urlSubcategory && item.subcategory !== urlSubcategory)) {
+            // If sticky localItem has a different category or subcategory, reset it
+            if (localItem && ((urlCategory && localItem.category !== urlCategory) || (urlSubcategory && localItem.subcategory !== urlSubcategory))) {
                 setLocalItem(null);
             }
-            fetchAll();
         } else {
             setLocalItem(item);
         }
+        fetchAll();
     }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     if (!localItem || loading) return (

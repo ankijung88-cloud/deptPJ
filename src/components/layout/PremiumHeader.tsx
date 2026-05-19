@@ -25,8 +25,10 @@ export const PremiumHeader: React.FC<PremiumHeaderProps> = ({ item, onEdit, canE
     
     const metadata = (item?.metadata as any) || {};
     const categoryKey = item?.category || urlCategory || '';
-    const storedNameKey = categoryKey ? `agency_brand_name_${categoryKey}` : 'agency_brand_name';
-    const storedLogoKey = categoryKey ? `agency_brand_logo_${categoryKey}` : 'agency_brand_logo';
+    const subcategoryKey = item?.subcategory || urlSubcategory || '';
+    const scopeKey = subcategoryKey ? `${categoryKey}_${subcategoryKey}` : categoryKey;
+    const storedNameKey = scopeKey ? `agency_brand_name_${scopeKey}` : 'agency_brand_name';
+    const storedLogoKey = scopeKey ? `agency_brand_logo_${scopeKey}` : 'agency_brand_logo';
     const isLanding = item?.page_type === 'project_landing' || location.pathname.includes('/project-template');
     
     // Ensure we don't show "모든차서비스" or other default titles in agency context

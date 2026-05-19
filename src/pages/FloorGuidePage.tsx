@@ -258,8 +258,9 @@ const FloorGuidePage: React.FC = () => {
                                                                      (p.id?.includes('w2hs2') || p.subcategory === 'car-care');
                                                 if (is1FCarService) return true;
                                                 
-                                                // Hide 'project_landing' (rendered as main card) and 'skincare' (internal project pages)
-                                                return p.page_type !== 'project_landing' && p.page_type !== 'skincare';
+                                                // Hide 'project_landing' (rendered as main card) and all internal project pages
+                                                const isInternalProjectPage = ['project_landing', 'skincare', 'curation', 'brand', 'magazine', 'community'].includes(p.page_type || '');
+                                                return !isInternalProjectPage;
                                             });
 
                                             if (projectMainItems.length === 0 && regularItems.length === 0) {

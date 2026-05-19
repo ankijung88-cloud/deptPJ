@@ -30,6 +30,7 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     const queryParams = new URLSearchParams(location.search);
     const urlAgencyId = queryParams.get('agencyId');
     const urlCategory = queryParams.get('category');
+    const urlSubcategory = queryParams.get('subcategory');
 
     const [editingSection, setEditingSection] = useState<'hero' | 'feature' | 'banner' | 'footer' | 'header' | null>(null);
     const [modalMode, setModalMode] = useState<'add' | 'edit' | null>(null);
@@ -64,12 +65,12 @@ const ProjectLandingPage: React.FC<ProjectLandingPageProps> = ({ item }) => {
     };
 
     useEffect(() => {
-        if (!item || (urlCategory && item.category !== urlCategory)) {
+        if (!item || (urlCategory && item.category !== urlCategory) || (urlSubcategory && item.subcategory !== urlSubcategory)) {
             fetchSample();
         } else {
             setLocalItem(item);
         }
-    }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory]);
+    }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     if (!localItem) return null;
 

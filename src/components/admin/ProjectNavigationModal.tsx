@@ -30,8 +30,10 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
             const updatedMetadata = { ...metadata, ...formData };
             const agencyId = user?.id?.toString();
             const categoryKey = item.category || '';
-            const storedNameKey = categoryKey ? `agency_brand_name_${categoryKey}` : 'agency_brand_name';
-            const storedLogoKey = categoryKey ? `agency_brand_logo_${categoryKey}` : 'agency_brand_logo';
+            const subcategoryKey = item.subcategory || '';
+            const scopeKey = subcategoryKey ? `${categoryKey}_${subcategoryKey}` : categoryKey;
+            const storedNameKey = scopeKey ? `agency_brand_name_${scopeKey}` : 'agency_brand_name';
+            const storedLogoKey = scopeKey ? `agency_brand_logo_${scopeKey}` : 'agency_brand_logo';
             
             // Persist to localStorage for immediate session-wide consistency (category-scoped)
             if (formData.headerLogoText) {
@@ -54,8 +56,8 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
                 const updatedItem = { ...item, metadata: updatedMetadata };
                 const response = await updateProduct(item.id, updatedItem);
                 
-                // Propagate branding only to other agency projects of the SAME category
-                const propagationTargets = agencyProjects.filter(p => p.id !== item.id && p.category === item.category);
+                // Propagate branding only to other agency projects of the SAME category AND SUBCATEGORY
+                const propagationTargets = agencyProjects.filter(p => p.id !== item.id && p.category === item.category && p.subcategory === item.subcategory);
                 if (propagationTargets.length > 0) {
                     await Promise.all(propagationTargets.map(p => {
                         const newMetadata = { 
@@ -160,9 +162,10 @@ export const ProjectNavigationModal: React.FC<ProjectNavigationModalProps> = ({
     };
 
     const addNavLink = () => {
+        const uniqueSuffix = Date.now().toString(36).slice(-6);
         setFormData({ 
             ...formData, 
-            navLinks: [...navLinks, { name: '', path: '' }] 
+            navLinks: [...navLinks, { name: '새 카테고리', path: `/project-template/category-${uniqueSuffix}` }] 
         });
     };
 

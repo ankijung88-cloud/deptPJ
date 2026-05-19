@@ -433,6 +433,7 @@ const ProjectProductDetailPage: React.FC = () => {
     useImmersiveMode(true);
     
     const [product, setProduct] = useState<FeaturedItem | null>(null);
+    const [parentProject, setParentProject] = useState<FeaturedItem | null>(null);
     const [config, setConfig] = useState<PremiumDetailConfig>(DEFAULT_CONFIG);
     const [loading, setLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -460,6 +461,14 @@ const ProjectProductDetailPage: React.FC = () => {
             const data = await getProductById(id!);
             if (data) {
                 setProduct(data);
+                if ((data as any).parent_id) {
+                    try {
+                        const parentData = await getProductById((data as any).parent_id.toString());
+                        if (parentData) setParentProject(parentData);
+                    } catch (e) {
+                        console.error('Failed to fetch parent:', e);
+                    }
+                }
                 // Deep merge or fallback for nested config
                 const savedConfig = data.metadata?.premiumDetail || {};
                 const mergedConfig = {
@@ -534,7 +543,7 @@ const ProjectProductDetailPage: React.FC = () => {
             />
 
             <PremiumHeader 
-                item={product} 
+                item={parentProject || product} 
                 canEdit={canEdit}
                 onEdit={() => setShowNavigationModal(true)}
             />
@@ -592,7 +601,7 @@ const ProjectProductDetailPage: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            <main className="pt-24">
+            <main className={`pt-24 ${canEdit ? 'md:pt-[140px] pt-32' : ''}`}>
                 {/* Breadcrumbs */}
                 <div className="container mx-auto px-6 md:px-12 lg:px-24 py-6">
                     <nav className="flex items-center gap-2 text-[10px] text-[#8B7E66] tracking-widest uppercase">
@@ -797,7 +806,7 @@ const ProjectProductDetailPage: React.FC = () => {
                 </section>
             </main>
             
-            <PremiumFooter item={product} />
+            <PremiumFooter item={parentProject || product} />
         </div>
     );
 };

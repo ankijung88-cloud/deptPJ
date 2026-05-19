@@ -49,9 +49,11 @@ export const ProjectCurationPage: React.FC<{ item?: FeaturedItem }> = ({ item })
             const targetAgencyId = urlAgencyId || (isAgency ? user?.id?.toString() : null);
             const agencyProducts = targetAgencyId ? allProducts.filter(p => p.agency_id?.toString() === targetAgencyId) : [];
 
-            // Main template item (Prioritize urlCategory matching to break local state stickiness)
-            const sample = (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'curation' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
-                          (urlCategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'curation') : null) ||
+            // Main template item (Prioritize urlCategory & urlSubcategory matching to break local state stickiness)
+            const sample = (urlCategory && urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.subcategory === urlSubcategory && p.page_type === 'curation' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.subcategory === urlSubcategory && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && !urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'curation' && (targetAgencyId ? p.agency_id?.toString() === targetAgencyId : !p.agency_id)) : null) ||
+                          (urlCategory && !urlSubcategory ? allProducts.find(p => p.category === urlCategory && p.page_type === 'curation') : null) ||
                           (localItem ? allProducts.find(p => p.id === localItem.id) : null) || 
                           agencyProducts.find(p => p.page_type === 'curation') ||
                           agencyProducts[0] ||
@@ -59,7 +61,11 @@ export const ProjectCurationPage: React.FC<{ item?: FeaturedItem }> = ({ item })
                           allProducts.filter(p => !p.agency_id)[0] ||
                           allProducts[0];
 
-            if (sample) setLocalItem(sample);
+            if (item) {
+                setLocalItem(item);
+            } else if (sample) {
+                setLocalItem(sample);
+            }
 
             // Filter products for this page type
             let curationProducts = (agencyProducts.length > 0 ? agencyProducts : allProducts)
@@ -81,15 +87,15 @@ export const ProjectCurationPage: React.FC<{ item?: FeaturedItem }> = ({ item })
     };
 
     useEffect(() => {
-        if (!item || (urlCategory && item.category !== urlCategory)) {
-            // If sticky localItem has a different category than urlCategory, reset it
-            if (localItem && urlCategory && localItem.category !== urlCategory) {
+        if (!item || (urlCategory && item.category !== urlCategory) || (urlSubcategory && item.subcategory !== urlSubcategory)) {
+            // If sticky localItem has a different category or subcategory, reset it
+            if (localItem && ((urlCategory && localItem.category !== urlCategory) || (urlSubcategory && localItem.subcategory !== urlSubcategory))) {
                 setLocalItem(null);
             }
-            fetchAll();
         } else {
             setLocalItem(item);
         }
+        fetchAll();
     }, [item, isAdmin, isAgency, user, urlAgencyId, urlCategory, urlSubcategory]);
 
     const handleDelete = async (id?: string) => {
