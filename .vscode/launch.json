@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Client (Chrome)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+        "webpack:///./src/*": "${workspaceFolder}/src/*",
+        "webpack:///*": "*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Server (Node)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack (Client & Server)",
+      "configurations": ["Launch Client (Chrome)", "Debug Server (Node)"]
+    }
+  ]
+}

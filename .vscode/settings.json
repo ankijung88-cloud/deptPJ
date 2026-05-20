@@ -1,4 +1,66 @@
 {
-    "git.ignoreLimitWarning": true,
-    "css.lint.unknownAtRules": "ignore"
+  "git.ignoreLimitWarning": true,
+  "css.lint.unknownAtRules": "ignore",
+
+  // Format settings
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // Language-specific formatting defaults
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+
+  // Linting & Auto-fix on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": ["./", "./server"],
+
+  // File Nesting (VSCode specific feature to make the explorer extremely clean)
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock, .npmrc, vercel.json",
+    "tsconfig.json": "tsconfig.*.json",
+    "vite.config.ts": "vite.config.*, tailwind.config.*, postcss.config.*, webpack.config.*",
+    ".env": ".env.*"
+  },
+
+  // Tailwind CSS
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "ts"
+  },
+
+  // Search exclusion
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/tmp": true
+  }
 }

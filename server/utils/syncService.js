@@ -47,6 +47,7 @@ export const syncAll = async () => {
         floorsContent += '];\n';
 
         const floorsPath = path.resolve(__dirname, '../../src/constants/floors.ts');
+        fs.mkdirSync(path.dirname(floorsPath), { recursive: true });
         fs.writeFileSync(floorsPath, floorsContent, 'utf8');
 
         // --- PART B: Update src/i18n/categories.json ---

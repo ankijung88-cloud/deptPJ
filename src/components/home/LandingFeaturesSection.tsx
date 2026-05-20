@@ -267,11 +267,15 @@ export const LandingFeaturesSection: React.FC = () => {
                 <div className="flex flex-wrap justify-center gap-8">
                     <div className="px-10 py-5 bg-white/80 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Users className="text-dancheong-mugwort" />
-                        <span className="font-bold text-dancheong-ink/70">1,000+ 기업 도입</span>
+                        <span className="font-bold text-dancheong-ink/70">
+                            <AutoTranslatedText text="1,000+ 기업 도입" />
+                        </span>
                     </div>
                     <div className="px-10 py-5 bg-white/80 backdrop-blur-md rounded-[2rem] border border-white flex items-center gap-4 shadow-sm group hover:bg-white transition-all duration-500">
                         <Store className="text-dancheong-navy" />
-                        <span className="font-bold text-dancheong-ink/70">2,500+ 가상 상점</span>
+                        <span className="font-bold text-dancheong-ink/70">
+                            <AutoTranslatedText text="2,500+ 가상 상점" />
+                        </span>
                     </div>
                 </div>
             </motion.div>

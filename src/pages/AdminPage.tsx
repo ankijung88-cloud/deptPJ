@@ -646,6 +646,8 @@ const FloorManager = () => {
 };
 
 const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
+    const { translateAsync } = useAutoTranslate(null);
+    const { translateAsync: translateToEnglish } = useAutoTranslate(null, 'en');
     const [formData, setFormData] = useState<any>({
         id: '',
         floor: '',
@@ -735,22 +737,49 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
         }
     };
 
-    const translateAsync = async (t: string) => t;
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
         try {
+            // Auto-translate floor content from Korean to English
+            let finalFormData = { ...formData };
+            if (finalFormData.title?.ko) {
+                finalFormData.title.en = await translateToEnglish(finalFormData.title.ko);
+            }
+            if (finalFormData.description?.ko) {
+                finalFormData.description.en = await translateToEnglish(finalFormData.description.ko);
+            }
+            
+            // Auto-translate subitems
+            if (finalFormData.subitems && finalFormData.subitems.length > 0) {
+                const translatedSubitems = await Promise.all(
+                    finalFormData.subitems.map(async (sub: any) => {
+                        const labelKo = typeof sub.label === 'object' ? sub.label?.ko : sub.label;
+                        const descKo = typeof sub.description === 'object' ? sub.description?.ko : sub.description;
+                        
+                        const labelEn = labelKo ? await translateToEnglish(labelKo) : '';
+                        const descEn = descKo ? await translateToEnglish(descKo) : '';
+                        
+                        return {
+                            ...sub,
+                            label: { ko: labelKo || '', en: labelEn },
+                            description: { ko: descKo || '', en: descEn }
+                        };
+                    })
+                );
+                finalFormData.subitems = translatedSubitems;
+            }
+
             if (isEdit) {
                 try {
-                    await updateFloorCategory(floor.id, formData);
+                    await updateFloorCategory(floor.id, finalFormData);
                     const successMsg = await translateAsync('Successfully updated!');
                     alert(successMsg);
                 } catch (updateErr: any) {
                     if (updateErr.message?.includes('404') || 
                         updateErr.message?.toLowerCase().includes('not found') ||
                         updateErr.message?.includes('No category found')) {
-                        await createFloorCategory(formData);
+                        await createFloorCategory(finalFormData);
                         const successMsg = await translateAsync('Successfully created new record for this floor!');
                         alert(successMsg);
                     } else {
@@ -758,7 +787,7 @@ const FloorFormModal = ({ floor, onClose, onSuccess }: any) => {
                     }
                 }
             } else {
-                await createFloorCategory(formData);
+                await createFloorCategory(finalFormData);
                 const successMsg = await translateAsync('Successfully created!');
                 alert(successMsg);
             }
@@ -1107,14 +1136,23 @@ const NoticeFormModal = ({ notice, agencies, onClose, onSuccess }: any) => {
     const { isAdmin } = useAdmin();
     const { floors } = useFloors();
     const [formData, setFormData] = useState<any>(() => normalizeNoticeData(notice));
+    const { translateAsync: translateToEnglish } = useAutoTranslate(null, 'en');
 
     const isEdit = !!notice;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (isEdit) await apiUpdateNotice(notice.id, formData);
-            else await apiCreateNotice(formData);
+            let finalFormData = { ...formData };
+            if (finalFormData.title?.ko) {
+                finalFormData.title.en = await translateToEnglish(finalFormData.title.ko);
+            }
+            if (finalFormData.content?.ko) {
+                finalFormData.content.en = await translateToEnglish(finalFormData.content.ko);
+            }
+
+            if (isEdit) await apiUpdateNotice(notice.id, finalFormData);
+            else await apiCreateNotice(finalFormData);
             onSuccess();
         } catch (err) { alert('Operation failed'); }
     };
@@ -1326,12 +1364,21 @@ const FAQFormModal = ({ faq, agencies, onClose, onSuccess }: any) => {
     const isEdit = !!faq;
 
     const { translateAsync } = useAutoTranslate(null);
+    const { translateAsync: translateToEnglish } = useAutoTranslate(null, 'en');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (isEdit) await apiUpdateFaq(faq.id, formData);
-            else await apiCreateFaq(formData);
+            let finalFormData = { ...formData };
+            if (finalFormData.question?.ko) {
+                finalFormData.question.en = await translateToEnglish(finalFormData.question.ko);
+            }
+            if (finalFormData.answer?.ko) {
+                finalFormData.answer.en = await translateToEnglish(finalFormData.answer.ko);
+            }
+
+            if (isEdit) await apiUpdateFaq(faq.id, finalFormData);
+            else await apiCreateFaq(finalFormData);
             const successMsg = await translateAsync('Successfully saved');
             alert(successMsg);
             onSuccess();

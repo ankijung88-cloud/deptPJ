@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Building2 } from 'lucide-react';
 import { getAgencies } from '../../api/auth';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { FALLBACK_PARTNERS } from '../../data/fallbackData';
 
 // Constants for consistent spacing and sizing
@@ -60,7 +61,7 @@ const ScrollingRow: React.FC<{ direction: 'left' | 'right'; speed: number; items
                         </div>
                         <div className="flex flex-col">
                             <span className={`text-sm sm:text-base font-black tracking-tight ${partner.isComingSoon ? 'text-dancheong-ink/30' : 'text-dancheong-ink'}`}>
-                                {partner.agency_name || partner.name}
+                                <AutoTranslatedText text={partner.agency_name || partner.name} />
                             </span>
                             <span className="text-[9px] sm:text-[10px] text-dancheong-ink/40 font-bold uppercase tracking-wider">
                                 {partner.industry || (partner.agency_name ? 'Certified Partner' : 'Industry Partner')}

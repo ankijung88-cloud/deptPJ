@@ -54,7 +54,7 @@ export const LandingFloorSection: React.FC = () => {
                             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                             className="block"
                         >
-                            당신의 본연을 찾아가는
+                            <AutoTranslatedText text="당신의 본연을 찾아가는" />
                         </motion.span>
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
@@ -63,7 +63,7 @@ export const LandingFloorSection: React.FC = () => {
                             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                             className="block italic text-dancheong-mugwort/80"
                         >
-                            층별 큐레이션
+                            <AutoTranslatedText text="층별 큐레이션" />
                         </motion.span>
                     </h2>
                 </header>

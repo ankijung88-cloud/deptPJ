@@ -9,6 +9,8 @@ import { AutoTranslatedText } from '../common/AutoTranslatedText';
 import { TEMPLATE_CATEGORIES } from '../../utils/constants';
 import { FeaturedItem } from '../../types';
 import { normalizeLocalizedString } from '../../utils/i18nUtils';
+import { useAutoTranslate } from '../../hooks/useAutoTranslate';
+
 
 interface ProductFormModalProps {
     product?: FeaturedItem | null;
@@ -41,7 +43,9 @@ const normalizeProductData = (product: any, initialData?: any) => {
 
 export const ProductFormModal = ({ product, initialData, onClose, onSuccess }: ProductFormModalProps) => {
     const { isAdmin, isAgency, user } = useAdmin();
+    const { translateAsync: translateToEnglish } = useAutoTranslate(null, 'en');
     const { floors } = useFloors();
+
     const [agencies, setAgencies] = useState<any[]>([]);
     const [formData, setFormData] = useState<any>(() => {
         const data = normalizeProductData(product, initialData);
@@ -115,7 +119,20 @@ export const ProductFormModal = ({ product, initialData, onClose, onSuccess }: P
         setIsSaving(true);
         try {
             let finalFormData = { ...formData };
+            
+            // Auto-translate Korean content to English on submit
+            if (finalFormData.title?.ko) {
+                finalFormData.title.en = await translateToEnglish(finalFormData.title.ko);
+            }
+            if (finalFormData.description?.ko) {
+                finalFormData.description.en = await translateToEnglish(finalFormData.description.ko);
+            }
+            if (finalFormData.long_description?.ko) {
+                finalFormData.long_description.en = await translateToEnglish(finalFormData.long_description.ko);
+            }
+
             if (!isEdit) {
+
                 const isProjectTemplate = ['skincare', 'curation', 'brand', 'magazine', 'community', 'project_landing'].includes(formData.page_type);
                 if (isProjectTemplate) {
                     const cleanId = formData.id.trim().replace(/-[0-9]+$/, '');

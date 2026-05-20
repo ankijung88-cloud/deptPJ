@@ -164,15 +164,8 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
                 return;
             }
 
-            // 0. Skip if text is already in target language (very basic check)
-            if (targetLang === 'en' && !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(processingText) && !/[ぁ-んァ-ヶ]/.test(processingText)) {
-                // Input is likely already English
-                setTranslatedText(processingText);
-                return;
-            }
-
-            if (targetLang === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(processingText)) {
-                // Input is likely already Korean
+            // 0. Skip if target language is Korean (all source texts are Korean-based)
+            if (targetLang === 'ko') {
                 setTranslatedText(processingText);
                 return;
             }
@@ -206,9 +199,10 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
                 // @google/genai usage pattern
                 const ai = new GoogleGenAI({ apiKey });
 
-                const prompt = `Translate the following text to ${targetLangName}. 
-                Output ONLY the translated text without any quotes or explanations.
-                Preserve the original meaning and tone.
+                const prompt = `Translate the following Korean text to ${targetLangName}. 
+                The input text is in Korean, and all translation should be based on this Korean text.
+                Output ONLY the translated text without any quotes, explanations, or markdown formatting.
+                Preserve the original meaning, tone, and spacing.
                 If the text is already in ${targetLangName}, return it exactly as is.
                 Text: ${processingText}`;
 
@@ -257,7 +251,7 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
         const target = targetLangOverride || i18nInstance.language || 'ko';
         const short = target.split('-')[0];
         
-        if (short === 'ko' && /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(textToTranslate)) return textToTranslate;
+        if (short === 'ko') return textToTranslate;
         
         const cacheKey = `${textToTranslate}_${short}`;
         if (translationCache.has(cacheKey)) return translationCache.get(cacheKey)!;
@@ -276,7 +270,7 @@ export const useAutoTranslate = (text: any, targetLangOverride?: string) => {
             const ai = new GoogleGenAI({ apiKey });
             const result = await ai.models.generateContent({
                 model: 'gemini-2.0-flash',
-                contents: [{ role: 'user', parts: [{ text: `Translate "${textToTranslate}" to ${short}. Return ONLY the translation.` }] }],
+                contents: [{ role: 'user', parts: [{ text: `Translate the following Korean text to the language with ISO code "${short}". All translations must be based on the Korean original. Return ONLY the translated text, with no quotes, markdown formatting, or explanation: "${textToTranslate}"` }] }],
             });
             
             let resultStr = textToTranslate;

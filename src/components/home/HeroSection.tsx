@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { AutoTranslatedText } from '../common/AutoTranslatedText';
 
 interface HeroImage {
     id: number;
@@ -175,8 +176,8 @@ export const HeroSection: React.FC = () => {
 
                                     {/* Descriptive Subtext */}
                                     <p className="text-sm sm:text-xl md:text-2xl text-white/70 max-w-xl font-medium leading-tight italic">
-                                        당신의 본연의 아름다움을 깨우는 <br className="hidden sm:block" />
-                                        가장 순수하고 깊은 층별 큐레이션
+                                        <AutoTranslatedText text="당신의 본연의 아름다움을 깨우는" /> <br className="hidden sm:block" />
+                                        <AutoTranslatedText text="가장 순수하고 깊은 층별 큐레이션" />
                                     </p>
 
                                     {/* Call to Action Button */}
