@@ -154,6 +154,55 @@ async function initDB() {
       console.warn('[DB] Non-critical migration failed for description:', err.message);
     }
 
+    // NEW: Ensure 'title' column is VARCHAR(512) to prevent "Data too long" errors
+    try {
+      const [titleCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'title'");
+      if (titleCols.length > 0 && !titleCols[0].Type.toLowerCase().includes('varchar(512)') && !titleCols[0].Type.toLowerCase().includes('text')) {
+        console.log('[DB] Title column type is too small. Upgrading to VARCHAR(512)...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN title VARCHAR(512)");
+        console.log('[DB] Migration successful: title column updated to VARCHAR(512).');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for title:', err.message);
+    }
+
+    // NEW: Ensure 'event_date' column is VARCHAR(512) to prevent "Data too long" errors
+    try {
+      const [dateCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'event_date'");
+      if (dateCols.length > 0 && !dateCols[0].Type.toLowerCase().includes('varchar(512)') && !dateCols[0].Type.toLowerCase().includes('text')) {
+        console.log('[DB] event_date column type is too small. Upgrading to VARCHAR(512)...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN event_date VARCHAR(512)");
+        console.log('[DB] Migration successful: event_date column updated to VARCHAR(512).');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for event_date:', err.message);
+    }
+
+    // NEW: Ensure 'location' column is VARCHAR(512) to prevent "Data too long" errors
+    try {
+      const [locCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'location'");
+      if (locCols.length > 0 && !locCols[0].Type.toLowerCase().includes('varchar(512)') && !locCols[0].Type.toLowerCase().includes('text')) {
+        console.log('[DB] location column type is too small. Upgrading to VARCHAR(512)...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN location VARCHAR(512)");
+        console.log('[DB] Migration successful: location column updated to VARCHAR(512).');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for location:', err.message);
+    }
+
+    // NEW: Ensure 'price' column is VARCHAR(512) to prevent "Data too long" errors
+    try {
+      const [priceCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'price'");
+      if (priceCols.length > 0 && !priceCols[0].Type.toLowerCase().includes('varchar(512)') && !priceCols[0].Type.toLowerCase().includes('text')) {
+        console.log('[DB] price column type is too small. Upgrading to VARCHAR(512)...');
+        await pool.query("ALTER TABLE featured_items MODIFY COLUMN price VARCHAR(512)");
+        console.log('[DB] Migration successful: price column updated to VARCHAR(512).');
+      }
+    } catch (err) {
+      console.warn('[DB] Non-critical migration failed for price:', err.message);
+    }
+
+
     // NEW: Ensure parent_id is VARCHAR(255) to support string IDs from templates
     try {
       const [parentCols] = await pool.query("SHOW COLUMNS FROM featured_items LIKE 'parent_id'");
