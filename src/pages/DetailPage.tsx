@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar as CalendarIcon, MapPin, Loader2, LayoutGrid, Layout } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Loader2, LayoutGrid, Layout, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedText } from '../utils/i18nUtils';
@@ -59,6 +59,19 @@ export const DetailPage: React.FC = () => {
         const saved = localStorage.getItem('isGlobalMuted');
         return saved === null ? true : saved === 'true';
     });
+
+    const parsedMetadata = useMemo(() => {
+        if (!item?.metadata) return {};
+        if (typeof item.metadata === 'string') {
+            try {
+                return JSON.parse(item.metadata);
+            } catch (e) {
+                console.error("Failed to parse metadata in DetailPage:", e);
+                return {};
+            }
+        }
+        return item.metadata;
+    }, [item?.metadata]);
 
 
     // Set Breadcrumb Path
@@ -446,6 +459,24 @@ export const DetailPage: React.FC = () => {
                         <div className="sticky top-32 space-y-12">
                             <div className="space-y-6 px-4">
                                 {renderTemplateSwitcher(false)}
+                                {parsedMetadata?.external_link && (
+                                    <div className="pt-2 pb-6 border-b border-white/10">
+                                        <a 
+                                            href={parsedMetadata.external_link} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-center text-xs font-black uppercase tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                                            style={{ 
+                                                backgroundColor: theme.highlightColor, 
+                                                color: '#000000',
+                                                boxShadow: `0 8px 24px ${theme.glowColor}30`
+                                            }}
+                                        >
+                                            <AutoTranslatedText text="외부 링크 바로가기" />
+                                            <ExternalLink size={14} />
+                                        </a>
+                                    </div>
+                                )}
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: theme.textMuted }}><AutoTranslatedText text="Curated Category" /></span>
                                     <p className="font-medium tracking-wide" style={{ color: theme.textSecondary }}><AutoTranslatedText text={item.category} /></p>

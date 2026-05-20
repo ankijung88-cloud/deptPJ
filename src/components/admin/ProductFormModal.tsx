@@ -21,8 +21,21 @@ interface ProductFormModalProps {
 
 // normalizeLocalizedString moved to i18nUtils.ts
 
+const parseMetadata = (metadata: any) => {
+    if (!metadata) return {};
+    if (typeof metadata === 'string') {
+        try {
+            return JSON.parse(metadata);
+        } catch (e) {
+            console.error('Failed to parse metadata in normalizeProductData:', e);
+            return {};
+        }
+    }
+    return metadata;
+};
 
 const normalizeProductData = (product: any, initialData?: any) => {
+    const rawMetadata = product?.metadata || initialData?.metadata || {};
     return {
         id: product?.id || '',
         title: normalizeLocalizedString(product?.title || initialData?.title),
@@ -37,7 +50,7 @@ const normalizeProductData = (product: any, initialData?: any) => {
         long_description: normalizeLocalizedString(product?.long_description || initialData?.long_description),
         detail_media_type: product?.detail_media_type || initialData?.detail_media_type || 'image',
         detail_media_url: product?.detail_media_url || initialData?.detail_media_url || '',
-        metadata: product?.metadata || initialData?.metadata || {}
+        metadata: parseMetadata(rawMetadata)
     };
 };
 
@@ -395,6 +408,26 @@ export const ProductFormModal = ({ product, initialData, onClose, onSuccess }: P
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    {/* 5-4. External Link */}
+                    <div>
+                        <label className="text-xs font-bold text-dancheong-ink/60 uppercase tracking-widest pl-1 mb-2 block">
+                            <AutoTranslatedText text="5-4. 외부 링크 (옵션)" />
+                        </label>
+                        <input 
+                            type="text"
+                            value={formData.metadata?.external_link || ''}
+                            onChange={(e) => setFormData({
+                                ...formData,
+                                metadata: {
+                                    ...formData.metadata,
+                                    external_link: e.target.value
+                                }
+                            })}
+                            className="w-full bg-black/5 border border-dancheong-ink/10 rounded-xl p-4 text-dancheong-ink focus:border-[#00FFC2]/50"
+                            placeholder="https://..."
+                        />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
