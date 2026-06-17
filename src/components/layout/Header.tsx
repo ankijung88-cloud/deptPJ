@@ -14,7 +14,6 @@ const ADDITIONAL_NAV = [
     { path: '/inquiry', label: 'footer.inquiry' }
 ];
 
-import { Breadcrumbs } from '../common/Breadcrumbs';
 
 import { getJoseonThemeById, getFloorBySubId } from '../../utils/themeUtils';
 import { useNavigationState } from '../../context/NavigationActionContext';
@@ -278,10 +277,6 @@ const Header: React.FC = () => {
                         })}
                     </nav>
                 <div className="hidden lg:flex flex-col items-end space-y-1 py-2 font-sans">
-                        {/* Compact Breadcrumbs in Top Right */}
-                        <div className="opacity-100 transition-opacity">
-                            <Breadcrumbs />
-                        </div>
 
                         <div className="flex items-center space-x-6">
                             <button

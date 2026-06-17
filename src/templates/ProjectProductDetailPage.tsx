@@ -5,7 +5,7 @@ import { PremiumFooter } from '../components/home/PremiumFooter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useImmersiveMode } from '../context/NavigationActionContext';
 import { AutoTranslatedText } from '../components/common/AutoTranslatedText';
-import { ArrowRight, ChevronRight, Droplets, Leaf, Sparkles, Edit2, X, Check, Upload, Loader2 } from 'lucide-react';
+import { ArrowRight, Droplets, Leaf, Sparkles, Edit2, X, Check, Upload, Loader2 } from 'lucide-react';
 import { getProductById, updateProduct, deleteProduct } from '../api/products';
 import { FeaturedItem } from '../types';
 import { useAdmin } from '../hooks/useAdmin';
@@ -528,8 +528,6 @@ const ProjectProductDetailPage: React.FC = () => {
         );
     }
     
-    // Safety check for title
-    const displayTitle = config.hero?.title || product.title || "Product Detail";
 
     return (
         <div className="min-h-screen bg-[#F5F0E8] selection:bg-[#2D2924] selection:text-[#F5F0E8] overflow-x-hidden w-full max-w-full">
@@ -602,18 +600,6 @@ const ProjectProductDetailPage: React.FC = () => {
             </AnimatePresence>
 
             <main className={`pt-24 ${canEdit ? 'md:pt-[140px] pt-32' : ''}`}>
-                {/* Breadcrumbs */}
-                <div className="container mx-auto px-6 md:px-12 lg:px-24 py-6">
-                    <nav className="flex items-center gap-2 text-[10px] text-[#8B7E66] tracking-widest uppercase">
-                        <AutoTranslatedText text="홈" />
-                        <ChevronRight size={10} />
-                        <AutoTranslatedText text={product.page_type === 'curation' ? '큐레이션' : product.page_type === 'brand' ? '브랜드' : '스킨케어'} />
-                        <ChevronRight size={10} />
-                        <AutoTranslatedText text="제품" />
-                        <ChevronRight size={10} />
-                        <span className="text-[#2D2924] font-black"><AutoTranslatedText text={displayTitle} /></span>
-                    </nav>
-                </div>
 
                 {/* Hero Section */}
                 <EditableWrapper 
