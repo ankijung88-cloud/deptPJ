@@ -42,7 +42,7 @@ export const LandingFooterCTA: React.FC<LandingFooterCTAProps> = ({ onExplore })
             </div>
             
             <div className="absolute bottom-8 w-full text-center text-dancheong-ink/20 text-[10px] font-black uppercase tracking-widest">
-                © {new Date().getFullYear()} <AutoTranslatedText text="MONGTANG" />. <AutoTranslatedText text="ALL RIGHTS RESERVED." />
+                © {new Date().getFullYear()} <AutoTranslatedText text="FLOOR C" />. <AutoTranslatedText text="ALL RIGHTS RESERVED." />
             </div>
         </section>
     );

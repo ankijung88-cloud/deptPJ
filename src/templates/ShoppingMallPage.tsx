@@ -949,10 +949,10 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                                     value={customSubtitleLabel}
                                     onChange={(e) => setCustomSubtitleLabel(e.target.value)}
                                     placeholder="Shopping Mall Platform"
-                                    className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest tracking-[0.3em] bg-transparent border-b border-neutral-200 focus:outline-none"
+                                    className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.3em] bg-transparent border-b border-neutral-200 focus:outline-none"
                                 />
                             ) : (
-                                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest tracking-[0.3em]">
+                                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.3em]">
                                     <AutoTranslatedText text={customSubtitleLabel || "Shopping Mall Platform"} />
                                 </span>
                             )}
@@ -2082,7 +2082,7 @@ const ShoppingMallPage: React.FC<ShoppingMallPageProps> = ({ item: propItem, pro
                         ) : (
                             <>
                                 <div className="text-4xl md:text-7xl font-serif font-black tracking-tighter text-neutral-100 uppercase select-none leading-none opacity-80">
-                                    <AutoTranslatedText text={customBottomTitle || "MONGTANG"} />
+                                    <AutoTranslatedText text={customBottomTitle || "FLOOR C"} />
                                 </div>
                                 <p className="text-[10px] md:text-xs font-black tracking-[0.8em] text-neutral-400 uppercase max-w-2xl leading-loose opacity-60">
                                     <AutoTranslatedText text={customBottomSlogan || "Traditional Heritage × Modern Virtual Experience"} />

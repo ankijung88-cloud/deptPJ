@@ -17,7 +17,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         <div className={`flex items-center gap-2 sm:gap-3 ${className}`} style={{ mixBlendMode: 'multiply' }}>
             <img 
                 src="/mongdanglogo.png" 
-                alt="MONGTANG Logo"
+                alt="FLOOR C Logo"
                 style={{ 
                     height: typeof heightValue === 'number' ? `${heightValue * 0.75}px` : `calc(${heightValue} * 0.75)`, 
                     width: 'auto', 
@@ -35,8 +35,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
                         textShadow: '0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4)'
                     }}
                 >
-                    <span className="sm:hidden" style={{ fontSize: typeof heightValue === 'number' ? `${heightValue * 0.45}px` : `calc(${heightValue} * 0.45)` }}>MONGTANG</span>
-                    <span className="hidden sm:inline">MONGTANG</span>
+                    <span className="sm:hidden" style={{ fontSize: typeof heightValue === 'number' ? `${heightValue * 0.45}px` : `calc(${heightValue} * 0.45)` }}>FLOOR C</span>
+                    <span className="hidden sm:inline">FLOOR C</span>
                 </span>
             )}
         </div>

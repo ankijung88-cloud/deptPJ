@@ -482,7 +482,7 @@ const VirtualCinemaPage: React.FC<VirtualCinemaPageProps> = ({ productId, onClos
             {/* Cinema Footer */}
             <footer className="mt-64 py-40 px-6 border-t border-dancheong-ink/5 bg-white">
                 <div className="container mx-auto flex flex-col items-center gap-16">
-                    <div className="text-8xl md:text-[12rem] font-serif font-black tracking-tighter text-dancheong-ink/[0.03] uppercase select-none leading-none"><AutoTranslatedText text="MONGTANGSSOK" /></div>
+                    <div className="text-8xl md:text-[12rem] font-serif font-black tracking-tighter text-dancheong-ink/[0.03] uppercase select-none leading-none"><AutoTranslatedText text="FLOOR C SSOK" /></div>
                     <div className="flex flex-wrap justify-center gap-20 text-[10px] font-black tracking-[0.5em] uppercase text-dancheong-ink/30">
                         <a href="#" className="hover:text-[#800020] transition-colors"><AutoTranslatedText text="Archives" /></a>
                         <a href="#" className="hover:text-[#800020] transition-colors"><AutoTranslatedText text="Technical" /></a>

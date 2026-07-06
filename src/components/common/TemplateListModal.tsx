@@ -97,7 +97,7 @@ export const TemplateListModal: React.FC<TemplateListModalProps> = ({ isOpen, on
                         <div className="bg-dancheong-ink/5 p-6 flex items-center justify-center gap-2">
                             <LayoutGrid size={16} className="text-dancheong-ink/30" />
                             <span className="text-[10px] font-bold tracking-[0.2em] text-dancheong-ink/30 uppercase italic">
-                                Mongtangssok Immersive Platform
+                                Floor C SSOK Immersive Platform
                             </span>
                         </div>
                     </motion.div>

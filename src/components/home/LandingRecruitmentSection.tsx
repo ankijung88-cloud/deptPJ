@@ -129,7 +129,7 @@ export const LandingRecruitmentSection: React.FC = () => {
                         className="flex justify-center pt-12"
                     >
                         <button 
-                            onClick={() => window.location.href = 'mailto:contact@mongtangssok.com'}
+                            onClick={() => window.location.href = 'mailto:contact@floorcssok.com'}
                             className="group relative px-12 py-5 bg-dancheong-ink text-white rounded-full text-sm font-black uppercase tracking-[0.3em] overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_rgba(26,26,26,0.2)] active:scale-95"
                         >
                             <span className="relative z-10 flex items-center gap-3">
